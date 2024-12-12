@@ -1,17 +1,56 @@
-# This file is responsible for configuring your umbrella
-# and **all applications** and their dependencies with the
-# help of the Config module.
+# This file is responsible for configuring your application
+# and its dependencies with the aid of the Config module.
 #
-# Note that all applications in your umbrella share the
-# same configuration and dependencies, which is why they
-# all use the same configuration file. If you want different
-# configurations or dependencies per app, it is best to
-# move said applications out of the umbrella.
+# This configuration file is loaded before any dependency and
+# is restricted to this project.
+
+# General application configuration
 import Config
 
-# Configure Mix tasks and generators
+config :ash,
+  include_embedded_source_by_default?: false,
+  default_page_type: :keyset,
+  policies: [no_filter_static_forbidden_reads?: false]
+
+config :spark,
+  formatter: [
+    remove_parens?: true,
+    "Ash.Resource": [
+      section_order: [
+        :postgres,
+        :resource,
+        :code_interface,
+        :actions,
+        :policies,
+        :pub_sub,
+        :preparations,
+        :changes,
+        :validations,
+        :multitenancy,
+        :attributes,
+        :relationships,
+        :calculations,
+        :aggregates,
+        :identities
+      ]
+    ],
+    "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
+  ]
+
 config :monorepo,
-  ecto_repos: [Monorepo.Repo]
+  ecto_repos: [Monorepo.Repo],
+  generators: [timestamp_type: :utc_datetime]
+
+# Configures the endpoint
+config :monorepo, MonorepoWeb.Endpoint,
+  url: [host: "localhost"],
+  adapter: Bandit.PhoenixAdapter,
+  render_errors: [
+    formats: [html: MonorepoWeb.ErrorHTML, json: MonorepoWeb.ErrorJSON],
+    layout: false
+  ],
+  pubsub_server: Monorepo.PubSub,
+  live_view: [signing_salt: "XPZAC1QY"]
 
 # Configures the mailer
 #
@@ -22,41 +61,26 @@ config :monorepo,
 # at the `config/runtime.exs`.
 config :monorepo, Monorepo.Mailer, adapter: Swoosh.Adapters.Local
 
-config :monorepo_web,
-  ecto_repos: [Monorepo.Repo],
-  generators: [context_app: :monorepo]
-
-# Configures the endpoint
-config :monorepo_web, MonorepoWeb.Endpoint,
-  url: [host: "localhost"],
-  adapter: Bandit.PhoenixAdapter,
-  render_errors: [
-    formats: [html: MonorepoWeb.ErrorHTML, json: MonorepoWeb.ErrorJSON],
-    layout: false
-  ],
-  pubsub_server: Monorepo.PubSub,
-  live_view: [signing_salt: "SS3F1uD7"]
-
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
-  monorepo_web: [
+  monorepo: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
-    cd: Path.expand("../apps/monorepo_web/assets", __DIR__),
+    cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "3.4.3",
-  monorepo_web: [
+  monorepo: [
     args: ~w(
       --config=tailwind.config.js
       --input=css/app.css
       --output=../priv/static/assets/app.css
     ),
-    cd: Path.expand("../apps/monorepo_web/assets", __DIR__)
+    cd: Path.expand("../assets", __DIR__)
   ]
 
 # Configures Elixir's Logger

@@ -1,4 +1,5 @@
 import Config
+config :ash, disable_async?: true
 
 # Configure your database
 #
@@ -15,19 +16,19 @@ config :monorepo, Monorepo.Repo,
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :monorepo_web, MonorepoWeb.Endpoint,
+config :monorepo, MonorepoWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "QswnkYEsoyeNxuiyJmLmKsYf6koDoFxoSfJKmHj8RqlU0n1p9a5pp08/L1QdgHBa",
+  secret_key_base: "jCfUW7FfmRtbSGHCpj7EEkWpzweaB8J4m9UY5fhH7kMi6diTkchwPNuBmFQ+MNwN",
   server: false
-
-# Print only warnings and errors during test
-config :logger, level: :warning
 
 # In test we don't send emails
 config :monorepo, Monorepo.Mailer, adapter: Swoosh.Adapters.Test
 
 # Disable swoosh api client as it is only required for production adapters
 config :swoosh, :api_client, false
+
+# Print only warnings and errors during test
+config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime

@@ -1,13 +1,13 @@
 defmodule MonorepoWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :monorepo_web
+  use Phoenix.Endpoint, otp_app: :monorepo
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_monorepo_web_key",
-    signing_salt: "+evMXJPv",
+    key: "_monorepo_key",
+    signing_salt: "NrfH7luI",
     same_site: "Lax"
   ]
 
@@ -21,7 +21,7 @@ defmodule MonorepoWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :monorepo_web,
+    from: :monorepo,
     gzip: false,
     only: MonorepoWeb.static_paths()
 
@@ -31,7 +31,7 @@ defmodule MonorepoWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
-    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :monorepo_web
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :monorepo
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,

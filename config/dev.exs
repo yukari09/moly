@@ -16,17 +16,17 @@ config :monorepo, Monorepo.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :monorepo_web, MonorepoWeb.Endpoint,
+config :monorepo, MonorepoWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: 4000],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "a5zmafLeqB2KxLjBIElx0ZXT90UOhMIvUtig8myOyKcQJ6RIJXG/XKZTmfrOWG97",
+  secret_key_base: "Y6PVDp2fd/urXr/FmkbrhfgGEz8BQlnKk7vKUymacdM2lWHP/12xn7qKd2BBxfjZ",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:monorepo_web, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:monorepo_web, ~w(--watch)]}
+    esbuild: {Esbuild, :install_and_run, [:monorepo, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:monorepo, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -53,7 +53,7 @@ config :monorepo_web, MonorepoWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :monorepo_web, MonorepoWeb.Endpoint,
+config :monorepo, MonorepoWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
@@ -63,10 +63,14 @@ config :monorepo_web, MonorepoWeb.Endpoint,
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :monorepo_web, dev_routes: true
+config :monorepo, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
+
+# Set a higher stacktrace during development. Avoid configuring such
+# in production as building large stacktraces may be expensive.
+config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
@@ -79,7 +83,3 @@ config :phoenix_live_view,
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
-
-# Set a higher stacktrace during development. Avoid configuring such
-# in production as building large stacktraces may be expensive.
-config :phoenix, :stacktrace_depth, 20
