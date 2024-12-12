@@ -37,6 +37,8 @@ defmodule Monorepo.MixProject do
       {:ash_phoenix, "~> 2.0"},
       {:ash, "~> 3.0"},
       {:igniter, "~> 0.4"},
+      {:ash_graphql, "~> 1.4.6"},
+
       {:phoenix, "~> 1.7.14"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
