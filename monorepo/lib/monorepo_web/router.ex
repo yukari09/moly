@@ -33,6 +33,7 @@ defmodule MonorepoWeb.Router do
       # If an authenticated user must *not* be present:
       # on_mount {MonorepoWeb.LiveUserAuth, :live_no_user}
     end
+
   end
 
   scope "/", MonorepoWeb do
@@ -59,6 +60,7 @@ defmodule MonorepoWeb.Router do
                   AshAuthentication.Phoenix.Overrides.Default
                 ]
   end
+
 
   # Other scopes may use custom stacks.
   # scope "/api", MonorepoWeb do

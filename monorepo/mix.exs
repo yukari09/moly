@@ -33,6 +33,7 @@ defmodule Monorepo.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:ash_admin, "~> 0.12"},
       {:salad_ui, "~> 0.14"},
       {:ash_authentication_phoenix, "~> 2.0"},
       {:bcrypt_elixir, "~> 3.0"},

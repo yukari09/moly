@@ -87,3 +87,6 @@ config :swoosh, :api_client, false
 config :monorepo, google_oauth2_client_id: "486343447885-9jg87vj9h0qafcdvu4k2ugb7dggbsion.apps.googleusercontent.com"
 config :monorepo, google_oauth2_redirect_uri: "http://localhost:4000/auth/user/google/callback"
 config :monorepo, google_oauth2_client_secret: "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"
+
+# Path to install SaladUI components
+config :salad_ui, components_path: Path.join(File.cwd!(), "lib/monorepo_web/components")

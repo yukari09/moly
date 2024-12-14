@@ -17,7 +17,7 @@ defmodule MonorepoWeb do
   those modules here.
   """
 
-  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt ads.txt)
 
   def router do
     quote do
@@ -84,7 +84,7 @@ defmodule MonorepoWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import MonorepoWeb.CoreComponents
+      # import MonorepoWeb.CoreComponents
       import MonorepoWeb.Gettext
 
       # Shortcut for generating JS commands

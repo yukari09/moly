@@ -5,4 +5,5 @@ defmodule Monorepo.Accounts do
     resource(Monorepo.Accounts.Token)
     resource(Monorepo.Accounts.User)
   end
+
 end
