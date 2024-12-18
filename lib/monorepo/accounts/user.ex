@@ -3,23 +3,8 @@ defmodule Monorepo.Accounts.User do
     otp_app: :monorepo,
     domain: Monorepo.Accounts,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshAuthentication],
+    extensions: [AshAuthentication, AshAdmin.Resource],
     data_layer: AshPostgres.DataLayer
-
-  use AshPagify.Tsearch
-
-  @ash_pagify_options %{
-    default_limit: 15,
-    scopes: %{
-      role: [
-        %{name: :all, filter: nil},
-        %{name: :admin, filter: %{author: "John"}},
-        %{name: :user, filter: %{author: "Doe"}}
-      ]
-    }
-  }
-
-  def ash_pagify_options, do: @ash_pagify_options
 
   authentication do
     tokens do
@@ -118,15 +103,6 @@ defmodule Monorepo.Accounts.User do
         description("A JWT that can be used to authenticate the user.")
         allow_nil?(false)
       end
-    end
-
-    read :list_users do
-      description("List of users using on admin manage or other situaction.")
-
-      pagination offset?: true,
-                default_limit: @ash_pagify_options.default_limit,
-                countable: true,
-                required?: false
     end
 
     create :register_with_password do
@@ -273,10 +249,11 @@ defmodule Monorepo.Accounts.User do
       sensitive?(true)
     end
 
-    attribute :is_admin, :boolean do
+    attribute :role, :string do
       allow_nil?(false)
       sensitive?(false)
-      default(false)
+      public? true
+      default("user")
     end
   end
 
@@ -284,17 +261,8 @@ defmodule Monorepo.Accounts.User do
     identity(:unique_email, [:email])
   end
 
-  calculations do
-    calculate :tsvector,
-              AshPostgres.Tsvector,
-              expr(
-                fragment(
-                  "to_tsvector('simple', coalesce(?, '')) || to_tsvector('simple', coalesce(?, ''))",
-                  name,
-                  title
-                )
-              ),
-              public?: true
+  admin do
+    actor? true
   end
 
 end

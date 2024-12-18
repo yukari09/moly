@@ -3,6 +3,8 @@ defmodule MonorepoWeb.Router do
 
   use AshAuthentication.Phoenix.Router
 
+  import AshAdmin.Router
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -61,20 +63,31 @@ defmodule MonorepoWeb.Router do
                 ]
   end
 
+  scope "/" do
+    # Pipe it through your browser pipeline
+    pipe_through [:browser]
 
-  scope "/admin", MonorepoWeb do
-    pipe_through :browser
-
-    ash_authentication_live_session :authenticated_admin_routes,
-      on_mount: {MonorepoWeb.LiveUserAuth, :live_admin_user_required},
-      layout: {MonorepoWeb.Layouts, :admin}  do
-
-        live "/dashboard", AdminDashboardLive
-        live "/users", AdminUserLive
-        live "/blogs", AdminBlogLive
-    end
-
+    ash_admin "/admin"
   end
+
+  # scope "/admin", MonorepoWeb do
+  #   pipe_through :browser
+
+  #   ash_authentication_live_session :authenticated_admin_routes,
+  #     on_mount: {MonorepoWeb.LiveUserAuth, :live_admin_user_required},
+  #     layout: {MonorepoWeb.Layouts, :admin}  do
+
+  #       live "/dashboard", AdminDashboardLive
+
+  #       live "/users", UserLive.Index, :index
+  #       live "/users/new", UserLive.Index, :new
+  #       live "/users/:id/edit", UserLive.Index, :edit
+
+  #       live "/users/:id", UserLive.Show, :show
+  #       live "/users/:id/show/edit", UserLive.Show, :edit
+  #   end
+
+  # end
 
   # Other scopes may use custom stacks.
   # scope "/api", MonorepoWeb do

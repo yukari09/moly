@@ -33,7 +33,7 @@ defmodule Monorepo.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:ash_pagify, "~> 1.2.2"},
+      {:ash_admin, "~> 0.12.0"},
       {:lucide_icons, "~> 1.1"},
       {:earmark, "~> 1.4.47"},
       {:imgproxy, "~> 3.0"},
