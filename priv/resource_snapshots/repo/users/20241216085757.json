@@ -39,6 +39,16 @@
       "size": null,
       "source": "hashed_password",
       "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "\"user\"",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "role",
+      "type": "text"
     }
   ],
   "base_filter": null,
@@ -46,7 +56,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "81AB4BA0490FF36ABCDE9A46A931DBF4A11FDCF743AAF71418103F5E344EDA92",
+  "hash": "4334EFC8096F0F1A4D450E193F5B880031881AE8153C94D6A479E8916EE108C4",
   "identities": [
     {
       "all_tenants?": false,

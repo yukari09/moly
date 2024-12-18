@@ -46,7 +46,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "888A0A79F25E96220DDD789D17A2954E97AC86E867DB093A558950B87F6D5EC5",
+  "hash": "2AD33AEE5671823021879F93306DFA547AF745F6C25A07D83107CEE38A84DC0F",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -55,5 +55,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "categories"
+  "table": "posts_categories"
 }

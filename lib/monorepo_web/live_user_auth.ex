@@ -23,7 +23,7 @@ defmodule MonorepoWeb.LiveUserAuth do
   end
 
   def on_mount(:live_admin_user_required, _params, _session, socket) do
-    if socket.assigns[:current_user] && socket.assigns[:current_user] |> Map.get(:is_admin)  do
+    if socket.assigns[:current_user] && socket.assigns[:current_user] |> Map.get(:role) == "admin"  do
       {:cont, socket}
     else
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}

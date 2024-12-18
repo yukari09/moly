@@ -1,8 +1,13 @@
 defmodule Monorepo.Blog.Post do
-  use Ash.Resource, otp_app: :monorepo, domain: Monorepo.Blog, data_layer: AshPostgres.DataLayer
+  use Ash.Resource,
+    otp_app: :monorepo,
+    domain: Monorepo.Blog,
+    authorizers: [Ash.Policy.Authorizer],
+    extensions: [AshAdmin.Resource, AshRbac],
+    data_layer: AshPostgres.DataLayer
 
   actions do
-    defaults([:read])
+    defaults([:read, create: [:title, :subject]])
   end
 
   attributes do

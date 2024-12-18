@@ -1,6 +1,8 @@
 defmodule MonorepoWeb.UserLive.Index do
   use MonorepoWeb, :live_view
 
+  @context  %{private: %{ash_authentication?: true}}
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -16,18 +18,25 @@ defmodule MonorepoWeb.UserLive.Index do
     <.table>
       <.table_header>
       <.table_row>
-        <.table_head class="w-[100px]">id</.table_head>
+        <.table_head class="w-[100px]">&nbsp;</.table_head>
         <.table_head>Email</.table_head>
         <.table_head>ConfirmedAt</.table_head>
         <.table_head class="text-right">Action</.table_head>
       </.table_row>
       </.table_header>
       <.table_body>
-        <.table_row :for={{row, id} <- @streams.users} id={id}>
-          <.table_cell>{row.id}</.table_cell>
-          <.table_cell></.table_cell>
-          <.table_cell></.table_cell>
-          <.table_cell></.table_cell>
+        <.table_row :for={{id, row} <- @streams.users} id={id}>
+          <.table_cell>
+            <div class="flex">
+              <.avatar>
+                <.avatar_image src="https://github.com/shadcn.png" />
+                <.avatar_fallback class="bg-primary text-white">CN</.avatar_fallback>
+              </.avatar>
+            </div>
+          </.table_cell>
+          <.table_cell>{row.email}</.table_cell>
+          <.table_cell>{row.confirmed_at}</.table_cell>
+          <.table_cell class="text-right">{row.profile}</.table_cell>
         </.table_row>
       </.table_body>
     </.table>
@@ -38,9 +47,13 @@ defmodule MonorepoWeb.UserLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    data =
+      Ash.read!(Monorepo.Accounts.User, context: @context)
+      |> Ash.load!([:profile])
+
     {:ok,
      socket
-     |> stream(:users, Ash.read!(Monorepo.Accounts.User, actor: socket.assigns[:current_user]))
+     |> stream(:users, data)
      |> assign_new(:current_user, fn -> nil end)}
   end
 

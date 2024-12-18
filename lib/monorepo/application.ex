@@ -20,6 +20,7 @@ defmodule Monorepo.Application do
       MonorepoWeb.Endpoint,
       {AshAuthentication.Supervisor, [otp_app: :monorepo]},
       TwMerge.Cache,
+      {Cachex, [:cache]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

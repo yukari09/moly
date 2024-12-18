@@ -1,8 +1,13 @@
 defmodule Monorepo.Blog.Category do
-  use Ash.Resource, otp_app: :monorepo, domain: Monorepo.Blog, data_layer: AshPostgres.DataLayer
+  use Ash.Resource,
+    otp_app: :monorepo,
+    domain: Monorepo.Blog,
+    authorizers: [Ash.Policy.Authorizer],
+    extensions: [AshRbac],
+    data_layer: AshPostgres.DataLayer
 
   actions do
-    defaults([:read])
+    defaults([:read, create: [:category_name]])
   end
 
   attributes do
@@ -17,7 +22,8 @@ defmodule Monorepo.Blog.Category do
   end
 
   postgres do
-    table("categories")
+    table("posts_categories")
     repo(Monorepo.Repo)
   end
+
 end

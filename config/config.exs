@@ -12,6 +12,8 @@ config :ash,
   default_page_type: :keyset,
   policies: [no_filter_static_forbidden_reads?: false]
 
+config :ash, :policies, show_policy_breakdowns?: true
+
 config :spark,
   formatter: [
     remove_parens?: true,

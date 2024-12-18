@@ -4,7 +4,7 @@ import Config
 config :monorepo, Monorepo.Repo,
   username: "yukari",
   password: "83233167",
-  hostname: "192.168.6.8",
+  hostname: "localhost",
   database: "monorepo_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
@@ -90,3 +90,22 @@ config :monorepo, google_oauth2_client_secret: "GOCSPX-IusQ4jlmLYBFvuoSKcbe7ir3M
 
 # Path to install SaladUI components
 config :salad_ui, components_path: Path.join(File.cwd!(), "lib/monorepo_web/components")
+
+config :ex_aws,
+  region: "us-east-1",
+  access_key_id: "415efd2219d218600c53964e88d8fe82",
+  secret_access_key: "78b72539f2b1daef78868904b452592790d62e00b404455e1a0384bd14f264bf"
+
+config :ex_aws, :s3,
+  scheme: "https://",
+  host: "9a489bdeb68e9c3976091df2de6de7d8.r2.cloudflarestorage.com",
+  port: 443,
+  bucket: "impressifyai-test",
+  image_dir: :images,
+  video_dir: :videos,
+  domain: "dev-cdn.impressifyai.com"
+
+config :imgproxy,
+  prefix: "http://192.168.6.8:8008",
+  key: "31dde3553997eb7bd3ad1ce2700c2f2e32dc15fffcd19969399e65b7c7d47c81",
+  salt: "38d48531bc85ac8273a0cb9f057223349141a53954937b97785b9cbf15ee34ee"

@@ -33,6 +33,7 @@ defmodule Monorepo.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:ash_rbac, "~> 0.6.1"},
       {:ash_admin, "~> 0.12.0"},
       {:lucide_icons, "~> 1.1"},
       {:earmark, "~> 1.4.47"},
@@ -45,7 +46,14 @@ defmodule Monorepo.MixProject do
       {:ash_postgres, "~> 2.0"},
       {:ash_phoenix, "~> 2.0"},
       {:ash, "~> 3.0"},
+      {:cachex, "~> 4.0"},
       {:igniter, "~> 0.4"},
+      {:ex_aws, "~> 2.0"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:poison, "~> 3.0"},
+      {:hackney, "~> 1.9"},
+      {:sweet_xml, "~> 0.7"},
+      #=====================
       {:phoenix, "~> 1.7.14"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
@@ -65,7 +73,7 @@ defmodule Monorepo.MixProject do
        app: false,
        compile: false,
        depth: 1},
-      {:swoosh, "~> 1.5"},
+      {:swoosh, "~> 1.7.5"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},

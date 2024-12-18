@@ -83,7 +83,7 @@
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "categories"
+        "table": "posts_categories"
       },
       "size": null,
       "source": "category_id",
@@ -124,7 +124,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "DCFD3714F7777E52C08DD52C944219282BB9BA888A977F85DF29FA34F10DBD28",
+  "hash": "3710647FDA9080DB06CC7A44D38E52293AE4B21B765EC151A48F18341F6E83A1",
   "identities": [],
   "multitenancy": {
     "attribute": null,

@@ -3,7 +3,7 @@ defmodule Monorepo.Accounts.User do
     otp_app: :monorepo,
     domain: Monorepo.Accounts,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshAuthentication, AshAdmin.Resource],
+    extensions: [AshAuthentication],
     data_layer: AshPostgres.DataLayer
 
   authentication do
@@ -226,6 +226,10 @@ defmodule Monorepo.Accounts.User do
     end
   end
 
+  relationships do
+    has_one :profile, Monorepo.Accounts.Profile
+  end
+
   policies do
     bypass AshAuthentication.Checks.AshAuthenticationInteraction do
       authorize_if(always())
@@ -261,8 +265,5 @@ defmodule Monorepo.Accounts.User do
     identity(:unique_email, [:email])
   end
 
-  admin do
-    actor? true
-  end
 
 end

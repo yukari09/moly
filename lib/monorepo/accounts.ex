@@ -4,9 +4,7 @@ defmodule Monorepo.Accounts do
   resources do
     resource(Monorepo.Accounts.Token)
     resource(Monorepo.Accounts.User)
+    resource(Monorepo.Accounts.Profile)
   end
 
-  admin do
-    show? true
-  end
 end

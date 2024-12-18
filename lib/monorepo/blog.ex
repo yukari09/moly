@@ -5,4 +5,8 @@ defmodule Monorepo.Blog do
     resource(Monorepo.Blog.Category)
     resource(Monorepo.Blog.Post)
   end
+
+  # admin do
+  #   show? true
+  # end
 end
