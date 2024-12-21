@@ -86,46 +86,6 @@ defmodule MonorepoWeb do
       # Core UI components and translation
       # import MonorepoWeb.CoreComponents, except: [input: 1, button: 1, table: 1]
 
-      import SaladUI.{
-        Accordion,
-        Alert,
-        AlertDialog,
-        Avatar,
-        Badge,
-        Breadcrumb,
-        Button,
-        Card,
-        Chart,
-        Checkbox,
-        Collapsible,
-        Dialog,
-        DropdownMenu,
-        Form,
-        Helpers,
-        HoverCard,
-        Icon,
-        Input,
-        Label,
-        Menu,
-        Pagination,
-        Popover,
-        Progress,
-        RadioGroup,
-        ScrollArea,
-        Select,
-        Separator,
-        Sheet,
-        Sidebar,
-        Skeleton,
-        Slider,
-        Switch,
-        Table,
-        Tabs,
-        Textarea,
-        Toggle,
-        ToggleGroup,
-        Tooltip
-      }
 
       import MonorepoWeb.Gettext
 

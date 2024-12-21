@@ -39,7 +39,6 @@ defmodule Monorepo.MixProject do
       {:lucide_icons, "~> 1.1"},
       {:earmark, "~> 1.4.47"},
       {:imgproxy, "~> 3.0"},
-      {:salad_ui, "~> 0.14.4"},
       {:ash_authentication_phoenix, "~> 2.0"},
       {:bcrypt_elixir, "~> 3.0"},
       {:picosat_elixir, "~> 0.2"},
