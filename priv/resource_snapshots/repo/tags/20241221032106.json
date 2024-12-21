@@ -1,16 +1,6 @@
 {
   "attributes": [
     {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "confirmed_at",
-      "type": "utc_datetime_usec"
-    },
-    {
       "allow_nil?": false,
       "default": "fragment(\"gen_random_uuid()\")",
       "generated?": false,
@@ -27,27 +17,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "email",
-      "type": "citext"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "hashed_password",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "\"user\"",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "role",
+      "source": "tag_name",
       "type": "text"
     },
     {
@@ -76,19 +46,19 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "B1E94B4F5A68685E69B75D28D57934CA3AC590FC024E48187F1E9C91C6BD53F4",
+  "hash": "A4C4FD2584A465CD7F7FB893C01E94255084A71B98B798D1C646431C1D8C33CA",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "users_unique_email_index",
+      "index_name": "tags_unique_tag_name_index",
       "keys": [
         {
           "type": "atom",
-          "value": "email"
+          "value": "tag_name"
         }
       ],
-      "name": "unique_email",
+      "name": "unique_tag_name",
       "nils_distinct?": true,
       "where": null
     }
@@ -100,5 +70,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "users"
+  "table": "tags"
 }

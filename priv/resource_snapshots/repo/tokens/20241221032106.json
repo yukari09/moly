@@ -1,13 +1,13 @@
 {
   "attributes": [
     {
-      "allow_nil?": true,
-      "default": "nil",
+      "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "confirmed_at",
+      "source": "created_at",
       "type": "utc_datetime_usec"
     },
     {
@@ -24,20 +24,40 @@
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
-      "primary_key?": false,
+      "primary_key?": true,
       "references": null,
       "size": null,
-      "source": "email",
-      "type": "citext"
+      "source": "jti",
+      "type": "text"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "hashed_password",
+      "source": "subject",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "expires_at",
+      "type": "utc_datetime"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "purpose",
       "type": "text"
     },
     {
@@ -47,8 +67,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "role",
-      "type": "text"
+      "source": "extra_data",
+      "type": "map"
     },
     {
       "allow_nil?": false,
@@ -76,23 +96,8 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "C0BBE8DE1B362BD5AEE6FD1F6ADA98F917FEC32C64ED6267D29413BB945B010B",
-  "identities": [
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "users_unique_email_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "email"
-        }
-      ],
-      "name": "unique_email",
-      "nils_distinct?": true,
-      "where": null
-    }
-  ],
+  "hash": "68099C0000E36745E5C12F89D31D7A5AD43CAFB0EAC93B7BF91FC0725944C828",
+  "identities": [],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -100,5 +105,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "users"
+  "table": "tokens"
 }

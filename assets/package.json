@@ -2,5 +2,8 @@
   "devDependencies": {
     "daisyui": "^4.12.22",
     "tailwindcss-animate": "^1.0.7"
+  },
+  "dependencies": {
+    "easymde": "^2.18.0"
   }
 }

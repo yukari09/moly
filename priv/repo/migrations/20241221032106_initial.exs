@@ -60,7 +60,8 @@ defmodule Monorepo.Repo.Migrations.Initial do
     alter table(:users) do
       add(:email, :citext, null: false)
       add(:hashed_password, :text)
-      add(:role, :text)
+      add(:role, :text, null: false, default: "user")
+      add(:status, :text, null: false, default: "pending")
 
       add(:inserted_at, :utc_datetime_usec,
         null: false,
@@ -114,6 +115,8 @@ defmodule Monorepo.Repo.Migrations.Initial do
       )
     end
 
+    create unique_index(:tags, [:tag_name], name: "tags_unique_tag_name_index")
+
     create table(:posts_tags, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
 
@@ -160,9 +163,9 @@ defmodule Monorepo.Repo.Migrations.Initial do
     alter table(:posts) do
       add(:title, :text, null: false)
       add(:subject, :text, null: false)
-      add(:cover_image, :text)
       add(:excerpt, :text, null: false)
-      add(:published, :boolean, null: false, default: false)
+      add(:post_status, :text, null: false, default: "draft")
+      add(:post_type, :text, null: false, default: "post")
 
       add(:inserted_at, :utc_datetime_usec,
         null: false,
@@ -176,6 +179,31 @@ defmodule Monorepo.Repo.Migrations.Initial do
 
       add(:category_id, :uuid)
       add(:user_id, :uuid)
+    end
+
+    create table(:post_metas, primary_key: false) do
+      add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
+      add(:meta_key, :text, null: false)
+
+      add(:inserted_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+      )
+
+      add(:updated_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+      )
+
+      add(
+        :post_id,
+        references(:posts,
+          column: :id,
+          name: "post_metas_post_id_fkey",
+          type: :uuid,
+          prefix: "public"
+        )
+      )
     end
 
     create table(:categories, primary_key: false) do
@@ -246,14 +274,18 @@ defmodule Monorepo.Repo.Migrations.Initial do
 
     drop(table(:categories))
 
+    drop(constraint(:post_metas, "post_metas_post_id_fkey"))
+
+    drop(table(:post_metas))
+
     alter table(:posts) do
       remove(:user_id)
       remove(:category_id)
       remove(:updated_at)
       remove(:inserted_at)
-      remove(:published)
+      remove(:post_type)
+      remove(:post_status)
       remove(:excerpt)
-      remove(:cover_image)
       remove(:subject)
       remove(:title)
     end
@@ -271,6 +303,8 @@ defmodule Monorepo.Repo.Migrations.Initial do
 
     drop(table(:posts_tags))
 
+    drop_if_exists(unique_index(:tags, [:tag_name], name: "tags_unique_tag_name_index"))
+
     drop(table(:tags))
 
     drop(table(:tokens))
@@ -280,6 +314,7 @@ defmodule Monorepo.Repo.Migrations.Initial do
     alter table(:users) do
       remove(:updated_at)
       remove(:inserted_at)
+      remove(:status)
       remove(:role)
       remove(:hashed_password)
       remove(:email)

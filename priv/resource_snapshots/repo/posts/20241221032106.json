@@ -31,16 +31,6 @@
       "type": "text"
     },
     {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "cover_image",
-      "type": "text"
-    },
-    {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
@@ -52,13 +42,23 @@
     },
     {
       "allow_nil?": false,
-      "default": "false",
+      "default": "\"draft\"",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "published",
-      "type": "boolean"
+      "source": "post_status",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "\"post\"",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "post_type",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -143,8 +143,8 @@
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": true,
-  "hash": "49BF00AC0A7418286EB833334266498CCF7B1376007C2B53D100D7EA05B8E05B",
+  "has_create_action": false,
+  "hash": "9F27A4AE0E8D535D3CA962F28D5EF9FEB34647843C705AAF6D7465DF629CE8F3",
   "identities": [
     {
       "all_tenants?": false,

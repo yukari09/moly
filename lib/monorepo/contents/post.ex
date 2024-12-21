@@ -19,8 +19,11 @@ defmodule Monorepo.Contents.Post do
         countable(true)
       end
     end
-  end
 
+    create :create do
+      accept [:title, :subject, :excerpt, :post_status, :post_type, :category_id, :user_id]
+    end
+  end
 
   attributes do
     uuid_primary_key(:id)
@@ -34,8 +37,6 @@ defmodule Monorepo.Contents.Post do
       allow_nil?(false)
       public?(true)
     end
-
-    attribute(:cover_image, :string)
 
     attribute :excerpt, :string do
       allow_nil?(false)
