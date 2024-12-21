@@ -66,6 +66,16 @@
       "primary_key?": false,
       "references": null,
       "size": null,
+      "source": "profile_picture",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
       "source": "first_name",
       "type": "text"
     },
@@ -77,16 +87,6 @@
       "references": null,
       "size": null,
       "source": "last_name",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "profile_picture",
       "type": "text"
     },
     {
@@ -195,7 +195,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "1E29C705DC1CB4B7F07B1C8AA532A81DB677B09472D7BA13BA8EDB63E4C437C9",
+  "hash": "31490617DEEB419C5C6BC97F82A37B381031778225F7675B094F30FF924FBD8A",
   "identities": [
     {
       "all_tenants?": false,

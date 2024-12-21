@@ -33,12 +33,13 @@ defmodule Monorepo.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:timex, "~> 3.0"},
       {:ash_rbac, "~> 0.6.1"},
       {:ash_admin, "~> 0.12.0"},
       {:lucide_icons, "~> 1.1"},
       {:earmark, "~> 1.4.47"},
       {:imgproxy, "~> 3.0"},
-      {:salad_ui, "~> 0.14"},
+      {:salad_ui, "~> 0.14.4"},
       {:ash_authentication_phoenix, "~> 2.0"},
       {:bcrypt_elixir, "~> 3.0"},
       {:picosat_elixir, "~> 0.2"},
@@ -53,7 +54,7 @@ defmodule Monorepo.MixProject do
       {:poison, "~> 3.0"},
       {:hackney, "~> 1.9"},
       {:sweet_xml, "~> 0.7"},
-      #=====================
+      # =====================
       {:phoenix, "~> 1.7.14"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},

@@ -24,9 +24,10 @@ defmodule Monorepo.Accounts.Profile do
     end
 
     attribute :name, :string
+    attribute :profile_picture, :string
+
     attribute :first_name, :string
     attribute :last_name, :string
-    attribute :profile_picture, :string
     attribute :bio, :string
     attribute :date_of_birth, :date
     attribute :gender, :string

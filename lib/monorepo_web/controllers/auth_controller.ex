@@ -7,10 +7,16 @@ defmodule MonorepoWeb.AuthController do
 
     message =
       case activity do
-        {:confirm_new_user, :confirm} -> "Your email address has now been confirmed"
+        {:confirm_new_user, :confirm} ->
+          if user.status != :active do
+            Ash.update!(user, action: :update_user_status_to_active, context: %{private: %{ash_authentication?: true}})
+          end
+          "Your email address has now been confirmed"
         {:password, :reset} -> "Your password has successfully been reset"
         _ -> "You are now signed in"
       end
+
+    user = Ash.load!(user, [:profile])
 
     conn
     |> delete_session(:return_to)

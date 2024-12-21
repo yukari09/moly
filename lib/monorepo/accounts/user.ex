@@ -45,7 +45,17 @@ defmodule Monorepo.Accounts.User do
   end
 
   actions do
-    defaults([:read])
+    read :read do
+      primary?(true)
+      prepare(build(sort: [inserted_at: :desc]))
+
+      pagination do
+        required?(false)
+        offset?(true)
+        keyset?(true)
+        countable(true)
+      end
+    end
 
     read :get_by_subject do
       description("Get a user by the subject claim in a JWT")
@@ -163,6 +173,7 @@ defmodule Monorepo.Accounts.User do
       # Required if you're using the password & confirmation strategies
       upsert_fields []
       change set_attribute(:confirmed_at, &DateTime.utc_now/0)
+      change set_attribute(:status, :active)
       change after_action(fn _changeset, user, _context ->
         case user.confirmed_at do
           nil -> {:error, "Unconfirmed user exists already"}
@@ -224,6 +235,11 @@ defmodule Monorepo.Accounts.User do
       # Generates an authentication token for the user
       change(AshAuthentication.GenerateTokenChange)
     end
+
+    update :update_user_status_to_active do
+      description("Update the status of a user to active")
+      change set_attribute(:status, :active)
+    end
   end
 
   relationships do
@@ -253,12 +269,18 @@ defmodule Monorepo.Accounts.User do
       sensitive?(true)
     end
 
-    attribute :role, :string do
+    attribute :role, :atom do
       allow_nil?(false)
-      sensitive?(false)
-      public? true
-      default("user")
+      default(:user)
     end
+
+    attribute :status, :atom do
+      allow_nil?(false)
+      default(:pending)
+      constraints(one_of: [:pending, :active, :inactive, :deleted])
+    end
+
+    timestamps()
   end
 
   identities do

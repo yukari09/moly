@@ -12,36 +12,6 @@
     },
     {
       "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "title",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "subject",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "cover_image",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
       "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "primary_key?": false,
@@ -78,15 +48,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "posts_category_id_fkey",
+        "name": "posts_tags_post_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "posts_categories"
+        "table": "posts"
       },
       "size": null,
-      "source": "category_id",
+      "source": "post_id",
       "type": "uuid"
     },
     {
@@ -107,15 +77,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "posts_user_id_fkey",
+        "name": "posts_tags_tag_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "tags"
       },
       "size": null,
-      "source": "user_id",
+      "source": "tag_id",
       "type": "uuid"
     }
   ],
@@ -124,7 +94,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "3710647FDA9080DB06CC7A44D38E52293AE4B21B765EC151A48F18341F6E83A1",
+  "hash": "DE0CDF5F3061A544B905EB130B39FF025068D05C5114B2FC64E8379A21589ADC",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -133,5 +103,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "posts"
+  "table": "posts_tags"
 }

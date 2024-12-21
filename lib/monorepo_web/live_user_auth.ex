@@ -8,7 +8,7 @@ defmodule MonorepoWeb.LiveUserAuth do
 
   def on_mount(:live_user_optional, _params, _session, socket) do
     if socket.assigns[:current_user] do
-      {:cont, socket}
+      {:cont, load_user_profile(socket)}
     else
       {:cont, assign(socket, :current_user, nil)}
     end
@@ -16,19 +16,12 @@ defmodule MonorepoWeb.LiveUserAuth do
 
   def on_mount(:live_user_required, _params, _session, socket) do
     if socket.assigns[:current_user] do
-      {:cont, socket}
+      {:cont, load_user_profile(socket)}
     else
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
     end
   end
 
-  def on_mount(:live_admin_user_required, _params, _session, socket) do
-    if socket.assigns[:current_user] && socket.assigns[:current_user] |> Map.get(:role) == "admin"  do
-      {:cont, socket}
-    else
-      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
-    end
-  end
 
   def on_mount(:live_no_user, _params, _session, socket) do
     if socket.assigns[:current_user] do
@@ -37,4 +30,10 @@ defmodule MonorepoWeb.LiveUserAuth do
       {:cont, assign(socket, :current_user, nil)}
     end
   end
+
+  defp load_user_profile(%{assigns: %{current_user: current_user}} = socket) do
+    socket
+    |> assign(:current_user, Ash.load!(current_user, [:profile]))
+  end
+  defp load_user_profile(socket), do: socket
 end

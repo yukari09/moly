@@ -44,7 +44,7 @@ config :spark,
 config :monorepo,
   ecto_repos: [Monorepo.Repo],
   generators: [timestamp_type: :utc_datetime],
-  ash_domains: [Monorepo.Blog, Monorepo.Accounts]
+  ash_domains: [Monorepo.Tags, Monorepo.Categories, Monorepo.Contents, Monorepo.Accounts]
 
 # Configures the endpoint
 config :monorepo, MonorepoWeb.Endpoint,

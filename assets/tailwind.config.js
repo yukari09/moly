@@ -8,6 +8,9 @@ const path = require("path")
 module.exports = {
   content: [
 "../deps/salad_ui/lib/**/*.ex",
+"../deps/salad_ui/lib/**/*.ex",
+"../deps/salad_ui/lib/**/*.ex",
+"../deps/salad_ui/lib/**/*.ex",
     "./js/**/*.js",
     "../lib/monorepo_web.ex",
     "../lib/monorepo_web/**/*.*ex",
@@ -15,8 +18,7 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors: require("./tailwind.colors.json")
-    },
+      colors: require("./tailwind.colors.json")},
   },
   plugins: [
     require("@tailwindcss/typography"),

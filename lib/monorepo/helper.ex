@@ -110,4 +110,101 @@ defmodule Monorepo.Helper do
       {bucket, domain}
     end
   end
+
+  def format_number_readable(number) when is_integer(number) do
+    format_number_readable(Integer.to_string(number))
+  end
+
+  def format_number_readable(number) when is_binary(number) and number != "" do
+    {value, ""} = Integer.parse(number)
+    format_value(value)
+  end
+
+  def format_number_readable(_), do: ""
+
+  defp format_value(value) when value >= 1_000_000 do
+    "#{div(value, 1000)}m"
+  end
+
+  defp format_value(value) when value >= 1000 do
+    "#{div(value, 1000)}k"
+  end
+
+  defp format_value(value), do: Integer.to_string(value)
+
+  def ago(nil), do: ""
+
+  def ago(timestamp) when is_float(timestamp) do
+    {:ok, ago} =
+      timestamp
+      |> trunc()
+      |> Timex.from_unix()
+      |> Timex.Format.DateTime.Formatters.Relative.format("{relative}")
+
+    ago
+  end
+
+  def ago(year, month, day, hour, minute \\ 0, second \\ 0)
+      when is_integer(year) and is_integer(month) and is_integer(hour) do
+    {:ok, ago} =
+      NaiveDateTime.new!(year, month, day, hour, minute, second)
+      |> Timex.Format.DateTime.Formatters.Relative.format("{relative}")
+
+    ago
+  end
+
+  def timestamp2datetime(timestamp) when is_float(timestamp) do
+    trunc(timestamp)
+    |> Timex.from_unix()
+    |> Timex.format!("{h24}:{0m}  {D},{Mshort} {YYYY}")
+  end
+
+  def timestamp2datetime(_), do: ""
+
+  def get_in(map, keys) do
+    Enum.reduce_while(keys, map, fn key, map ->
+      case Map.get(map, key) do
+        nil -> {:halt, nil}
+        value -> {:cont, value}
+      end
+    end)
+  end
+
+  def generate_random_id(length \\ 8) do
+    charset = ~c"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    for _ <- 1..length, into: "", do: <<Enum.random(charset)>>
+  end
+
+
+  def pagination_meta(total, page_size, page, show_item)
+       when is_integer(total) and is_integer(page_size) and is_integer(page) and
+              is_integer(show_item) do
+    current_page = page
+    total_pages = ceil(total / page_size)
+    mid = floor(show_item / 2)
+    start_page = current_page - mid
+    start_page = (start_page <= 0 && 1) || start_page
+
+    end_page = start_page + show_item - 1
+    end_page = (end_page > total_pages && total_pages) || end_page
+
+    start_row = (page - 1) * page_size + 1
+    end_row = start_row + page_size - 1
+    end_row = (total < end_row && total) || end_row
+
+    %{
+      is_first: current_page === 1,
+      is_last: current_page === total_pages,
+      prev: (current_page > 1 && current_page - 1) || nil,
+      next: (total_pages > current_page && current_page + 1) || nil,
+      page_range: start_page..end_page,
+      current_page: current_page,
+      ellipsis: total_pages - end_page > 2,
+      page_size: page_size,
+      start_row: start_row,
+      end_row: end_row,
+      total: total,
+      total_pages: total_pages
+    }
+  end
 end

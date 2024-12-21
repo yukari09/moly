@@ -84,46 +84,48 @@ defmodule MonorepoWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import MonorepoWeb.CoreComponents, except: [input: 1, button: 1, table: 1]
+      # import MonorepoWeb.CoreComponents, except: [input: 1, button: 1, table: 1]
 
-      import SaladUI.Accordion
-      import SaladUI.Alert
-      import SaladUI.AlertDialog
-      import SaladUI.Avatar
-      import SaladUI.Badge
-      import SaladUI.Breadcrumb
-      import SaladUI.Button
-      import SaladUI.Card
-      import SaladUI.Chart
-      import SaladUI.Checkbox
-      import SaladUI.Collapsible
-      import SaladUI.Dialog
-      import SaladUI.DropdownMenu
-      import SaladUI.Form
-      import SaladUI.Helpers
-      import SaladUI.HoverCard
-      import SaladUI.Icon
-      import SaladUI.Input
-      import SaladUI.Label
-      import SaladUI.Menu
-      import SaladUI.Pagination
-      import SaladUI.Popover
-      import SaladUI.Progress
-      import SaladUI.RadioGroup
-      import SaladUI.ScrollArea
-      import SaladUI.Select
-      import SaladUI.Separator
-      import SaladUI.Sheet
-      import SaladUI.Sidebar
-      import SaladUI.Skeleton
-      import SaladUI.Slider
-      import SaladUI.Switch
-      import SaladUI.Table
-      import SaladUI.Tabs
-      import SaladUI.Textarea
-      import SaladUI.Toggle
-      import SaladUI.ToggleGroup
-      import SaladUI.Tooltip
+      import SaladUI.{
+        Accordion,
+        Alert,
+        AlertDialog,
+        Avatar,
+        Badge,
+        Breadcrumb,
+        Button,
+        Card,
+        Chart,
+        Checkbox,
+        Collapsible,
+        Dialog,
+        DropdownMenu,
+        Form,
+        Helpers,
+        HoverCard,
+        Icon,
+        Input,
+        Label,
+        Menu,
+        Pagination,
+        Popover,
+        Progress,
+        RadioGroup,
+        ScrollArea,
+        Select,
+        Separator,
+        Sheet,
+        Sidebar,
+        Skeleton,
+        Slider,
+        Switch,
+        Table,
+        Tabs,
+        Textarea,
+        Toggle,
+        ToggleGroup,
+        Tooltip
+      }
 
       import MonorepoWeb.Gettext
 
