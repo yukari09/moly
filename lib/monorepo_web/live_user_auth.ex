@@ -22,7 +22,6 @@ defmodule MonorepoWeb.LiveUserAuth do
     end
   end
 
-
   def on_mount(:live_no_user, _params, _session, socket) do
     if socket.assigns[:current_user] do
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
@@ -35,5 +34,6 @@ defmodule MonorepoWeb.LiveUserAuth do
     socket
     |> assign(:current_user, Ash.load!(current_user, [:profile]))
   end
+
   defp load_user_profile(socket), do: socket
 end

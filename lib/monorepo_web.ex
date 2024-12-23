@@ -84,8 +84,7 @@ defmodule MonorepoWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      # import MonorepoWeb.CoreComponents, except: [input: 1, button: 1, table: 1]
-
+      import MonorepoWeb.CoreComponents, only: [icon: 1]
 
       import MonorepoWeb.Gettext
 

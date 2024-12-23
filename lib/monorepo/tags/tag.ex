@@ -11,27 +11,39 @@ defmodule Monorepo.Tags.Tag do
     repo(Monorepo.Repo)
   end
 
+  rbac do
+    role :user do
+      fields([:tag_name, :inserted_at, :updated_at])
+      actions([:read])
+    end
+
+    role :admin do
+      fields([:tag_name, :inserted_at, :updated_at, :is_deleted])
+      actions([:read, :create])
+    end
+  end
+
   actions do
     read :read do
-      primary?(true)
-      prepare(build(sort: [inserted_at: :desc]))
+      primary? true
+      prepare build(sort: [inserted_at: :desc])
 
       pagination do
-        required?(false)
-        offset?(true)
-        keyset?(true)
-        countable(true)
+        required? false
+        offset? true
+        keyset? true
+        countable true
       end
     end
 
     create :create do
       argument :tag_name, :string do
-        allow_nil?(false)
-        constraints(min_length: 2)
-        sensitive?(false)
+        allow_nil? false
+        constraints min_length: 2
+        sensitive? false
       end
 
-      change(set_attribute(:tag_name, arg(:tag_name)))
+      change set_attribute(:tag_name, arg(:tag_name))
     end
 
     update :update do
@@ -62,17 +74,5 @@ defmodule Monorepo.Tags.Tag do
 
   identities do
     identity :unique_tag_name, [:tag_name]
-  end
-
-  rbac do
-    role :user do
-      fields [:tag_name, :inserted_at, :updated_at]
-      actions [:read]
-    end
-
-    role :admin do
-      fields [:tag_name, :inserted_at, :updated_at, :is_deleted]
-      actions [:read, :create]
-    end
   end
 end

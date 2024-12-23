@@ -8,22 +8,18 @@ const path = require("path")
 module.exports = {
   content: [
 "../deps/salad_ui/lib/**/*.ex",
-"../deps/salad_ui/lib/**/*.ex",
-"../deps/salad_ui/lib/**/*.ex",
-"../deps/salad_ui/lib/**/*.ex",
     "./js/**/*.js",
     "../lib/monorepo_web.ex",
     "../lib/monorepo_web/**/*.*ex",
     "../deps/ash_authentication_phoenix/**/*.*ex"
   ],
   theme: {
-    extend: {
-      colors: require("./tailwind.colors.json")},
+    extend: {},
   },
   plugins: [
     require("@tailwindcss/typography"),
     require("tailwindcss-animate"),
-    require("@tailwindcss/forms"),
+    // require("@tailwindcss/forms"),
     require('daisyui'),
     // Allows prefixing tailwind classes with LiveView classes to add rules
     // only when LiveView classes are applied, for example:

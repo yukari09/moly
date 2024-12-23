@@ -19,7 +19,6 @@ defmodule Monorepo.Application do
       # Start to serve requests, typically the last entry
       MonorepoWeb.Endpoint,
       {AshAuthentication.Supervisor, [otp_app: :monorepo]},
-      TwMerge.Cache,
       {Cachex, [:cache]}
     ]
 

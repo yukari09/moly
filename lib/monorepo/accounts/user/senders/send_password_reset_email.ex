@@ -12,6 +12,5 @@ defmodule Monorepo.Accounts.User.Senders.SendPasswordResetEmail do
       user,
       url(~p"/password-reset/#{token}")
     )
-
   end
 end

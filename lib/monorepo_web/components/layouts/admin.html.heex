@@ -1,15 +1,276 @@
-<MonorepoWeb.Layouts.Helper.admin_sidebar view={@socket.view} current_user={@current_user}>
-{ @inner_content }
-</MonorepoWeb.Layouts.Helper.admin_sidebar>
+<%
+  items = [
+    %{
+        title: "Dashboard",
+        icon: "hero-home",
+        url: ~p"/admin/dashboard",
+        view: [MonorepoWeb.AdminDashboardLive]
+    },
+    %{
+        title: "Accounts",
+        icon: "hero-users",
+        url: ~p"/admin/users",
+        view: [MonorepoWeb.AdminUserLive.Index]
+    },
+    %{
+        title: "Contents",
+        icon: "hero-newspaper",
+        items: [
+            %{
+                title: "Posts",
+                url: ~p"/admin/posts",
+                view: [MonorepoWeb.AdminPostLive.Index],
+                show: true
+            },
+            %{
+                title: "Categories",
+                url: ~p"/admin/categories",
+                view: [MonorepoWeb.AdminCategoryLive.Index],
+                show: true
+            },
+            %{
+                title: "Tags",
+                url: ~p"/admin/tags",
+                view: [MonorepoWeb.AdminTagLive.Index],
+                show: true
+            }
+        ]
+    }
+  ]
+
+  is_active = fn(item) ->
+    item_views = 
+      if Map.has_key?(item, :view) do
+        item.view
+      else
+        []
+    end
+    item_views = 
+      if Map.has_key?(item, :items) do
+        Enum.reduce(item.items, item_views, fn(item, acc) ->
+            if Map.has_key?(item, :view) do
+                [item.view | acc]
+            else
+                acc
+            end
+        end)
+    else
+        item_views
+    end
+    @socket.view in item_views
+  end
+
+  open_off_canvas_menu = fn() ->
+    JS.transition({"transition-opacity ease-linear duration-300", "opacity-0", "opacity-100"}, to: "#off-canvas-menu-backdrop", time: 300)
+    |> JS.transition({"transition ease-in-out duration-300 transform", "-translate-x-full", "translate-x-0"}, to: "#off-canvas-menu-content-inner", time: 300)
+    |> JS.transition({"ease-in-out duration-300", "opacity-0", "opacity-100"}, to: "#off-canvas-menu-close-button", time: 300)
+    |> JS.remove_class("hidden", to: "#off-canvas-menu-backdrop")
+    |> JS.remove_class("hidden", to: "#off-canvas-menu-content-inner")
+    |> JS.remove_class("hidden", to: "#off-canvas-menu")
+  end
+
+  close_off_canvas_menu = fn() ->
+    JS.add_class("hidden", to: "#off-canvas-menu-backdrop", time: 300, transition: {"transition-opacity ease-linear duration-300", "opacity-100", "opacity-0"})
+    |> JS.add_class("hidden", to: "#off-canvas-menu-content-inner", time: 300, transition: {"transition ease-in-out duration-300 transform", "translate-x-0", "-translate-x-full"})
+    |> JS.transition({"ease-in-out duration-300", "opacity-100", "opacity-0"}, to: "#off-canvas-menu-close-button", time: 300)
+    |> JS.add_class("hidden", to: "#off-canvas-menu", time: 300, transition: {"duration-300","",""})
+  end
+%>
 
 
+<div>
+  <div id="off-canvas-menu" class="relative z-50 lg:hidden hidden" role="dialog" aria-modal="true">
+    <div id="off-canvas-menu-backdrop" class="fixed inset-0 bg-gray-900/80 lg:hidden hidden" aria-hidden="true"></div>
+    <div id="off-canvas-menu-content" class="fixed inset-0 flex">
+      <div id="off-canvas-menu-content-inner" class="relative mr-16 flex w-full max-w-xs flex-1 lg:hidden hidden" phx-click-away={close_off_canvas_menu.()}>
+        <div 
+            id="off-canvas-menu-close-button" 
+            class="absolute left-full top-0 flex w-16 justify-center pt-5"
+            phx-click={close_off_canvas_menu.()}
+        >
+          <button type="button" class="-m-2.5 p-2.5">
+            <span class="sr-only">Close sidebar</span>
+            <svg class="size-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
+        <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
+          <div class="flex h-16 shrink-0 items-center">
+            <img class="h-8 w-auto" src="/images/logo.png" alt="Monorepo">
+          </div>
+          <nav class="flex flex-1 flex-col">
+            <ul role="list" class="flex flex-1 flex-col gap-y-7">
+                <li>
+                    <ul role="list" class="-mx-2 space-y-1">
+                        <li :for={item <- items}>
+                            <.link 
+                                :if={Map.has_key?(item, :url)} 
+                                patch={item.url} 
+                                class={[
+                                    "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700",
+                                    is_active.(item) && "bg-gray-50" || "hover:bg-gray-50"
+                                ]}
+                            >
+                                <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
+                                { item.title }
+                            </.link>
+                            <div :if={item && Map.has_key?(item, :items) && Enum.count(item.items) > 0}>
+                                <button 
+                                    id={ "sub-menu-#{item.icon}-button" } 
+                                    type="button" 
+                                    class="flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold text-gray-700 hover:bg-gray-50" 
+                                    aria-controls={ "sub-menu-#{item.icon}" }
+                                    aria-expanded="false"
+                                    phx-click={
+                                        JS.toggle_class("block hidden", to: "#sub-menu-#{item.icon}")
+                                        |> JS.toggle_class("rotate-90 text-gray-500 text-gray-400", to: "#sub-menu-#{item.icon}-icon")
+                                    }
+                                >
+                                    <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
+                                    { item.title }
+                                    <Lucideicons.chevron_right id={ "sub-menu-#{item.icon}-icon" } class={["ml-auto size-5 shrink-0 duration-100", is_active.(item) && " rotate-90 text-gray-500" || " text-gray-400"]} />
+                                </button>
+                                <ul id={ "sub-menu-#{item.icon}" } class={["mt-1 px-2", is_active.(item) && "block" || "hidden"]}>
+                                    <li :for={sub_item <- item.items}>
+                                        <.link patch={sub_item.url} class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
+                                            { sub_item.title }
+                                        </.link>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="mt-auto">
+                    <a href="#" class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-gray-600">
+                    <Lucideicons.settings class="size-6 shrink-0 text-gray-400 group-hover:text-gray-600" />
+                    Settings
+                    </a>
+                </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+    <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
+      <div class="flex h-16 shrink-0 items-center">
+        <img class="h-8 w-auto" src="/images/logo.png" alt="Monorepo">
+      </div>
+        <nav class="flex flex-1 flex-col">
+            <ul role="list" class="flex flex-1 flex-col gap-y-7">
+                <li>
+                    <ul role="list" class="-mx-2 space-y-1">
+                        <li :for={item <- items}>
+                            <.link 
+                                :if={Map.has_key?(item, :url)} 
+                                patch={item.url} 
+                                class={[
+                                    "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700",
+                                    is_active.(item) && "bg-gray-50" || "hover:bg-gray-50"
+                                ]}
+                            >
+                                <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
+                                { item.title }
+                            </.link>
+                            <div :if={item && Map.has_key?(item, :items) && Enum.count(item.items) > 0}>
+                                <button 
+                                    id={ "sub-menu-#{item.icon}-button" } 
+                                    type="button" 
+                                    class="flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold text-gray-700 hover:bg-gray-50" 
+                                    aria-controls={ "sub-menu-#{item.icon}" }
+                                    aria-expanded="false"
+                                    phx-click={
+                                        JS.toggle_class("block hidden", to: "#sub-menu-#{item.icon}")
+                                        |> JS.toggle_class("rotate-90 text-gray-500 text-gray-400", to: "#sub-menu-#{item.icon}-icon")
+                                    }
+                                >
+                                    <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
+                                    { item.title }
+                                    <Lucideicons.chevron_right id={ "sub-menu-#{item.icon}-icon" } class={["ml-auto size-5 shrink-0 duration-100", is_active.(item) && " rotate-90 text-gray-500" || " text-gray-400"]} />
+                                </button>
+                                <ul id={ "sub-menu-#{item.icon}" } class={["mt-1 px-2", is_active.(item) && "block" || "hidden"]}>
+                                    <li :for={sub_item <- item.items}>
+                                        <.link patch={sub_item.url} class="block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50">
+                                            { sub_item.title }
+                                        </.link>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="mt-auto">
+                    <a href="#" class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-gray-600">
+                    <Lucideicons.settings class="size-6 shrink-0 text-gray-400 group-hover:text-gray-600" />
+                    Settings
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+  </div>
 
+  <div class="lg:pl-72">
+    <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+      <button 
+        id="off-canvas-menu-button"
+        type="button" 
+        class="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+        phx-click={open_off_canvas_menu.()}
+    >
+        <span class="sr-only">Open sidebar</span>
+        <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
 
+      <!-- Separator -->
+      <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
 
+      <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+        <form class="grid flex-1 grid-cols-1" action="#" method="GET">
+          <input type="search" name="search" aria-label="Search" class="col-start-1 row-start-1 block size-full bg-white pl-8 text-base text-gray-900 outline-none placeholder:text-gray-400 sm:text-sm/6" placeholder="Search">
+          <svg class="pointer-events-none col-start-1 row-start-1 size-5 self-center text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+            <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" />
+          </svg>
+        </form>
+        <div class="flex items-center gap-x-4 lg:gap-x-6">
+          <button type="button" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+            <span class="sr-only">View notifications</span>
+            <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+            </svg>
+          </button>
 
+          <!-- Separator -->
+          <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" aria-hidden="true"></div>
 
+          <MonorepoWeb.TailwindUI.dropdown id="user-menu">
+            <:button_slot>
+              <span class="sr-only">Open user menu</span>
+              <img class="size-8 rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+            </:button_slot>
 
+            <:menu_slot>
+              <!-- Active: "bg-gray-50 outline-none", Not Active: "" -->
+              <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-0">Your profile</a>
+              <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-1">Sign out</a>
+            </:menu_slot>
+          </MonorepoWeb.TailwindUI.dropdown>
 
+        </div>
+      </div>
+    </div>
 
+    <main class="py-10">
+      <div class="px-4 sm:px-6 lg:px-8">
+        <%= @inner_content %>
+      </div>
+    </main>
+  </div>
+</div>

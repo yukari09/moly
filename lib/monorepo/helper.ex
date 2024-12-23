@@ -62,11 +62,14 @@ defmodule Monorepo.Helper do
       |> Imgproxy.new()
       |> Imgproxy.set_extension("webp")
 
-    o = case [width, height] do
-      [nil, nil] -> new_img
-      [_, _] ->
-        Imgproxy.resize(new_img, width, height, type: "fit")
-    end
+    o =
+      case [width, height] do
+        [nil, nil] ->
+          new_img
+
+        [_, _] ->
+          Imgproxy.resize(new_img, width, height, type: "fit")
+      end
 
     to_string(o)
   end
@@ -175,10 +178,9 @@ defmodule Monorepo.Helper do
     for _ <- 1..length, into: "", do: <<Enum.random(charset)>>
   end
 
-
   def pagination_meta(total, page_size, page, show_item)
-       when is_integer(total) and is_integer(page_size) and is_integer(page) and
-              is_integer(show_item) do
+      when is_integer(total) and is_integer(page_size) and is_integer(page) and
+             is_integer(show_item) do
     current_page = page
     total_pages = ceil(total / page_size)
     mid = floor(show_item / 2)

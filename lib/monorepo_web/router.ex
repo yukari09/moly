@@ -6,22 +6,22 @@ defmodule MonorepoWeb.Router do
   # import AshAdmin.Router
 
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, html: {MonorepoWeb.Layouts, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-    plug :load_from_session
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, html: {MonorepoWeb.Layouts, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
+    plug(:load_from_session)
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
-    plug :load_from_bearer
+    plug(:accepts, ["json"])
+    plug(:load_from_bearer)
   end
 
   scope "/", MonorepoWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
     ash_authentication_live_session :authenticated_routes do
       # in each liveview, add one of the following at the top of the module:
@@ -35,32 +35,35 @@ defmodule MonorepoWeb.Router do
       # If an authenticated user must *not* be present:
       # on_mount {MonorepoWeb.LiveUserAuth, :live_no_user}
     end
-
   end
 
   scope "/", MonorepoWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
-    get "/", PageController, :home
-    auth_routes AuthController, Monorepo.Accounts.User, path: "/auth"
-    sign_out_route AuthController
+    get("/", PageController, :home)
+    auth_routes(AuthController, Monorepo.Accounts.User, path: "/auth")
+    sign_out_route(AuthController)
 
     # Remove these if you'd like to use your own authentication views
-    sign_in_route register_path: "/register",
-                  reset_path: "/reset",
-                  auth_routes_prefix: "/auth",
-                  on_mount: [{MonorepoWeb.LiveUserAuth, :live_no_user}],
-                  overrides: [
-                    MonorepoWeb.AuthOverrides,
-                    AshAuthentication.Phoenix.Overrides.Default
-                  ]
+    sign_in_route(
+      register_path: "/register",
+      reset_path: "/reset",
+      auth_routes_prefix: "/auth",
+      on_mount: [{MonorepoWeb.LiveUserAuth, :live_no_user}],
+      overrides: [
+        MonorepoWeb.AuthOverrides,
+        AshAuthentication.Phoenix.Overrides.Default
+      ]
+    )
 
     # Remove this if you do not want to use the reset password feature
-    reset_route auth_routes_prefix: "/auth",
-                overrides: [
-                  MonorepoWeb.AuthOverrides,
-                  AshAuthentication.Phoenix.Overrides.Default
-                ]
+    reset_route(
+      auth_routes_prefix: "/auth",
+      overrides: [
+        MonorepoWeb.AuthOverrides,
+        AshAuthentication.Phoenix.Overrides.Default
+      ]
+    )
   end
 
   # scope "/" do
@@ -71,21 +74,18 @@ defmodule MonorepoWeb.Router do
   # end
 
   scope "/admin", MonorepoWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
     ash_authentication_live_session :authenticated_admin_routes,
       on_mount: {MonorepoWeb.LiveUserAuth, :live_user_required},
-      layout: {MonorepoWeb.Layouts, :admin}  do
-
-        live "/dashboard", AdminDashboardLive
-
-        live "/users", UserLive.Index, :index
-        live "/categories", CategoryLive.Index, :index
-        live "/tags", TagLive.Index, :index
-        live "/posts", PostLive.Index, :index
-        live "/posts/new", PostLive.New, :new
+      layout: {MonorepoWeb.Layouts, :admin} do
+      live("/dashboard", AdminDashboardLive)
+      live("/users", AdminUserLive.Index, :index)
+      # live "/categories", CategoryLive.Index, :index
+      # live "/tags", TagLive.Index, :index
+      # live "/posts", PostLive.Index, :index
+      # live "/posts/new", PostLive.New, :new
     end
-
   end
 
   # Other scopes may use custom stacks.
@@ -103,10 +103,10 @@ defmodule MonorepoWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      live_dashboard "/dashboard", metrics: MonorepoWeb.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      live_dashboard("/dashboard", metrics: MonorepoWeb.Telemetry)
+      forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
   end
 end

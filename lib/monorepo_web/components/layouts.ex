@@ -10,5 +10,5 @@ defmodule MonorepoWeb.Layouts do
   """
   use MonorepoWeb, :html
 
-  embed_templates "layouts/*"
+  embed_templates("layouts/*")
 end

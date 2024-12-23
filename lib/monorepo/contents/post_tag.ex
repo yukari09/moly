@@ -1,5 +1,8 @@
 defmodule Monorepo.Contents.PostTag do
-  use Ash.Resource, otp_app: :monorepo, domain: Monorepo.Contents, data_layer: AshPostgres.DataLayer
+  use Ash.Resource,
+    otp_app: :monorepo,
+    domain: Monorepo.Contents,
+    data_layer: AshPostgres.DataLayer
 
   postgres do
     table "posts_tags"
@@ -11,7 +14,7 @@ defmodule Monorepo.Contents.PostTag do
   end
 
   attributes do
-    uuid_primary_key(:id)
+    uuid_primary_key :id
     timestamps()
   end
 

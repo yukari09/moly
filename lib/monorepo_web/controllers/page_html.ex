@@ -6,5 +6,5 @@ defmodule MonorepoWeb.PageHTML do
   """
   use MonorepoWeb, :html
 
-  embed_templates "page_html/*"
+  embed_templates("page_html/*")
 end
