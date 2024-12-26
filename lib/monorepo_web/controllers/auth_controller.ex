@@ -24,7 +24,7 @@ defmodule MonorepoWeb.AuthController do
           "You are now signed in"
       end
 
-    user = Ash.load!(user, [:profile])
+    user = Ash.load!(user, [:user_meta])
 
     conn
     |> delete_session(:return_to)

@@ -32,7 +32,7 @@ defmodule MonorepoWeb.LiveUserAuth do
 
   defp load_user_profile(%{assigns: %{current_user: current_user}} = socket) do
     socket
-    |> assign(:current_user, Ash.load!(current_user, [:profile]))
+    |> assign(:current_user, Ash.load!(current_user, [:user_meta]))
   end
 
   defp load_user_profile(socket), do: socket

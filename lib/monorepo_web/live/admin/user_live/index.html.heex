@@ -1,0 +1,104 @@
+<div class="px-4 sm:px-6 lg:px-8">
+    <.header title="Users" description="A list of all the users in your account including their name, title, email and role.">
+        <.button 
+            class="flex items-center gap-2" 
+            phx-click={"new"}
+        >
+            <%!-- <.icon name="hero-user-plus-solid" class="size-5" /> --%>
+            Add User
+        </.button>
+    </.header>
+
+    <.form class="mt-8" phx-change="search" phx-submit="search" phx-debounce="300">
+    <div class="flex items-center rounded-md bg-white pl-3 outline outline-1 -outline-offset-1 outline-gray-300 has-[input:focus-within]:outline has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-gray-600">
+        <Lucideicons.search class="size-4 text-gray-400" />
+        <input type="text" name="q" id="users-search-input" autocomplete="off" class="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6" placeholder="Search">
+    </div>
+    </.form>
+    <div class="mt-8 flow-root" :if={@users.results != []}>
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <.table
+            rows={@users.results}
+            class="divide-y divide-gray-300"
+            >
+            <:col :let={row} label="Name">
+                <div class="flex items-center">
+                <div class="size-11 shrink-0">
+                    <.avatar class="!size-11">
+                    <.avatar_image src={row.avatar} />
+                    <.avatar_fallback initials={current_user_short_name(row)} />
+                    </.avatar>
+                </div>
+                <div class="ml-4">
+                    <div class="font-medium text-gray-900"><%= current_user_name(row) %></div>
+                    <div class="mt-1 text-gray-500"><%= row.email %></div>
+                </div>
+                </div>
+            </:col>
+
+            <:col :let={row} label="Status">
+                <.badge variant={%{active: "success", inactive: "warning", deleted: "error"}[row.status]} label={row.status}>
+                {row.status}
+                </.badge>
+            </:col>
+
+            <:col :let={row} label="Role">
+                <%= row.role %>
+            </:col>
+
+            <:col :let={row} label="Created At">
+                <%= row.inserted_at |> Timex.format!("{Mfull} {D}, {YYYY} {h24}:{m}") %>
+            </:col>
+
+            <:col :let={row} label="Actions">
+                <div class="flex items-center gap-2 max-w-[60px]">
+                    <.tooltip text="Activate" size="xs" :if={row.status == :inactive}>
+                        <.link phx-click="activate" phx-value-id={row.id} class="group" role="menuitem" tabindex="-1" id="menu-item-0">
+                            <.icon name="hero-key" class="size-4 text-gray-700" />
+                        </.link>
+                    </.tooltip>
+                    <.tooltip text="Ban" size="xs" :if={row.status == :active}>
+                        <.link phx-click="inactivate" phx-value-id={row.id} class="group" role="menuitem" tabindex="-1" id="menu-item-1">
+                            <Lucideicons.ban  class="size-4 text-gray-700" />
+                        </.link>
+                    </.tooltip>
+                    <.tooltip text="Delete" size="xs" :if={row.status != :deleted}>
+                        <.link phx-click="delete" phx-value-id={row.id} class="group" role="menuitem" tabindex="-1" id="menu-item-2">
+                        <.icon name="hero-trash" class="size-4 text-gray-700" />
+                        </.link>
+                    </.tooltip>
+                </div>
+            </:col>
+            </.table>
+            </div>
+        </div>
+    </div>
+
+    <.pagination current_url={generate_live_url(@params)} page_meta={@page_meta} />
+</div>
+
+<.modal 
+    :if={@live_action in [:new, :edit, :validate]} 
+    show={@live_action in [:new, :edit, :validate]} 
+    id="user-form-modal" on_cancel={JS.patch(generate_live_url(@params))}
+    inner_class="sm:max-w-lg"
+>
+  <.header size="md" title="Create new user" />
+  <.form :let={f} for={@form} phx-change="validate" phx-submit={JS.push("save") |> JS.dispatch("app:disabled-form-element")} phx-debounce="300" class="mt-6">
+    <div class="space-y-4">
+        <.input field={f[:email]} type="email" label="Email" help_text="The email address of the user." />
+        <.input field={f[:password]} type="password" label="Password" help_text="The password of the user." />
+        <div class="w-2/3">
+          <.select field={f[:role]} options={%{admin: "Admin", user: "User"}} label="Role" />
+        </div>
+    </div>
+    <div id={"#{f[:status].id}-container"} class="mt-6 bg-gray-100 p-4 rounded-md" phx-update="ignore">
+        <.checkbox  field={f[:status]} value="active" label="Active?" description="Activate this user."  />
+    </div>
+    <div class="flex gap-2 mt-6 justify-end">
+        <.button type="submit" form={@form} phx-disable-with="Saving..."}>Save</.button>
+        <.button variant="outline" phx-click={JS.patch(generate_live_url(@params))}>Cancel</.button>
+    </div>
+  </.form>
+</.modal>

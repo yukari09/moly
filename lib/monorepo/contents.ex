@@ -3,7 +3,6 @@ defmodule Monorepo.Contents do
 
   resources do
     resource Monorepo.Contents.Post
-    resource Monorepo.Contents.PostTag
     resource Monorepo.Contents.PostMeta
   end
 end

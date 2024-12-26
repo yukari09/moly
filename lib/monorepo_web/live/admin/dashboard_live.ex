@@ -2,7 +2,11 @@ defmodule MonorepoWeb.AdminDashboardLive do
   use MonorepoWeb, :live_view
 
   @impl true
-  def mount(_params, _session, %{assigns: %{current_user: %{role: :admin, status: :active}}} = socket) do
+  def mount(
+        _params,
+        _session,
+        %{assigns: %{current_user: %{role: :admin, status: :active}}} = socket
+      ) do
     {:ok, socket}
   end
 

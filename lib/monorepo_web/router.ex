@@ -81,10 +81,10 @@ defmodule MonorepoWeb.Router do
       layout: {MonorepoWeb.Layouts, :admin} do
       live("/dashboard", AdminDashboardLive)
       live("/users", AdminUserLive.Index, :index)
+      live("/posts/new", AdminPostLive.New)
       # live "/categories", CategoryLive.Index, :index
       # live "/tags", TagLive.Index, :index
       # live "/posts", PostLive.Index, :index
-      # live "/posts/new", PostLive.New, :new
     end
   end
 

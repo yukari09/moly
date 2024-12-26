@@ -3,7 +3,7 @@ defmodule Monorepo.Contents.Post do
     otp_app: :monorepo,
     domain: Monorepo.Contents,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshAdmin.Resource, AshRbac],
+    extensions: [AshRbac],
     data_layer: AshPostgres.DataLayer
 
   postgres do
@@ -11,17 +11,17 @@ defmodule Monorepo.Contents.Post do
     repo(Monorepo.Repo)
   end
 
-  rbac do
-    role :user do
-      fields([:tag_name, :inserted_at, :updated_at])
-      actions([:read])
-    end
+  # rbac do
+  #   role :user do
+  #     fields([:tag_name, :inserted_at, :updated_at])
+  #     actions([:read])
+  #   end
 
-    role :admin do
-      fields([:tag_name, :inserted_at, :updated_at, :is_deleted])
-      actions([:read, :create])
-    end
-  end
+  #   role :admin do
+  #     fields([:tag_name, :inserted_at, :updated_at, :is_deleted])
+  #     actions([:read, :create])
+  #   end
+  # end
 
   actions do
     read :read do
@@ -35,27 +35,24 @@ defmodule Monorepo.Contents.Post do
         countable true
       end
     end
-
-    create :create do
-      accept [:title, :subject, :excerpt, :post_status, :post_type, :category_id, :user_id]
-    end
   end
 
   attributes do
     uuid_primary_key :id
 
-    attribute :title, :string do
+    attribute :post_title, :string do
       allow_nil? false
       public? true
     end
 
-    attribute :subject, :string do
+    attribute :post_content, :string do
       allow_nil? false
       public? true
     end
 
-    attribute :excerpt, :string do
+    attribute :post_excerpt, :string do
       allow_nil? false
+      length(min: 1, max: 1000)
     end
 
     attribute :post_status, :atom do
@@ -67,19 +64,77 @@ defmodule Monorepo.Contents.Post do
     attribute :post_type, :atom do
       allow_nil? false
       default :post
-      validations(one_of: [:post, :page])
+      validations(one_of: [:post, :page, :nav_menu_item])
+    end
+
+    attribute :comment_status, :boolean do
+      allow_nil? false
+      default false
+    end
+
+    attribute :ping_status, :boolean do
+      allow_nil? false
+      default false
+    end
+
+    attribute :to_ping, {:array, :string} do
+      allow_nil? false
+      default []
+    end
+
+    attribute :pinged, {:array, :string} do
+      allow_nil? false
+      default []
+    end
+
+    attribute :post_parent, :uuid do
+      allow_nil? false
+      default nil
+    end
+
+    attribute :menu_order, :integer do
+      allow_nil? false
+      default 0
+    end
+
+    attribute :post_mime_type, :string do
+      allow_nil? false
+      default "post"
+    end
+
+    attribute :comment_count, :integer do
+      allow_nil? false
+      default 0
+    end
+
+    attribute :post_password, :string do
+      allow_nil? false
+      default ""
+    end
+
+    attribute :post_name, :string do
+      allow_nil? false
+      length(min: 1, max: 200)
+      default ""
+    end
+
+    attribute :post_content_filtered, :string do
+      allow_nil? false
+      default ""
     end
 
     timestamps()
   end
 
   relationships do
-    belongs_to :category, Monorepo.Categories.Category
-    belongs_to :user, Monorepo.Accounts.User
-    many_to_many :tags, Monorepo.Tags.Tag, through: Monorepo.Contents.PostTag
+    belongs_to :author, Monorepo.Accounts.User
+    has_many :post_meta, Monorepo.Contents.PostMeta
+
+    many_to_many :term_taxonomy, Monorepo.Terms.TermTaxonomy,
+      through: Monorepo.Terms.TermRelationships
   end
 
   identities do
-    identity :unique_title, [:title]
+    identity :unique_title, [:post_name]
   end
 end

@@ -184,6 +184,44 @@ defmodule Monorepo.Accounts.User do
              end)
     end
 
+    create :create_manually do
+      description "Create a new user using the admin interface"
+
+      argument :email, :string do
+        allow_nil? false
+
+        constraints trim?: true,
+                    allow_empty?: false
+      end
+
+      argument :password, :string do
+        description "The proposed password for the user, in plain text."
+        allow_nil? false
+        constraints min_length: 8
+        sensitive? true
+      end
+
+      argument :role, :atom do
+        allow_nil? false
+        default :user
+      end
+
+      argument :status, :atom do
+        default :inactive
+        constraints one_of: [:active, :inactive, :deleted]
+      end
+
+      validate match(:email, ~r/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) do
+        message "must be a valid email address"
+      end
+
+      change set_context(%{strategy_name: :password})
+      change AshAuthentication.Strategy.Password.HashPasswordChange
+      change set_attribute(:status, arg(:status))
+      change set_attribute(:role, arg(:role))
+      change set_attribute(:email, arg(:email))
+    end
+
     action :request_password_reset_with_password do
       description "Send password reset instructions to a user if they exist."
 
@@ -238,9 +276,15 @@ defmodule Monorepo.Accounts.User do
       change AshAuthentication.GenerateTokenChange
     end
 
-    update :update_user_status_to_active do
+    update :update_user_status do
       description "Update the status of a user to active"
-      change set_attribute(:status, :active)
+
+      argument :status, :atom do
+        allow_nil? false
+        constraints one_of: [:active, :inactive, :deleted]
+      end
+
+      change set_attribute(:status, arg(:status))
     end
   end
 
@@ -274,18 +318,36 @@ defmodule Monorepo.Accounts.User do
 
     attribute :status, :atom do
       allow_nil? false
-      default :pending
-      constraints one_of: [:pending, :active, :inactive, :deleted]
+      default :inactive
+      constraints one_of: [:active, :inactive, :deleted]
+    end
+
+    attribute :nickname, :string do
+      allow_nil? true
+      length(min: 1, max: 50)
+    end
+
+    attribute :display_name, :string do
+      allow_nil? true
+      length(min: 1, max: 50)
+    end
+
+    attribute :avatar, :string do
+      allow_nil? true
+      length(min: 1, max: 255)
     end
 
     timestamps()
   end
 
   relationships do
-    has_one :profile, Monorepo.Accounts.Profile
+    has_many :posts, Monorepo.Contents.Post, destination_attribute: :author_id
+    has_many :user_meta, Monorepo.Accounts.UserMeta
+    has_many :comments, Monorepo.Comments.Comment, destination_attribute: :comment_author_id
   end
 
   identities do
     identity :unique_email, [:email]
+    identity :unique_display_name, [:display_name]
   end
 end

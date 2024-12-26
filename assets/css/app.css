@@ -1,3 +1,4 @@
+/* @import "inter.css"; */
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
@@ -18,3 +19,11 @@ body { @apply bg-background text-foreground; }
     -ms-overflow-style: none;
     scrollbar-width: none;
 } */
+
+/* phx-click-loading
+phx-change-loading
+phx-submit-loading
+phx-focus-loading
+phx-blur-loading
+phx-keydown-loading
+phx-keyup-loading */

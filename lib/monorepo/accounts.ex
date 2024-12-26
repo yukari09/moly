@@ -4,6 +4,6 @@ defmodule Monorepo.Accounts do
   resources do
     resource Monorepo.Accounts.Token
     resource Monorepo.Accounts.User
-    resource Monorepo.Accounts.Profile
+    resource Monorepo.Accounts.UserMeta
   end
 end

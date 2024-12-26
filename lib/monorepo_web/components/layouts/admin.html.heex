@@ -17,21 +17,27 @@
         icon: "hero-newspaper",
         items: [
             %{
-                title: "Posts",
+                title: "All posts",
                 url: ~p"/admin/posts",
                 view: [MonorepoWeb.AdminPostLive.Index],
                 show: true
             },
             %{
+                title: "Create new post",
+                url: ~p"/admin/posts/new",
+                view: [MonorepoWeb.AdminPostLive.New],
+                show: true
+            },
+            %{
                 title: "Categories",
                 url: ~p"/admin/categories",
-                view: [MonorepoWeb.AdminCategoryLive.Index],
+                view: [MonorepoWeb.AdminPostLive.Categories],
                 show: true
             },
             %{
                 title: "Tags",
                 url: ~p"/admin/tags",
-                view: [MonorepoWeb.AdminTagLive.Index],
+                view: [MonorepoWeb.AdminPostLive.Tags],
                 show: true
             }
         ]

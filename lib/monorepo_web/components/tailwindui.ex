@@ -5,24 +5,33 @@ defmodule MonorepoWeb.TailwindUI do
 
   import MonorepoWeb.Gettext
   import Monorepo.Helper, only: [generate_random_id: 1]
-
-
+  import MonorepoWeb.CoreComponents, only: [translate_error: 1]
 
   defp hide_dropdown(menu_dom_id) do
-    JS.hide(to: "##{menu_dom_id}", transition: {"transition ease-in duration-75", "transform opacity-100 scale-100", "transform opacity-0 scale-95"})
+    JS.hide(
+      to: "##{menu_dom_id}",
+      transition:
+        {"transition ease-in duration-75", "transform opacity-100 scale-100",
+         "transform opacity-0 scale-95"}
+    )
   end
 
   defp show_dropdown(menu_dom_id) do
-    JS.show(to: "##{menu_dom_id}", transition: {"transition ease-out duration-100", "transform opacity-0 scale-95", "transform opacity-100 scale-100"})
+    JS.show(
+      to: "##{menu_dom_id}",
+      transition:
+        {"transition ease-out duration-100", "transform opacity-0 scale-95",
+         "transform opacity-100 scale-100"}
+    )
   end
 
   @doc """
   Dropdown menu.
   """
-  attr :id, :string, required: true
-  attr :class, :string, default: nil
-  slot :button_slot, required: true
-  slot :menu_slot, required: true
+  attr(:id, :string, required: true)
+  attr(:class, :string, default: nil)
+  slot(:button_slot, required: true)
+  slot(:menu_slot, required: true)
 
   def dropdown(assigns) do
     menu_id = generate_random_id(8)
@@ -72,30 +81,66 @@ defmodule MonorepoWeb.TailwindUI do
 
   attr(:type, :string, default: "button")
   attr(:class, :string, default: nil)
-  attr(:variant, :string, default: "primary", values: ["primary", "secondary"])
+  attr(:variant, :string, default: "primary", values: ["primary", "secondary", "gray", "error"])
   attr(:size, :string, default: "md", values: ["xs", "sm", "md", "lg", "xl"])
+  attr(:navigate, :string, default: nil)
+  attr(:patch, :string, default: nil)
+  attr(:href, :string, default: nil)
+  attr(:form, :any, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def button(assigns) do
     ~H"""
-    <button
-      type={@type}
+    <.link
+      :if={@navigate || @patch || @href}
+      navigate={@navigate}
+      patch={@patch}
+      href={@href}
       class={[
         # Base styles
-        "font-semibold text-sm shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+        "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
         # Size-specific styles
-        @size == "xs" && "px-2 py-1 text-xs rounded",
-        @size == "sm" && "px-2 py-1 rounded",
-        @size == "md" && "px-2.5 py-1.5 rounded-md",
-        @size == "lg" && "px-3 py-2 rounded-md",
-        @size == "xl" && "px-3.5 py-2.5 rounded-md",
+        @size == "xs" && "h-7 rounded-md px-2.5 text-xs",
+        @size == "sm" && "h-8 rounded-md px-3 text-sm",
+        @size == "md" && "h-9 rounded-md px-4 text-sm",
+        @size == "lg" && "h-10 rounded-md px-4 text-sm",
+        @size == "xl" && "h-11 rounded-md px-5 text-md",
         # Variant-specific styles
-        @variant == "primary" && "bg-gray-900 text-white hover:bg-gray-700 focus-visible:outline-gray-800",
+        @variant == "primary" && "bg-gray-900 text-white hover:bg-gray-800 focus-visible:outline-gray-800",
         @variant == "secondary" && "bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
+        @variant == "gray" && "bg-gray-50 text-gray-900 hover:bg-gray-100 hover:text-gray-900",
+        @variant == "error" && "bg-red-600 text-white hover:bg-red-500 focus-visible:outline-red-500",
         # Custom classes
         @class
       ]}
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
+    </.link>
+
+    <button
+      :if={!@navigate && !@patch && !@href}
+      type={@type}
+      class={[
+        # Base styles
+        "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+        @form && (@form.errors != [] || @form.source.valid? == false) && "opacity-50",
+        # Size-specific styles
+        @size == "xs" && "h-7 rounded-md px-2.5 text-xs",
+        @size == "sm" && "h-8 rounded-md px-3 text-sm",
+        @size == "md" && "h-9 rounded-md px-4 text-sm",
+        @size == "lg" && "h-10 rounded-md px-4 text-sm",
+        @size == "xl" && "h-11 rounded-md px-5 text-md",
+        # Variant-specific styles
+        @variant == "primary" && "bg-gray-900 text-white hover:bg-gray-800 focus-visible:outline-gray-800",
+        @variant == "secondary" && "bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
+        @variant == "gray" && "bg-gray-50 text-gray-900 hover:bg-gray-100 hover:text-gray-900",
+        @variant == "error" && "bg-red-600 text-white hover:bg-red-500 focus-visible:outline-red-500",
+        # Custom classes
+        @class
+      ]}
+      disabled={@form && (@form.errors != [] || @form.source.valid? == false)}
       {@rest}
     >
       <%= render_slot(@inner_block) %>
@@ -107,14 +152,19 @@ defmodule MonorepoWeb.TailwindUI do
   Header component
   """
   attr(:title, :string, required: true)
+  attr(:class, :string, default: nil)
   attr(:description, :string, default: nil)
+  attr(:size, :string, default: "lg", values: ["sm", "md", "lg", "xl"])
   slot(:inner_block, required: false)
 
   def header(assigns) do
     ~H"""
-    <div class="sm:flex sm:items-center">
+    <div class={["sm:flex sm:items-center", @class]}>
       <div class="sm:flex-auto">
-        <h1 class="text-2xl font-semibold text-gray-900"><%= @title %></h1>
+        <h3 :if={@size == "sm"} class="font-semibold text-lg text-gray-900"><%= @title %></h3>
+        <h2 :if={@size == "md"} class="font-semibold text-xl text-gray-900"><%= @title %></h2>
+        <h1 :if={@size == "lg"} class="font-semibold text-2xl text-gray-900"><%= @title %></h1>
+        <h1 :if={@size == "xl"} class="font-semibold text-3xl text-gray-900"><%= @title %></h1>
         <p :if={@description} class="mt-2 text-sm text-gray-700"><%= @description %></p>
       </div>
       <div :if={@inner_block != []} class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
@@ -124,21 +174,22 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
-  attr :rows, :list, required: true
-  attr :class, :string, default: nil
-  attr :tbody_class, :string, default: "divide-y divide-gray-200 bg-white"
+  attr(:rows, :list, required: true)
+  attr(:class, :string, default: nil)
+  attr(:tbody_class, :string, default: "divide-y divide-gray-200 bg-white")
 
   slot :col, required: true do
-    attr :label, :string, required: true
-    attr :field, :any
-    attr :class, :string
-    attr :td_class, :string
-    attr :sortable, :boolean
-    attr :sort_by, :any
-    attr :align, :string
-    attr :hidden, :boolean
-    attr :width, :string
-    attr :sr_label, :string  # For screen reader only labels
+    attr(:label, :string, required: true)
+    attr(:field, :any)
+    attr(:class, :string)
+    attr(:td_class, :string)
+    attr(:sortable, :boolean)
+    attr(:sort_by, :any)
+    attr(:align, :string)
+    attr(:hidden, :boolean)
+    attr(:width, :string)
+    # For screen reader only labels
+    attr(:sr_label, :string)
   end
 
   def table(assigns) do
@@ -202,9 +253,13 @@ defmodule MonorepoWeb.TailwindUI do
       <.badge>Active</.badge>
       <.badge variant="error">Failed</.badge>
   """
-  attr :variant, :string, default: "success", values: ["success", "warning", "error", "gray", "info"]
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr(:variant, :string,
+    default: "success",
+    values: ["success", "warning", "error", "gray", "info"]
+  )
+
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
 
   def badge(assigns) do
     ~H"""
@@ -237,10 +292,10 @@ defmodule MonorepoWeb.TailwindUI do
         </.avatar_fallback>
       </.avatar>
   """
-  attr :size, :string, default: "md", values: ["xs", "sm", "md", "lg", "xl"]
-  attr :class, :string, default: nil
-  attr :rest, :global
-  slot :inner_block, required: true
+  attr(:size, :string, default: "md", values: ["xs", "sm", "md", "lg", "xl"])
+  attr(:class, :string, default: nil)
+  attr(:rest, :global)
+  slot(:inner_block, required: true)
 
   def avatar(assigns) do
     ~H"""
@@ -262,10 +317,10 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
-  attr :src, :string, required: true
-  attr :alt, :string, default: ""
-  attr :class, :string, default: nil
-  attr :rest, :global
+  attr(:src, :string, required: true)
+  attr(:alt, :string, default: "")
+  attr(:class, :string, default: nil)
+  attr(:rest, :global)
 
   def avatar_image(assigns) do
     ~H"""
@@ -283,9 +338,9 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
-  attr :class, :string, default: nil
-  attr :rest, :global
-  attr :initials, :string, required: true
+  attr(:class, :string, default: nil)
+  attr(:rest, :global)
+  attr(:initials, :string, required: true)
 
   def avatar_fallback(assigns) do
     ~H"""
@@ -303,79 +358,64 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
+  attr(:field, Phoenix.HTML.FormField, required: true)
+  attr(:type, :string, default: "text")
+  attr(:label, :string, required: true)
+  attr(:placeholder, :string, default: nil)
+  attr(:class, :string, default: nil)
+  attr(:help_text, :string, default: nil)
+  attr(:errors, :list, default: [])
+  attr(:rest, :global)
+  attr(:aria_label, :string, default: nil)
 
-  attr :type, :string, default: "text"
-  attr :name, :string, required: true
-  attr :id, :string
-  attr :label, :string, required: true
-  attr :value, :string
-  attr :placeholder, :string, default: nil
-  attr :class, :string, default: nil
-  attr :help_text, :string, default: nil
-  attr :error, :string, default: nil
-  attr :disabled, :boolean, default: false
-  attr :rest, :global
-  attr :aria_label, :string, default: nil
-
-  def input(assigns) do
-    assigns = assign_new(assigns, :id, fn -> assigns.name end)
+  def input(%{field: field} = assigns) do
+    error_messages = error_messages(field.errors)
+    assigns = assign(assigns, :errors, error_messages)
 
     ~H"""
     <div>
-      <%= if @aria_label do %>
+      <input
+        :if={@aria_label}
+        type={@type}
+        name={@field.name}
+        id={@field.id}
+        value={@field.value}
+        placeholder={@placeholder}
+        aria-label={@aria_label}
+        class={[
+          "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
+          @errors != [] && "text-red-900 outline-red-300 placeholder:text-red-300 focus:outline-red-600",
+          @class
+        ]}
+        {@rest}
+      />
+      <label :if={!@aria_label} for={@field.id} class="block text-sm/6 font-medium text-gray-900"><%= @label %></label>
+      <div  :if={!@aria_label} class={["mt-2", @errors != [] && "grid grid-cols-1"]}>
         <input
           type={@type}
-          name={@name}
-          id={@id}
-          value={@value}
+          name={@field.name}
+          id={@field.id}
+          value={@field.value}
           placeholder={@placeholder}
-          aria-label={@aria_label}
           class={[
-            "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6",
-            @error && "text-red-900 outline-red-300 placeholder:text-red-300 focus:outline-red-600",
-            @disabled && "cursor-not-allowed bg-gray-50 text-gray-500 outline-gray-200",
+            "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
+            @errors != [] && "col-start-1 row-start-1 text-red-900 outline-red-300 placeholder:text-red-300 focus:outline-red-600 pr-10",
             @class
           ]}
-          disabled={@disabled}
+          aria-invalid={@errors != []}
+          aria-describedby={cond do
+            @errors != [] -> "#{@field.id}-error"
+            @help_text -> "#{@field.id}-description"
+            true -> nil
+          end}
           {@rest}
         />
-      <% else %>
-        <label for={@id} class="block text-sm/6 font-medium text-gray-900"><%= @label %></label>
-        <div class={["mt-2", @error && "grid grid-cols-1"]}>
-          <input
-            type={@type}
-            name={@name}
-            id={@id}
-            value={@value}
-            placeholder={@placeholder}
-            class={[
-              "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6",
-              @error && "col-start-1 row-start-1 text-red-900 outline-red-300 placeholder:text-red-300 focus:outline-red-600 pr-10",
-              @disabled && "cursor-not-allowed bg-gray-50 text-gray-500 outline-gray-200",
-              @class
-            ]}
-            aria-invalid={@error != nil}
-            aria-describedby={cond do
-              @error -> "#{@id}-error"
-              @help_text -> "#{@id}-description"
-              true -> nil
-            end}
-            disabled={@disabled}
-            {@rest}
-          />
-          <%= if @error do %>
-            <svg class="pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-red-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
-              <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" />
-            </svg>
-          <% end %>
-        </div>
-        <%= if @help_text do %>
-          <p class="mt-2 text-sm text-gray-500" id={"#{@id}-description"}><%= @help_text %></p>
-        <% end %>
-        <%= if @error do %>
-          <p class="mt-2 text-sm text-red-600" id={"#{@id}-error"}><%= @error %></p>
-        <% end %>
-      <% end %>
+        <svg :if={@errors != []} class="pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-red-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+          <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" />
+        </svg>
+      </div>
+        <p :if={@help_text && @errors == []} class="mt-2 text-sm text-gray-500" id={"#{@field.id}-description"}>{ @help_text }</p>
+        <p :if={@errors != []} class="mt-2 text-sm text-red-600" id={"#{@field.id}-error"}>{ @label } { List.first(@errors) }</p>
     </div>
     """
   end
@@ -389,11 +429,11 @@ defmodule MonorepoWeb.TailwindUI do
         <button>Hover me</button>
       </.tooltip>
   """
-  attr :text, :string, required: true
-  attr :direction, :string, default: "top", values: ["top", "right", "bottom", "left"]
-  attr :size, :string, default: "sm", values: ["xs", "sm", "md", "lg"]
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr(:text, :string, required: true)
+  attr(:direction, :string, default: "top", values: ["top", "right", "bottom", "left"])
+  attr(:size, :string, default: "sm", values: ["xs", "sm", "md", "lg"])
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
 
   def tooltip(assigns) do
     # Pre-calculate spacing based on size and direction
@@ -462,57 +502,78 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
+  def show_modal(js \\ %JS{}, id) do
+    js
+    |> JS.show(to: "##{id}")
+    |> JS.show(
+      to: "##{id}-backdrop",
+      time: 300,
+      transition: {"ease-out duration-300", "opacity-0", "opacity-100"}
+    )
+    |> JS.show(
+      to: "##{id}-panel",
+      time: 300,
+      transition:
+        {"ease-out duration-300", "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+         "opacity-100 translate-y-0 sm:scale-100"}
+    )
+    |> JS.add_class("overflow-hidden", to: "body")
+  end
+
+  def hide_modal(js \\ %JS{}, id) do
+    js
+    |> JS.hide(
+      to: "##{id}-backdrop",
+      time: 200,
+      transition: {"ease-in duration-200", "opacity-100", "opacity-0"}
+    )
+    |> JS.hide(
+      to: "##{id}-panel",
+      time: 200,
+      transition:
+        {"ease-in duration-200", "opacity-100 translate-y-0 sm:scale-100",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
+    )
+    |> JS.hide(to: "##{id}", transition: {"block", "block", "hidden"})
+    |> JS.remove_class("overflow-hidden", to: "body")
+  end
+
   @doc """
   Renders a modal dialog component.
   """
-  attr :class, :string, default: nil
-  attr :inner_class, :string, default: nil
-  attr :show, :boolean, default: false
-  slot :header, required: false
-  slot :footer, required: false
-  slot :inner_block
+  attr(:id, :string, required: true)
+  attr(:class, :string, default: nil)
+  attr(:inner_class, :string, default: nil)
+  attr(:show, :boolean, default: false)
+  attr(:block_click_away, :boolean, default: false)
+  attr(:on_cancel, JS, default: %JS{})
+  slot(:inner_block, required: true)
 
   def modal(assigns) do
-    id = generate_random_id(8)
-    assigns = assign(assigns, :id, id)
-
     ~H"""
       <div
         id={@id}
-        class={["relative z-50", @class]}
+        class={["relative z-50 hidden", @class]}
         aria-labelledby="modal-title"
         role="dialog"
         aria-modal="true"
+        phx-mounted={@show && show_modal(@id)}
+        phx-remove={hide_modal(@id)}
+        data-cancel={JS.exec(@on_cancel, "phx-remove")}
       >
-      <!--
-        Background backdrop, show/hide based on modal state.
-
-        Entering: "ease-out duration-300"
-          From: "opacity-0"
-          To: "opacity-100"
-        Leaving: "ease-in duration-200"
-          From: "opacity-100"
-          To: "opacity-0"
-      -->
-      <div class="fixed inset-0 bg-gray-500/75 transition-opacity" aria-hidden="true"></div>
+      <div id={"#{@id}-backdrop"} class="fixed inset-0 bg-gray-500/75 transition-opacity" aria-hidden="true"></div>
 
       <div class="fixed inset-0 z-50 w-screen overflow-y-auto">
-        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <!--
-            Modal panel, show/hide based on modal state.
-
-            Entering: "ease-out duration-300"
-              From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              To: "opacity-100 translate-y-0 sm:scale-100"
-            Leaving: "ease-in duration-200"
-              From: "opacity-100 translate-y-0 sm:scale-100"
-              To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          -->
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
           <div
+            id={"#{@id}-panel"}
             class={[
               "relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6",
               @inner_class
             ]}
+            phx-window-keydown={!@block_click_away && JS.exec("data-cancel", to: "##{@id}")}
+            phx-key="escape"
+            phx-click-away={!@block_click_away && JS.exec("data-cancel", to: "##{@id}")}
           >
             <%= render_slot(@inner_block) %>
           </div>
@@ -522,5 +583,211 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
+  attr(:title, :string, required: true)
+  attr(:description, :string, required: true)
+  attr(:button_text, :string, required: true)
+  attr(:button_class, :string, required: true)
+  attr(:on_confirm, JS, default: %JS{})
 
+  def action_modal(assigns) do
+    ~H"""
+    <.modal id={@id} show={@show} on_cancel={@on_cancel}>
+      <div>
+        <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-green-100">
+          <svg class="size-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+          </svg>
+        </div>
+        <div class="mt-3 text-center sm:mt-5">
+          <h3 class="text-base font-semibold text-gray-900" id="modal-title"><%= @title %></h3>
+          <div class="mt-2">
+            <p class="text-sm text-gray-500"><%= @description %></p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5 sm:mt-6">
+        <.button class="w-full" phx-click={@on_confirm}>
+        <%= @button_text %>
+        </.button>
+      </div>
+    </.modal>
+    """
+  end
+
+  attr(:label, :string, required: true)
+  attr(:field, Phoenix.HTML.FormField, required: true)
+  attr(:options, :list, required: true)
+  attr(:class, :string, default: nil)
+  attr(:rest, :global)
+
+  def select(assigns) do
+    ~H"""
+    <div>
+      <label for={@field.id} class="block text-sm/6 font-medium text-gray-900"><%= @label %></label>
+      <div class="mt-2 grid grid-cols-1">
+        <select
+          id={@field.id}
+          name={@field.name}
+          class={[
+            "col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
+            @class
+          ]}
+          value={@field.value}
+          {@rest}
+        >
+          <option :for={{value, label} <- @options} value={value} selected={to_string(value) == to_string(@field.value)}><%= label %></option>
+        </select>
+        <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+          <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+        </svg>
+      </div>
+    </div>
+    """
+  end
+
+  attr(:field, Phoenix.HTML.FormField, required: true)
+  attr(:value, :string, required: true)
+  attr(:label, :string, required: false, default: nil)
+  attr(:description, :string, default: nil)
+  attr(:checked, :boolean, default: false)
+  attr(:class, :string, default: nil)
+  attr(:rest, :global)
+
+  def checkbox(assigns) do
+    ~H"""
+    <div class="flex gap-3">
+      <div class="flex h-6 shrink-0 items-center">
+        <div class="group grid size-4 grid-cols-1 phx-submit-loading:opacity-50" >
+          <input
+            type="checkbox"
+            id={@field.id}
+            name={@field.name}
+            checked={@checked}
+            value={@value}
+            class={[
+              "col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white",
+              "checked:border-gray-600 checked:bg-gray-600",
+              "indeterminate:border-gray-600 indeterminate:bg-gray-600",
+              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
+              "disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100",
+              "forced-colors:appearance-auto",
+              @class
+            ]}
+            {@rest}
+          />
+          <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-[:disabled]:stroke-gray-950/25" viewBox="0 0 14 14" fill="none">
+            <path class="opacity-0 group-has-[:checked]:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path class="opacity-0 group-has-[:indeterminate]:opacity-100" d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+      </div>
+      <label class="text-sm/6 cursor-pointer" for={@field.id}>
+        <span :if={@label} for={@field.id} class="font-medium text-gray-900"><%= @label %></span>
+        <span :if={@description} id={"#{@field.id}-description"} class="text-gray-500"><span class="sr-only"><%= @label %> </span><%= @description %></span>
+      </label>
+    </div>
+    """
+  end
+
+  attr(:class, :string, default: nil)
+  attr(:page_meta, :map, required: true)
+  attr(:current_url, :string, required: true)
+  attr(:rest, :global)
+
+  def pagination(assigns) do
+    ~H"""
+    <div class={["flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6", @class]} {@rest}>
+      <div class="flex flex-1 justify-between sm:hidden">
+        <.link
+          :if={@page_meta.prev}
+          patch={generate_page_url(@current_url, @page_meta.prev)}
+          class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Previous
+        </.link>
+        <.link
+          :if={@page_meta.next}
+          patch={generate_page_url(@current_url, @page_meta.next)}
+          class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Next
+        </.link>
+      </div>
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+            Showing
+            <span class="font-medium">{@page_meta.start_row}</span>
+            to
+            <span class="font-medium">{ @page_meta.end_row }</span>
+            of
+            <span class="font-medium"><%= @page_meta.total %></span>
+            results
+          </p>
+        </div>
+        <div>
+          <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+            <.link
+              :if={@page_meta.prev}
+              patch={generate_page_url(@current_url, @page_meta.prev)}
+              class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+            >
+              <span class="sr-only">Previous</span>
+              <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
+              </svg>
+            </.link>
+
+            <.link
+              :for={page <- @page_meta.page_range}
+              patch={generate_page_url(@current_url, page)}
+              aria-current={page == @page_meta.current_page && "page"}
+              class={[
+                "relative inline-flex items-center px-4 py-2 text-sm font-semibold",
+                page == @page_meta.current_page && "z-10 bg-gray-800 text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
+                page != @page_meta.current_page && "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+              ]}
+            >
+              <%= page %>
+            </.link>
+
+            <span :if={@page_meta.ellipsis} class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">...</span>
+
+            <.link
+              :if={@page_meta.next}
+              patch={generate_page_url(@current_url, @page_meta.next)}
+              class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+            >
+              <span class="sr-only">Next</span>
+              <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+              </svg>
+            </.link>
+          </nav>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  defp generate_page_url(url, new_page) do
+    uri = URI.parse(url)
+    query_params = URI.decode_query(uri.query) || %{}
+
+    updated_query_params =
+      case Map.has_key?(query_params, "page") do
+        true -> Map.put(query_params, "page", Integer.to_string(new_page))
+        # If "page" doesn't exist, add it
+        false -> Map.put(query_params, "page", Integer.to_string(new_page))
+      end
+
+    updated_query = URI.encode_query(updated_query_params)
+
+    updated_uri = %{uri | query: updated_query}
+    URI.to_string(updated_uri)
+  end
+
+  defp error_messages(errors) do
+    Enum.map(errors, &translate_error(&1))
+  end
 end

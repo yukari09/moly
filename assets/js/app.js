@@ -51,3 +51,20 @@ window.addEventListener("phx:js-exec", ({detail}) => {
     liveSocket.execJS(el, el.getAttribute(detail.attr))
   })
 })
+
+
+window.addEventListener("app:disabled-form-element", (event) => {
+  //disabled this form elements like input, select, checkbox, etc
+  const form = event.target
+  if (form) {
+    const elements = form.querySelectorAll('input, select, textarea, button')
+    elements.forEach(element => {
+      element.disabled = true
+    })
+    setTimeout(() => {
+      elements.forEach(element => {
+        element.disabled = false
+      })
+    }, 2000)
+  }
+});
