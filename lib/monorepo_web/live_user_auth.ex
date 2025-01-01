@@ -2,13 +2,14 @@ defmodule MonorepoWeb.LiveUserAuth do
   @moduledoc """
   Helpers for authenticating users in LiveViews.
   """
+  use MonorepoWeb, :verified_routes
 
   import Phoenix.Component
-  use MonorepoWeb, :verified_routes
+  import Phoenix.LiveView, only: [redirect: 2]
 
   def on_mount(:live_user_optional, _params, _session, socket) do
     if socket.assigns[:current_user] do
-      {:cont, load_user_profile(socket)}
+      {:cont, socket}
     else
       {:cont, assign(socket, :current_user, nil)}
     end
@@ -16,24 +17,31 @@ defmodule MonorepoWeb.LiveUserAuth do
 
   def on_mount(:live_user_required, _params, _session, socket) do
     if socket.assigns[:current_user] do
-      {:cont, load_user_profile(socket)}
+      {:cont, socket}
     else
-      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
+      {:halt, redirect(socket, to: ~p"/sign-in")}
     end
   end
 
+  def on_mount(:live_admin_required, _params, _session, socket), do: check_roles(socket)
+
   def on_mount(:live_no_user, _params, _session, socket) do
     if socket.assigns[:current_user] do
-      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
+      {:halt, redirect(socket, to: ~p"/")}
     else
       {:cont, assign(socket, :current_user, nil)}
     end
   end
 
-  defp load_user_profile(%{assigns: %{current_user: current_user}} = socket) do
-    socket
-    |> assign(:current_user, Ash.load!(current_user, [:user_meta]))
+  defp check_roles(%{assigns: %{current_user: %{roles: roles, status: :active}}}  = socket) do
+    socket =
+      if Enum.member?(roles, :admin) do
+        socket
+      else
+        redirect(socket, to: ~p"/sign-in")
+      end
+    {:cont, socket}
   end
 
-  defp load_user_profile(socket), do: socket
+  defp check_roles(socket), do: {:halt, redirect(socket, to: ~p"/sign-in")}
 end

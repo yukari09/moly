@@ -17,7 +17,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "meta_key",
+      "source": "term_key",
       "type": "text"
     },
     {
@@ -27,7 +27,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "meta_value",
+      "source": "term_value",
       "type": "text"
     },
     {
@@ -68,15 +68,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "user_meta_user_id_fkey",
+        "name": "term_meta_term_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "terms"
       },
       "size": null,
-      "source": "user_id",
+      "source": "term_id",
       "type": "uuid"
     }
   ],
@@ -85,7 +85,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "CF63D0580143DC59EC023284001C9B0139452805FC742698D7660EC78E1C2DC6",
+  "hash": "FAE5387CE29741E0050566F5B66EE27942EC854CA908FD87E646AF7BCE2620F4",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -94,5 +94,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "user_meta"
+  "table": "term_meta"
 }

@@ -1,29 +1,11 @@
 defmodule MonorepoWeb.AdminUserLive.Index do
-  use MonorepoWeb, :live_view
+  use MonorepoWeb.Admin
 
-  require Ash.Query
-
-  import Ash.Expr
-  import Monorepo.Helper
-  import MonorepoWeb.TailwindUI
   import Monorepo.Accounts.Helper
 
   @per_page "10"
   @model Monorepo.Accounts.User
   @context %{private: %{ash_authentication?: true}}
-
-  @impl true
-  def mount(
-        _params,
-        _session,
-        %{assigns: %{current_user: %{role: :admin, status: :active}}} = socket
-      ) do
-    {:ok, socket}
-  end
-
-  def mount(_params, _session, socket) do
-    {:ok, redirect(socket, to: ~p"/sign-in")}
-  end
 
   @impl true
   def handle_params(params, _uri, socket) do
@@ -62,7 +44,7 @@ defmodule MonorepoWeb.AdminUserLive.Index do
 
   defp handle_action(socket, :save, %{"form" => params}) do
     :timer.sleep(250)
-    old_live_action = socket.assigns.live_action
+    # old_live_action = socket.assigns.live_action
 
     case AshPhoenix.Form.submit(
            socket.assigns.form,
@@ -107,6 +89,8 @@ defmodule MonorepoWeb.AdminUserLive.Index do
   end
 
   defp get_list_by_params(socket, params) do
+    current_user = socket.assigns.current_user
+
     page =
       Map.get(params, "page", "1")
       |> String.to_integer()
@@ -127,7 +111,7 @@ defmodule MonorepoWeb.AdminUserLive.Index do
 
     opts = [
       context: @context,
-      actor: %{roles: [socket.assigns.current_user.role]},
+      actor: current_user,
       page: [limit: limit, offset: offset, count: true]
     ]
 

@@ -1,5 +1,6 @@
 import EditorJS from '@editorjs/editorjs'
 import Header from "@editorjs/header"
+import LazyLoad from "vanilla-lazyload"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 
@@ -32,4 +33,15 @@ Hooks.Editor = {
     });
   }
 }
+
+Hooks.lazyLoad = {
+  mounted() {
+    new LazyLoad({container: this.el})
+  },
+  updated() {
+    new LazyLoad({container: this.el})
+  }
+}
+
+
 export default Hooks

@@ -84,12 +84,15 @@ config :phoenix_live_view,
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
 
+
+# Customize env for this app
 config :monorepo,
   google_oauth2_client_id:
-    "486343447885-9jg87vj9h0qafcdvu4k2ugb7dggbsion.apps.googleusercontent.com"
-
-config :monorepo, google_oauth2_redirect_uri: "http://localhost:4000/auth/user/google/callback"
-config :monorepo, google_oauth2_client_secret: "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"
+    "486343447885-9jg87vj9h0qafcdvu4k2ugb7dggbsion.apps.googleusercontent.com",
+  google_oauth2_redirect_uri: "http://192.168.6.8:4000/auth/user/google/callback",
+  google_oauth2_client_secret: "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",
+  email_name: "monorepo@monorepo.dev",
+  email_address: "monorepo@monorepo.dev"
 
 config :ex_aws,
   region: "us-east-1",
@@ -101,8 +104,6 @@ config :ex_aws, :s3,
   host: "9a489bdeb68e9c3976091df2de6de7d8.r2.cloudflarestorage.com",
   port: 443,
   bucket: "impressifyai-test",
-  image_dir: :images,
-  video_dir: :videos,
   domain: "dev-cdn.impressifyai.com"
 
 config :imgproxy,

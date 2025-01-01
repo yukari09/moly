@@ -1,13 +1,13 @@
 {
   "attributes": [
     {
-      "allow_nil?": true,
-      "default": "nil",
+      "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "confirmed_at",
+      "source": "created_at",
       "type": "utc_datetime_usec"
     },
     {
@@ -24,40 +24,40 @@
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
-      "primary_key?": false,
+      "primary_key?": true,
       "references": null,
       "size": null,
-      "source": "email",
-      "type": "citext"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "hashed_password",
+      "source": "jti",
       "type": "text"
     },
     {
       "allow_nil?": false,
-      "default": "\"user\"",
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "role",
+      "source": "subject",
       "type": "text"
     },
     {
       "allow_nil?": false,
-      "default": "\"inactive\"",
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "status",
+      "source": "expires_at",
+      "type": "utc_datetime"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "purpose",
       "type": "text"
     },
     {
@@ -67,28 +67,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "nickname",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "display_name",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "avatar",
-      "type": "text"
+      "source": "extra_data",
+      "type": "map"
     },
     {
       "allow_nil?": false,
@@ -116,37 +96,8 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "AD314664A7499BC23F4DAFD287C520100B69CEC9CFD49B1E7484B1591B6FC6A4",
-  "identities": [
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "users_unique_display_name_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "display_name"
-        }
-      ],
-      "name": "unique_display_name",
-      "nils_distinct?": true,
-      "where": null
-    },
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "users_unique_email_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "email"
-        }
-      ],
-      "name": "unique_email",
-      "nils_distinct?": true,
-      "where": null
-    }
-  ],
+  "hash": "8E380952251E938ADE6137C5868A8D27A201752988F4727C4EB3D54F1A28FBF1",
+  "identities": [],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -154,5 +105,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "users"
+  "table": "tokens"
 }

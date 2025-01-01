@@ -19,7 +19,17 @@ defmodule Monorepo.Application do
       # Start to serve requests, typically the last entry
       MonorepoWeb.Endpoint,
       {AshAuthentication.Supervisor, [otp_app: :monorepo]},
-      {Cachex, [:cache]}
+      {Cachex, [:cache]},
+
+      {
+        FLAME.Pool,
+        name: Monorepo.SamplePool,
+        min: 0,
+        max: 10,
+        max_concurrency: 5,
+        idle_shutdown_after: 30_000,
+        log: :debug
+      }
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

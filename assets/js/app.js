@@ -22,12 +22,14 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import Hooks from "./hooks"
+import Uploaders from "./uploaders"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 3000,
   params: {_csrf_token: csrfToken},
-  hooks: Hooks
+  hooks: Hooks,
+  uploaders: Uploaders
 })
 
 // Show progress bar on live navigation and form submits
@@ -52,8 +54,7 @@ window.addEventListener("phx:js-exec", ({detail}) => {
   })
 })
 
-
-window.addEventListener("app:disabled-form-element", (event) => {
+window.addEventListener("app:disabledFormElement", (event) => {
   //disabled this form elements like input, select, checkbox, etc
   const form = event.target
   if (form) {
@@ -68,3 +69,91 @@ window.addEventListener("app:disabled-form-element", (event) => {
     }, 2000)
   }
 });
+
+
+window.addEventListener("app:historyback", (_) => {history.back()})
+
+
+window.addEventListener("app:saveLocalStorage", ({detail}) => {
+  localStorage.setItem(detail.key, btoa(detail.value))
+})
+
+window.addEventListener("app:recoverConnection", (event) => {
+  const value = localStorage.getItem(event.detail.key)
+  if (value) {
+    localStorage.removeItem(event.detail.key)
+    liveSocket.execJS(event.target, `[["exec",{"attr":"${atob(value)}"}]]`)
+  }
+})
+
+window.addEventListener("app:addOverlayOnDragOver", (event) => {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:1000;pointer-events:none;';
+  let isOverlayAdded = false;
+
+  event.target.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    if (!isOverlayAdded) {
+      event.target.style.position = 'relative';
+      event.target.appendChild(overlay);
+      isOverlayAdded = true;
+    }
+  });
+
+  event.target.addEventListener('dragleave', (e) => {
+    if (!e.relatedTarget || !event.target.contains(e.relatedTarget)) {
+      if (isOverlayAdded) {
+        event.target.removeChild(overlay);
+        event.target.style.position = '';
+        isOverlayAdded = false;
+      }
+    }
+  });
+
+  event.target.addEventListener('drop', (e) => {
+    e.preventDefault();
+    if (isOverlayAdded) {
+      event.target.removeChild(overlay);
+      event.target.style.position = '';
+      isOverlayAdded = false;
+    }
+    liveSocket.execJS(event.target, `[["exec",{"attr":"phx-drop-target"}]]`);
+  });
+});
+ 
+
+// window.addEventListener("app:addOverlayOnDragOver", (event) => {
+//   const overlay = document.createElement('div');
+//   overlay.style.cssText = 'position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:1000;pointer-events:none;';
+//   let isOverlayAdded = false;
+
+//   event.target.addEventListener('dragenter', (e) => {
+//     e.preventDefault();
+//     if (!isOverlayAdded) {
+//       event.target.style.position = 'relative';
+//       event.target.appendChild(overlay);
+//       isOverlayAdded = true;
+//     }
+//   });
+
+//   event.target.addEventListener('dragleave', (e) => {
+//     if (!e.relatedTarget || !event.target.contains(e.relatedTarget)) {
+//       if (isOverlayAdded) {
+//         event.target.removeChild(overlay);
+//         event.target.style.position = '';
+//         isOverlayAdded = false;
+//       }
+//     }
+//   });
+
+//   event.target.addEventListener('drop', (e) => {
+//     e.preventDefault();
+//     if (isOverlayAdded) {
+//       event.target.removeChild(overlay);
+//       event.target.style.position = '';
+//       isOverlayAdded = false;
+//     }
+//     liveSocket.execJS(event.target, `[["exec",{"attr":"phx-drop-target"}]]`);
+//   });
+// });
+ 

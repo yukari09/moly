@@ -43,8 +43,8 @@
                 </.badge>
             </:col>
 
-            <:col :let={row} label="Role">
-                <%= row.role %>
+            <:col :let={row} label="Roles">
+                <%= row.roles |> Enum.join(", ") %>
             </:col>
 
             <:col :let={row} label="Created At">
@@ -81,20 +81,21 @@
 <.modal 
     :if={@live_action in [:new, :edit, :validate]} 
     show={@live_action in [:new, :edit, :validate]} 
-    id="user-form-modal" on_cancel={JS.patch(generate_live_url(@params))}
-    inner_class="sm:max-w-lg"
+    id="user-form-modal" 
+    on_cancel={JS.patch(generate_live_url(@params))}
+    inner_class="sm:max-w-xl"
 >
   <.header size="md" title="Create new user" />
-  <.form :let={f} for={@form} phx-change="validate" phx-submit={JS.push("save") |> JS.dispatch("app:disabled-form-element")} phx-debounce="300" class="mt-6">
+  <.form :let={f} for={@form} phx-change="validate" phx-submit={JS.push("save") |> JS.dispatch("app:disabledFormElement")} phx-debounce="300" class="mt-6">
     <div class="space-y-4">
         <.input field={f[:email]} type="email" label="Email" help_text="The email address of the user." />
         <.input field={f[:password]} type="password" label="Password" help_text="The password of the user." />
-        <div class="w-2/3">
-          <.select field={f[:role]} options={%{admin: "Admin", user: "User"}} label="Role" />
+        <div>
+          <.select field={f[:roles]} options={%{admin: "Admin", user: "User"}} label="Roles" multiple={true} size="2" />
         </div>
     </div>
     <div id={"#{f[:status].id}-container"} class="mt-6 bg-gray-100 p-4 rounded-md" phx-update="ignore">
-        <.checkbox  field={f[:status]} value="active" label="Active?" description="Activate this user."  />
+        <.checkbox field={f[:status]} value="active" label="Status" description="Activate this user. When active, the user will have full access to their account and all associated features." />
     </div>
     <div class="flex gap-2 mt-6 justify-end">
         <.button type="submit" form={@form} phx-disable-with="Saving..."}>Save</.button>

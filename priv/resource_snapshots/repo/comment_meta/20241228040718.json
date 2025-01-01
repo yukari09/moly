@@ -11,7 +11,7 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -21,7 +21,7 @@
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -68,15 +68,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "post_meta_post_id_fkey",
+        "name": "comment_meta_comment_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "posts"
+        "table": "comments"
       },
       "size": null,
-      "source": "post_id",
+      "source": "comment_id",
       "type": "uuid"
     }
   ],
@@ -85,7 +85,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "3B0A761267AE5091B8403737EA939494443B4DA4BA65F26DF688F4B5FD0CDC08",
+  "hash": "E725B09F34938E6AFE15FBECD0B2557EAB01ED13257329D049236C786B8601C5",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -94,5 +94,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "post_meta"
+  "table": "comment_meta"
 }

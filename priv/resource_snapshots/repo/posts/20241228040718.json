@@ -21,7 +21,7 @@
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -31,7 +31,7 @@
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -107,14 +107,14 @@
       ]
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "post_parent",
-      "type": "uuid"
+      "source": "guid",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -147,8 +147,8 @@
       "type": "bigint"
     },
     {
-      "allow_nil?": false,
-      "default": "\"\"",
+      "allow_nil?": true,
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
@@ -167,7 +167,7 @@
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "\"\"",
       "generated?": false,
       "primary_key?": false,
@@ -197,7 +197,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -224,26 +224,55 @@
       "size": null,
       "source": "author_id",
       "type": "uuid"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "posts_post_parent_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "posts"
+      },
+      "size": null,
+      "source": "post_parent",
+      "type": "uuid"
     }
   ],
   "base_filter": null,
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": false,
-  "hash": "DA53656E1A38015770E94F9EB85CE99FDB8B66E74BF4F6CF60C8FF78C0A5CD01",
+  "has_create_action": true,
+  "hash": "6E96A520E8C3D0A50F2E80E557E352D8A4B10DC7929017B67EE18CF1087CA411",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "posts_unique_title_index",
+      "index_name": "posts_unique_post_name_index",
       "keys": [
         {
           "type": "atom",
           "value": "post_name"
         }
       ],
-      "name": "unique_title",
+      "name": "unique_post_name",
       "nils_distinct?": true,
       "where": null
     }

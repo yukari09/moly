@@ -13,7 +13,7 @@ defmodule Monorepo.Repo.Migrations.Initial do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
       add(:email, :citext, null: false)
       add(:hashed_password, :text)
-      add(:role, :text, null: false, default: "user")
+      add(:roles, {:array, :text}, null: false)
       add(:status, :text, null: false, default: "inactive")
       add(:nickname, :text)
       add(:display_name, :text)
@@ -211,21 +211,21 @@ defmodule Monorepo.Repo.Migrations.Initial do
 
     alter table(:posts) do
       add(:post_title, :text, null: false)
-      add(:post_content, :text, null: false)
-      add(:post_excerpt, :text, null: false)
+      add(:post_content, :text)
+      add(:post_excerpt, :text)
       add(:post_status, :text, null: false, default: "draft")
       add(:post_type, :text, null: false, default: "post")
       add(:comment_status, :boolean, null: false, default: false)
       add(:ping_status, :boolean, null: false, default: false)
       add(:to_ping, {:array, :text}, null: false, default: [])
       add(:pinged, {:array, :text}, null: false, default: [])
-      add(:post_parent, :uuid, null: false)
+      add(:guid, :text)
       add(:menu_order, :bigint, null: false, default: 0)
       add(:post_mime_type, :text, null: false, default: "post")
       add(:comment_count, :bigint, null: false, default: 0)
-      add(:post_password, :text, null: false, default: "")
+      add(:post_password, :text)
       add(:post_name, :text, null: false, default: "")
-      add(:post_content_filtered, :text, null: false, default: "")
+      add(:post_content_filtered, :text, default: "")
 
       add(:inserted_at, :utc_datetime_usec,
         null: false,
@@ -244,11 +244,22 @@ defmodule Monorepo.Repo.Migrations.Initial do
           name: "posts_author_id_fkey",
           type: :uuid,
           prefix: "public"
+        ),
+        null: false
+      )
+
+      add(
+        :post_parent,
+        references(:posts,
+          column: :id,
+          name: "posts_post_parent_fkey",
+          type: :uuid,
+          prefix: "public"
         )
       )
     end
 
-    create unique_index(:posts, [:post_name], name: "posts_unique_title_index")
+    create unique_index(:posts, [:post_name], name: "posts_unique_post_name_index")
 
     create table(:post_meta, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
@@ -272,7 +283,8 @@ defmodule Monorepo.Repo.Migrations.Initial do
           name: "post_meta_post_id_fkey",
           type: :uuid,
           prefix: "public"
-        )
+        ),
+        null: false
       )
     end
 
@@ -389,11 +401,14 @@ defmodule Monorepo.Repo.Migrations.Initial do
 
     drop(table(:post_meta))
 
-    drop_if_exists(unique_index(:posts, [:post_name], name: "posts_unique_title_index"))
+    drop_if_exists(unique_index(:posts, [:post_name], name: "posts_unique_post_name_index"))
 
     drop(constraint(:posts, "posts_author_id_fkey"))
 
+    drop(constraint(:posts, "posts_post_parent_fkey"))
+
     alter table(:posts) do
+      remove(:post_parent)
       remove(:author_id)
       remove(:updated_at)
       remove(:inserted_at)
@@ -403,7 +418,7 @@ defmodule Monorepo.Repo.Migrations.Initial do
       remove(:comment_count)
       remove(:post_mime_type)
       remove(:menu_order)
-      remove(:post_parent)
+      remove(:guid)
       remove(:pinged)
       remove(:to_ping)
       remove(:ping_status)

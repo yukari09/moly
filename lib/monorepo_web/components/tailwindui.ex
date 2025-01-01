@@ -25,13 +25,38 @@ defmodule MonorepoWeb.TailwindUI do
     )
   end
 
+  ## JS Commands
+
+  def show(js \\ %JS{}, selector) do
+    JS.show(js,
+      to: selector,
+      time: 300,
+      transition:
+        {"transition-all transform ease-out duration-300",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+         "opacity-100 translate-y-0 sm:scale-100"}
+    )
+  end
+
+  def hide(js \\ %JS{}, selector) do
+    JS.hide(js,
+      to: selector,
+      time: 200,
+      transition:
+        {"transition-all transform ease-in duration-200",
+         "opacity-100 translate-y-0 sm:scale-100",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
+    )
+  end
+
+
   @doc """
   Dropdown menu.
   """
   attr(:id, :string, required: true)
   attr(:class, :string, default: nil)
-  slot(:button_slot, required: true)
-  slot(:menu_slot, required: true)
+  slot :button_slot, required: true
+  slot :menu_slot, required: true
 
   def dropdown(assigns) do
     menu_id = generate_random_id(8)
@@ -45,8 +70,8 @@ defmodule MonorepoWeb.TailwindUI do
     ~H"""
     <div class={["relative", @class]} id={@id}>
       <button
-        id={@button_id}
-        :for={slot <- Enum.slice(@button_slot, 0, 1)}
+        :for={ {slot, index} <- Enum.with_index(@button_slot) }
+        id={"#{@button_id}-#{index}"}
         type="button"
         class={[
           "-m-1.5 flex items-center p-1.5",
@@ -54,30 +79,62 @@ defmodule MonorepoWeb.TailwindUI do
         ]}
         aria-expanded="false"
         aria-haspopup="true"
-        phx-click={show_dropdown(@menu_id)}
+        phx-click={show_dropdown("#{@menu_id}-#{index}")}
+        disabled={Map.get(slot, :disabled, false)}
       >
         { render_slot(slot) }
       </button>
 
       <div
-        id={@menu_id}
-        :for={slot <- Enum.slice(@menu_slot, 0, 1)}
+        :for={ {slot, index} <- Enum.with_index(@menu_slot) }
+        id={"#{@menu_id}-#{index}"}
         class={[
-          "absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden hidden",
+          "absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden hidden divide-y divide-gray-100",
           # Width from menu slot or default
-          Map.get(slot, :class) || "w-32"
+          Map.get(slot, :class, "w-32")
         ]}
         role="menu"
         aria-orientation="vertical"
         aria-labelledby={@button_id}
         tabindex="-1"
-        phx-click-away={hide_dropdown(@menu_id)}
+        phx-click-away={hide_dropdown("#{@menu_id}-#{index}")}
+        data-menu-id={Map.get(slot, :"data-menu-id", "#{@menu_id}-#{index}")}
       >
         { render_slot(slot) }
       </div>
     </div>
     """
   end
+
+
+  attr(:id, :string, default: nil)
+  attr(:class, :string, default: nil)
+  attr(:active, :boolean, default: false)
+  attr(:rest, :global)
+  attr :disabled, :boolean, default: false
+  slot(:inner_block, required: true)
+
+  def dropdown_link(assigns) do
+    ~H"""
+    <a
+      class={[
+        "block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 hover:outline-none  cursor-pointer",
+        @active && "bg-gray-100 text-gray-900 outline-none",
+        !@active && "text-gray-700",
+        @disabled && "pointer-events-none opacity-50",
+        @class
+      ]}
+      role="menuitem"
+      tabindex="-1"
+      id={@id}
+      disabled={@disabled}
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
+    </a>
+    """
+  end
+
 
   attr(:type, :string, default: "button")
   attr(:class, :string, default: nil)
@@ -259,6 +316,7 @@ defmodule MonorepoWeb.TailwindUI do
   )
 
   attr(:class, :string, default: nil)
+  attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def badge(assigns) do
@@ -272,8 +330,25 @@ defmodule MonorepoWeb.TailwindUI do
       @variant == "gray" && "bg-gray-50 text-gray-700 ring-gray-600/20",
       @variant == "info" && "bg-blue-50 text-blue-700 ring-blue-600/20",
       @class
-    ]}>
+    ]}
+    {@rest}
+    >
       <%= render_slot(@inner_block) %>
+    </span>
+    """
+  end
+
+
+  attr :badge, :string, default: nil
+  attr :class, :string, default: nil
+
+  def badge_span(assigns) do
+    ~H"""
+    <span :if={@badge} class={[
+      "hidden rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-900 lg:inline-block",
+      @class
+    ]}>
+      { @badge }
     </span>
     """
   end
@@ -416,6 +491,52 @@ defmodule MonorepoWeb.TailwindUI do
       </div>
         <p :if={@help_text && @errors == []} class="mt-2 text-sm text-gray-500" id={"#{@field.id}-description"}>{ @help_text }</p>
         <p :if={@errors != []} class="mt-2 text-sm text-red-600" id={"#{@field.id}-error"}>{ @label } { List.first(@errors) }</p>
+    </div>
+    """
+  end
+
+
+  attr(:field, Phoenix.HTML.FormField, required: true)
+  attr(:label, :string, required: true)
+  attr(:placeholder, :string, default: nil)
+  attr(:class, :string, default: nil)
+  attr(:help_text, :string, default: nil)
+  attr(:errors, :list, default: [])
+  attr(:rest, :global)
+  attr(:rows, :integer, default: 3)
+
+  def textarea(%{field: field} = assigns) do
+    error_messages = error_messages(field.errors)
+    assigns = assign(assigns, :errors, error_messages)
+
+    ~H"""
+    <div>
+      <label for={@field.id} class="block text-sm/6 font-medium text-gray-900"><%= @label %></label>
+      <div class={["mt-2", @errors != [] && "grid grid-cols-1"]}>
+        <textarea
+          name={@field.name}
+          id={@field.id}
+          placeholder={@placeholder}
+          rows={@rows}
+          class={[
+            "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
+            @errors != [] && "col-start-1 row-start-1 text-red-900 outline-red-300 placeholder:text-red-300 focus:outline-red-600",
+            @class
+          ]}
+          aria-invalid={@errors != []}
+          aria-describedby={cond do
+            @errors != [] -> "#{@field.id}-error"
+            @help_text -> "#{@field.id}-description"
+            true -> nil
+          end}
+          {@rest}
+        ><%= Phoenix.HTML.Form.normalize_value("textarea", @field.value) %></textarea>
+        <svg :if={@errors != []} class="pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-start justify-self-end text-red-500 sm:size-4 mt-2" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+          <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <p :if={@help_text && @errors == []} class="mt-2 text-sm text-gray-500" id={"#{@field.id}-description"}>{ @help_text }</p>
+      <p :if={@errors != []} class="mt-2 text-sm text-red-600" id={"#{@field.id}-error"}>{ @label } { List.first(@errors) }</p>
     </div>
     """
   end
@@ -618,6 +739,7 @@ defmodule MonorepoWeb.TailwindUI do
   attr(:field, Phoenix.HTML.FormField, required: true)
   attr(:options, :list, required: true)
   attr(:class, :string, default: nil)
+  attr :multiple, :boolean, default: false
   attr(:rest, :global)
 
   def select(assigns) do
@@ -627,15 +749,21 @@ defmodule MonorepoWeb.TailwindUI do
       <div class="mt-2 grid grid-cols-1">
         <select
           id={@field.id}
-          name={@field.name}
+          name={@multiple && "#{@field.name}[]" || @field.name}
           class={[
             "col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
             @class
           ]}
-          value={@field.value}
+          multiple={@multiple}
           {@rest}
         >
-          <option :for={{value, label} <- @options} value={value} selected={to_string(value) == to_string(@field.value)}><%= label %></option>
+          <option
+            :for={{value, label} <- @options}
+            value={value}
+            selected={(is_binary(@field.value) && value == @field.value) || (is_list(@field.value) && value in @field.value)}
+          >
+            <%= label %>
+          </option>
         </select>
         <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
           <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
@@ -766,6 +894,166 @@ defmodule MonorepoWeb.TailwindUI do
           </nav>
         </div>
       </div>
+    </div>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :name, :string, required: true
+  attr :class, :string, default: nil
+  attr :input_class, :string, default: nil
+  attr :value, :string, default: nil
+  attr :placeholder, :string, default: nil
+  attr :rest, :global
+  def search_input(assigns) do
+    ~H"""
+    <div
+      id={@id}
+      class={[
+        "flex items-center rounded-md bg-white pl-3 outline outline-1 -outline-offset-1 outline-gray-300 has-[input:focus-within]:outline has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-gray-600",
+        @class
+      ]}
+    >
+        <Lucideicons.search class="size-4 text-gray-400" />
+        <input type="search" name={@name} value={@value} autocomplete="off" class={[
+          "block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6",
+          "",
+          @input_class
+        ]} placeholder={@placeholder || "Search"} {@rest}>
+    </div>
+    """
+  end
+
+  @doc """
+  Tabs with underline and badges.
+  """
+  attr :id, :string, required: true
+  attr(:tabs, :list, required: true)
+  attr(:current_tab, :string, required: true)
+  attr(:class, :string, default: nil)
+  attr(:inner_class, :string, default: nil)
+
+  def tabs_with_badges(assigns) do
+    ~H"""
+    <div class={@class}>
+      <div class="grid grid-cols-1 sm:hidden">
+        <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
+        <select aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600">
+          <option
+            :for={tab <- @tabs}
+            value={tab.value}
+            selected={tab.value == @current_tab}
+            phx-click={JS.patch(tab.href)}
+          >
+            <%= tab.label %>
+          </option>
+        </select>
+        <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+          <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="hidden sm:block">
+        <div class={["border-b border-gray-200",@inner_class]}>
+          <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+            <.link :for={tab <- @tabs} patch={tab.href} class={[
+              "flex whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium",
+              tab.value == @current_tab && "border-gray-500 text-gray-600",
+              tab.value != @current_tab && "border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700"
+            ]}>
+              <%= tab.label %>
+              <.badge_span class="ml-3"  badge={tab.badge} />
+            </.link>
+          </nav>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+
+  @doc """
+  Renders flash notices.
+
+  ## Examples
+
+      <.flash kind={:info} flash={@flash} />
+      <.flash kind={:info} phx-mounted={show("#flash")}>Welcome Back!</.flash>
+  """
+  attr(:id, :string, doc: "the optional id of flash container")
+  attr(:flash, :map, default: %{}, doc: "the map of flash messages to display")
+  attr(:title, :string, default: nil)
+  attr(:kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup")
+  attr(:rest, :global, doc: "the arbitrary HTML attributes to add to the flash container")
+
+  slot(:inner_block, doc: "the optional inner block that renders the flash message")
+
+  def flash(assigns) do
+    assigns = assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
+
+    ~H"""
+    <div
+      :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
+      id={@id}
+      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+      role="alert"
+      class={[
+        "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
+        @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
+        @kind == :error && "bg-rose-50 text-rose-900 shadow-md ring-rose-500 fill-rose-900"
+      ]}
+      {@rest}
+    >
+      <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
+        <MonorepoWeb.CoreComponents.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-4 w-4" />
+        <MonorepoWeb.CoreComponents.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-4 w-4" />
+        {@title}
+      </p>
+      <p class="mt-2 text-sm leading-5">{msg}</p>
+      <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
+        <MonorepoWeb.CoreComponents.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
+      </button>
+    </div>
+    """
+  end
+
+  @doc """
+  Shows the flash group with standard titles and content.
+
+  ## Examples
+
+      <.flash_group flash={@flash} />
+  """
+  attr(:flash, :map, required: true, doc: "the map of flash messages")
+  attr(:id, :string, default: "flash-group", doc: "the optional id of flash container")
+
+  def flash_group(assigns) do
+    ~H"""
+    <div id={@id}>
+      <.flash kind={:info} title={gettext("Success!")} flash={@flash} />
+      <.flash kind={:error} title={gettext("Error!")} flash={@flash} />
+      <.flash
+        id="client-error"
+        kind={:error}
+        title={gettext("We can't find the internet")}
+        phx-disconnected={show(".phx-client-error #client-error")}
+        phx-connected={hide("#client-error")}
+        hidden
+      >
+        {gettext("Attempting to reconnect")}
+        <MonorepoWeb.CoreComponents.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+      </.flash>
+
+      <.flash
+        id="server-error"
+        kind={:error}
+        title={gettext("Something went wrong!")}
+        phx-disconnected={show(".phx-server-error #server-error")}
+        phx-connected={hide("#server-error")}
+        hidden
+      >
+        {gettext("Hang in there while we get back on track")}
+        <MonorepoWeb.CoreComponents.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+      </.flash>
     </div>
     """
   end

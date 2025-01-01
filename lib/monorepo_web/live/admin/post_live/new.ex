@@ -1,10 +1,26 @@
 defmodule MonorepoWeb.AdminPostLive.New do
-  use MonorepoWeb, :live_view
+  use MonorepoWeb.Admin, layout: false
 
-  import MonorepoWeb.TailwindUI
+  @impl true
+  def mount(_params, _session, socket) do
+    {:ok,
+      socket,
+      layout: false
+    }
+  end
 
-  def mount(params, session, socket) do
-    {:ok, socket, layout: false}
+  @impl true
+  def handle_event(event_name, params, socket) do
+    socket =
+      socket
+      |> assign(:live_action, String.to_atom(event_name))
+      |> handle_action(params)
+
+    {:noreply, socket}
+  end
+
+  defp handle_action(%{assigns: %{live_action: :set_featured_image}}  = socket, _params) do
+    socket
   end
 
   defp toggle_sidebar(toggle_el) do

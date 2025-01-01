@@ -11,24 +11,34 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "meta_key",
+      "source": "name",
       "type": "text"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "meta_value",
+      "source": "slug",
       "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "0",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "term_group",
+      "type": "bigint"
     },
     {
       "allow_nil?": false,
@@ -49,35 +59,6 @@
       "size": null,
       "source": "updated_at",
       "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "comment_meta_comment_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "comments"
-      },
-      "size": null,
-      "source": "comment_id",
-      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -85,8 +66,23 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "7778A58F65519285865BCC2CF14F805FEB92BB313B2A67CD95BC3CF2EFEC2C7E",
-  "identities": [],
+  "hash": "2D063BC3596FFAC0CA70F4D995256CF91C06CF9DE4CEF28223A8D68DF6ECB683",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "terms_unique_slug_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "slug"
+        }
+      ],
+      "name": "unique_slug",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -94,5 +90,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "comment_meta"
+  "table": "terms"
 }

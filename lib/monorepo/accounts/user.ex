@@ -201,9 +201,9 @@ defmodule Monorepo.Accounts.User do
         sensitive? true
       end
 
-      argument :role, :atom do
+      argument :roles, {:array, :atom} do
         allow_nil? false
-        default :user
+        default [:user]
       end
 
       argument :status, :atom do
@@ -218,7 +218,7 @@ defmodule Monorepo.Accounts.User do
       change set_context(%{strategy_name: :password})
       change AshAuthentication.Strategy.Password.HashPasswordChange
       change set_attribute(:status, arg(:status))
-      change set_attribute(:role, arg(:role))
+      change set_attribute(:roles, arg(:roles))
       change set_attribute(:email, arg(:email))
     end
 
@@ -311,9 +311,9 @@ defmodule Monorepo.Accounts.User do
       sensitive? true
     end
 
-    attribute :role, :atom do
+    attribute :roles, {:array, :atom} do
       allow_nil? false
-      default :user
+      default [:user]
     end
 
     attribute :status, :atom do

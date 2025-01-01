@@ -12,32 +12,12 @@
     },
     {
       "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "taxonomy",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "description",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
       "default": "0",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "count",
+      "source": "term_order",
       "type": "bigint"
     },
     {
@@ -78,15 +58,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "term_taxonomy_term_id_fkey",
+        "name": "term_relationships_term_taxonomy_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "terms"
+        "table": "term_taxonomy"
       },
       "size": null,
-      "source": "term_id",
+      "source": "term_taxonomy_id",
       "type": "uuid"
     },
     {
@@ -107,15 +87,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "term_taxonomy_parent_id_fkey",
+        "name": "term_relationships_post_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "term_taxonomy"
+        "table": "posts"
       },
       "size": null,
-      "source": "parent_id",
+      "source": "post_id",
       "type": "uuid"
     }
   ],
@@ -124,7 +104,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "9FA78B701A646EC8F240DC0996DF8BD2A304DDA095C1F8FA6B08637E0A6B360C",
+  "hash": "65E72BDA151B09336D574DFE8A406E14BD66B5EC04D0E1E70B6262885AA365FC",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -133,5 +113,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "term_taxonomy"
+  "table": "term_relationships"
 }

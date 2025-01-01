@@ -76,12 +76,14 @@ defmodule MonorepoWeb.Router do
   scope "/admin", MonorepoWeb do
     pipe_through(:browser)
 
-    ash_authentication_live_session :authenticated_admin_routes,
-      on_mount: {MonorepoWeb.LiveUserAuth, :live_user_required},
+    ash_authentication_live_session :live_admin,
+      on_mount: {MonorepoWeb.LiveUserAuth, :live_admin_required},
       layout: {MonorepoWeb.Layouts, :admin} do
       live("/dashboard", AdminDashboardLive)
       live("/users", AdminUserLive.Index, :index)
       live("/posts/new", AdminPostLive.New)
+      live("/media", AdminMediaLive.Index, :index)
+      live("/media/:id/edit", AdminMediaLive.Edit, :page)
       # live "/categories", CategoryLive.Index, :index
       # live "/tags", TagLive.Index, :index
       # live "/posts", PostLive.Index, :index

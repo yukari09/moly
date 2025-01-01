@@ -17,7 +17,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "term_key",
+      "source": "option_name",
       "type": "text"
     },
     {
@@ -27,8 +27,18 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "term_value",
+      "source": "option_value",
       "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "false",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "autoload",
+      "type": "boolean"
     },
     {
       "allow_nil?": false,
@@ -49,35 +59,6 @@
       "size": null,
       "source": "updated_at",
       "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "term_meta_term_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "terms"
-      },
-      "size": null,
-      "source": "term_id",
-      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -85,7 +66,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "833FA0F288AF7431C22BF030E4AB180733655E47E145853CF807C70FD76CDF9D",
+  "hash": "74A0870483A251294C472BA72012BAC894637389A31A27594A755B7280CDF7DF",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -94,5 +75,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "term_meta"
+  "table": "options"
 }

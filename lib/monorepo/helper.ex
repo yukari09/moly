@@ -1,24 +1,20 @@
 defmodule Monorepo.Helper do
-  def upload_image_by_url(image_url) do
-    Enum.reduce_while(1..5, nil, fn _, _ ->
-      {bucket, _, _, upload_bucket_path, domain_url} = s3_env(:image_dir)
+  @moduledoc """
+  Helper functions.
+  """
 
-      try do
-        {:ok, %{status: 200, body: body}} =
-          Finch.build("GET", image_url) |> Finch.request(Monorepo.Finch)
+  require Logger
 
-        %{status_code: 200} =
-          ExAws.S3.put_object(bucket, upload_bucket_path, body) |> ExAws.request!()
-
-        {:halt, domain_url}
-      rescue
-        _ -> {:cont, nil}
-      end
-    end)
+  @doc """
+  Uploads a file to S3
+  """
+  def put_object(%Phoenix.LiveView.UploadEntry{} = upload_entry, body_or_path) do
+    entry_filename(upload_entry)
+    |> put_object(body_or_path)
   end
 
-  def put_object_from_generated_url(url, body_or_path) do
-    {bucket, _} = s3_env()
+  def put_object(filename, body_or_path) when is_binary(filename) do
+    bucket = load_s3_config(:bucket)
 
     body =
       if File.exists?(body_or_path) do
@@ -27,53 +23,162 @@ defmodule Monorepo.Helper do
         body_or_path
       end
 
-    upload_bucket_path =
-      URI.parse(url)
-      |> Map.get(:path)
-      |> Path.relative()
+    Logger.info("Uploading #{filename} to S3, file size: #{byte_size(body)}")
 
-    ExAws.S3.put_object(bucket, upload_bucket_path, body)
-    |> ExAws.request()
-    |> case do
-      {:ok, _} -> :ok
-      _ -> :error
-    end
-  end
-
-  def generate_domain_url(type) when type in [nil, :image_dir, :video_dir] do
-    s3_env(type)
-    |> elem(4)
-  end
-
-  def s3_path_from_url(url) do
-    {bucket, _} = s3_env()
-
-    upload_bucket_path =
-      URI.parse(url)
-      |> Map.get(:path)
-      |> Path.relative()
-
-    "s3://#{bucket}/#{upload_bucket_path}"
-  end
-
-  def resize_s3_image_from_url(url, width, height) do
-    new_img =
-      s3_path_from_url(url)
-      |> Imgproxy.new()
-      |> Imgproxy.set_extension("webp")
-
-    o =
-      case [width, height] do
-        [nil, nil] ->
-          new_img
-
-        [_, _] ->
-          Imgproxy.resize(new_img, width, height, type: "fit")
+    Enum.reduce_while(1..5, nil, fn _, _ ->
+      ExAws.S3.put_object(bucket, filename, body)
+      |> ExAws.request()
+      |> case do
+        {:ok, _} -> {:halt, filename}
+        _ -> {:cont, nil}
       end
+    end)
+  end
+
+  def remove_object(filename) do
+    bucket = load_s3_config(:bucket)
+    Enum.reduce_while(1..5, nil, fn _, _ ->
+      ExAws.S3.delete_object(bucket, filename)
+      |> ExAws.request()
+      |> case do
+        {:ok, _} -> {:halt, filename}
+        _ -> {:cont, nil}
+      end
+    end)
+  end
+
+  def presign_upload(%Phoenix.LiveView.UploadEntry{} = upload_entry, socket) do
+    config = load_s3_config()
+    bucket = Map.get(config, :bucket)
+    key = entry_filename(upload_entry)
+
+    {:ok, url} =
+      ExAws.S3.presigned_url(config, :put, bucket, key,
+        expires_in: 7200,
+        query_params: [{"Content-Type", upload_entry.client_type}]
+      )
+     {:ok, %{uploader: "S3", key: key, url: url}, socket}
+  end
+
+  def image_resize(filename, width \\ nil, height \\ nil) do
+    new_img =
+      Imgproxy.new("s3://#{s3_path(filename)}")
+      |> Imgproxy.set_extension("avif")
+
+    o = case [width, height] do
+      [nil, nil] -> new_img
+      [_, _] ->
+        Imgproxy.resize(new_img, width, height, type: "fill")
+    end
 
     to_string(o)
   end
 
+  defp s3_path(filename) do
+    bucket = load_s3_config(:bucket)
+    "#{bucket}/#{filename}"
+  end
+
+  def s3_file_with_domain(filename), do: "https://#{load_s3_config(:domain)}/#{filename}"
+
+  def upload_entry_information(%Phoenix.LiveView.UploadEntry{client_type: mime_type} = entry, file_path) do
+    {:ok, data} = ffprobe(file_path)
+
+    video_stream = Enum.find(data["streams"], &(&1["codec_type"] == "video"))
+    width = video_stream["width"]
+    height = video_stream["height"]
+    duration = format_duration(video_stream["duration"])
+    case put_object(entry, file_path) do
+      nil -> nil
+      filename ->
+        entry_information(mime_type, width, height, duration, filename)
+        |> Map.put(:filesize, entry.client_size)
+        |> Map.put(:filename, filename)
+        |> Map.put(:mime_type, mime_type)
+        |> Map.put(:width, width)
+        |> Map.put(:height, height)
+        |> Map.put(:type, Path.extname(entry.client_name))
+    end
+  end
+
+  def entry_information("image"<>_, width, height, _, filename) do
+    original_ratio = width / height
+    sizes =
+      [smallthumbnail: 80, thumbnail: 150, medium: 300, large: 1024, xlarge: 1280, xxlarge: 2048, huge: 4096]
+      |> Enum.filter(fn {_, width_size} -> width >= width_size end)
+      |> Enum.reduce(%{}, fn {key, width_size}, acc ->
+        height_size = round(width_size / original_ratio)
+        Map.put(acc, key, %{
+          file: image_resize(filename, width_size, height_size),
+          width: width_size,
+          height: height_size,
+          mime_type: "image/webp"
+        })
+      end)
+    %{file: image_resize(filename), sizes: sizes}
+  end
+
+  def entry_information("video"<>_, _, _, duration, filename) do
+    %{file: s3_file_with_domain(filename), duration: duration}
+  end
+
+  def struct_meta(metas) when is_list(metas) do
+    Map.new(metas, &({&1.meta_key, &1.meta_value}))
+  end
+
+  def media_file_meta(metas) do
+    metas
+    |> struct_meta()
+    |> Map.get(:attachment_metadata)
+    |> fetch_image_file_from_attachment_metadata()
+  end
+
+  def fetch_image_file_from_attachment_metadata(meta_value) when is_binary(meta_value) do
+    meta_value
+    |> Jason.decode()
+    |> case do
+      {:ok, meta_value} -> meta_value
+      _ -> nil
+    end
+  end
+
+  def fetch_image_file_from_attachment_metadata(meta_value, image_key) when is_binary(meta_value) and is_list(image_key) do
+    case fetch_image_file_from_attachment_metadata(meta_value) do
+      nil -> nil
+      meta_value ->
+        Enum.map(image_key, &get_in_from_keys(meta_value, ["sizes", &1, "file"]))
+        |> List.first()
+    end
+  end
+
+  def ffprobe(media_path) do
+    FLAME.call(Monorepo.SamplePool, fn ->
+      {output, 0} = System.cmd("ffprobe", ~w(-v quiet -print_format json -show_format -show_streams -i #{media_path}))
+      Jason.decode(output)
+    end)
+  end
+
+  defp entry_filename(%Phoenix.LiveView.UploadEntry{} = upload_entry) do
+    [upload_entry.client_type, upload_entry.uuid <> Path.extname(upload_entry.client_name)]
+    |> Path.join()
+  end
+
+  defp load_s3_config(key \\ nil) do
+    config = ExAws.Config.new(:s3)
+    key && Map.get(config, key) || config
+  end
+
+  @doc """
+  Generate random id
+  """
+  def generate_random_id(length \\ 8) do
+    charset = ~c"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    for _ <- 1..length, into: "", do: <<Enum.random(charset)>>
+  end
+
+  @doc """
+  Generate random string
+  """
   def generate_random_str(length \\ 12) when is_integer(length) and length > 0 do
     characters =
       Enum.concat([
@@ -88,7 +193,7 @@ defmodule Monorepo.Helper do
     |> List.to_string()
   end
 
-  def get_youtube_id_from_url(url) do
+  def get_youtube_id(url) do
     pattern =
       ~r/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([\w-]{11})/
 
@@ -98,45 +203,46 @@ defmodule Monorepo.Helper do
     end
   end
 
-  defp s3_env(type \\ nil) when type in [nil, :image_dir, :video_dir] do
-    s3_conf = Application.get_env(:ex_aws, :s3)
+  def extract_filename_without_extension(filename) do
+    filename
+    |> Path.basename()
+    |> String.split(".")
+    |> Enum.slice(0..-2//1)
+    |> Enum.join(".")
+  end
 
-    bucket = Keyword.fetch!(s3_conf, :bucket)
-    domain = Keyword.fetch!(s3_conf, :domain)
-
-    if type do
-      bucket_dir = Keyword.fetch!(s3_conf, type)
-      upload_bucket_path = "#{bucket_dir}/#{Ecto.UUID.generate()}"
-      domain_url = Path.join("https://#{domain}", upload_bucket_path)
-      {bucket, bucket_dir, domain, upload_bucket_path, domain_url}
-    else
-      {bucket, domain}
+  def format_duration(duration) when is_binary(duration) do
+    case String.contains?(duration, ".") do
+      true ->
+        duration
+        |> String.to_float()
+        |> Float.floor()
+        |> trunc()
+      false ->
+        String.to_integer(duration)
     end
   end
 
-  def format_number_readable(number) when is_integer(number) do
-    format_number_readable(Integer.to_string(number))
+  def format_duration(_), do: 0
+
+  def is_video_mime_type(mime_type), do: String.contains?(mime_type, "video")
+  def is_image_mime_type(mime_type), do: String.contains?(mime_type, "image")
+
+  @doc """
+  Format number to human readable
+  """
+  def format_number(value) when value >= 1_000_000 do
+    "#{div(value, 1000)}M"
   end
-
-  def format_number_readable(number) when is_binary(number) and number != "" do
-    {value, ""} = Integer.parse(number)
-    format_value(value)
+  def format_number(value) when value >= 1000 do
+    "#{div(value, 1000)}K"
   end
+  def format_number(value), do: Integer.to_string(value)
 
-  def format_number_readable(_), do: ""
-
-  defp format_value(value) when value >= 1_000_000 do
-    "#{div(value, 1000)}m"
-  end
-
-  defp format_value(value) when value >= 1000 do
-    "#{div(value, 1000)}k"
-  end
-
-  defp format_value(value), do: Integer.to_string(value)
-
+  @doc """
+  Format time ago
+  """
   def ago(nil), do: ""
-
   def ago(timestamp) when is_float(timestamp) do
     {:ok, ago} =
       timestamp
@@ -146,7 +252,6 @@ defmodule Monorepo.Helper do
 
     ago
   end
-
   def ago(year, month, day, hour, minute \\ 0, second \\ 0)
       when is_integer(year) and is_integer(month) and is_integer(hour) do
     {:ok, ago} =
@@ -161,10 +266,9 @@ defmodule Monorepo.Helper do
     |> Timex.from_unix()
     |> Timex.format!("{h24}:{0m}  {D},{Mshort} {YYYY}")
   end
-
   def timestamp2datetime(_), do: ""
 
-  def get_in(map, keys) do
+  def get_in_from_keys(map, keys) do
     Enum.reduce_while(keys, map, fn key, map ->
       case Map.get(map, key) do
         nil -> {:halt, nil}
@@ -173,10 +277,16 @@ defmodule Monorepo.Helper do
     end)
   end
 
-  def generate_random_id(length \\ 8) do
-    charset = ~c"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    for _ <- 1..length, into: "", do: <<Enum.random(charset)>>
+  def bits_to_readable(bits) when is_binary(bits), do: bits_to_readable(String.to_integer(bits))
+  def bits_to_readable(bits) when is_integer(bits) do
+    cond do
+      bits >= 1_000_000_000 -> "#{div(bits, 1_000_000_000)} GB"
+      bits >= 1_000_000 -> "#{div(bits, 1_000_000)} MB"
+      bits >= 1_000 -> "#{div(bits, 1_000)} KB"
+      true -> "#{bits} B"
+    end
   end
+  def bits_to_readable(nil), do: 0
 
   def pagination_meta(total, page_size, page, show_item)
       when is_integer(total) and is_integer(page_size) and is_integer(page) and

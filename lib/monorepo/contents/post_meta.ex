@@ -3,44 +3,41 @@ defmodule Monorepo.Contents.PostMeta do
     otp_app: :monorepo,
     domain: Monorepo.Contents,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshRbac],
     data_layer: AshPostgres.DataLayer
+
+  import Monorepo.Helper, only: [remove_object: 1]
 
   postgres do
     table "post_meta"
     repo(Monorepo.Repo)
   end
 
-  rbac do
-    role :user do
-      fields([:meta_key, :meta_value, :inserted_at, :updated_at])
-      actions([:read])
-    end
-
-    role :admin do
-      fields([:meta_key, :meta_value, :inserted_at, :updated_at])
-      actions([:read, :create, :update, :destroy])
-    end
-  end
-
   actions do
     read :read do
       primary? true
-      prepare build(sort: [inserted_at: :desc])
+      pagination offset?: true, keyset?: true, required?: false
+    end
 
-      pagination do
-        required? false
-        offset? true
-        keyset? true
-        countable true
-      end
+    create :create do
+      accept [:meta_key, :meta_value]
+      argument :post, :uuid, allow_nil?: false
+      change manage_relationship(:post, :post, type: :append_and_remove)
+    end
+
+    update :update do
+      primary? true
+      accept [:meta_key, :meta_value]
+    end
+
+    destroy :destroy do
+      change after_action(&remove_attachment/3)
     end
   end
 
   attributes do
     uuid_primary_key :id
 
-    attribute :meta_key, :string do
+    attribute :meta_key, :atom do
       length(min: 1, max: 255)
       allow_nil? false
     end
@@ -53,6 +50,22 @@ defmodule Monorepo.Contents.PostMeta do
   end
 
   relationships do
-    belongs_to :post, Monorepo.Contents.Post
+    belongs_to :post, Monorepo.Contents.Post, allow_nil?: false
+  end
+
+  policies do
+    policy always() do
+      authorize_if always()
+    end
+  end
+
+  defp remove_attachment(_changeset, postmeta, _context) do
+    meta_key = postmeta.meta_key
+    if meta_key == :attached_file do
+      remove_object(postmeta.meta_value)
+      {:ok, postmeta}
+    else
+      {:ok, postmeta}
+    end
   end
 end
