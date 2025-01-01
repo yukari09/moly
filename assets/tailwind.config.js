@@ -7,7 +7,6 @@ const path = require("path")
 
 module.exports = {
   content: [
-"../deps/salad_ui/lib/**/*.ex",
     "./js/**/*.js",
     "../lib/monorepo_web.ex",
     "../lib/monorepo_web/**/*.*ex",
@@ -16,7 +15,13 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["ui-sans-serif", "system-ui", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"],
+        sans: [
+          '"Inter var", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',         
+          {
+            fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
+            fontVariationSettings: '"opsz" 32'
+          }
+        ],
         serif: ["ui-serif", "Georgia", "Cambria", "Times New Roman", "Times", "serif"],
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"],
       },

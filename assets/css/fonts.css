@@ -1,0 +1,11 @@
+/* Inter var from rsms.me/inter */
+
+@import url('https://rsms.me/inter/inter.css');
+
+/* 确保字体回退机制 */
+:root { font-family: 'Inter var', sans-serif; }
+
+/* 启用 Inter 的 OpenType 特性 */
+@supports (font-variation-settings: normal) {
+  :root { font-family: 'Inter var', sans-serif; }
+}
