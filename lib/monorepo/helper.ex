@@ -82,22 +82,24 @@ defmodule Monorepo.Helper do
   def s3_file_with_domain(filename), do: "https://#{load_s3_config(:domain)}/#{filename}"
 
   def upload_entry_information(%Phoenix.LiveView.UploadEntry{client_type: mime_type} = entry, file_path) do
-    {:ok, data} = ffprobe(file_path)
-
-    video_stream = Enum.find(data["streams"], &(&1["codec_type"] == "video"))
-    width = video_stream["width"]
-    height = video_stream["height"]
-    duration = format_duration(video_stream["duration"])
-    case put_object(entry, file_path) do
-      nil -> nil
-      filename ->
-        entry_information(mime_type, width, height, duration, filename)
-        |> Map.put(:filesize, entry.client_size)
-        |> Map.put(:filename, filename)
-        |> Map.put(:mime_type, mime_type)
-        |> Map.put(:width, width)
-        |> Map.put(:height, height)
-        |> Map.put(:type, Path.extname(entry.client_name))
+    case ffprobe(file_path) do
+      {:ok, data} ->
+        video_stream = Enum.find(data["streams"], &(&1["codec_type"] == "video"))
+        width = video_stream["width"]
+        height = video_stream["height"]
+        duration = format_duration(video_stream["duration"])
+        case put_object(entry, file_path) do
+          nil -> nil
+          filename ->
+            entry_information(mime_type, width, height, duration, filename)
+            |> Map.put(:filesize, entry.client_size)
+            |> Map.put(:filename, filename)
+            |> Map.put(:mime_type, mime_type)
+            |> Map.put(:width, width)
+            |> Map.put(:height, height)
+            |> Map.put(:type, Path.extname(entry.client_name))
+        end
+      _ -> :error
     end
   end
 
@@ -153,8 +155,10 @@ defmodule Monorepo.Helper do
 
   def ffprobe(media_path) do
     FLAME.call(Monorepo.SamplePool, fn ->
-      {output, 0} = System.cmd("ffprobe", ~w(-v quiet -print_format json -show_format -show_streams -i #{media_path}))
-      Jason.decode(output)
+      case System.cmd("ffprobe", ~w(-v quiet -print_format json -show_format -show_streams -i #{media_path})) do
+        {output, 0} -> Jason.decode(output)
+        _ -> {:error, nil}
+      end
     end)
   end
 

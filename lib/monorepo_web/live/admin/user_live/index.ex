@@ -1,5 +1,5 @@
 defmodule MonorepoWeb.AdminUserLive.Index do
-  use MonorepoWeb.Admin
+  use MonorepoWeb.Admin, :live_view
 
   import Monorepo.Accounts.Helper
 

@@ -1,3 +1,4 @@
+<%= if !@modal do %>
 <div 
     phx-disconnected={
       JS.dispatch(
@@ -13,9 +14,10 @@
     }
     data-recover={JS.navigate(live_url(Map.delete(@params, :page)))}
 >
-  <.header title="Media Library" class="mb-4" description="Upload and manage your images and videos for use across your website."></.header>
 
-  <div id="media-top-nav" class="border-b flex items-center justify-between sticky top-16 z-40 bg-white !mt-8 py-2 sm:py-0">
+  <.header  title="Media Library" class="mb-4" description="Upload and manage your images and videos for use across your website."></.header>
+
+  <div id="media-top-nav" class={["border-b flex items-center justify-between sticky z-40 bg-white py-2 sm:py-0 top-16 !mt-8"]}>
     <div class="flex items-center gap-1 sm:gap-4">
         <.form id="upload-form"  phx-change="validate">
             <.live_file_input upload={@uploads.media} class="hidden"/>
@@ -41,14 +43,13 @@
             ]}
             current_tab={@params.media_type}
             inner_class = "border-none"
-            class=""
         />
     </div>
 
     <div class="flex items-center gap-4">
       <.dropdown id="actions-dorpdown">
         <:button_slot disabled={false} 
-          class="inline-flex items-center justify-center gap-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 rounded-md text-sm bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 !-m-0"
+          class={["inline-flex items-center justify-center gap-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 rounded-md text-sm bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 !-m-0"]}
         >
           <.badge 
             variant="gray" 
@@ -160,34 +161,15 @@
                   id={"#{id}-media-check"}
                   class="absolute top-2 right-2 opacity-0 space-y-1 group-hover:opacity-75"
                 >
-                  <%!-- <div 
+                  <div 
+                    phx-click={
+                      JS.set_attribute({"src", ~p"/admin/media/#{media.id}/edit"}, to: "#media-edit-iframe")
+                      |> show_modal("media-edit-modal")
+                    }
+                    phx-value-id={media.id}
                     class="rounded-md p-1 bg-black"
-                    phx-click={
-                      JS.dispatch("media:click", to: "##{id}-media")
-                    }
                   >
-                    <Lucideicons.check class="text-white size-3 sm:size-4"/>
-                  </div> --%>
-                  <div 
-                    :if={is_image_mime_type(media.post_mime_type)}
-                    class="rounded-md p-1 bg-black" 
-                    phx-click={
-                      JS.set_attribute({"src", media.guid}, to: "#image-view")
-                      |> show_modal("media-image-view")
-                    }
-                  >
-                    <Lucideicons.search class="text-white size-3 sm:size-4"/>
-                  </div>
-                  <div 
-                    :if={is_video_mime_type(media.post_mime_type)}
-                    class="rounded-md p-1 bg-black" 
-                    phx-click={
-                      JS.set_attribute({"src", media.guid}, to: "#video-view")
-                      |> JS.set_attribute({"type", media.post_mime_type}, to: "#video-view")
-                      |> show_modal("media-video-view")
-                    }
-                  >
-                    <Lucideicons.play class="text-white size-3 sm:size-4"/>
+                    <Lucideicons.settings_2 class="text-white size-3 sm:size-4"/>
                   </div>
                 </div>
               </div>
@@ -201,21 +183,191 @@
   </div>
 </div>
 
-
 <.modal 
-  id="media-image-view"
-  inner_class="sm:!max-w-[90vw] sm:!max-h-[90vh] overflow-scroll !p-0 !m-0"
-  show={false}
+  id={"media-edit-modal"}
+  inner_class="sm:!max-w-[60vw] sm:!max-h-[70vh] overflow-scroll !p-0 !m-0  lg:min-w-[1000px] lg:min-h-[650px] lg:w-[1000px] lg:h-[650px]"
 >
-  <img id="image-view"/>
+  <iframe id="media-edit-iframe" class="w-full h-full"></iframe>
 </.modal>
 
-<.modal 
-  id="media-video-view"
-  inner_class="sm:!max-w-[90vw] sm:!max-h-[90vh] overflow-scroll !p-0 !m-0"
-  show={false}
+<% else %>
+
+<div 
+    phx-disconnected={
+      JS.dispatch(
+        "app:saveLocalStorage", 
+        detail: %{
+          key: "Admin:media:index:recover", 
+          value: "data-recover"
+        }
+      )
+    }
+    phx-connected={
+      JS.dispatch("app:recoverConnection", detail: %{key: "Admin:media:index:recover"})
+    }
+    data-recover={JS.navigate(live_url(Map.delete(@params, :page)))}
 >
-  <video class="w-full h-full object-cover" controls>
-      <source id="video-view"/>
-  </video>
-</.modal>
+
+  <div id="media-top-nav" class={["border-b flex items-center justify-between sticky z-40 bg-white py-2 sm:py-0"]}>
+    <div class="flex items-center gap-1 sm:gap-4">
+        <.form id="upload-form"  phx-change="validate">
+            <.live_file_input upload={@uploads.media} class="hidden"/>
+            <.button variant="secondary" class="!p-0 !m-0 sm:w-32" :if={!is_uploading?(@uploads.media)} id="media-upload-button">
+                <label for={@uploads.media.ref}  class="flex items-center gap-1 cursor-pointer px-4 py-2">
+                    <Lucideicons.image_plus class="w-5 h-5" />
+                    <span class="hidden sm:inline">Add new</span>
+                </label>
+            </.button>
+            <.button variant="secondary" class="!p-0 !m-0  w-32" :if={is_uploading?(@uploads.media)} disabled>
+            <label  class="flex items-center gap-1 cursor-pointer px-4">
+                <Lucideicons.loader_circle class="w-5 h-5 animate-spin" />
+                <span class="hidden sm:inline">Uploading...</span>
+            </label>
+            </.button>
+        </.form>
+        <.tabs_with_badges
+            id="post-image-selector-tabs"
+            tabs={[
+              %{label: "All", value: "", href: live_url(%{@params | page: 1, media_type: ""}), badge: @count_all},
+              %{label: "Images", value: "image", href: live_url(%{@params | page: 1, media_type: "image"}), badge: @count_images},
+              %{label: "Videos", value: "video", href: live_url(%{@params | page: 1, media_type: "video"}), badge: @count_videos}
+            ]}
+            current_tab={@params.media_type}
+            inner_class = "border-none"
+        />
+    </div>
+
+    <div class="flex items-center gap-4">
+      <.dropdown id="actions-dorpdown">
+        <:button_slot disabled={false} 
+          class={["inline-flex items-center justify-center gap-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 rounded-md text-sm bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 !-m-0"]}
+        >
+          <.badge 
+            variant="gray" 
+            class="!rounded-full px-1" 
+            data-selected-counter={true}
+          >0</.badge>
+          Actions
+          <Lucideicons.chevron_down class="w-4 h-4" />
+        </:button_slot>
+        <:menu_slot  data-menu-id="actions-menu" class="w-44">
+            <div class="py-1" role="none">
+              <.dropdown_link 
+                class={["flex items-center gap-2"]}
+                data-action-link='select-all'
+                phx-click={
+                  JS.dispatch("actions:selectAll:click")
+                  |> JS.exec("phx-click-away", to: "[data-menu-id='actions-menu']")
+                }
+              >
+                <.icon name="hero-check-circle" class="size-5" /> Select All
+              </.dropdown_link>
+              <.dropdown_link 
+                class={["flex items-center gap-2 opacity-50 pointer-events-none"]} 
+                data-action-link='deselect-all'
+                disabled={true}
+                phx-click={
+                  JS.dispatch("actions:deselectAll:click")
+                  |> JS.exec("phx-click-away", to: "[data-menu-id='actions-menu']")
+                }
+              >
+                <.icon name="hero-x-circle" class="size-5" /> Deselect All
+              </.dropdown_link>
+            </div>
+            <div class="py-1" role="none">
+              <.dropdown_link 
+                class={["flex items-center gap-2 opacity-50 pointer-events-none"]} 
+                data-confirm="Are you sure?"
+                data-action-link="delete-selected"
+                phx-click={
+                  JS.dispatch("media:actions:deleteSelected")
+                  |> JS.exec("phx-click-away", to: "[data-menu-id='actions-menu']")
+                }
+              >
+                <.icon name="hero-trash" class="size-5" /> Delete Selected
+              </.dropdown_link>
+            </div>
+        </:menu_slot>
+      </.dropdown>
+      <.form class="hidden sm:block" phx-change="search-image" phx-submit="search-image">
+        <.search_input id="image-search-text-input" name="q" value={@params.q} phx-debounce="300" aria-label="Search"/>
+      </.form>
+    </div>
+  </div>
+
+  <div 
+    class="mt-4"
+  >
+    <ul
+        id="media-list-stream"
+        role="list"
+        phx-update={"stream"}
+        phx-page-loading
+        data-is-uploading={is_uploading?(@uploads.media)}
+        phx-viewport-bottom={!is_uploading?(@uploads.media) &&!@end_of_timeline? &&  "load-more"}
+        class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8 min-h-[300px]"
+        phx-mounted={JS.dispatch("app:addOverlayOnDragOver")}
+        phx-drop-target={@uploads.media.ref}
+    >
+      <li class="relative" :for={{id, media} <- @streams.medias} :if={!Map.has_key?(media, :post_meta)} id={id}>
+        <div class="group overflow-hidden rounded-lg bg-gray-100">
+            <div class="aspect-[10/7]">
+                <.live_img_preview
+                :if={is_image_mime_type(media.client_type)}
+                entry={media}
+                class={["pointer-events-none w-full h-full object-cover group-hover:opacity-75 animate-pulse"]}
+                />
+            </div>
+            <button type="button" class="absolute inset-0 focus:outline-none">
+                <span class="sr-only">View details for {media.client_name}</span>
+            </button>
+        </div>
+        <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900">{media.client_name}</p>
+        <p class="pointer-events-none block text-sm font-medium text-gray-500">{bits_to_readable(media.client_size)}</p>
+      </li>
+      <li class="relative" :for={{id, media} <- @streams.medias} :if={Map.has_key?(media, :post_meta)} id={id}>
+        <% metas = struct_meta( media.post_meta) %>
+        <div 
+            id={"#{id}-media"}
+            class="group overflow-hidden rounded-lg bg-gray-100"
+            data-media-id={media.id}
+            phx-click={
+              JS.dispatch("media:click", to: "##{id}-media")
+            }
+        >
+            <div class="aspect-[10/7]">
+                <img
+                    :if={is_image_mime_type(media.post_mime_type)}
+                    src={fetch_image_file_from_attachment_metadata(metas.attachment_metadata, ["medium", "thumbnail"])}
+                    class={["pointer-events-none w-full h-full object-cover group-hover:opacity-75"]}
+                />
+                <video class="w-full h-full  object-cover" controls :if={is_video_mime_type(media.post_mime_type)}>
+                    <source src={media.guid} type={media.post_mime_type}>
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <button type="button" class="absolute inset-0 focus:outline-none">
+              <div class="w-full h-full hidden group-hover:block" id={"#{id}-media-overlay"}>
+                <div 
+                  id={"#{id}-media-check"}
+                  class="absolute top-2 right-2 opacity-0 space-y-1 group-hover:opacity-75"
+                >
+                  <div 
+                    phx-click={"edit"}
+                    phx-value-id={media.id}
+                    class="rounded-md p-1 bg-black"
+                  >
+                    <Lucideicons.settings_2 class="text-white size-3 sm:size-4"/>
+                  </div>
+                </div>
+              </div>
+              <span class="sr-only">View details for {media.post_title}</span>
+            </button>
+        </div>
+        <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900">{media.post_title}</p>
+        <p class="pointer-events-none block text-sm font-medium text-gray-500">{bits_to_readable(metas.attachment_filesize)}</p>
+      </li>
+    </ul>
+  </div>
+</div>
+<% end %>

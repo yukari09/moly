@@ -40,12 +40,10 @@ defmodule Monorepo.Contents.Post do
     end
 
     update :update_media do
-      require_atomic? false
       accept [:post_title, :post_content]
 
-      argument :post_meta, {:array, :map} do
-        allow_nil? false
-      end
+      argument :caption, :string
+      argument :alt_text, :string
 
       change after_action(&update_media_meta/3)
     end
@@ -189,23 +187,14 @@ defmodule Monorepo.Contents.Post do
     changeset
   end
 
+  defp update_media_meta(%{arguments: arguments} = _changeset, post, _context) do
+    # Ash.update!(post, %{caption: caption, alt_text: alt_text}, actor: context.actor)
+    {:ok, post}
+  end
+
   defp change_post_name(changeset, _) do
     hash = Monorepo.Helper.generate_random_str()
     Ash.Changeset.force_change_attribute(changeset, :post_name, hash)
   end
-
-  defp update_media_meta(%{arguments: %{post_meta: post_meta}} = _changeset, post, context) when is_list(post_meta) do
-    Enum.filter(post_meta, fn
-      %{"id" => _id, "meta_value" => _meta_value, "_form_type" => "update"} -> true
-      _ -> false
-    end)
-    |> Enum.map(fn %{"id" => id, "meta_value" => meta_value} ->
-      changeset = %Monorepo.Contents.PostMeta{id: id}
-      Ash.update!(changeset, %{meta_value: meta_value}, actor: context.actor)
-    end)
-
-    {:ok, post}
-  end
-
 
 end

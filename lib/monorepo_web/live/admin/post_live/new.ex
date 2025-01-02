@@ -1,11 +1,11 @@
 defmodule MonorepoWeb.AdminPostLive.New do
-  use MonorepoWeb.Admin, layout: false
+  use MonorepoWeb.Admin, :live_view
 
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
       socket,
-      layout: false
+      layout: {MonorepoWeb.Layouts, :admin_modal}
     }
   end
 

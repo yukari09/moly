@@ -345,7 +345,7 @@ defmodule MonorepoWeb.TailwindUI do
   def badge_span(assigns) do
     ~H"""
     <span :if={@badge} class={[
-      "hidden rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-900 lg:inline-block",
+      "hidden rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-900 md:inline-block",
       @class
     ]}>
       { @badge }
@@ -438,6 +438,7 @@ defmodule MonorepoWeb.TailwindUI do
   attr(:label, :string, required: true)
   attr(:placeholder, :string, default: nil)
   attr(:class, :string, default: nil)
+  attr(:container_class, :string, default: nil)
   attr(:help_text, :string, default: nil)
   attr(:errors, :list, default: [])
   attr(:rest, :global)
@@ -448,7 +449,7 @@ defmodule MonorepoWeb.TailwindUI do
     assigns = assign(assigns, :errors, error_messages)
 
     ~H"""
-    <div>
+    <div class={@container_class}>
       <input
         :if={@aria_label}
         type={@type}

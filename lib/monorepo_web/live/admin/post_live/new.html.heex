@@ -1,30 +1,30 @@
 <div>
-    <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
-      <.link phx-click={JS.dispatch("app:historyback")} class="flex flex-shrink-0 items-center">
-        <img class="h-8 w-auto" src="/images/logo.png" alt="Your Company">
-      </.link>
-      <!-- Separator -->
-      <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
+  <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
+    <.link patch={~p"/admin/posts/index"} class="flex flex-shrink-0 items-center">
+      <img class="h-8 w-auto" src="/images/logo.png" alt="Your Company">
+    </.link>
+    <!-- Separator -->
+    <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
 
-      <div class="flex flex-1 gap-x-4 self-stretch items-center lg:gap-x-6">
-        <.link class="text-sm text-primary text-gray-500 ml-auto">Save draft</.link>
-        <.link class="text-sm text-primary flex items-center gap-x-1 text-gray-500">
-          <Lucideicons.laptop  class="w-4 h-4" />
-          Preview
-        </.link>
-        <div class="flex items-center gap-x-4 lg:gap-x-6">
-          <.button size="sm" >Publish</.button>
-        </div>
-        <.link 
-          class="text-sm text-primary text-gray-500" 
-          phx-click={
-            toggle_sidebar("#new-post-sidebar")
-          }
-        >
-          <Lucideicons.panel_right  class="w-4 h-4" />
-        </.link>
+    <div class="flex flex-1 gap-x-4 self-stretch items-center lg:gap-x-6">
+      <.link class="text-sm text-primary text-gray-500 ml-auto">Save draft</.link>
+      <.link class="text-sm text-primary flex items-center gap-x-1 text-gray-500">
+        <Lucideicons.laptop  class="w-4 h-4" />
+        Preview
+      </.link>
+      <div class="flex items-center gap-x-4 lg:gap-x-6">
+        <.button size="sm" >Publish</.button>
       </div>
+      <.link 
+        class="text-sm text-primary text-gray-500" 
+        phx-click={
+          toggle_sidebar("#new-post-sidebar")
+        }
+      >
+        <Lucideicons.panel_right  class="w-4 h-4" />
+      </.link>
     </div>
+  </div>
 </div>
 
 <div class="flex items-top justify-between mx-auto h-[calc(100vh-4rem)]">
@@ -42,7 +42,6 @@
     </div> 
   </div>
 
- 
   <div 
       id="new-post-sidebar" 
       class="pointer-events-auto w-screen max-w-sm border-l border-gray-200 h-[calc(100vh-4rem)] overflow-y-scroll"
@@ -58,7 +57,7 @@
             <.button 
               variant="secondary" 
               class="w-full"
-              phx-click={show_modal("post-image-selector")}
+              phx-click={JS.set_attribute({"src", ~p"/admin/media?modal=true"}, to: "#media-iframe") |> show_modal("post-image-selector")}
             >
               Set featured image
             </.button>
@@ -151,78 +150,37 @@
                   <li>
                       <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Customer Success</a>
                     </li>
-                  
                 </ul>
               </div>
           </li>
       </ul>
     </div>
   </div> 
-
-
 </div>
 
 
 
 <.modal 
   id="post-image-selector"
-  inner_class="sm:!max-w-[80%] sm:h-[80%] sm:overflow-scroll-y !p-0 !m-0"
+  inner_class="sm:!max-w-[60vw] sm:!max-h-[70vh] overflow-scroll !p-0 !m-0  lg:min-w-[1000px] lg:min-h-[650px] lg:w-[1000px] lg:h-[650px]"
 >
 
+<div class="flex flex-col h-full">
 
-
-
-  <div>
-
-    <div class="border-b flex items-center justify-between px-4 mt-2.5">
-      <div class="flex items-center gap-4">
-          <.button variant="secondary" class="flex items-center gap-1">
-            <Lucideicons.image_plus class="w-4 h-4" />
-            Add new
-          </.button>
-
-       <.tabs_with_badges
-        id="post-image-selector-tabs"
-        tabs={[
-          %{label: "All", value: "applied", href: "#", badge: 52},
-          %{label: "Images", value: "phone_screening", href: "#", badge: 6},
-          %{label: "This post", value: "interview", href: "#", badge: 4},
-          %{label: "Videos", value: "offer", href: "#", badge: nil}
-        ]}
-        current_tab="interview"
-        inner_class = "border-none"
-      />
-      </div>
-          <.form>
-            <.search_input id="image-search-text-input" name="image_name"/>
-          </.form>
+    <div class="flex justify-start px-4 py-2.5 gap-2 border-b border-gray-200 mb-1">
+      <.button variant="outline" phx-click={JS.dispatch("app:contentWindowHistoryback", to: "#media-iframe")} class="!text-gray-500">
+        <Lucideicons.arrow_left class="w-4 h-4" />&nbsp;Back
+      </.button>
     </div>
 
-
-    <div class="px-4 py-4">
- 
-      <ul role="list" class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
-        <li class="relative">
-          <div class="group overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100">
-            <img src="https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80" alt="" class="pointer-events-none aspect-[10/7] object-cover group-hover:opacity-75">
-            <button type="button" class="absolute inset-0 focus:outline-none">
-              <span class="sr-only">View details for IMG_4985.HEIC</span>
-            </button>
-          </div>
-          <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900">IMG_4985.HEIC</p>
-          <p class="pointer-events-none block text-sm font-medium text-gray-500">3.9 MB</p>
-        </li>
-
-        <!-- More files... -->
-      </ul>
+    <div class="px-4 lg:px-6 flex-1">
+      <iframe id="media-iframe" class="w-full h-full"></iframe>
     </div>
 
-    <div class="flex justify-end px-4 pt-2.5 pb-4 gap-2 border-t border-gray-200">
+    <div class="flex justify-end px-4 pt-2.5 pb-4 gap-2 border-t border-gray-200 mt-1">
       <.button variant="gray" phx-click={hide_modal("post-image-selector")}>Cancel</.button>
       <.button variant="gray" class="!text-gray-500" disable={true}>Insert</.button>
     </div>
-  </div>
+</div>
+
 </.modal>
-
-
-

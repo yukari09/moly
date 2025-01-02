@@ -1,5 +1,5 @@
 defmodule MonorepoWeb.AdminDashboardLive do
-  use MonorepoWeb.Admin
+  use MonorepoWeb.Admin, :live_view
 
   @impl true
   def render(assigns) do

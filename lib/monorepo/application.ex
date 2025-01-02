@@ -25,9 +25,9 @@ defmodule Monorepo.Application do
         FLAME.Pool,
         name: Monorepo.SamplePool,
         min: 0,
-        max: 10,
-        max_concurrency: 5,
-        idle_shutdown_after: 30_000,
+        max: 32,
+        max_concurrency: 8,
+        idle_shutdown_after: 120_000,
         log: :debug
       }
     ]

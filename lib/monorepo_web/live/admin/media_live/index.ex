@@ -1,5 +1,5 @@
 defmodule MonorepoWeb.AdminMediaLive.Index do
-  use MonorepoWeb.Admin
+  use MonorepoWeb.Admin, :live_view
 
   require Logger
 
@@ -7,8 +7,10 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
   @model Monorepo.Contents.Post
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok,
+  def mount(params, _session, socket) do
+    Phoenix.PubSub.subscribe(Monorepo.PubSub, "admin:media")
+
+    socket =
       socket
       |> allow_upload(
         :media,
@@ -18,27 +20,39 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
         progress: &handle_progress/3,
         max_entries: 120
       )
-    }
-  end
 
-  @impl true
-  def handle_params(params, _uri, %{assigns: %{params: _}} = socket) do
-    socket =
-      socket
-      |> assign(initial_params(params))
-      |> get_list_by_params(true)
+    [socket, opts] =
+      if Map.has_key?(params, "modal") do
+        [assign(socket, :modal, true), [layout: {MonorepoWeb.Layouts, :admin_modal}]]
+      else
+        [assign(socket, :modal, false), []]
+      end
 
-    {:noreply, socket}
+    {:ok, socket, opts}
   end
 
   @impl true
   def handle_params(params, _uri, socket) do
-    new_socket =
+    socket =
       socket
       |> assign(initial_params(params))
-      |> get_list_by_params()
-    {:noreply, new_socket}
+
+    refresh? =
+      if Map.has_key?(socket.assigns, :query_params) do
+        socket.assigns.query_params != params
+      else
+        false
+      end
+
+    socket =
+      socket
+      |> assign(:query_params, params)
+      |> assign(:per_page, @per_page)
+      |> get_list_by_params(refresh?)
+
+    {:noreply, socket}
   end
+
 
   @impl true
   def handle_event("validate", _params, socket) do
@@ -66,6 +80,15 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
     {:noreply, socket}
   end
 
+  def handle_event("edit", %{"id" => id}, socket) do
+    socket =
+      socket
+      |> assign(:page_title, "Edit Media")
+      |> assign(:post_id, id)
+      |> assign(:live_action, :edit)
+
+    {:noreply, socket}
+  end
 
   def handle_event("media:delete:selected", %{"data-id" => data_id}, socket) do
     data_id = String.split(data_id, ",")
@@ -98,8 +121,6 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
       |> get_list_by_params(true)
     {:noreply, socket}
   end
-
-
 
   def handle_progress(:media, entry, socket) do
     if entry.done? do
@@ -143,46 +164,56 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
 
   @impl true
   def handle_info({_ref, {:media_upload, {entry, path}}}, socket) do
-    %{mime_type: mime_type, file: file, filename: filename, filesize: filesize} = meta_data = upload_entry_information(entry, path)
-
-    client_name_with_extension = extract_filename_without_extension(entry.client_name)
-
-    metas =
-      [
-        %{meta_key: :attached_file, meta_value: filename},
-        %{meta_key: :attachment_filesize, meta_value: "#{filesize}"},
-        %{meta_key: :attachment_metadata, meta_value: Jason.encode!(meta_data)},
-        %{meta_key: :attachment_image_alt, meta_value: client_name_with_extension},
-        %{meta_key: :attachment_image_caption, meta_value: client_name_with_extension},
-      ]
-
-    attrs = %{
-      post_title: client_name_with_extension,
-      post_mime_type: mime_type,
-      guid: file,
-      post_content: "",
-      metas: metas
-    }
-
-    {:ok, media} = Monorepo.Contents.create_media(attrs, actor: socket.assigns.current_user)
-    media = media |> Ash.load!([:post_meta])
-
-    count_all = socket.assigns.count_all + 1
-    count_videos = if is_video_mime_type(media.post_mime_type), do: socket.assigns.count_videos + 1, else: socket.assigns.count_videos
-    count_images = if is_image_mime_type(media.post_mime_type), do: socket.assigns.count_images + 1, else: socket.assigns.count_images
-
     socket =
-      socket
-      |> stream_delete_by_dom_id(:medias, "medias-#{entry.uuid}")
-      |> stream_insert(:medias, media, at: 0)
-      |> assign(count_all: count_all)
-      |> assign(count_videos: count_videos)
-      |> assign(count_images: count_images)
+      case upload_entry_information(entry, path) do
+        :error ->
+          socket
+          |> put_flash(:error, "Error uploading file \"#{entry.client_name}\"")
+        %{mime_type: mime_type, file: file, filename: filename, filesize: filesize} = meta_data ->
+
+          client_name_with_extension = extract_filename_without_extension(entry.client_name)
+
+          metas =
+            [
+              %{meta_key: :attached_file, meta_value: filename},
+              %{meta_key: :attachment_filesize, meta_value: "#{filesize}"},
+              %{meta_key: :attachment_metadata, meta_value: Jason.encode!(meta_data)},
+              %{meta_key: :attachment_image_alt, meta_value: client_name_with_extension},
+              %{meta_key: :attachment_image_caption, meta_value: client_name_with_extension},
+            ]
+
+          attrs = %{
+            post_title: client_name_with_extension,
+            post_mime_type: mime_type,
+            guid: file,
+            post_content: "",
+            metas: metas
+          }
+
+          {:ok, media} = Monorepo.Contents.create_media(attrs, actor: socket.assigns.current_user)
+          media = media |> Ash.load!([:post_meta])
+
+          count_all = socket.assigns.count_all + 1
+          count_videos = if is_video_mime_type(media.post_mime_type), do: socket.assigns.count_videos + 1, else: socket.assigns.count_videos
+          count_images = if is_image_mime_type(media.post_mime_type), do: socket.assigns.count_images + 1, else: socket.assigns.count_images
+
+          socket =
+            socket
+            |> stream_insert(:medias, media, at: 0)
+            |> assign(count_all: count_all)
+            |> assign(count_videos: count_videos)
+            |> assign(count_images: count_images)
+
+          File.rm(path)
+
+          socket
+      end
 
     File.rm(path)
-    {:noreply, socket}
+    {:noreply, stream_delete_by_dom_id(socket, :medias, "medias-#{entry.uuid}")}
   end
 
+  def handle_info({:media_update, media}, socket), do: {:noreply, stream_insert(socket, :medias, media)}
   def handle_info(_msg, socket), do: {:noreply, socket}
 
 

@@ -54,6 +54,17 @@ window.addEventListener("phx:js-exec", ({detail}) => {
   })
 })
 
+//disabled user redirect  
+window.addEventListener("phx:disabledRedirect", (event) => {
+  event.preventDefault()
+  event.stopPropagation()
+})
+
+//enabled user redirect  
+window.addEventListener("phx:enabledRedirect", (event) => {
+  event.stopPropagation()
+})
+
 window.addEventListener("app:disabledFormElement", (event) => {
   //disabled this form elements like input, select, checkbox, etc
   const form = event.target
@@ -72,6 +83,7 @@ window.addEventListener("app:disabledFormElement", (event) => {
 
 
 window.addEventListener("app:historyback", (_) => {history.back()})
+window.addEventListener("app:contentWindowHistoryback", (event) => {event.target.contentWindow.history.back()})
 
 
 window.addEventListener("app:saveLocalStorage", ({detail}) => {
@@ -120,40 +132,3 @@ window.addEventListener("app:addOverlayOnDragOver", (event) => {
     liveSocket.execJS(event.target, `[["exec",{"attr":"phx-drop-target"}]]`);
   });
 });
- 
-
-// window.addEventListener("app:addOverlayOnDragOver", (event) => {
-//   const overlay = document.createElement('div');
-//   overlay.style.cssText = 'position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:1000;pointer-events:none;';
-//   let isOverlayAdded = false;
-
-//   event.target.addEventListener('dragenter', (e) => {
-//     e.preventDefault();
-//     if (!isOverlayAdded) {
-//       event.target.style.position = 'relative';
-//       event.target.appendChild(overlay);
-//       isOverlayAdded = true;
-//     }
-//   });
-
-//   event.target.addEventListener('dragleave', (e) => {
-//     if (!e.relatedTarget || !event.target.contains(e.relatedTarget)) {
-//       if (isOverlayAdded) {
-//         event.target.removeChild(overlay);
-//         event.target.style.position = '';
-//         isOverlayAdded = false;
-//       }
-//     }
-//   });
-
-//   event.target.addEventListener('drop', (e) => {
-//     e.preventDefault();
-//     if (isOverlayAdded) {
-//       event.target.removeChild(overlay);
-//       event.target.style.position = '';
-//       isOverlayAdded = false;
-//     }
-//     liveSocket.execJS(event.target, `[["exec",{"attr":"phx-drop-target"}]]`);
-//   });
-// });
- 
