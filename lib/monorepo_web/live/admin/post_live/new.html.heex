@@ -1,5 +1,34 @@
+<%
+  toggle_sidebar = fn toggle_el ->
+    hide_el = "#{toggle_el}[aria-expanded='false']"
+    show_el = "#{toggle_el}[aria-expanded='true']"
+
+    JS.hide(
+      transition:
+        {"transition ease-in-out duration-300 transform", "translate-x-0", "translate-x-full"},
+      to: show_el,
+      time: 300
+    )
+    |> JS.show(
+      transition:
+        {"transition ease-in-out duration-300 transform", "translate-x-full", "translate-x-0"},
+      to: hide_el,
+      time: 300
+    )
+    |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: toggle_el)
+  end
+
+
+  accordion = fn icon_el, target_el ->
+    JS.toggle_class("block hidden", to: target_el, transition: "easy-in-out duration-50", time: 50)
+    |> JS.toggle_class("border-b", transition: "easy-in-out duration-50", time: 50)
+    |> JS.toggle_class("rotate-180 text-gray-500 text-gray-400", transition: "easy-in-out duration-50", time: 50, to: icon_el)
+  end
+%>
+
+<.form :let={f} for={@form} class="h-screen" phx-change="validate">
 <div>
-  <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
+  <div class=" flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
     <.link patch={~p"/admin/posts/index"} class="flex flex-shrink-0 items-center">
       <img class="h-8 w-auto" src="/images/logo.png" alt="Your Company">
     </.link>
@@ -18,7 +47,7 @@
       <.link 
         class="text-sm text-primary text-gray-500" 
         phx-click={
-          toggle_sidebar("#new-post-sidebar")
+          toggle_sidebar.("#new-post-sidebar")
         }
       >
         <Lucideicons.panel_right  class="w-4 h-4" />
@@ -44,7 +73,7 @@
 
   <div 
       id="new-post-sidebar" 
-      class="pointer-events-auto w-screen max-w-sm border-l border-gray-200 h-[calc(100vh-4rem)] overflow-y-scroll"
+      class="pointer-events-auto w-screen max-w-sm border-l border-gray-200 h-[calc(100vh-4rem)] overflow-y-scroll overflow-x-visible"
       aria-expanded="true"
   >
     <div class="h-full overflow-y-scroll bg-white flex flex-col px-2 sm:px-4 space-y-4">
@@ -52,91 +81,134 @@
         <h2 class="text-base font-semibold text-gray-900" id="slide-over-title">Post settings</h2>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-5">
           <div>
-            <.button 
-              variant="secondary" 
-              class="w-full"
-              phx-click={JS.set_attribute({"src", ~p"/admin/media?modal=true"}, to: "#media-iframe") |> show_modal("post-image-selector")}
-            >
-              Set featured image
-            </.button>
+            <%= if !is_nil(@featured_image) do %>
+              <div class="relative aspect-[10/7]">
+                <img src={media_file_meta_image(@featured_image.post_meta, ["medium", "thumbnail", "raw"])} alt="Featured image" class="w-full h-full object-cover rounded-md" />
+                <.button 
+                  class="absolute top-2 right-2 !p-1 !size-6 bg-white !rounded-full shadow-md hover:bg-gray-100"
+                  phx-click={
+                    JS.set_attribute({"value", nil}, to: "#thumbnail_id_meta_key")
+                    |> JS.set_attribute({"value", nil}, to: "#thumbnail_id_meta_value")
+                    |> JS.push("featured_image")
+                  }
+                  variant="outline"
+                  phx-value-media-id=""
+                >
+                  <Lucideicons.x class="w-4 h-4 text-gray-500" />
+                </.button>
+              </div>
+              <input id="thumbnail_id_meta_key" name={"#{f[:post_meta].name}[0][meta_key]"} value="thumbnail_id" type="hidden"/>
+              <input id="thumbnail_id_meta_value" name={"#{f[:post_meta].name}[0][meta_value]"} value={@featured_image.id} type="hidden"/>
+            <% else %>
+              <.button 
+                variant="secondary" 
+                class="w-full"
+                phx-click={JS.set_attribute({"src", ~p"/admin/media?media_type=image&modal=true"}, to: "#media-iframe") |> show_modal("#{@selected_image_modal_id}")}
+              >
+                Set featured image
+              </.button>
+            <% end %>
           </div>
 
           <div class="text-gray-600 text-sm mx-2">Last edited 4 hours ago.</div>
 
-          <ul class="space-y-4 mx-2">
-            <li class="flex items-center text-sm">
+          <ul class="space-y-4 mx-2 text-sm">
+            <li class="flex items-center">
               <span class="font-medium w-32">Status</span>
-              <span class="text-gray-600">Draft</span>
+              <span class="text-gray-600 capitalize">{@form.source.source.attributes.post_status}</span>
             </li>
-            <li class="flex items-center text-sm">
+            <li class="flex items-center">
               <span class="font-medium w-32">Publish</span>
-              <span class="text-gray-600">Immediately</span>
+              <label class="text-gray-600 hover:underline cursor-pointer flex items-center gap-1" for={f[:post_date].id}>
+                <span :if={!f[:post_date].value || f[:post_date].value == ""}>Immediately</span>
+                <span :if={f[:post_date].value} id={f[:post_date].id<>"-txt"} phx-update="ignore" phx-hook="LocalizeDateTime">{f[:post_date].value}</span>
+                <Lucideicons.calendar class="w-4 h-4 text-gray-500" />
+              </label>
+              <.input field={f[:post_date]} label={nil} class="!w-0 !h-0 !border-0 !m-0 !!ring-0 !p-0"  phx-hook="DatetimePicker" data-utc-target={"#"<>f[:post_date].id<>"-txt"} />
             </li>
-            <li class="flex items-center text-sm">
+            <li class="flex items-center">
               <span class="font-medium w-32">Slug</span>
-              <span class="text-gray-600">slug</span>
+              <.dropdown id={f[:post_name].id <> "-dropdown"} class="flex-1">
+                <:button_slot class="text-gray-600 !p-0 !m-0">
+                  {f[:post_name].value || "Edit slug"}
+                </:button_slot> 
+                <:menu_slot class="p-3 w-72 mt-2">
+                  <div class="pb-2">
+                    <span class="font-semibold text-sm">Slug</span>
+                  </div>
+                  <div class="space-y-4 py-2">
+                    <div>
+                      <.input field={f[:post_name]} label="Unique slug" phx-debounce="blur" autocomplete="off"/>
+                    </div>
+                    <div>
+                      <span class="font-medium text-sm/6">
+                        Permanent link: <span id="{f[:post_name].id}-url" class="font-normal" phx-hook="BindInputToUrl" data-base-url={@host} data-target={"#"<>f[:post_name].id}>{@host}</span>
+                      </span>
+                    </div>
+                  </div>
+                </:menu_slot>
+              </.dropdown>
             </li>
-            <li class="flex items-center text-sm">
+            <li class="flex items-center">
               <span class="font-medium w-32">Discussion</span>
-              <span class="text-gray-600">Open</span>
+              <.toggle_switch id="comments_open_toggle"  label={nil} enabled={true} on_change={JS.toggle_attribute({"value", "1", "0"}, to: "#comments_open_meta_value")} />
+              <input id="comments_open_meta_key" name={"#{f[:post_meta].name}[1][meta_key]"} value="comments_open" type="hidden"/>
+              <input id="comments_open_meta_value" name={"#{f[:post_meta].name}[1][meta_value]"} value="1" type="hidden"/>
             </li>
-            <li class="flex items-center text-sm">
+            <li class="flex items-center">
+              <span class="font-medium w-32">Author</span>
+              <span class="text-gray-600">{Monorepo.Accounts.Helper.current_user_name(@current_user)}</span>
+            </li>
+            <%!-- <li class="flex items-center">
               <span class="font-medium w-32">Revisions</span>
               <span class="text-gray-600">4</span>
-            </li>
+            </li> --%>
           </ul>
-          <div><.button variant="secondary" class="w-full text-red-600 hover:text-red-500">Move to trash</.button></div>
+          <%!-- <div><.button variant="secondary" class="w-full text-red-600 hover:text-red-500">Move to trash</.button></div> --%>
         </div>
 
 
       <ul role="list" class="-mx-2 divide-y border-y">
         <li>
           <div>
-              <button type="button" class="hover:bg-gray-50 flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700" aria-controls="sub-menu-1"  aria-expanded="false">
+              <button 
+                type="button" 
+                class="hover:bg-gray-50 flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700" aria-controls="sub-menu-1"  aria-expanded="false"
+                phx-click={accordion.("#sub-menu-1-icon", "#sub-menu-1")}                
+              >
                 Excerpt
-                <Lucideicons.chevron_down class="w-4 h-4" />
+                <Lucideicons.chevron_down id="sub-menu-1-icon" class="w-4 h-4" />
               </button>
-              <ul  class="mt-1 px-2 hidden">
-                <li>
-                    <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Engineering</a>
-                  </li>
-                <li>
-                    <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Human Resources</a>
-                  </li>
-                <li>
-                    <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Customer Success</a>
-                  </li>
-                
-              </ul>
+              <div class="mt-1 px-2 hidden mb-2" id="sub-menu-1">
+                <.textarea field={f[:post_excerpt]} placeholder="Add an excerpt" label={nil} rows="5" />
+              </div>
+            </div>
+          </li>
+
+          <li>
+           <div>
+              <button 
+                type="button" 
+                class="hover:bg-gray-50 flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700" aria-controls="sub-menu-1"  aria-expanded="false"
+                phx-click={accordion.("#sub-menu-2-icon", "#sub-menu-2")}                
+              >
+                Categories
+                <Lucideicons.chevron_down id="sub-menu-2-icon" class="w-4 h-4" />
+              </button>
+              <div class="mt-1 px-2 hidden mb-2 space-y-2" id="sub-menu-2">
+                  <div id="term-taxonomy" class="space-y-1 max-h-[180px] overflow-y-scroll border my-2 px-4 py-2 rounded-sm" phx-update="ignore">
+                    <.category_inputs parent={nil}  form={f} />
+                  </div>
+                <div><.link class="text-gray-500 hover:underline text-sm" phx-click={show_modal(@create_category_modal_id)}>Add New Category</.link></div>
+              </div>
             </div>
           </li>
 
           <li>
             <div>
-                <button type="button" class="hover:bg-gray-50 flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700" aria-controls="sub-menu-1"  aria-expanded="false">
-                  Categories
-                  <Lucideicons.chevron_down class="w-4 h-4" />
-                </button>
-                <ul  class="mt-1 px-2 hidden">
-                  <li>
-                      <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Engineering</a>
-                    </li>
-                  <li>
-                      <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Human Resources</a>
-                    </li>
-                  <li>
-                      <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Customer Success</a>
-                    </li>
-                  
-                </ul>
-              </div>
-          </li>
-
-          <li>
-            <div>
-                <button type="button" class="hover:bg-gray-50 flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700" aria-controls="sub-menu-1"  aria-expanded="false">
+                <button type="button" class="hover:bg-gray-50 flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700" aria-controls="sub-menu-3"  aria-expanded="false">
                   Tags
                   <Lucideicons.chevron_down class="w-4 h-4" />
                 </button>
@@ -157,30 +229,58 @@
     </div>
   </div> 
 </div>
-
-
+</.form>
 
 <.modal 
-  id="post-image-selector"
-  inner_class="sm:!max-w-[60vw] sm:!max-h-[70vh] overflow-scroll !p-0 !m-0  lg:min-w-[1000px] lg:min-h-[650px] lg:w-[1000px] lg:h-[650px]"
+  id={@selected_image_modal_id}
+  inner_class="sm:!max-w-[90vw] sm:!max-h-[90vh] overflow-scroll !p-0 !m-0 h-[90vh] h-[90vh]"
+  on_cancel={
+    JS.push("reset_selected_image")
+  }
 >
 
-<div class="flex flex-col h-full">
+  <div class="flex flex-col h-full">
+      <div class="flex justify-start px-4 py-2.5 gap-2 border-b border-gray-200 mb-1">
+        <.button variant="outline" phx-click={JS.dispatch("app:contentWindowHistoryback", to: "#media-iframe")} class="!text-gray-500">
+          <Lucideicons.arrow_left class="w-4 h-4" />&nbsp;Back
+        </.button>
+      </div>
 
-    <div class="flex justify-start px-4 py-2.5 gap-2 border-b border-gray-200 mb-1">
-      <.button variant="outline" phx-click={JS.dispatch("app:contentWindowHistoryback", to: "#media-iframe")} class="!text-gray-500">
-        <Lucideicons.arrow_left class="w-4 h-4" />&nbsp;Back
-      </.button>
-    </div>
+      <div class="px-4 lg:px-6 flex-1">
+        <iframe id="media-iframe" class="w-full h-full"></iframe>
+      </div>
 
-    <div class="px-4 lg:px-6 flex-1">
-      <iframe id="media-iframe" class="w-full h-full"></iframe>
-    </div>
+      <div class="flex justify-end px-4 pt-2.5 pb-4 gap-2 border-t border-gray-200 mt-1">
+        <.button 
+          id="modal-cancel-button" 
+          variant="gray" 
+          class="w-20" 
+          phx-click={JS.exec("data-cancel", to: "##{@selected_image_modal_id}")}
+        >
+          Cancel
+        </.button>
+        <.button 
+          id="modal-comfirm-button"
+          variant="primary" 
+          class={["w-20"]}
+          phx-value-media-id={@selected_image} 
+          phx-click={
+            JS.push("featured_image")
+            |> JS.exec("data-cancel", to: "##{@selected_image_modal_id}")
+          }   
+          disabled={is_nil(@selected_image)}
+        >
+          Insert
+        </.button>
+      </div>
+  </div>
 
-    <div class="flex justify-end px-4 pt-2.5 pb-4 gap-2 border-t border-gray-200 mt-1">
-      <.button variant="gray" phx-click={hide_modal("post-image-selector")}>Cancel</.button>
-      <.button variant="gray" class="!text-gray-500" disable={true}>Insert</.button>
-    </div>
-</div>
+</.modal>
 
+<.modal 
+  id={@create_category_modal_id}
+  inner_class=""
+  phx-update="replace"
+>
+  {live_render(@socket, MonorepoWeb.AdminPostLive.NewCategory, id: "sub-menu-container", session: %{"modal_id"=>@create_category_modal_id},  sticky: false) }
 </.modal>

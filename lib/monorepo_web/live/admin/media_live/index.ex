@@ -90,6 +90,11 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
     {:noreply, socket}
   end
 
+  def handle_event("media:broadcast:selected", %{"id" => id}, socket) do
+    Phoenix.PubSub.broadcast(Monorepo.PubSub, "admin:media", {:broadcast_selected, id})
+    {:noreply, socket}
+  end
+
   def handle_event("media:delete:selected", %{"data-id" => data_id}, socket) do
     data_id = String.split(data_id, ",")
 

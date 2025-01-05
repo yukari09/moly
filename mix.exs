@@ -33,8 +33,8 @@ defmodule Monorepo.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:timex, "~> 3.7"},
       {:flame, "~> 0.5"},
-      {:timex, "~> 3.0"},
       {:ash_rbac, "~> 0.6.1"},
       {:ash_admin, "~> 0.12.0"},
       {:lucide_icons, "~> 1.1"},

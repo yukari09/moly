@@ -35,6 +35,22 @@ window.addEventListener("media:click", (event) => {
     updateStatus()
 })
 
+window.addEventListener("media:clickSingle", (event) => {
+  document.querySelectorAll(event.detail.items).forEach(el => {
+    mediaWrapRingClass.forEach(className => {
+      el.classList.remove(className)
+    })
+  })
+  mediaWrapRingClass.forEach(className => {
+    event.target.classList.add(className)
+  })
+  const encodedJS = `[["push",{"value":{"id":"${event.target.dataset.mediaId}"},"event":"media:broadcast:selected"}]]`;
+  liveSocket.execJS(event.target, encodedJS)
+  setSelectedStyle(event.target, "toggle")
+  updateStatus()
+})
+
+
 window.addEventListener("actions:selectAll:click", (event) => {
     document.querySelectorAll(mediaDataSelector).forEach(el => {
       el.classList.add(...mediaWrapRingClass)
@@ -62,19 +78,21 @@ const updateStatus = () => {
   let deselectAllLink = document.querySelector(deselectAllLinkSelector)
   let deleteSelectedLink = document.querySelector(deleteSelectedLinkSelector)
 
-  if (currentSelectedMediaCount > 0) {
-    [deselectAllLink, deleteSelectedLink].forEach(link => {enableActions(link)})
-  }else{
-    [deleteSelectedLink, deselectAllLink].forEach(link => {disableActions(link)})
-  }
+  if(selectAllLink && deselectAllLink && deleteSelectedLink){
+    if (currentSelectedMediaCount > 0) {
+      [deselectAllLink, deleteSelectedLink].forEach(link => {enableActions(link)})
+    }else{
+      [deleteSelectedLink, deselectAllLink].forEach(link => {disableActions(link)})
+    }
+    
+    if(document.querySelectorAll(mediaDataSelector).length === currentSelectedMediaCount){
+      disableActions(selectAllLink)
+    }else{
+      enableActions(selectAllLink)
+    }
   
-  if(document.querySelectorAll(mediaDataSelector).length === currentSelectedMediaCount){
-    disableActions(selectAllLink)
-  }else{
-    enableActions(selectAllLink)
+    document.querySelector(dataSelectedCounterSelector).innerHTML = currentSelectedMediaCount
   }
-
-  document.querySelector(dataSelectedCounterSelector).innerHTML = currentSelectedMediaCount
 
 }
 

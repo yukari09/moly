@@ -17,6 +17,7 @@
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
+import Alpine from 'alpinejs'
 // Establish Phoenix Socket and LiveView configuration.
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
@@ -24,12 +25,22 @@ import topbar from "../vendor/topbar"
 import Hooks from "./hooks"
 import Uploaders from "./uploaders"
 
+window.Alpine = Alpine
+Alpine.start()
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 3000,
   params: {_csrf_token: csrfToken},
   hooks: Hooks,
-  uploaders: Uploaders
+  uploaders: Uploaders,
+  dom: {
+    onBeforeElUpdated(from, to) {
+      if (from._x_dataStack) {
+        window.Alpine.clone(from, to)
+      }
+    }
+  }
 })
 
 // Show progress bar on live navigation and form submits
@@ -46,7 +57,6 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
-
 // Allows to execute JS commands from the server
 window.addEventListener("phx:js-exec", ({detail}) => {
   document.querySelectorAll(detail.to).forEach(el => {
@@ -54,17 +64,7 @@ window.addEventListener("phx:js-exec", ({detail}) => {
   })
 })
 
-//disabled user redirect  
-window.addEventListener("phx:disabledRedirect", (event) => {
-  event.preventDefault()
-  event.stopPropagation()
-})
-
-//enabled user redirect  
-window.addEventListener("phx:enabledRedirect", (event) => {
-  event.stopPropagation()
-})
-
+ 
 window.addEventListener("app:disabledFormElement", (event) => {
   //disabled this form elements like input, select, checkbox, etc
   const form = event.target
@@ -132,3 +132,5 @@ window.addEventListener("app:addOverlayOnDragOver", (event) => {
     liveSocket.execJS(event.target, `[["exec",{"attr":"phx-drop-target"}]]`);
   });
 });
+
+ 

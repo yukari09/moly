@@ -4,6 +4,7 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 @import "../node_modules/easymde/dist/easymde.min.css";
+@import "../node_modules/flatpickr/dist/flatpickr.min.css";
 
 /* This file is for your main application CSS */
 /*  
@@ -21,10 +22,8 @@ body { @apply bg-background text-foreground; }
     scrollbar-width: none;
 } */
 
-/* phx-click-loading
-phx-change-loading
-phx-submit-loading
-phx-focus-loading
-phx-blur-loading
-phx-keydown-loading
-phx-keyup-loading */
+.while-submitting { display: none; }
+.inputs { display: block; }
+
+.phx-submit-loading .while-submitting { display: block; }
+.phx-submit-loading .inputs { display: none; }

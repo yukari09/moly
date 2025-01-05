@@ -22,7 +22,7 @@ defmodule Monorepo.Contents.Post do
 
     role :admin do
       fields([:post_title, :post_name, :post_type, :post_content, :post_status, :post_mime_type, :guid, :inserted_at, :updated_at])
-      actions([:read, :create_media, :destroy_media, :update_media])
+      actions([:read, :create_media, :destroy_media, :update_media, :create_post, :update_post])
     end
   end
 
@@ -38,6 +38,26 @@ defmodule Monorepo.Contents.Post do
         countable true
       end
     end
+
+
+    create :create_post do
+      accept [:post_title, :post_content, :post_type, :post_status, :post_name]
+
+      argument :post_meta, {:array, :map} do
+        allow_nil? false
+      end
+
+      change relate_actor(:author)
+    end
+
+    create :update_post do
+      accept [:post_title, :post_content, :post_type, :post_status]
+
+      argument :post_meta, {:array, :map} do
+        allow_nil? false
+      end
+    end
+
 
     update :update_media do
       require_atomic? false
@@ -59,6 +79,7 @@ defmodule Monorepo.Contents.Post do
 
       change set_attribute(:post_type, :attachment)
       change set_attribute(:post_status, :inherit)
+      change set_attribute(:post_date,  DateTime.utc_now())
       change &change_post_name/2
       change relate_actor(:author)
 
@@ -132,6 +153,11 @@ defmodule Monorepo.Contents.Post do
     attribute :post_mime_type, :string do
       allow_nil? false
       default "post"
+    end
+
+    attribute :post_date,  :utc_datetime do
+      description "The date the post was created"
+      allow_nil? false
     end
 
     attribute :comment_count, :integer do

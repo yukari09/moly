@@ -7,6 +7,8 @@ defmodule MonorepoWeb.TailwindUI do
   import Monorepo.Helper, only: [generate_random_id: 1]
   import MonorepoWeb.CoreComponents, only: [translate_error: 1]
 
+  ## JS Commands
+
   defp hide_dropdown(menu_dom_id) do
     JS.hide(
       to: "##{menu_dom_id}",
@@ -68,7 +70,7 @@ defmodule MonorepoWeb.TailwindUI do
       |> assign(button_id: button_id)
 
     ~H"""
-    <div class={["relative", @class]} id={@id}>
+    <div class={["relative overflow-visible", @class]} id={@id}>
       <button
         :for={ {slot, index} <- Enum.with_index(@button_slot) }
         id={"#{@button_id}-#{index}"}
@@ -145,6 +147,7 @@ defmodule MonorepoWeb.TailwindUI do
   attr(:href, :string, default: nil)
   attr(:form, :any, default: nil)
   attr(:rest, :global)
+  attr(:disabled, :boolean, default: false)
   slot(:inner_block, required: true)
 
   def button(assigns) do
@@ -155,7 +158,6 @@ defmodule MonorepoWeb.TailwindUI do
       patch={@patch}
       href={@href}
       class={[
-        # Base styles
         "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
         # Size-specific styles
         @size == "xs" && "h-7 rounded-md px-2.5 text-xs",
@@ -168,6 +170,7 @@ defmodule MonorepoWeb.TailwindUI do
         @variant == "secondary" && "bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
         @variant == "gray" && "bg-gray-50 text-gray-900 hover:bg-gray-100 hover:text-gray-900",
         @variant == "error" && "bg-red-600 text-white hover:bg-red-500 focus-visible:outline-red-500",
+        @disabled && "pointer-events-none opacity-50",
         # Custom classes
         @class
       ]}
@@ -180,7 +183,6 @@ defmodule MonorepoWeb.TailwindUI do
       :if={!@navigate && !@patch && !@href}
       type={@type}
       class={[
-        # Base styles
         "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
         @form && (@form.errors != [] || @form.source.valid? == false) && "opacity-50",
         # Size-specific styles
@@ -194,6 +196,7 @@ defmodule MonorepoWeb.TailwindUI do
         @variant == "secondary" && "bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
         @variant == "gray" && "bg-gray-50 text-gray-900 hover:bg-gray-100 hover:text-gray-900",
         @variant == "error" && "bg-red-600 text-white hover:bg-red-500 focus-visible:outline-red-500",
+        @disabled && "pointer-events-none opacity-50",
         # Custom classes
         @class
       ]}
@@ -357,6 +360,7 @@ defmodule MonorepoWeb.TailwindUI do
   Avatar components for displaying user images or fallback initials.
 
   ## Examples
+
       <.avatar size="sm">
         <.avatar_image src="path/to/image.jpg" alt="User avatar" />
       </.avatar>
@@ -675,7 +679,7 @@ defmodule MonorepoWeb.TailwindUI do
     ~H"""
       <div
         id={@id}
-        class={["relative z-50 hidden", @class]}
+        class={["hidden", @class]}
         aria-labelledby="modal-title"
         role="dialog"
         aria-modal="true"
@@ -741,6 +745,7 @@ defmodule MonorepoWeb.TailwindUI do
   attr(:options, :list, required: true)
   attr(:class, :string, default: nil)
   attr :multiple, :boolean, default: false
+  attr :prompt, :string, default: nil
   attr(:rest, :global)
 
   def select(assigns) do
@@ -758,6 +763,7 @@ defmodule MonorepoWeb.TailwindUI do
           multiple={@multiple}
           {@rest}
         >
+          <option :if={@prompt} value="" disabled selected>{@prompt}</option>
           <option
             :for={{value, label} <- @options}
             value={value}
@@ -766,7 +772,7 @@ defmodule MonorepoWeb.TailwindUI do
             <%= label %>
           </option>
         </select>
-        <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+        <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
           <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
         </svg>
       </div>
@@ -775,7 +781,7 @@ defmodule MonorepoWeb.TailwindUI do
   end
 
   attr(:field, Phoenix.HTML.FormField, required: true)
-  attr(:value, :string, required: true)
+  attr(:value, :string, default: nil)
   attr(:label, :string, required: false, default: nil)
   attr(:description, :string, default: nil)
   attr(:checked, :boolean, default: false)
@@ -791,8 +797,8 @@ defmodule MonorepoWeb.TailwindUI do
             type="checkbox"
             id={@field.id}
             name={@field.name}
-            checked={@checked}
-            value={@value}
+            checked={@checked }
+            value={is_nil(@value) && @field.value || @value}
             class={[
               "col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white",
               "checked:border-gray-600 checked:bg-gray-600",
@@ -814,87 +820,6 @@ defmodule MonorepoWeb.TailwindUI do
         <span :if={@label} for={@field.id} class="font-medium text-gray-900"><%= @label %></span>
         <span :if={@description} id={"#{@field.id}-description"} class="text-gray-500"><span class="sr-only"><%= @label %> </span><%= @description %></span>
       </label>
-    </div>
-    """
-  end
-
-  attr(:class, :string, default: nil)
-  attr(:page_meta, :map, required: true)
-  attr(:current_url, :string, required: true)
-  attr(:rest, :global)
-
-  def pagination(assigns) do
-    ~H"""
-    <div class={["flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6", @class]} {@rest}>
-      <div class="flex flex-1 justify-between sm:hidden">
-        <.link
-          :if={@page_meta.prev}
-          patch={generate_page_url(@current_url, @page_meta.prev)}
-          class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Previous
-        </.link>
-        <.link
-          :if={@page_meta.next}
-          patch={generate_page_url(@current_url, @page_meta.next)}
-          class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Next
-        </.link>
-      </div>
-      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-        <div>
-          <p class="text-sm text-gray-700">
-            Showing
-            <span class="font-medium">{@page_meta.start_row}</span>
-            to
-            <span class="font-medium">{ @page_meta.end_row }</span>
-            of
-            <span class="font-medium"><%= @page_meta.total %></span>
-            results
-          </p>
-        </div>
-        <div>
-          <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-            <.link
-              :if={@page_meta.prev}
-              patch={generate_page_url(@current_url, @page_meta.prev)}
-              class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            >
-              <span class="sr-only">Previous</span>
-              <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                <path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
-              </svg>
-            </.link>
-
-            <.link
-              :for={page <- @page_meta.page_range}
-              patch={generate_page_url(@current_url, page)}
-              aria-current={page == @page_meta.current_page && "page"}
-              class={[
-                "relative inline-flex items-center px-4 py-2 text-sm font-semibold",
-                page == @page_meta.current_page && "z-10 bg-gray-800 text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
-                page != @page_meta.current_page && "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-              ]}
-            >
-              <%= page %>
-            </.link>
-
-            <span :if={@page_meta.ellipsis} class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">...</span>
-
-            <.link
-              :if={@page_meta.next}
-              patch={generate_page_url(@current_url, @page_meta.next)}
-              class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            >
-              <span class="sr-only">Next</span>
-              <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-              </svg>
-            </.link>
-          </nav>
-        </div>
-      </div>
     </div>
     """
   end
@@ -945,6 +870,7 @@ defmodule MonorepoWeb.TailwindUI do
             value={tab.value}
             selected={tab.value == @current_tab}
             phx-click={JS.patch(tab.href)}
+            disabled={tab[:disabled]}
           >
             <%= tab.label %>
           </option>
@@ -956,10 +882,11 @@ defmodule MonorepoWeb.TailwindUI do
       <div class="hidden sm:block">
         <div class={["border-b border-gray-200",@inner_class]}>
           <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-            <.link :for={tab <- @tabs} patch={tab.href} class={[
+            <.link :for={tab <- @tabs} patch={!tab[:disabled] &&tab.href} class={[
               "flex whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium",
               tab.value == @current_tab && "border-gray-500 text-gray-600",
-              tab.value != @current_tab && "border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700"
+              tab.value != @current_tab && "border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700",
+              tab[:disabled] && "cursor-not-allowed opacity-50"
             ]}>
               <%= tab.label %>
               <.badge_span class="ml-3"  badge={tab.badge} />
@@ -974,7 +901,6 @@ defmodule MonorepoWeb.TailwindUI do
 
   @doc """
   Renders flash notices.
-
   ## Examples
 
       <.flash kind={:info} flash={@flash} />
@@ -1059,6 +985,57 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
+
+  attr :id, :string, required: true
+  attr :label, :string, required: false
+  attr :description, :string, default: nil
+  attr :on_change, JS, default: %JS{}
+  attr :class, :string, default: nil
+  attr :enabled, :boolean, default: false
+  attr :rest, :global
+
+  def toggle_switch(assigns) do
+    ~H"""
+    <div id={@id} class="flex items-center">
+      <button
+        type="button"
+        class={[
+          "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2",
+          @enabled && "bg-gray-600" || "bg-gray-300",
+          @class
+        ]}
+        role="switch"
+        aria-checked="false"
+        aria-labelledby="toggle-label"
+        phx-click={
+          @on_change
+          |> JS.exec("data-toggle", to: "##{@id}-toggle")
+          |> JS.toggle_class("bg-gray-600 bg-gray-300")
+        }
+      >
+        <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+        <span
+          id={"#{@id}-toggle"}
+          aria-hidden="true"
+          class={[
+            "pointer-events-none inline-block size-5  rounded-full bg-white shadow ring-0 transform transition duration-200 ease-in-out",
+            @enabled && "translate-x-5" || "translate-x-0",
+          ]}
+          data-toggle={
+            JS.toggle_class("translate-x-5 translate-x-0")
+          }
+        ></span>
+      </button>
+      <span class="ml-3 text-sm" :if={@label}>
+        <span class="font-medium text-gray-900">{@label}</span>
+      </span>
+    </div>
+    """
+  end
+
+
+
+
   defp generate_page_url(url, new_page) do
     uri = URI.parse(url)
     query_params = URI.decode_query(uri.query) || %{}
@@ -1078,5 +1055,88 @@ defmodule MonorepoWeb.TailwindUI do
 
   defp error_messages(errors) do
     Enum.map(errors, &translate_error(&1))
+  end
+
+
+
+  attr(:class, :string, default: nil)
+  attr(:page_meta, :map, required: true)
+  attr(:current_url, :string, required: true)
+  attr(:rest, :global)
+
+  def pagination(assigns) do
+    ~H"""
+    <div class={["flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6", @class]} {@rest}>
+      <div class="flex flex-1 justify-between sm:hidden">
+        <.link
+          :if={@page_meta.prev}
+          patch={generate_page_url(@current_url, @page_meta.prev)}
+          class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Previous
+        </.link>
+        <.link
+          :if={@page_meta.next}
+          patch={generate_page_url(@current_url, @page_meta.next)}
+          class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Next
+        </.link>
+      </div>
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+            Showing
+            <span class="font-medium">{@page_meta.start_row}</span>
+            to
+            <span class="font-medium">{ @page_meta.end_row }</span>
+            of
+            <span class="font-medium"><%= @page_meta.total %></span>
+            results
+          </p>
+        </div>
+        <div>
+          <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+            <.link
+              :if={@page_meta.prev}
+              patch={generate_page_url(@current_url, @page_meta.prev)}
+              class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+            >
+              <span class="sr-only">Previous</span>
+              <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+              </svg>
+            </.link>
+
+            <.link
+              :for={page <- @page_meta.page_range}
+              patch={generate_page_url(@current_url, page)}
+              aria-current={page == @page_meta.current_page && "page"}
+              class={[
+                "relative inline-flex items-center px-4 py-2 text-sm font-semibold",
+                page == @page_meta.current_page && "z-10 bg-gray-800 text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
+                page != @page_meta.current_page && "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+              ]}
+            >
+              <%= page %>
+            </.link>
+
+            <span :if={@page_meta.ellipsis} class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">...</span>
+
+            <.link
+              :if={@page_meta.next}
+              patch={generate_page_url(@current_url, @page_meta.next)}
+              class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+            >
+              <span class="sr-only">Next</span>
+              <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+              </svg>
+            </.link>
+          </nav>
+        </div>
+      </div>
+    </div>
+    """
   end
 end

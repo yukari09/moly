@@ -11,6 +11,58 @@ defmodule Monorepo.Terms.TermTaxonomy do
     repo(Monorepo.Repo)
   end
 
+  rbac do
+    role :user do
+      fields([:read])
+      actions([:read])
+    end
+
+    role :admin do
+      fields([:taxonomy, :description, :count])
+      actions([:create, :read, :update, :destroy])
+    end
+  end
+
+  actions do
+    default_accept [:taxonomy, :description, :count]
+
+    read :read do
+      primary? true
+      prepare build(sort: [inserted_at: :desc])
+
+      pagination do
+        required? false
+        offset? true
+        keyset? true
+        countable true
+      end
+
+      argument :parent, :uuid do
+        allow_nil? true
+      end
+
+      argument :taxonomy_name, :string do
+        allow_nil? true
+      end
+
+      filter(expr(is_nil(^arg(:parent)) or parent_id == ^arg(:parent)))
+      filter(expr(is_nil(^arg(:taxonomy_name)) or taxonomy == ^arg(:taxonomy_name)))
+    end
+
+    create :create do
+      primary? true
+
+      argument :parent_id, :uuid do
+        allow_nil? true
+      end
+
+      change manage_relationship(:parent_id, :parent, type: :append_and_remove)
+    end
+
+    update :update, primary?: true
+    destroy :destroy, primary?: true
+  end
+
   attributes do
     uuid_primary_key :id
 
@@ -19,7 +71,8 @@ defmodule Monorepo.Terms.TermTaxonomy do
     end
 
     attribute :description, :string do
-      allow_nil? false
+      allow_nil? true
+      default ""
     end
 
     attribute :count, :integer do
@@ -32,7 +85,7 @@ defmodule Monorepo.Terms.TermTaxonomy do
 
   relationships do
     belongs_to :term, Monorepo.Terms.Term
-    belongs_to :parent, Monorepo.Terms.TermTaxonomy
+    belongs_to :parent, Monorepo.Terms.Term
     many_to_many :posts, Monorepo.Contents.Post, through: Monorepo.Terms.TermRelationships
   end
 end

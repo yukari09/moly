@@ -17,7 +17,7 @@
 
   <.header  title="Media Library" class="mb-4" description="Upload and manage your images and videos for use across your website."></.header>
 
-  <div id="media-top-nav" class={["border-b flex items-center justify-between sticky z-40 bg-white py-2 sm:py-0 top-16 !mt-8"]}>
+  <div id="media-top-nav" class={["border-b flex items-center justify-between sticky z-10 bg-white py-2 sm:py-0 top-16 !mt-8"]}>
     <div class="flex items-center gap-1 sm:gap-4">
         <.form id="upload-form"  phx-change="validate">
             <.live_file_input upload={@uploads.media} class="hidden"/>
@@ -185,7 +185,7 @@
 
 <.modal 
   id={"media-edit-modal"}
-  inner_class="sm:!max-w-[60vw] sm:!max-h-[70vh] overflow-scroll !p-0 !m-0  lg:min-w-[1000px] lg:min-h-[650px] lg:w-[1000px] lg:h-[650px]"
+  inner_class="sm:!max-w-[90vw] sm:!max-h-[90vh] overflow-scroll !p-0 !m-0 h-[90vh] h-[90vh]"
 >
   <iframe id="media-edit-iframe" class="w-full h-full"></iframe>
 </.modal>
@@ -205,10 +205,10 @@
     phx-connected={
       JS.dispatch("app:recoverConnection", detail: %{key: "Admin:media:index:recover"})
     }
-    data-recover={JS.navigate(live_url(Map.delete(@params, :page)))}
+    data-recover={JS.navigate(live_url(Map.delete(@params, :page) |> Map.put(:modal, true)))}
 >
 
-  <div id="media-top-nav" class={["border-b flex items-center justify-between sticky z-40 bg-white py-2 sm:py-0"]}>
+  <div id="media-top-nav" class={["border-b flex items-center justify-between sticky top-0 z-40 bg-white py-2 sm:py-0"]}>
     <div class="flex items-center gap-1 sm:gap-4">
         <.form id="upload-form"  phx-change="validate">
             <.live_file_input upload={@uploads.media} class="hidden"/>
@@ -228,9 +228,9 @@
         <.tabs_with_badges
             id="post-image-selector-tabs"
             tabs={[
-              %{label: "All", value: "", href: live_url(%{@params | page: 1, media_type: ""}), badge: @count_all},
-              %{label: "Images", value: "image", href: live_url(%{@params | page: 1, media_type: "image"}), badge: @count_images},
-              %{label: "Videos", value: "video", href: live_url(%{@params | page: 1, media_type: "video"}), badge: @count_videos}
+              %{label: "All", value: "", href: live_url(%{@params | page: 1, media_type: ""}), badge: @count_all, disabled: true},
+              %{label: "Images", value: "image", href: live_url(%{@params | page: 1, media_type: "image"}), badge: @count_images, disabled: false},
+              %{label: "Videos", value: "video", href: live_url(%{@params | page: 1, media_type: "video"}), badge: @count_videos, disabled: true}
             ]}
             current_tab={@params.media_type}
             inner_class = "border-none"
@@ -238,57 +238,6 @@
     </div>
 
     <div class="flex items-center gap-4">
-      <.dropdown id="actions-dorpdown">
-        <:button_slot disabled={false} 
-          class={["inline-flex items-center justify-center gap-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 rounded-md text-sm bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 !-m-0"]}
-        >
-          <.badge 
-            variant="gray" 
-            class="!rounded-full px-1" 
-            data-selected-counter={true}
-          >0</.badge>
-          Actions
-          <Lucideicons.chevron_down class="w-4 h-4" />
-        </:button_slot>
-        <:menu_slot  data-menu-id="actions-menu" class="w-44">
-            <div class="py-1" role="none">
-              <.dropdown_link 
-                class={["flex items-center gap-2"]}
-                data-action-link='select-all'
-                phx-click={
-                  JS.dispatch("actions:selectAll:click")
-                  |> JS.exec("phx-click-away", to: "[data-menu-id='actions-menu']")
-                }
-              >
-                <.icon name="hero-check-circle" class="size-5" /> Select All
-              </.dropdown_link>
-              <.dropdown_link 
-                class={["flex items-center gap-2 opacity-50 pointer-events-none"]} 
-                data-action-link='deselect-all'
-                disabled={true}
-                phx-click={
-                  JS.dispatch("actions:deselectAll:click")
-                  |> JS.exec("phx-click-away", to: "[data-menu-id='actions-menu']")
-                }
-              >
-                <.icon name="hero-x-circle" class="size-5" /> Deselect All
-              </.dropdown_link>
-            </div>
-            <div class="py-1" role="none">
-              <.dropdown_link 
-                class={["flex items-center gap-2 opacity-50 pointer-events-none"]} 
-                data-confirm="Are you sure?"
-                data-action-link="delete-selected"
-                phx-click={
-                  JS.dispatch("media:actions:deleteSelected")
-                  |> JS.exec("phx-click-away", to: "[data-menu-id='actions-menu']")
-                }
-              >
-                <.icon name="hero-trash" class="size-5" /> Delete Selected
-              </.dropdown_link>
-            </div>
-        </:menu_slot>
-      </.dropdown>
       <.form class="hidden sm:block" phx-change="search-image" phx-submit="search-image">
         <.search_input id="image-search-text-input" name="q" value={@params.q} phx-debounce="300" aria-label="Search"/>
       </.form>
@@ -329,10 +278,10 @@
         <% metas = struct_meta( media.post_meta) %>
         <div 
             id={"#{id}-media"}
-            class="group overflow-hidden rounded-lg bg-gray-100"
+            class="group overflow-hidden rounded-lg bg-gray-100 meida-list-item"
             data-media-id={media.id}
             phx-click={
-              JS.dispatch("media:click", to: "##{id}-media")
+              JS.dispatch("media:clickSingle", detail: %{items: ".meida-list-item"})
             }
         >
             <div class="aspect-[10/7]">
@@ -353,7 +302,7 @@
                   class="absolute top-2 right-2 opacity-0 space-y-1 group-hover:opacity-75"
                 >
                   <div 
-                    phx-click={"edit"}
+                    phx-click={JS.patch(~p"/admin/media/#{media.id}/edit?modal=true")}
                     phx-value-id={media.id}
                     class="rounded-md p-1 bg-black"
                   >
@@ -370,4 +319,5 @@
     </ul>
   </div>
 </div>
+
 <% end %>

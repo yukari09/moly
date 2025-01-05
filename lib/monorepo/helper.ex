@@ -79,7 +79,7 @@ defmodule Monorepo.Helper do
     "#{bucket}/#{filename}"
   end
 
-  def s3_file_with_domain(filename), do: "https://#{load_s3_config(:domain)}/#{filename}"
+  def s3_file_with_domain(filename), do: "#{load_s3_config(:domain_scheme)}://#{load_s3_config(:domain)}/#{filename}"
 
   def upload_entry_information(%Phoenix.LiveView.UploadEntry{client_type: mime_type} = entry, file_path) do
     case ffprobe(file_path) do
@@ -106,7 +106,7 @@ defmodule Monorepo.Helper do
   def entry_information("image"<>_, width, height, _, filename) do
     original_ratio = width / height
     sizes =
-      [smallthumbnail: 80, thumbnail: 150, medium: 300, large: 1024, xlarge: 1280, xxlarge: 2048, huge: 4096]
+      [full: width, thumbnail: 180, medium: 360, large: 1024, xlarge: 1280, xxlarge: 2048, huge: 4096]
       |> Enum.filter(fn {_, width_size} -> width >= width_size end)
       |> Enum.reduce(%{}, fn {key, width_size}, acc ->
         height_size = round(width_size / original_ratio)
@@ -124,6 +124,7 @@ defmodule Monorepo.Helper do
     %{file: s3_file_with_domain(filename), duration: duration}
   end
 
+  def struct_meta(nil), do: %{}
   def struct_meta(metas) when is_list(metas) do
     Map.new(metas, &({&1.meta_key, &1.meta_value}))
   end
@@ -133,6 +134,13 @@ defmodule Monorepo.Helper do
     |> struct_meta()
     |> Map.get(:attachment_metadata)
     |> fetch_image_file_from_attachment_metadata()
+  end
+
+  def media_file_meta_image(post_meta, image_key) when is_list(post_meta) and is_list(image_key) do
+    post_meta
+    |> struct_meta()
+    |> Map.get(:attachment_metadata)
+    |> fetch_image_file_from_attachment_metadata(image_key)
   end
 
   def fetch_image_file_from_attachment_metadata(meta_value) when is_binary(meta_value) do
