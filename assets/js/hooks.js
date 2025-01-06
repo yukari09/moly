@@ -1,15 +1,15 @@
 import EditorJS from '@editorjs/editorjs'
 import Header from "@editorjs/header"
+import List from '@editorjs/list'
+import Quote from '@editorjs/quote'
 import LazyLoad from "vanilla-lazyload"
 import flatpickr from "flatpickr"
 import { DateTime } from "luxon"
 import Tagify from '@yaireo/tagify'
 
-
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 
 let Hooks = {}
-
 Hooks.Editor = {
   mounted() {
     const editor = new EditorJS({
@@ -20,6 +20,15 @@ Hooks.Editor = {
           class: Header,
           inlineToolbar: true
         },
+        list: List,
+        quote: {
+          class: Quote,
+          inlineToolbar: true,
+          config: {
+            quotePlaceholder: 'Enter a quote',
+            captionPlaceholder: 'Quote\'s author'
+          },
+        },
       },
       data: {},
       onChange: () => {
@@ -27,41 +36,162 @@ Hooks.Editor = {
           const contentEl = document.querySelector(`#${this.el.dataset.content}`)
           if (contentEl) {
             contentEl.value = JSON.stringify(outputData)
-            // 觸發 change 事件以確保 Phoenix LiveView 能夠捕獲變化
             contentEl.dispatchEvent(new Event('change', { bubbles: true }))
+            
+            // Save current state to localStorage
+            try {
+              localStorage.setItem('editorjs-content', JSON.stringify(outputData))
+              // Enable undo button after content change
+              const undoButton = document.querySelector('[data-editor-action="undo"]')
+              if (undoButton) {
+                undoButton.removeAttribute('disabled')
+              }
+              // Disable redo button when new content is added
+              const redoButton = document.querySelector('[data-editor-action="redo"]')
+              if (redoButton) {
+                redoButton.setAttribute('disabled', 'true')
+              }
+            } catch (error) {
+              console.error('Failed to save to localStorage:', error)
+            }
           }
         }).catch((error) => {
           console.error('Saving failed: ', error)
         });
       },
       onReady: () => {
-        // 首先檢查是否有初始內容
-        const initialContent = this.el.dataset.initialContent;
-        if (initialContent) {
+        // Try to load saved content from localStorage first
+        const savedContent = localStorage.getItem('editorjs-content')
+        if (savedContent) {
           try {
-            const parsedInitialContent = JSON.parse(initialContent);
-            editor.render(parsedInitialContent);
-            return;
+            const parsedContent = JSON.parse(savedContent)
+            editor.render(parsedContent)
+            return
           } catch (error) {
-            console.error('Failed to parse initial content:', error);
+            console.error('Failed to parse saved content:', error)
           }
         }
 
-        // 如果沒有初始內容，檢查已保存的內容
-        const savedData = this.el.textContent.trim();
-        if (savedData && savedData !== "Nothing found") {
+        // Fall back to initial content from data attribute
+        const initialContent = this.el.dataset.initialContent
+        if (initialContent) {
           try {
-            const parsedData = JSON.parse(savedData);
-            editor.render(parsedData);
+            const parsedContent = JSON.parse(initialContent)
+            editor.render(parsedContent)
+            
+            // Save initial content to localStorage if it doesn't exist
+            if (!localStorage.getItem('editorjs-content')) {
+              localStorage.setItem('editorjs-content', initialContent)
+            }
+
+            // Update the hidden input field
+            const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+            if (contentEl) {
+              contentEl.value = initialContent
+              contentEl.dispatchEvent(new Event('change', { bubbles: true }))
+            }
           } catch (error) {
-            console.error('Failed to parse saved data:', error);
-            editor.render({}); // 解析失敗時使用空編輯器
+            console.error('Failed to parse initial content:', error)
           }
-        } else {
-          editor.render({}); // 沒有任何內容時使用空編輯器
         }
       }
     });
+
+    // Clear editor handler
+    window.addEventListener('app:clearEditor', () => {
+      editor.clear().then(() => {
+        // Clear the hidden input field as well
+        const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+        if (contentEl) {
+          contentEl.value = JSON.stringify({ blocks: [] })
+          contentEl.dispatchEvent(new Event('change', { bubbles: true }))
+        }
+        // Clear localStorage
+        localStorage.removeItem('editorjs-content')
+        // Disable both buttons
+        const undoButton = document.querySelector('[data-editor-action="undo"]')
+        const redoButton = document.querySelector('[data-editor-action="redo"]')
+        if (undoButton) undoButton.setAttribute('disabled', 'true')
+        if (redoButton) redoButton.setAttribute('disabled', 'true')
+      }).catch((error) => {
+        console.error('Clearing failed: ', error)
+      });
+    });
+
+    // Undo handler
+    window.addEventListener('app:editorUndo', () => {
+      const undoButton = document.querySelector('[data-editor-action="undo"]')
+      if (undoButton && !undoButton.hasAttribute('disabled')) {
+        try {
+          document.execCommand('undo')
+          // Enable redo button after undo
+          const redoButton = document.querySelector('[data-editor-action="redo"]')
+          if (redoButton) {
+            redoButton.removeAttribute('disabled')
+          }
+          // Check if we can still undo
+          if (!document.queryCommandEnabled('undo')) {
+            undoButton.setAttribute('disabled', 'true')
+          }
+        } catch (error) {
+          console.error('Undo failed:', error)
+        }
+      }
+    });
+
+    // Redo handler
+    window.addEventListener('app:editorRedo', () => {
+      const redoButton = document.querySelector('[data-editor-action="redo"]')
+      if (redoButton && !redoButton.hasAttribute('disabled')) {
+        try {
+          document.execCommand('redo')
+          // Enable undo button after redo
+          const undoButton = document.querySelector('[data-editor-action="undo"]')
+          if (undoButton) {
+            undoButton.removeAttribute('disabled')
+          }
+          // Check if we can still redo
+          if (!document.queryCommandEnabled('redo')) {
+            redoButton.setAttribute('disabled', 'true')
+          }
+        } catch (error) {
+          console.error('Redo failed:', error)
+        }
+      }
+    });
+
+    this._editor = editor;
+
+    // Enable undo/redo keyboard shortcuts
+    this.el.addEventListener('keydown', (e) => {
+      if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
+        if (e.shiftKey) {
+          // Ctrl/Cmd + Shift + Z = Redo
+          e.preventDefault();
+          this.el.dispatchEvent(new CustomEvent('app:editorRedo'));
+        } else {
+          // Ctrl/Cmd + Z = Undo
+          e.preventDefault();
+          this.el.dispatchEvent(new CustomEvent('app:editorUndo'));
+        }
+      } else if (e.key === 'y' && (e.ctrlKey || e.metaKey)) {
+        // Ctrl/Cmd + Y = Redo (alternative)
+        e.preventDefault();
+        this.el.dispatchEvent(new CustomEvent('app:editorRedo'));
+      }
+    });
+
+    // Initial button state
+    const undoButton = document.querySelector('[data-editor-action="undo"]')
+    const redoButton = document.querySelector('[data-editor-action="redo"]')
+    if (undoButton) undoButton.setAttribute('disabled', 'true')
+    if (redoButton) redoButton.setAttribute('disabled', 'true')
+  },
+
+  destroyed() {
+    if (this._editor) {
+      this._editor.destroy();
+    }
   }
 }
 
@@ -73,7 +203,6 @@ Hooks.lazyLoad = {
     new LazyLoad({container: this.el})
   }
 }
-
 
 Hooks.DatetimePicker = {
   mounted() {
@@ -111,7 +240,6 @@ Hooks.LocalizeDateTime = {
   }
 }
 
-
 Hooks.BindInputToUrl = {
   mounted() {
     this.inputElement = document.querySelector(this.el.dataset.target);
@@ -136,10 +264,11 @@ Hooks.BindInputToUrl = {
   }
 }
 
-
 Hooks.TagifyHook = {
   mounted() {
     let input = this.el;
+    const targetContainer = document.querySelector(this.el.dataset.targetContainer)
+
     this.tagify = new Tagify(input, {
       whitelist: [],  
       dropdown: {
@@ -148,11 +277,31 @@ Hooks.TagifyHook = {
     });
 
     this.tagify.on('add', (e) => {
-      console.log('Tag added:', e.detail.data);
+      console.log('Tag added:', e.detail.data)
+      const namePrefix = this.el.dataset.targetName
+      if(e.detail.data.__tagId){
+        const taxonomyInput = document.createElement('input');
+        taxonomyInput.type = 'hidden';
+        taxonomyInput.name = `${namePrefix}[][taxonomy]`;
+        taxonomyInput.value = "post_tag";
+        targetContainer.appendChild(taxonomyInput);
+
+        const termNameInput = document.createElement('input');
+        termNameInput.type = 'hidden';
+        termNameInput.name = `${namePrefix}[][name]`;
+        termNameInput.value = e.detail.data.value;
+        targetContainer.appendChild(termNameInput);
+      }
     });
 
     this.tagify.on('remove', (e) => {
-      console.log('Tag removed:', e.detail.data);
+      const namePrefix = this.el.dataset.targetName
+      const inputs = targetContainer.querySelectorAll(`input[name^="${namePrefix}"]`)
+      inputs.forEach(input => {
+        if (input.value === e.detail.data.value || input.value === "post_tag") {
+          targetContainer.removeChild(input)
+        }
+      })
     });
   },
 

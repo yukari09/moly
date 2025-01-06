@@ -7,13 +7,19 @@ defmodule MonorepoWeb.AdminPostLive.New do
 
     form = resource_to_form(socket)
 
+    term_taxonomy_categories =
+      Monorepo.Terms.read_term_taxonomy!("category", nil, actor: socket.assigns.current_user)
+      |> Ash.load!([:term], actor: socket.assigns.current_user)
+      |> Enum.map(&%{id: &1.id, name: &1.term.name})
+
     socket =
       socket
       |> assign(
         selected_image: nil,
         featured_image: nil,
         selected_categories: [],
-        form: form
+        form: form,
+        term_taxonomy_categories: term_taxonomy_categories
       )
 
     {:ok,
@@ -77,10 +83,6 @@ defmodule MonorepoWeb.AdminPostLive.New do
   end
 
   defp resource_to_form(socket) do
-    term_taxonomy_categories =
-      Monorepo.Terms.read_term_taxonomy!("category", nil, actor: socket.assigns.current_user)
-      |> Ash.load!([:term], actor: socket.assigns.current_user)
-
     AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post, [
       forms: [
         post_meta: [
@@ -91,10 +93,11 @@ defmodule MonorepoWeb.AdminPostLive.New do
         ],
         term_taxonomy_categories: [
           type: :list,
-          data: term_taxonomy_categories,
+          data: [],
           resource: Monorepo.Terms.TermTaxonomy,
           update_action: :update,
-          create_action: :create
+          create_action: :create,
+          read_action: :read
         ],
         term_taxonomy_tags: [
           type: :list,

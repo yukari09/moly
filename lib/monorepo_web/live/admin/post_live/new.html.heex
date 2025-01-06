@@ -32,17 +32,44 @@
     <.link patch={~p"/admin/posts/index"} class="flex flex-shrink-0 items-center">
       <img class="h-8 w-auto" src="/images/logo.png" alt="Your Company">
     </.link>
+
     <!-- Separator -->
     <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
 
+    <.link 
+      class="editor-action-btn"
+      phx-click={JS.dispatch("app:editorUndo", to: "#editorjs")}
+      data-editor-action="undo"
+    >
+      <Lucideicons.undo_2 class="size-5" />
+    </.link>
+
+    <.link 
+      class="editor-action-btn"
+      phx-click={JS.dispatch("app:editorRedo", to: "#editorjs")}
+      data-editor-action="redo"
+    >
+      <Lucideicons.redo_2 class="size-5" />
+    </.link>
+
     <div class="flex flex-1 gap-x-4 self-stretch items-center lg:gap-x-6">
-      <.link class="text-sm text-primary text-gray-500 ml-auto">Save draft</.link>
+      <.link class="text-sm text-primary text-gray-500 ml-auto" >Save draft</.link>
+      <.link 
+        class="text-sm text-primary flex items-center gap-x-1 text-gray-500"
+        phx-click={
+          JS.dispatch("app:clearEditor", to: "#editorjs")
+        }
+        data-confirm="Are you sure you want to clear the editor? This action cannot be undone."
+      >
+        <Lucideicons.eraser class="w-4 h-4" />
+        Clear editor
+      </.link>
       <.link class="text-sm text-primary flex items-center gap-x-1 text-gray-500">
         <Lucideicons.laptop  class="w-4 h-4" />
         Preview
       </.link>
       <div class="flex items-center gap-x-4 lg:gap-x-6">
-        <.button size="sm" >Publish</.button>
+        <.button size="sm" form={@form}>Publish</.button>
       </div>
       <.link 
         class="text-sm text-primary text-gray-500" 
@@ -60,7 +87,7 @@
   <div class="flex-1 h-full overflow-y-scroll">
     <div class="mx-auto lg:w-[840px]">
       <div class="w-[650px] mx-auto mt-8">
-        <.input field={f[:post_title]} type="text" autocomplete="off" placeholder="Add a title" class="w-full !border-0 !p-0 !text-3xl font-bold text-gray-900 !outline-none" label={nil} show_error={false} />
+        <.input field={f[:post_title]} type="text" autocomplete="off" placeholder="Add a title" class="w-full !border-0 !p-0 !text-4xl font-bold text-gray-900 !outline-none" label={nil} show_error={false} />
       </div>
       <div 
         id="editorjs" 
@@ -76,20 +103,20 @@
               type: "header",
               data: %{
                 text: "Start Writing Your New Article",
-                level: 1
+                level: 2
               }
             },
             %{
               type: "paragraph",
               data: %{
-                text: "This is where your article begins. You can start writing or use the toolbar to add more content blocks."
+                text: "This is the starting point of your article. You can begin writing or use the toolbar to add more content blocks."
               }
             },
             %{
               type: "header",
               data: %{
                 text: "Article Outline",
-                level: 2
+                level: 3
               }
             },
             %{
@@ -97,9 +124,9 @@
               data: %{
                 style: "unordered",
                 items: [
-                  "First key point",
-                  "Second key point",
-                  "Third key point"
+                  "First point",
+                  "Second point",
+                  "Third point"
                 ]
               }
             },
@@ -243,13 +270,18 @@
                 Categories
                 <Lucideicons.chevron_up id="sub-menu-2-icon" class="w-4 h-4" />
               </button>
-              <div class="mt-1 px-2   mb-2 space-y-2" id="sub-menu-2">
+              <div class="mt-1 px-2 mb-2 space-y-2" id="sub-menu-2">
                   <div id="term-taxonomy" class="space-y-1 max-h-[180px] overflow-y-scroll border my-2 px-4 py-2 rounded-sm" phx-update="ignore">
-                  <.inputs_for :let={f_cat} field={@form[:term_taxonomy_categories]}>
-                    <div class="flex items-center">
-                      <.checkbox field={f_cat[:id]} label={f_cat[:term].value.name} />
-                    </div>
-                  </.inputs_for>
+                 
+                    <.checkbox 
+                      :for={{term_taxonomy_category,i} <- Enum.with_index(@term_taxonomy_categories) }  
+                      name={"#{f[:term_taxonomies].name}[0][id]"} 
+                      value={term_taxonomy_category.id} 
+                      label={term_taxonomy_category.name} 
+                      id={"term-taxonomy-#{i}"}
+                    />
+                 
+                  
                   </div>
                 <div><.link class="text-gray-500 hover:underline text-sm" phx-click={show_modal(@create_category_modal_id)}>Add New Category</.link></div>
               </div>
@@ -270,9 +302,9 @@
                 </button>
                 <div  class="mt-1 px-2   py-2" id="sub-menu-3">
                   <div id="tagify-input-container" phx-update="ignore">
-                    <input class="w-full rounded-md" type="text" id="tagify-input" phx-hook="TagifyHook" />
+                    <input class="w-full rounded-md" type="text" id="tagify-input" phx-hook="TagifyHook" data-target-name={"#{@form[:term_taxonomy_tags].name}"}  data-target-container="#tagify-input-target" />
                   </div>
-                  <div class="mb-12"></div>
+                  <div class="mb-12" id="tagify-input-target" phx-update="ignore"></div>
                 </div>
               </div>
           </li>

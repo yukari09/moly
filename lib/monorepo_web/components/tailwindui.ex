@@ -688,7 +688,7 @@ defmodule MonorepoWeb.TailwindUI do
         phx-remove={hide_modal(@id)}
         data-cancel={JS.exec(@on_cancel, "phx-remove")}
       >
-      <div id={"#{@id}-backdrop"} class="fixed inset-0 bg-gray-500/75 transition-opacity" aria-hidden="true"></div>
+      <div id={"#{@id}-backdrop"} class="fixed inset-0 bg-gray-500/75 transition-opacity z-20" aria-hidden="true"></div>
 
       <div class="fixed inset-0 z-50 w-screen overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
@@ -781,7 +781,9 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
-  attr(:field, Phoenix.HTML.FormField, required: true)
+  attr :id, :string, default: nil
+  attr :name, :string, default: nil
+  attr(:field, Phoenix.HTML.FormField, default: nil)
   attr(:value, :string, default: nil)
   attr(:label, :string, required: false, default: nil)
   attr(:description, :string, default: nil)
@@ -796,9 +798,9 @@ defmodule MonorepoWeb.TailwindUI do
         <div class="group grid size-4 grid-cols-1 phx-submit-loading:opacity-50" >
           <input
             type="checkbox"
-            id={@field.id}
-            name={@field.name}
-            checked={@checked }
+            id={@id || @field.id}
+            name={@name || @field.name}
+            checked={@checked}
             value={is_nil(@value) && @field.value || @value}
             class={[
               "col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white",
@@ -817,9 +819,9 @@ defmodule MonorepoWeb.TailwindUI do
           </svg>
         </div>
       </div>
-      <label class="text-sm/6 cursor-pointer" for={@field.id}>
-        <span :if={@label} for={@field.id} class="font-medium text-gray-900"><%= @label %></span>
-        <span :if={@description} id={"#{@field.id}-description"} class="text-gray-500"><span class="sr-only"><%= @label %> </span><%= @description %></span>
+      <label class="text-sm/6 cursor-pointer" for={@id || @field.id}>
+        <span :if={@label} for={@id || @field.id} class="font-medium text-gray-900"><%= @label %></span>
+        <span :if={@description} id={"#{@id || @field.id}-description"} class="text-gray-500"><span class="sr-only"><%= @label %> </span><%= @description %></span>
       </label>
     </div>
     """
