@@ -39,7 +39,6 @@ defmodule MonorepoWeb.AdminMediaLive.Edit do
       case updated_media do
         {:ok, media} ->
           media = Ash.load!(media, [:post_meta])
-          Phoenix.PubSub.broadcast(Monorepo.PubSub, "admin:media", {:media_update, media})
 
           socket
           |> assign(:media, media)

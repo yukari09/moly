@@ -3,7 +3,6 @@ defmodule MonorepoWeb.AdminPostLive.New do
 
   @impl true
   def mount(_params, _session, socket) do
-    Phoenix.PubSub.subscribe(Monorepo.PubSub, "admin:media")
 
     form = resource_to_form(socket)
 
@@ -15,8 +14,6 @@ defmodule MonorepoWeb.AdminPostLive.New do
     socket =
       socket
       |> assign(
-        selected_image: nil,
-        featured_image: nil,
         selected_categories: [],
         form: form,
         term_taxonomy_categories: term_taxonomy_categories
@@ -38,35 +35,12 @@ defmodule MonorepoWeb.AdminPostLive.New do
     {:noreply, assign(socket, host: "#{scheme}://#{authority}/p")}
   end
 
-  @impl true
-  def handle_info({:broadcast_selected, id}, socket) do
-    socket =
-      socket
-      |> assign(:selected_image, id)
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("featured_image", %{"media-id" => id}, socket) do
-    socket =
-      case id do
-        "" -> assign(socket, :featured_image, nil)
-        nil -> assign(socket, :featured_image, nil)
-        id ->
-          media =
-            Ash.get!(Monorepo.Contents.Post, id, actor: socket.assigns.current_user)
-            |> Ash.load!([:post_meta])
-
-          assign(socket, :featured_image, media)
-      end
-    {:noreply, socket}
-  end
 
 
-  def handle_event("reset_selected_image", _, socket) do
-    {:noreply, assign(socket, :selected_image, nil)}
-  end
+
+
+
+
 
   def handle_event("validate", %{"form" => params}, socket) do
     selected_categories =

@@ -8,7 +8,6 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
 
   @impl true
   def mount(params, _session, socket) do
-    Phoenix.PubSub.subscribe(Monorepo.PubSub, "admin:media")
 
     socket =
       socket
@@ -91,7 +90,6 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
   end
 
   def handle_event("media:broadcast:selected", %{"id" => id}, socket) do
-    Phoenix.PubSub.broadcast(Monorepo.PubSub, "admin:media", {:broadcast_selected, id})
     {:noreply, socket}
   end
 

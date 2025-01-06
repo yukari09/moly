@@ -278,8 +278,9 @@
         <% metas = struct_meta( media.post_meta) %>
         <div 
             id={"#{id}-media"}
-            class="group overflow-hidden rounded-lg bg-gray-100 meida-list-item"
+            class="group overflow-hidden rounded-lg bg-gray-100 media-list-item"
             data-media-id={media.id}
+            data-media-url={fetch_image_file_from_attachment_metadata(metas.attachment_metadata, ["medium", "thumbnail"])}
         >
             <div class="aspect-[10/7]">
                 <img

@@ -334,28 +334,16 @@ Hooks.DatetimePicker = {
       onChange: (selectedDates, dateStr, instance) => {
         const datetime = DateTime.fromJSDate(selectedDates[0]).setZone("utc")
         this.el.value = datetime.toISO()
-        const targetElement = document.querySelector(this.el.dataset.utcTarget)
-        if (targetElement) {
+        const immediatelyEl = document.querySelector(this.el.dataset.immediately)
+        const calendarEl = document.querySelector(this.el.dataset.calendar)
+        if (calendarEl) {
           const utcDateTime = DateTime.fromISO(this.el.value, { zone: "utc" })
           const localDateTime = utcDateTime.setZone(DateTime.local().zoneName).toLocaleString(DateTime.DATETIME_MED) 
-          targetElement.textContent = localDateTime
+          calendarEl.innerText = localDateTime
+          immediatelyEl.classList.add("hidden")
         }
       }    
     });
-  }
-}
-
-Hooks.LocalizeDateTime = {
-  mounted() {
-    this.localizeText();
-  },
-  localizeText() {
-    const utcText = this.el.innerText
-    if (utcText) {
-      const utcDateTime = DateTime.fromISO(utcText, { zone: "utc" });
-      const localDateTime = utcDateTime.setZone(DateTime.local().zoneName).toLocaleString(DateTime.DATETIME_MED);
-      this.el.innerText = localDateTime;
-    }
   }
 }
 
@@ -431,85 +419,121 @@ Hooks.TagifyHook = {
 
 Hooks.IframeMediaSelector = {
   mounted() {
-    const iframe = this.el
+    const iframe = this.el;
+    const modalId = this.el.dataset.modalId;
+    const mediaWrapRingClass = ["ring-2", "ring-gray-900", "ring-offset-2", "ring-offset-gray-100"];
     
-    iframe.addEventListener('load', () => {
-      try {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document
+    const updateMediaItemStyle = (mediaItem, isSelected) => {
+      const overlayId = mediaItem.getAttribute('id') + '-overlay';
+      const checkId = mediaItem.getAttribute('id') + '-check';
+      const overlay = document.getElementById(overlayId);
+      const check = document.getElementById(checkId);
+      
+      mediaWrapRingClass.forEach(className => {
+        isSelected ? mediaItem.classList.add(className) : mediaItem.classList.remove(className);
+      });
+      
+      if (overlay) {
+        isSelected ? overlay.classList.add('!block') : overlay.classList.remove('!block');
+      }
+      if (check) {
+        check.classList.toggle('opacity-0', !isSelected);
+        check.classList.toggle('opacity-75', isSelected);
+      }
+    };
+
+    const handleMediaSelection = (mediaId, mediaUrl) => {
+      const confirmButton = document.querySelector('#modal-comfirm-button');
+      if (!confirmButton) return;
+
+      // 啟用確認按鈕
+      confirmButton.classList.remove('pointer-events-none', 'opacity-50');
+      confirmButton.removeAttribute('disabled');
+      confirmButton.setAttribute('phx-value-media-id', mediaId);
+      
+      // 為確認按鈕添加點擊事件
+      confirmButton.addEventListener('click', () => {
+        // 更新隱藏輸入框的值
+        const metaValueInput = document.querySelector('#thumbnail_id_meta_value');
+        if (metaValueInput) {
+          metaValueInput.value = mediaId;
+        }
         
-        const script = document.createElement('script')
+        // 更新預覽圖片
+        const featuredImageContainer = document.querySelector('#featured-image-container');
+        const previewImage = featuredImageContainer?.querySelector('img');
+        if (previewImage && mediaUrl) {
+          previewImage.src = mediaUrl;
+          featuredImageContainer.classList.remove('hidden');
+        }
+
+        // 隱藏 Set featured image 按鈕
+        const setFeaturedButton = Array.from(document.querySelectorAll('button'))
+          .find(button => button.textContent.trim() === 'Set featured image');
+        if (setFeaturedButton) {
+          setFeaturedButton.classList.add('hidden');
+        }
+
+        // 禁用確認按鈕
+        confirmButton.setAttribute('disabled', 'disabled');
+        confirmButton.classList.add('pointer-events-none', 'opacity-50');
+
+        // 關閉模態框
+        this.liveSocket.execJS(document.getElementById(modalId), `[["exec",{"attr":"phx-remove"}]]`);
+      }, { once: true });
+    };
+    
+    const handleIframeLoad = () => {
+      try {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        if (!iframeDoc) {
+          throw new Error('無法訪問 iframe 文檔');
+        }
+        
+        const script = document.createElement('script');
         script.textContent = `
-          const mediaWrapRingClass = ["ring-2", "ring-gray-900", "ring-offset-2", "ring-offset-gray-100"];
+          const mediaWrapRingClass = ${JSON.stringify(mediaWrapRingClass)};
+          const updateMediaItemStyle = ${updateMediaItemStyle.toString()};
           
           document.addEventListener('click', function(e) {
-            const mediaItem = e.target.closest('.meida-list-item');
-            if (mediaItem) {
-              document.querySelectorAll('.meida-list-item').forEach(el => {
-                mediaWrapRingClass.forEach(className => {
-                  el.classList.remove(className);
-                });
-                
-                const overlayId = el.getAttribute('id') + '-overlay';
-                const checkId = el.getAttribute('id') + '-check';
-                const overlay = document.getElementById(overlayId);
-                const check = document.getElementById(checkId);
-                
-                if (overlay) {
-                  overlay.classList.remove('!block');
-                }
-                if (check) {
-                  check.classList.remove('opacity-75');
-                  check.classList.add('opacity-0');
-                }
-              });
-              
-              mediaWrapRingClass.forEach(className => {
-                mediaItem.classList.add(className);
-              });
-              
-              const overlayId = mediaItem.getAttribute('id') + '-overlay';
-              const checkId = mediaItem.getAttribute('id') + '-check';
-              const overlay = document.getElementById(overlayId);
-              const check = document.getElementById(checkId);
-              
-              if (overlay) {
-                overlay.classList.add('!block');
-              }
-              if (check) {
-                check.classList.remove('opacity-0');
-                check.classList.add('opacity-75');
-              }
-              
-              const mediaId = mediaItem.getAttribute('data-media-id');
-              console.log('Sending media ID:', mediaId);
-              window.parent.postMessage({
-                type: 'mediaSelected',
-                mediaId: mediaId
-              }, '*');
-            }
+            const mediaItem = e.target.closest('.media-list-item');
+            if (!mediaItem) return;
+            
+            // 清除其他項目的選中狀態
+            document.querySelectorAll('.media-list-item').forEach(el => {
+              updateMediaItemStyle(el, false);
+            });
+            
+            // 設置當前項目的選中狀態
+            updateMediaItemStyle(mediaItem, true);
+            
+            window.parent.postMessage({
+              type: 'mediaSelected',
+              mediaId: mediaItem.getAttribute('data-media-id'),
+              mediaUrl: mediaItem.getAttribute('data-media-url')
+            }, '*');
           });
         `;
         iframeDoc.body.appendChild(script);
-        
-        console.log('Hook mounted successfully');
       } catch (error) {
-        console.error('Error in IframeMediaSelector hook:', error);
+        console.error('初始化媒體選擇器時發生錯誤:', error.message);
       }
-    });
-    
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'mediaSelected') {
-        console.log('Message received:', event.data);
-        const mediaId = event.data.mediaId;
-        
-        const confirmButton = document.querySelector('#modal-comfirm-button');
-        if (confirmButton) {
-          confirmButton.classList.remove('pointer-events-none', 'opacity-50');
-          confirmButton.removeAttribute('disabled');
-          confirmButton.setAttribute('phx-value-media-id', mediaId);
-        }
-      }
-    });
+    };
+
+    // 處理來自 iframe 的消息
+    const handleMessage = (event) => {
+      if (!event.data || event.data.type !== 'mediaSelected') return;
+      handleMediaSelection(event.data.mediaId, event.data.mediaUrl);
+    };
+
+    iframe.addEventListener('load', handleIframeLoad);
+    window.addEventListener('message', handleMessage);
+
+    // 清理事件監聽器
+    this.destroy = () => {
+      iframe.removeEventListener('load', handleIframeLoad);
+      window.removeEventListener('message', handleMessage);
+    };
   }
 }
 

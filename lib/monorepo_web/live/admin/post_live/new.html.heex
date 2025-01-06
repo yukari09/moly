@@ -26,7 +26,7 @@
   end
 %>
 
-<.form :let={f} for={@form} class="h-screen" phx-change="validate">
+<.form :let={f} for={@form} class="h-screen">
 <div>
   <div class=" flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
     <.link patch={~p"/admin/posts/index"} class="flex flex-shrink-0 items-center">
@@ -155,7 +155,7 @@
 
   <div 
       id="new-post-sidebar" 
-      class="pointer-events-auto w-screen max-w-sm border-l border-gray-200 h-[calc(100vh-4rem)] overflow-y-scroll overflow-x-visible"
+      class="pointer-events-auto w-screen max-w-sm hidden xl:block border-l border-gray-200 h-[calc(100vh-4rem)] overflow-y-scroll overflow-x-visible"
       aria-expanded="true"
   >
     <div class="h-full overflow-y-scroll bg-white flex flex-col px-2 sm:px-4 space-y-4">
@@ -165,33 +165,32 @@
 
       <div class="space-y-5">
           <div>
-            <%= if !is_nil(@featured_image) do %>
-              <div class="relative aspect-[10/7]">
-                <img src={media_file_meta_image(@featured_image.post_meta, ["medium", "thumbnail", "raw"])} alt="Featured image" class="w-full h-full object-cover rounded-md" />
-                <.button 
-                  class="absolute top-2 right-2 !p-1 !size-6 bg-white !rounded-full shadow-md hover:bg-gray-100"
-                  phx-click={
-                    JS.set_attribute({"value", nil}, to: "#thumbnail_id_meta_key")
-                    |> JS.set_attribute({"value", nil}, to: "#thumbnail_id_meta_value")
-                    |> JS.push("featured_image")
-                  }
-                  variant="outline"
-                  phx-value-media-id=""
-                >
-                  <Lucideicons.x class="w-4 h-4 text-gray-500" />
-                </.button>
-              </div>
-              <input id="thumbnail_id_meta_key" name={"#{f[:post_meta].name}[0][meta_key]"} value="thumbnail_id" type="hidden"/>
-              <input id="thumbnail_id_meta_value" name={"#{f[:post_meta].name}[0][meta_value]"} value={@featured_image.id} type="hidden"/>
-            <% else %>
+            <div class="relative aspect-[10/7] hidden" id="featured-image-container">
+              <img src={nil} alt="Featured image" class="w-full h-full object-cover rounded-md" />
               <.button 
+                class="absolute top-2 right-2 !p-1 !size-6 bg-white !rounded-full shadow-md hover:bg-gray-100"
+                phx-click={
+                  JS.set_attribute({"value", nil}, to: "#thumbnail_id_meta_key")
+                  |> JS.set_attribute({"value", nil}, to: "#thumbnail_id_meta_value")
+                  |> JS.toggle_class("hidden", to: "#featured-image-container")
+                  |> JS.toggle_class("hidden", to: "#set-featured-image-btn")
+                }
+                variant="outline"
+              >
+                <Lucideicons.x class="w-4 h-4 text-gray-500" />
+              </.button>
+            </div>
+            <input id="thumbnail_id_meta_key" name={"#{f[:post_meta].name}[0][meta_key]"} value="thumbnail_id" type="hidden"/>
+            <input id="thumbnail_id_meta_value" name={"#{f[:post_meta].name}[0][meta_value]"} type="hidden"/>
+            
+              <.button 
+                id="set-featured-image-btn"
                 variant="secondary" 
-                class="w-full"
+                class="w-full my-4"
                 phx-click={JS.set_attribute({"src", ~p"/admin/media?media_type=image&modal=true"}, to: "#media-iframe") |> show_modal("#{@selected_image_modal_id}")}
               >
                 Set featured image
               </.button>
-            <% end %>
           </div>
 
           <div class="text-gray-600 text-sm mx-2">Last edited 4 hours ago.</div>
@@ -204,17 +203,22 @@
             <li class="flex items-center">
               <span class="font-medium w-32">Publish</span>
               <label class="text-gray-600 hover:underline cursor-pointer flex items-center gap-1" for={f[:post_date].id}>
-                <span :if={!f[:post_date].value || f[:post_date].value == ""}>Immediately</span>
-                <span :if={f[:post_date].value} id={f[:post_date].id<>"-txt"} phx-update="ignore" phx-hook="LocalizeDateTime">{f[:post_date].value}</span>
-                <Lucideicons.calendar class="w-4 h-4 text-gray-500" />
+                <span id="post-date-immediately" class="flex items-center">Immediately <Lucideicons.calendar class="w-4 h-4 text-gray-500" /></span>
+                <span id="post-date-calendar"></span>
               </label>
-              <.input field={f[:post_date]} label={nil} class="!w-0 !h-0 !border-0 !m-0 !!ring-0 !p-0"  phx-hook="DatetimePicker" data-utc-target={"#"<>f[:post_date].id<>"-txt"} />
+              <.input 
+                field={f[:post_date]} label={nil} 
+                class="!w-0 !h-0 !border-0 !m-0 !!ring-0 !p-0"  
+                phx-hook="DatetimePicker" 
+                data-immediately = "#post-date-immediately"
+                data-calendar = "#post-date-calendar"
+              />
             </li>
             <li class="flex items-center">
               <span class="font-medium w-32">Slug</span>
               <.dropdown id={f[:post_name].id <> "-dropdown"} class="flex-1">
                 <:button_slot class="text-gray-600 !p-0 !m-0">
-                  {f[:post_name].value || "Edit slug"}
+                  {f[:post_name].value || "#{generate_slug()}"}
                 </:button_slot> 
                 <:menu_slot class="p-3 w-72 mt-2">
                   <div class="pb-2">
@@ -326,9 +330,7 @@
 <.modal 
   id={@selected_image_modal_id}
   inner_class="sm:!max-w-[90vw] sm:!max-h-[90vh] overflow-scroll !p-0 !m-0 h-[90vh] h-[90vh]"
-  on_cancel={
-    JS.push("reset_selected_image")
-  }
+  on_cancel={hide_modal(@selected_image_modal_id)}
 >
 
   <div class="flex flex-col h-full">
@@ -339,7 +341,7 @@
       </div>
 
       <div class="px-4 lg:px-6 flex-1">
-        <iframe id="media-iframe" class="w-full h-full" phx-hook="IframeMediaSelector"></iframe>
+        <iframe id="media-iframe" class="w-full h-full" phx-hook="IframeMediaSelector" data-modal-id={@selected_image_modal_id}></iframe>
       </div>
 
       <div class="flex justify-end px-4 pt-2.5 pb-4 gap-2 border-t border-gray-200 mt-1">
@@ -347,7 +349,10 @@
           id="modal-cancel-button" 
           variant="gray" 
           class="w-20" 
-          phx-click={JS.exec("data-cancel", to: "##{@selected_image_modal_id}")}
+          phx-click={
+            JS.exec("data-cancel", to: "##{@selected_image_modal_id}")
+            |> JS.set_attribute({"disabled", "disabled"}, to: "#modal-comfirm-button")
+          }
         >
           Cancel
         </.button>

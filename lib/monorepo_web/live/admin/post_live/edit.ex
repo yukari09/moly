@@ -3,7 +3,6 @@ defmodule MonorepoWeb.AdminPostLive.Edit do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    Phoenix.PubSub.subscribe(Monorepo.PubSub, "admin:media")
 
     post =
       Ash.get!(Monorepo.Contents.Post, id, actor: socket.assigns.current_user)
