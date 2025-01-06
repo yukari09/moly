@@ -86,8 +86,17 @@
 <div class="flex items-top justify-between mx-auto h-[calc(100vh-4rem)]">
   <div class="flex-1 h-full overflow-y-scroll">
     <div class="mx-auto lg:w-[840px]">
-      <div class="w-[650px] mx-auto mt-8">
-        <.input field={f[:post_title]} type="text" autocomplete="off" placeholder="Add a title" class="w-full !border-0 !p-0 !text-4xl font-bold text-gray-900 !outline-none" label={nil} show_error={false} />
+      <div class="w-[650px] mx-auto mt-12">
+        <textarea
+          id={f[:post_title].id}
+          phx-update="ignore"
+          autocomplete="off"
+          placeholder="Add a title"
+          class="w-full !border-0 !p-0 !text-4xl font-bold !text-gray-900 !outline-none break-words resize-none overflow-hidden"
+          rows="1"
+          phx-hook="AutoResizeTextarea"
+          data-auto-resize="true"
+        ></textarea>
       </div>
       <div 
         id="editorjs" 
@@ -140,7 +149,7 @@
           ]
         })}
       ></div> 
-      <.input field={f[:post_content]} type="hidden" class="hidden" label={nil}  />
+      <.input phx-update="ignore" field={f[:post_content]} type="hidden" class="hidden" label={nil}  />
     </div> 
   </div>
 

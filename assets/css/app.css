@@ -111,3 +111,50 @@ h5.ce-header {
   @apply opacity-50 cursor-not-allowed;
   @apply hover:text-gray-500 hover:bg-white hover:border-transparent;
 }
+
+/* Editor.js Animation Controls */
+.codex-editor__redactor {
+  transition: none !important;
+}
+
+.ce-block {
+  transition: none !important;
+}
+
+.ce-block__content {
+  transition: none !important;
+}
+
+.ce-toolbar__actions {
+  transition: none !important;
+}
+
+.ce-toolbar__settings-btn {
+  transition: none !important;
+}
+
+.ce-toolbar__plus {
+  transition: none !important;
+}
+
+.ce-toolbar {
+  transition: none !important;
+}
+
+.ce-toolbar__content {
+  transition: none !important;
+}
+
+.ce-paragraph {
+  transition: none !important;
+}
+
+.cdx-block {
+  transition: none !important;
+}
+
+/* Smooth transitions only for hover effects */
+.ce-toolbar__settings-btn:hover,
+.ce-toolbar__plus:hover {
+  transition: background-color 0.15s ease !important;
+}

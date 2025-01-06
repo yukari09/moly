@@ -10,8 +10,64 @@ import Tagify from '@yaireo/tagify'
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 
 let Hooks = {}
+
+// Auto-resize textarea hook
+Hooks.AutoResizeTextarea = {
+  mounted() {
+    this.resize = () => {
+      this.el.style.height = 'auto'
+      this.el.style.height = this.el.scrollHeight + 'px'
+    }
+    
+    // Initial resize
+    this.resize()
+    
+    // Resize on input
+    this.el.addEventListener('input', this.resize)
+    
+    // Handle window resize
+    window.addEventListener('resize', this.resize)
+    
+    // Handle paste events
+    this.el.addEventListener('paste', () => {
+      // Use setTimeout to ensure content is pasted before resizing
+      setTimeout(this.resize, 0)
+    })
+  },
+  
+  updated() {
+    this.resize()
+  },
+  
+  destroyed() {
+    this.el.removeEventListener('input', this.resize)
+    window.removeEventListener('resize', this.resize)
+  }
+}
+
 Hooks.Editor = {
   mounted() {
+    // Get initial content first
+    let initialData = {}
+    const savedContent = localStorage.getItem('editorjs-content')
+    const initialContent = this.el.dataset.initialContent
+
+    if (savedContent) {
+      try {
+        initialData = JSON.parse(savedContent)
+      } catch (error) {
+        console.error('Failed to parse saved content:', error)
+      }
+    } else if (initialContent) {
+      try {
+        initialData = JSON.parse(initialContent)
+        // Save initial content to localStorage
+        localStorage.setItem('editorjs-content', initialContent)
+      } catch (error) {
+        console.error('Failed to parse initial content:', error)
+      }
+    }
+
     const editor = new EditorJS({
       holder: this.el,
       placeholder: this.el.dataset.placeholder,
@@ -30,7 +86,7 @@ Hooks.Editor = {
           },
         },
       },
-      data: {},
+      data: initialData,
       onChange: () => {
         editor.save().then((outputData) => {
           const contentEl = document.querySelector(`#${this.el.dataset.content}`)
@@ -38,18 +94,21 @@ Hooks.Editor = {
             contentEl.value = JSON.stringify(outputData)
             contentEl.dispatchEvent(new Event('change', { bubbles: true }))
             
-            // Save current state to localStorage
+            // Save current state to localStorage and add to undo stack
             try {
+              const previousState = localStorage.getItem('editorjs-content')
               localStorage.setItem('editorjs-content', JSON.stringify(outputData))
-              // Enable undo button after content change
-              const undoButton = document.querySelector('[data-editor-action="undo"]')
-              if (undoButton) {
-                undoButton.removeAttribute('disabled')
-              }
-              // Disable redo button when new content is added
-              const redoButton = document.querySelector('[data-editor-action="redo"]')
-              if (redoButton) {
-                redoButton.setAttribute('disabled', 'true')
+              
+              // Create undo/redo command
+              if (previousState) {
+                const command = {
+                  newState: JSON.stringify(outputData),
+                  oldState: previousState
+                }
+                undoStack.push(command)
+                // Clear redo stack when new changes are made
+                redoStack.length = 0
+                updateButtonStates()
               }
             } catch (error) {
               console.error('Failed to save to localStorage:', error)
@@ -60,103 +119,137 @@ Hooks.Editor = {
         });
       },
       onReady: () => {
-        // Try to load saved content from localStorage first
-        const savedContent = localStorage.getItem('editorjs-content')
-        if (savedContent) {
-          try {
-            const parsedContent = JSON.parse(savedContent)
-            editor.render(parsedContent)
-            return
-          } catch (error) {
-            console.error('Failed to parse saved content:', error)
-          }
-        }
-
-        // Fall back to initial content from data attribute
-        const initialContent = this.el.dataset.initialContent
-        if (initialContent) {
-          try {
-            const parsedContent = JSON.parse(initialContent)
-            editor.render(parsedContent)
-            
-            // Save initial content to localStorage if it doesn't exist
-            if (!localStorage.getItem('editorjs-content')) {
-              localStorage.setItem('editorjs-content', initialContent)
-            }
-
-            // Update the hidden input field
-            const contentEl = document.querySelector(`#${this.el.dataset.content}`)
-            if (contentEl) {
-              contentEl.value = initialContent
-              contentEl.dispatchEvent(new Event('change', { bubbles: true }))
-            }
-          } catch (error) {
-            console.error('Failed to parse initial content:', error)
-          }
+        // Update the hidden input field with initial content
+        const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+        if (contentEl && initialData.blocks && initialData.blocks.length > 0) {
+          contentEl.value = JSON.stringify(initialData)
+          contentEl.dispatchEvent(new Event('change', { bubbles: true }))
         }
       }
     });
 
     // Clear editor handler
     window.addEventListener('app:clearEditor', () => {
-      editor.clear().then(() => {
-        // Clear the hidden input field as well
-        const contentEl = document.querySelector(`#${this.el.dataset.content}`)
-        if (contentEl) {
-          contentEl.value = JSON.stringify({ blocks: [] })
-          contentEl.dispatchEvent(new Event('change', { bubbles: true }))
+      editor.save().then((currentData) => {
+        const currentState = JSON.stringify(currentData)
+        
+        // Save the current state to undo stack before clearing
+        if (currentState && currentData.blocks && currentData.blocks.length > 0) {
+          const command = {
+            newState: JSON.stringify({ blocks: [] }),
+            oldState: currentState
+          }
+          undoStack.push(command)
+          redoStack.length = 0
+          updateButtonStates()
         }
-        // Clear localStorage
-        localStorage.removeItem('editorjs-content')
-        // Disable both buttons
-        const undoButton = document.querySelector('[data-editor-action="undo"]')
-        const redoButton = document.querySelector('[data-editor-action="redo"]')
-        if (undoButton) undoButton.setAttribute('disabled', 'true')
-        if (redoButton) redoButton.setAttribute('disabled', 'true')
-      }).catch((error) => {
-        console.error('Clearing failed: ', error)
+
+        // Now clear the editor
+        editor.clear().then(() => {
+          // Clear the hidden input field as well
+          const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+          if (contentEl) {
+            contentEl.value = JSON.stringify({ blocks: [] })
+            contentEl.dispatchEvent(new Event('change', { bubbles: true }))
+          }
+          // Clear localStorage
+          localStorage.removeItem('editorjs-content')
+        }).catch((error) => {
+          console.error('Clearing failed: ', error)
+        });
       });
     });
+
+    // Undo/Redo stacks
+    const undoStack = []
+    const redoStack = []
+
+    // Update button states
+    const updateButtonStates = () => {
+      const undoButton = document.querySelector('[data-editor-action="undo"]')
+      const redoButton = document.querySelector('[data-editor-action="redo"]')
+      
+      if (undoButton) {
+        if (undoStack.length > 0) {
+          undoButton.removeAttribute('disabled')
+        } else {
+          undoButton.setAttribute('disabled', 'true')
+        }
+      }
+      
+      if (redoButton) {
+        if (redoStack.length > 0) {
+          redoButton.removeAttribute('disabled')
+        } else {
+          redoButton.setAttribute('disabled', 'true')
+        }
+      }
+    }
+
+    // Debounce function
+    const debounce = (func, wait) => {
+      let timeout
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout)
+          func(...args)
+        }
+        clearTimeout(timeout)
+        timeout = setTimeout(later, wait)
+      }
+    }
 
     // Undo handler
     window.addEventListener('app:editorUndo', () => {
       const undoButton = document.querySelector('[data-editor-action="undo"]')
-      if (undoButton && !undoButton.hasAttribute('disabled')) {
-        try {
-          document.execCommand('undo')
-          // Enable redo button after undo
-          const redoButton = document.querySelector('[data-editor-action="redo"]')
-          if (redoButton) {
-            redoButton.removeAttribute('disabled')
-          }
-          // Check if we can still undo
-          if (!document.queryCommandEnabled('undo')) {
-            undoButton.setAttribute('disabled', 'true')
-          }
-        } catch (error) {
-          console.error('Undo failed:', error)
-        }
+      if (undoButton && !undoButton.hasAttribute('disabled') && undoStack.length > 0) {
+        const command = undoStack.pop()
+        const oldData = JSON.parse(command.oldState)
+        
+        // Debounced render
+        const debouncedRender = debounce(() => {
+          editor.render(oldData).then(() => {
+            localStorage.setItem('editorjs-content', command.oldState)
+            
+            // Update hidden input
+            const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+            if (contentEl) {
+              contentEl.value = command.oldState
+              contentEl.dispatchEvent(new Event('change', { bubbles: true }))
+            }
+          })
+        }, 100)
+
+        debouncedRender()
+        redoStack.push(command)
+        updateButtonStates()
       }
     });
 
     // Redo handler
     window.addEventListener('app:editorRedo', () => {
       const redoButton = document.querySelector('[data-editor-action="redo"]')
-      if (redoButton && !redoButton.hasAttribute('disabled')) {
-        try {
-          document.execCommand('redo')
-          // Enable undo button after redo
-          const undoButton = document.querySelector('[data-editor-action="undo"]')
-          if (undoButton) {
-            undoButton.removeAttribute('disabled')
-          }
-          // Check if we can still redo
-          if (!document.queryCommandEnabled('redo')) {
-            redoButton.setAttribute('disabled', 'true')
-          }
-        } catch (error) {
-          console.error('Redo failed:', error)
-        }
+      if (redoButton && !redoButton.hasAttribute('disabled') && redoStack.length > 0) {
+        const command = redoStack.pop()
+        const newData = JSON.parse(command.newState)
+        
+        // Debounced render
+        const debouncedRender = debounce(() => {
+          editor.render(newData).then(() => {
+            localStorage.setItem('editorjs-content', command.newState)
+            
+            // Update hidden input
+            const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+            if (contentEl) {
+              contentEl.value = command.newState
+              contentEl.dispatchEvent(new Event('change', { bubbles: true }))
+            }
+          })
+        }, 100)
+
+        debouncedRender()
+        undoStack.push(command)
+        updateButtonStates()
       }
     });
 
@@ -181,11 +274,8 @@ Hooks.Editor = {
       }
     });
 
-    // Initial button state
-    const undoButton = document.querySelector('[data-editor-action="undo"]')
-    const redoButton = document.querySelector('[data-editor-action="redo"]')
-    if (undoButton) undoButton.setAttribute('disabled', 'true')
-    if (redoButton) redoButton.setAttribute('disabled', 'true')
+    // Initial button states
+    updateButtonStates()
   },
 
   destroyed() {
