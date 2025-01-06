@@ -5,12 +5,7 @@ defmodule MonorepoWeb.AdminPostLive.New do
   def mount(_params, _session, socket) do
     Phoenix.PubSub.subscribe(Monorepo.PubSub, "admin:media")
 
-    term_taxonomy_category =
-      Monorepo.Terms.read_term_taxonomy!("category", nil, actor: socket.assigns.current_user)
-      |> Ash.load!([:term], actor: socket.assigns.current_user)
-
-
-    form = resource_to_form(Monorepo.Contents.Post, term_taxonomy_category)
+    form = resource_to_form(socket)
 
     socket =
       socket
@@ -81,25 +76,37 @@ defmodule MonorepoWeb.AdminPostLive.New do
     {:noreply, socket}
   end
 
-  defp resource_to_form(post, term_taxonomy_category) do
-    AshPhoenix.Form.for_create(post, :create_post, [
+  defp resource_to_form(socket) do
+    term_taxonomy_categories =
+      Monorepo.Terms.read_term_taxonomy!("category", nil, actor: socket.assigns.current_user)
+      |> Ash.load!([:term], actor: socket.assigns.current_user)
+
+    AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post, [
       forms: [
         post_meta: [
           type: :list,
-          data: [],
           resource: Monorepo.Contents.PostMeta,
           update_action: :update,
           create_action: :create
         ],
-        term_taxonomy: [
+        term_taxonomy_categories: [
           type: :list,
-          data: term_taxonomy_category,
+          data: term_taxonomy_categories,
           resource: Monorepo.Terms.TermTaxonomy,
           update_action: :update,
-          create_action: :create,
+          create_action: :create
+        ],
+        term_taxonomy_tags: [
+          type: :list,
+          data: [],
+          resource: Monorepo.Terms.TermTaxonomy,
+          update_action: :update,
+          create_action: :create
         ]
       ]
     ])
+    |> AshPhoenix.Form.add_form([:term_taxonomy_categories])
+    |> AshPhoenix.Form.add_form([:term_taxonomy_tags])
     |> to_form()
   end
 

@@ -191,6 +191,14 @@ defmodule Monorepo.Contents.Post do
 
     many_to_many :term_taxonomy, Monorepo.Terms.TermTaxonomy,
       through: Monorepo.Terms.TermRelationships
+
+    many_to_many :term_taxonomy_categories, Monorepo.Terms.TermTaxonomy,
+      through: Monorepo.Terms.TermRelationships,
+      filter: expr(taxonomy == "category")
+
+    many_to_many :term_taxonomy_tags, Monorepo.Terms.TermTaxonomy,
+      through: Monorepo.Terms.TermRelationships,
+      filter: expr(taxonomy == "post_tag")
   end
 
   identities do

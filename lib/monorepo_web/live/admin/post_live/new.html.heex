@@ -60,7 +60,7 @@
   <div class="flex-1 h-full overflow-y-scroll">
     <div class="mx-auto lg:w-[840px]">
       <div class="w-[650px] mx-auto mt-8">
-        <.input field={f[:post_title]} type="text" autocomplete="off" placeholder="Add a title" class="w-full !border-0 p-0 !text-3xl font-bold text-gray-900 !outline-none" label={nil} show_error={false} />
+        <.input field={f[:post_title]} type="text" autocomplete="off" placeholder="Add a title" class="w-full !border-0 !p-0 !text-3xl font-bold text-gray-900 !outline-none" label={nil} show_error={false} />
       </div>
       <div 
         id="editorjs" 
@@ -69,7 +69,50 @@
         data-placeholder="Type text or paste a link"
         phx-update="ignore"
         data-content={"#{f[:post_content].id}"}
-      >{@form.source.source.data.post_content}</div> 
+        data-initial-content={Jason.encode!(%{
+          time: DateTime.utc_now() |> DateTime.to_unix(),
+          blocks: [
+            %{
+              type: "header",
+              data: %{
+                text: "Start Writing Your New Article",
+                level: 1
+              }
+            },
+            %{
+              type: "paragraph",
+              data: %{
+                text: "This is where your article begins. You can start writing or use the toolbar to add more content blocks."
+              }
+            },
+            %{
+              type: "header",
+              data: %{
+                text: "Article Outline",
+                level: 2
+              }
+            },
+            %{
+              type: "list",
+              data: %{
+                style: "unordered",
+                items: [
+                  "First key point",
+                  "Second key point",
+                  "Third key point"
+                ]
+              }
+            },
+            %{
+              type: "quote",
+              data: %{
+                text: "Writing is an exploration. You start from nothing and learn as you go.",
+                caption: "E.L. Doctorow"
+              }
+            }
+          ]
+        })}
+      ></div> 
       <.input field={f[:post_content]} type="hidden" class="hidden" label={nil}  />
     </div> 
   </div>
@@ -202,8 +245,10 @@
               </button>
               <div class="mt-1 px-2   mb-2 space-y-2" id="sub-menu-2">
                   <div id="term-taxonomy" class="space-y-1 max-h-[180px] overflow-y-scroll border my-2 px-4 py-2 rounded-sm" phx-update="ignore">
-                  <.inputs_for :let={term_taxonomy} field={@form[:term_taxonomy]} skip_hidden={true}>
-                    <.checkbox field={term_taxonomy[:id]} label={term_taxonomy[:term].value.name} />
+                  <.inputs_for :let={f_cat} field={@form[:term_taxonomy_categories]}>
+                    <div class="flex items-center">
+                      <.checkbox field={f_cat[:id]} label={f_cat[:term].value.name} />
+                    </div>
                   </.inputs_for>
                   </div>
                 <div><.link class="text-gray-500 hover:underline text-sm" phx-click={show_modal(@create_category_modal_id)}>Add New Category</.link></div>

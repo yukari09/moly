@@ -24,15 +24,30 @@ Hooks.Editor = {
       data: {},
       onChange: () => {
         editor.save().then((outputData) => {
-          const contentEl = document.querySelector(`[data-content="#${this.el.dataset.content}"]`)
+          const contentEl = document.querySelector(`#${this.el.dataset.content}`)
           if (contentEl) {
             contentEl.value = JSON.stringify(outputData)
+            // 觸發 change 事件以確保 Phoenix LiveView 能夠捕獲變化
+            contentEl.dispatchEvent(new Event('change', { bubbles: true }))
           }
         }).catch((error) => {
           console.error('Saving failed: ', error)
         });
       },
       onReady: () => {
+        // 首先檢查是否有初始內容
+        const initialContent = this.el.dataset.initialContent;
+        if (initialContent) {
+          try {
+            const parsedInitialContent = JSON.parse(initialContent);
+            editor.render(parsedInitialContent);
+            return;
+          } catch (error) {
+            console.error('Failed to parse initial content:', error);
+          }
+        }
+
+        // 如果沒有初始內容，檢查已保存的內容
         const savedData = this.el.textContent.trim();
         if (savedData && savedData !== "Nothing found") {
           try {
@@ -40,10 +55,10 @@ Hooks.Editor = {
             editor.render(parsedData);
           } catch (error) {
             console.error('Failed to parse saved data:', error);
-            editor.render({}); // Render an empty editor if parsing fails
+            editor.render({}); // 解析失敗時使用空編輯器
           }
         } else {
-          editor.render({}); // Render an empty editor if no saved data
+          editor.render({}); // 沒有任何內容時使用空編輯器
         }
       }
     });
