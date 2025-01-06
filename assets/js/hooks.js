@@ -19,11 +19,25 @@ Hooks.AutoResizeTextarea = {
       this.el.style.height = this.el.scrollHeight + 'px'
     }
     
-    // Initial resize
-    this.resize()
+    // Load saved title from localStorage
+    const savedTitle = localStorage.getItem('post-title')
+    if (savedTitle) {
+      this.el.value = savedTitle
+      this.resize()
+    }
     
-    // Resize on input
-    this.el.addEventListener('input', this.resize)
+    // Save title to localStorage on input
+    this.el.addEventListener('input', (e) => {
+      localStorage.setItem('post-title', e.target.value)
+      this.resize()
+      
+      // Also update the hidden input if it exists
+      const hiddenInput = document.querySelector(`input[name="${this.el.id}"]`)
+      if (hiddenInput) {
+        hiddenInput.value = e.target.value
+        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }))
+      }
+    })
     
     // Handle window resize
     window.addEventListener('resize', this.resize)
@@ -32,6 +46,20 @@ Hooks.AutoResizeTextarea = {
     this.el.addEventListener('paste', () => {
       // Use setTimeout to ensure content is pasted before resizing
       setTimeout(this.resize, 0)
+    })
+
+    // Clear title when editor is cleared
+    window.addEventListener('app:clearEditor', () => {
+      this.el.value = ''
+      localStorage.removeItem('post-title')
+      this.resize()
+      
+      // Also update the hidden input if it exists
+      const hiddenInput = document.querySelector(`input[name="${this.el.id}"]`)
+      if (hiddenInput) {
+        hiddenInput.value = ''
+        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }))
+      }
     })
   },
   
@@ -50,6 +78,7 @@ Hooks.Editor = {
     // Get initial content first
     let initialData = {}
     const savedContent = localStorage.getItem('editorjs-content')
+    const savedTitle = localStorage.getItem('post-title')
     const initialContent = this.el.dataset.initialContent
 
     if (savedContent) {
