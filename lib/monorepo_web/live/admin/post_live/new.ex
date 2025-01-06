@@ -103,19 +103,5 @@ defmodule MonorepoWeb.AdminPostLive.New do
     |> to_form()
   end
 
-  defp category_inputs(assigns) do
-    ~H"""
-    <.inputs_for :let={term_taxonomy} field={@form[:term_taxonomy]} skip_hidden={true}>
-      <.checkbox field={term_taxonomy[:id]} label={term_taxonomy[:term].value.name} />
-      <%= if Enum.any?(term_taxonomy[:children]) do %>
-        <div class="ml-4">
-          <%= for child <- term_taxonomy[:children] do %>
-            <%= category_inputs(assigns |> Map.put(:form, child)) %>
-          <% end %>
-        </div>
-      <% end %>
-    </.inputs_for>
-    """
-  end
 
 end

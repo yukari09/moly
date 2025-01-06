@@ -445,6 +445,7 @@ defmodule MonorepoWeb.TailwindUI do
   attr(:container_class, :string, default: nil)
   attr(:help_text, :string, default: nil)
   attr(:errors, :list, default: [])
+  attr(:show_error, :boolean, default: true)
   attr(:rest, :global)
   attr(:aria_label, :string, default: nil)
 
@@ -495,7 +496,7 @@ defmodule MonorepoWeb.TailwindUI do
         </svg>
       </div>
         <p :if={@help_text && @errors == []} class="mt-2 text-sm text-gray-500" id={"#{@field.id}-description"}>{ @help_text }</p>
-        <p :if={@errors != []} class="mt-2 text-sm text-red-600" id={"#{@field.id}-error"}>{ @label } { List.first(@errors) }</p>
+        <p :if={@errors != [] && @show_error} class="mt-2 text-sm text-red-600" id={"#{@field.id}-error"}>{ @label } { List.first(@errors) }</p>
     </div>
     """
   end

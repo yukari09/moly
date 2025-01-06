@@ -8,6 +8,7 @@
     "@editorjs/editorjs": "^2.30.7",
     "@editorjs/header": "^2.8.8",
     "@mux/upchunk": "^3.4.0",
+    "@yaireo/tagify": "^4.33.0",
     "alpinejs": "^3.14.8",
     "easymde": "^2.18.0",
     "flatpickr": "^4.6.13",
