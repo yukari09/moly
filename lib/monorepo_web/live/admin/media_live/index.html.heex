@@ -280,9 +280,6 @@
             id={"#{id}-media"}
             class="group overflow-hidden rounded-lg bg-gray-100 meida-list-item"
             data-media-id={media.id}
-            phx-click={
-              JS.dispatch("media:clickSingle", detail: %{items: ".meida-list-item"})
-            }
         >
             <div class="aspect-[10/7]">
                 <img

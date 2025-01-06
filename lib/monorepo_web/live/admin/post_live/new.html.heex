@@ -339,7 +339,7 @@
       </div>
 
       <div class="px-4 lg:px-6 flex-1">
-        <iframe id="media-iframe" class="w-full h-full"></iframe>
+        <iframe id="media-iframe" class="w-full h-full" phx-hook="IframeMediaSelector"></iframe>
       </div>
 
       <div class="flex justify-end px-4 pt-2.5 pb-4 gap-2 border-t border-gray-200 mt-1">
@@ -355,18 +355,12 @@
           id="modal-comfirm-button"
           variant="primary" 
           class={["w-20"]}
-          phx-value-media-id={@selected_image} 
-          phx-click={
-            JS.push("featured_image")
-            |> JS.exec("data-cancel", to: "##{@selected_image_modal_id}")
-          }   
-          disabled={is_nil(@selected_image)}
+          disabled={true}
         >
           Insert
         </.button>
       </div>
   </div>
-
 </.modal>
 
 <.modal 

@@ -151,6 +151,12 @@ defmodule MonorepoWeb.TailwindUI do
   slot(:inner_block, required: true)
 
   def button(assigns) do
+    assigns = assign_new(assigns, :form, fn -> nil end)
+    assigns = assign_new(assigns, :variant, fn -> "primary" end)
+    assigns = assign_new(assigns, :size, fn -> "md" end)
+    assigns = assign_new(assigns, :class, fn -> [] end)
+    assigns = assign_new(assigns, :disabled, fn -> false end)
+    
     ~H"""
     <.link
       :if={@navigate || @patch || @href}
@@ -170,7 +176,7 @@ defmodule MonorepoWeb.TailwindUI do
         @variant == "secondary" && "bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
         @variant == "gray" && "bg-gray-50 text-gray-900 hover:bg-gray-100 hover:text-gray-900",
         @variant == "error" && "bg-red-600 text-white hover:bg-red-500 focus-visible:outline-red-500",
-        @disabled && "pointer-events-none opacity-50",
+        (@disabled || (@form && (@form.errors != [] || @form.source.valid? == false))) && "opacity-50 pointer-events-none",
         # Custom classes
         @class
       ]}
@@ -196,11 +202,11 @@ defmodule MonorepoWeb.TailwindUI do
         @variant == "secondary" && "bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
         @variant == "gray" && "bg-gray-50 text-gray-900 hover:bg-gray-100 hover:text-gray-900",
         @variant == "error" && "bg-red-600 text-white hover:bg-red-500 focus-visible:outline-red-500",
-        @disabled && "pointer-events-none opacity-50",
+        (@disabled || (@form && (@form.errors != [] || @form.source.valid? == false))) && "opacity-50 pointer-events-none",
         # Custom classes
         @class
       ]}
-      disabled={@form && (@form.errors != [] || @form.source.valid? == false)}
+      disabled={@disabled || (@form && (@form.errors != [] || @form.source.valid? == false))}
       {@rest}
     >
       <%= render_slot(@inner_block) %>
