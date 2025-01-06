@@ -437,7 +437,6 @@ Hooks.IframeMediaSelector = {
       try {
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document
         
-        // 注入必要的全局變數
         const script = document.createElement('script')
         script.textContent = `
           const mediaWrapRingClass = ["ring-2", "ring-gray-900", "ring-offset-2", "ring-offset-gray-100"];
@@ -445,13 +444,11 @@ Hooks.IframeMediaSelector = {
           document.addEventListener('click', function(e) {
             const mediaItem = e.target.closest('.meida-list-item');
             if (mediaItem) {
-              // 清除其他選中狀態
               document.querySelectorAll('.meida-list-item').forEach(el => {
                 mediaWrapRingClass.forEach(className => {
                   el.classList.remove(className);
                 });
                 
-                // 清除覆蓋層和勾選標記
                 const overlayId = el.getAttribute('id') + '-overlay';
                 const checkId = el.getAttribute('id') + '-check';
                 const overlay = document.getElementById(overlayId);
@@ -466,12 +463,10 @@ Hooks.IframeMediaSelector = {
                 }
               });
               
-              // 添加選中效果
               mediaWrapRingClass.forEach(className => {
                 mediaItem.classList.add(className);
               });
               
-              // 顯示覆蓋層和勾選標記
               const overlayId = mediaItem.getAttribute('id') + '-overlay';
               const checkId = mediaItem.getAttribute('id') + '-check';
               const overlay = document.getElementById(overlayId);
@@ -485,14 +480,11 @@ Hooks.IframeMediaSelector = {
                 check.classList.add('opacity-75');
               }
               
-              // 發送選中消息到父窗口
               const mediaId = mediaItem.getAttribute('data-media-id');
-              const mediaUrl = mediaItem.querySelector('img').src;
-              console.log('Sending media data:', { mediaId, mediaUrl });
+              console.log('Sending media ID:', mediaId);
               window.parent.postMessage({
                 type: 'mediaSelected',
-                mediaId: mediaId,
-                mediaUrl: mediaUrl
+                mediaId: mediaId
               }, '*');
             }
           });
@@ -505,67 +497,16 @@ Hooks.IframeMediaSelector = {
       }
     });
     
-    // 監聽來自 iframe 的消息
     window.addEventListener('message', (event) => {
       if (event.data && event.data.type === 'mediaSelected') {
         console.log('Message received:', event.data);
-        const { mediaId, mediaUrl } = event.data;
+        const mediaId = event.data.mediaId;
         
-        // 更新確認按鈕
         const confirmButton = document.querySelector('#modal-comfirm-button');
         if (confirmButton) {
           confirmButton.classList.remove('pointer-events-none', 'opacity-50');
           confirmButton.removeAttribute('disabled');
           confirmButton.setAttribute('phx-value-media-id', mediaId);
-          
-          // 添加點擊事件監聽器
-          confirmButton.addEventListener('click', () => {
-            // 更新隱藏輸入
-            const thumbnailKeyInput = document.querySelector('#thumbnail_id_meta_key');
-            const thumbnailValueInput = document.querySelector('#thumbnail_id_meta_value');
-            
-            if (thumbnailKeyInput && thumbnailValueInput) {
-              thumbnailKeyInput.value = 'thumbnail_id';
-              thumbnailValueInput.value = mediaId;
-              
-              // 創建或更新圖片顯示區域
-              const imageContainer = document.createElement('div');
-              imageContainer.className = 'relative aspect-[10/7]';
-              imageContainer.innerHTML = `
-                <img src="${mediaUrl}" alt="Featured image" class="w-full h-full object-cover rounded-md" />
-                <button 
-                  class="absolute top-2 right-2 !p-1 !size-6 bg-white !rounded-full shadow-md hover:bg-gray-100"
-                  phx-click="featured_image"
-                  phx-value-media-id=""
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              `;
-              
-              // 替換或插入圖片容器
-              const existingContainer = document.querySelector('.relative.aspect-\\[10\\/7\\]');
-              const setButton = document.querySelector('[phx-click*=\'/admin/media\']');
-              
-              if (existingContainer) {
-                existingContainer.replaceWith(imageContainer);
-              } else if (setButton) {
-                setButton.style.display = 'none';
-                setButton.parentNode.insertBefore(imageContainer, setButton);
-              }
-              
-              // 關閉模態框
-              const modal = document.querySelector(`#${confirmButton.closest('[id^="modal-"]').id}`);
-              if (modal) {
-                modal.remove();
-              }
-              
-              // 觸發 LiveView 更新
-              this.pushEventTo(this.el, 'featured_image', { media_id: mediaId });
-            }
-          });
         }
       }
     });
