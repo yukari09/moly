@@ -81,9 +81,23 @@ Hooks.Editor = {
     const savedTitle = localStorage.getItem('post-title')
     const initialContent = this.el.dataset.initialContent
 
+    console.log('Initializing editor with:', {
+      savedContent,
+      initialContent
+    })
+
     if (savedContent) {
       try {
-        initialData = JSON.parse(savedContent)
+        const parsedContent = JSON.parse(savedContent)
+        // Only use saved content if it has blocks
+        if (parsedContent.blocks && parsedContent.blocks.length > 0) {
+          initialData = parsedContent
+          console.log('Using saved content:', initialData)
+        } else if (initialContent) {
+          initialData = JSON.parse(initialContent)
+          localStorage.setItem('editorjs-content', initialContent)
+          console.log('Using initial content because saved content is empty:', initialData)
+        }
       } catch (error) {
         console.error('Failed to parse saved content:', error)
       }
@@ -92,6 +106,7 @@ Hooks.Editor = {
         initialData = JSON.parse(initialContent)
         // Save initial content to localStorage
         localStorage.setItem('editorjs-content', initialContent)
+        console.log('Using initial content:', initialData)
       } catch (error) {
         console.error('Failed to parse initial content:', error)
       }

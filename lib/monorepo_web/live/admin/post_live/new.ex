@@ -11,6 +11,19 @@ defmodule MonorepoWeb.AdminPostLive.New do
       |> Ash.load!([:term], actor: socket.assigns.current_user)
       |> Enum.map(&%{id: &1.id, name: &1.term.name})
 
+    default_editor_content = %{
+      "time" => DateTime.utc_now() |> DateTime.to_unix(),
+      "blocks" => [
+        %{
+          "type" => "paragraph",
+          "data" => %{
+            "text" => "Start writing your post here..."
+          }
+        }
+      ],
+      "version" => "2.28.2"
+    }
+
     socket =
       socket
       |> assign(
