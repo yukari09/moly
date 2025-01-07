@@ -189,6 +189,10 @@ h5.ce-header {
   @apply hover:text-gray-500 hover:bg-white hover:border-transparent;
 }
 
+button[disabled] {
+  @apply opacity-50 pointer-events-none;
+}
+
 /* Disable Default Transitions */
 .codex-editor__redactor,
 .ce-block,

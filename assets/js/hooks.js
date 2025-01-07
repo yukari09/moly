@@ -14,62 +14,49 @@ let Hooks = {}
 // Auto-resize textarea hook
 Hooks.AutoResizeTextarea = {
   mounted() {
-    this.resize = () => {
-      this.el.style.height = 'auto'
-      this.el.style.height = this.el.scrollHeight + 'px'
-    }
-    
-    // Load saved title from localStorage
+    this.el.style.height = 'auto'
+    this.el.style.height = this.el.scrollHeight + 'px'
+
+    // Load saved title
     const savedTitle = localStorage.getItem('post-title')
     if (savedTitle) {
       this.el.value = savedTitle
-      this.resize()
+      this.el.style.height = 'auto'
+      this.el.style.height = this.el.scrollHeight + 'px'
     }
-    
-    // Save title to localStorage on input
-    this.el.addEventListener('input', (e) => {
-      localStorage.setItem('post-title', e.target.value)
-      this.resize()
-      
-      // Also update the hidden input if it exists
-      const hiddenInput = document.querySelector(`input[name="${this.el.id}"]`)
-      if (hiddenInput) {
-        hiddenInput.value = e.target.value
-        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }))
-      }
-    })
-    
-    // Handle window resize
-    window.addEventListener('resize', this.resize)
-    
-    // Handle paste events
-    this.el.addEventListener('paste', () => {
-      // Use setTimeout to ensure content is pasted before resizing
-      setTimeout(this.resize, 0)
-    })
 
-    // Clear title when editor is cleared
-    window.addEventListener('app:clearEditor', () => {
+    // Handle input
+    this.handleInput = e => {
+      e.target.style.height = 'auto'
+      e.target.style.height = e.target.scrollHeight + 'px'
+      localStorage.setItem('post-title', e.target.value)
+    }
+    this.el.addEventListener('input', this.handleInput)
+
+    // Handle clear editor event
+    this.handleClear = () => {
       this.el.value = ''
+      this.el.style.height = 'auto'
+      this.el.style.height = this.el.scrollHeight + 'px'
       localStorage.removeItem('post-title')
-      this.resize()
-      
-      // Also update the hidden input if it exists
-      const hiddenInput = document.querySelector(`input[name="${this.el.id}"]`)
-      if (hiddenInput) {
-        hiddenInput.value = ''
-        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }))
-      }
-    })
+    }
+    window.addEventListener('app:clearEditor', this.handleClear)
+
+    // Handle title restoration
+    this.handleTitleRestore = (e) => {
+      this.el.value = e.detail.title
+      this.el.style.height = 'auto'
+      this.el.style.height = this.el.scrollHeight + 'px'
+      // Trigger input event to update button states
+      this.el.dispatchEvent(new Event('input', { bubbles: true }))
+    }
+    window.addEventListener('post-title:restored', this.handleTitleRestore)
   },
-  
-  updated() {
-    this.resize()
-  },
-  
+
   destroyed() {
-    this.el.removeEventListener('input', this.resize)
-    window.removeEventListener('resize', this.resize)
+    this.el.removeEventListener('input', this.handleInput)
+    window.removeEventListener('app:clearEditor', this.handleClear)
+    window.removeEventListener('post-title:restored', this.handleTitleRestore)
   }
 }
 
@@ -89,6 +76,14 @@ Hooks.Editor = {
       savedContent,
       initialContent
     })
+
+    // Add title change listener
+    const titleInput = document.querySelector('#post_title')
+    if (titleInput) {
+      titleInput.addEventListener('input', () => {
+        localStorage.setItem('post-title', titleInput.value)
+      })
+    }
 
     if (savedContent) {
       try {
@@ -211,7 +206,10 @@ Hooks.Editor = {
           // Store previous state for undo
           const previousState = localStorage.getItem('editorjs-content')
           if (previousState && previousState !== JSON.stringify(outputData)) {
-            this.undoStack.push(previousState)
+            this.undoStack.push(JSON.stringify({
+              content: JSON.parse(previousState),
+              title: localStorage.getItem('post-title')
+            }))
             this.redoStack.length = 0 // Clear redo stack when new changes are made
           }
           localStorage.setItem('editorjs-content', JSON.stringify(outputData))
@@ -246,8 +244,15 @@ Hooks.Editor = {
       // Store current state for undo before clearing
       editor.save().then((currentData) => {
         const currentState = JSON.stringify(currentData)
-        if (currentState && currentData.blocks && currentData.blocks.length > 0) {
-          this.undoStack.push(currentState)
+        const titleInput = document.querySelector('#post_title')
+        const currentTitle = titleInput ? titleInput.value : ''
+
+        if ((currentState && currentData.blocks && currentData.blocks.length > 0) || currentTitle) {
+          // Save both editor content and title
+          this.undoStack.push(JSON.stringify({
+            content: currentData,
+            title: currentTitle
+          }))
           this.redoStack.length = 0
           this.updateButtonStates()
         }
@@ -256,16 +261,16 @@ Hooks.Editor = {
         this._editor.clear()
         
         // Clear title
-        const titleInput = document.querySelector('#post_title')
         if (titleInput) {
           titleInput.value = ''
-          // Trigger input event to update button states
-          titleInput.dispatchEvent(new Event('input'))
+          localStorage.removeItem('post-title')
+          // Trigger input event to update button states and resize
+          const event = new Event('input', { bubbles: true })
+          titleInput.dispatchEvent(event)
         }
 
         // Clear localStorage
         localStorage.removeItem('editorjs-content')
-        localStorage.removeItem('post-title')
 
         // Clear hidden input
         const contentEl = document.querySelector(`#${this.el.dataset.content}`)
@@ -283,26 +288,46 @@ Hooks.Editor = {
     window.addEventListener('app:editorUndo', () => {
       if (this.undoStack.length > 0) {
         const previousState = this.undoStack.pop()
-        const currentState = localStorage.getItem('editorjs-content')
+        const currentEditorState = localStorage.getItem('editorjs-content')
+        const titleInput = document.querySelector('#post_title')
+        const currentTitle = titleInput ? titleInput.value : ''
         
         // Save current state to redo stack
-        if (currentState) {
-          this.redoStack.push(currentState)
+        if (currentEditorState || currentTitle) {
+          this.redoStack.push(JSON.stringify({
+            content: currentEditorState ? JSON.parse(currentEditorState) : { blocks: [] },
+            title: currentTitle
+          }))
         }
 
         // Restore previous state
         const previousData = JSON.parse(previousState)
-        this._editor.render(previousData)
-        localStorage.setItem('editorjs-content', previousState)
-
-        // Update content input
-        const contentEl = document.querySelector(`#${this.el.dataset.content}`)
-        if (contentEl) {
-          contentEl.value = previousState
+        
+        // Restore title first
+        if (titleInput && previousData.title !== undefined) {
+          titleInput.value = previousData.title
+          localStorage.setItem('post-title', previousData.title)
+          // Dispatch a custom event for title restoration
+          window.dispatchEvent(new CustomEvent('post-title:restored', {
+            detail: { title: previousData.title }
+          }))
         }
 
-        // Update hasEditorContent flag
-        this.hasEditorContent = previousData.blocks && previousData.blocks.length > 0
+        // Then restore content
+        if (previousData.content) {
+          this._editor.render(previousData.content)
+          localStorage.setItem('editorjs-content', JSON.stringify(previousData.content))
+          
+          // Update content input
+          const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+          if (contentEl) {
+            contentEl.value = JSON.stringify(previousData.content)
+          }
+          
+          // Update hasEditorContent flag
+          this.hasEditorContent = previousData.content.blocks && previousData.content.blocks.length > 0
+        }
+
         this.updateButtonStates()
       }
     })
@@ -311,26 +336,46 @@ Hooks.Editor = {
     window.addEventListener('app:editorRedo', () => {
       if (this.redoStack.length > 0) {
         const nextState = this.redoStack.pop()
-        const currentState = localStorage.getItem('editorjs-content')
+        const currentEditorState = localStorage.getItem('editorjs-content')
+        const titleInput = document.querySelector('#post_title')
+        const currentTitle = titleInput ? titleInput.value : ''
         
         // Save current state to undo stack
-        if (currentState) {
-          this.undoStack.push(currentState)
+        if (currentEditorState || currentTitle) {
+          this.undoStack.push(JSON.stringify({
+            content: currentEditorState ? JSON.parse(currentEditorState) : { blocks: [] },
+            title: currentTitle
+          }))
         }
 
         // Restore next state
         const nextData = JSON.parse(nextState)
-        this._editor.render(nextData)
-        localStorage.setItem('editorjs-content', nextState)
-
-        // Update content input
-        const contentEl = document.querySelector(`#${this.el.dataset.content}`)
-        if (contentEl) {
-          contentEl.value = nextState
+        
+        // Restore title first
+        if (titleInput && nextData.title !== undefined) {
+          titleInput.value = nextData.title
+          localStorage.setItem('post-title', nextData.title)
+          // Dispatch a custom event for title restoration
+          window.dispatchEvent(new CustomEvent('post-title:restored', {
+            detail: { title: nextData.title }
+          }))
         }
 
-        // Update hasEditorContent flag
-        this.hasEditorContent = nextData.blocks && nextData.blocks.length > 0
+        // Then restore content
+        if (nextData.content) {
+          this._editor.render(nextData.content)
+          localStorage.setItem('editorjs-content', JSON.stringify(nextData.content))
+          
+          // Update content input
+          const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+          if (contentEl) {
+            contentEl.value = JSON.stringify(nextData.content)
+          }
+          
+          // Update hasEditorContent flag
+          this.hasEditorContent = nextData.content.blocks && nextData.content.blocks.length > 0
+        }
+
         this.updateButtonStates()
       }
     })
@@ -411,12 +456,22 @@ Hooks.BindInputToUrl = {
 
   bindValueToUrl(el) {
     const value = this.inputElement.value.trim();
-    let formattedValue = value
-    if(!value.startsWith('/')){
-      formattedValue = `/${value}`
+    const targetSelector = this.el.dataset.target;
+    const targetEls = document.querySelectorAll(targetSelector);
+    const originalValue = this.el.dataset.original;
+
+    let newValue = value;
+    if (value === '/') {
+      newValue = originalValue;
+    } else if (!value.startsWith('/')) {
+      newValue = value.length > 0 ? '/' + value : originalValue;
     }
-    this.inputElement.value = formattedValue
-    el.innerText = `${this.baseUrl}${formattedValue}`
+
+    this.inputElement.value = newValue;
+    this.el.dataset.original = newValue;
+    targetEls.forEach(targetEl => {
+      if (targetEl) targetEl.innerText = newValue;
+    });
   }
 }
 
