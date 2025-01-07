@@ -14,52 +14,53 @@ let Hooks = {}
 // Auto-resize textarea hook
 Hooks.AutoResizeTextarea = {
   mounted() {
-    this.el.style.height = 'auto'
-    this.el.style.height = this.el.scrollHeight + 'px'
-
-    // Load saved title
-    const savedTitle = localStorage.getItem('post-title')
-    if (savedTitle) {
-      this.el.value = savedTitle
+    // Initialize resize function
+    this.resize = () => {
       this.el.style.height = 'auto'
       this.el.style.height = this.el.scrollHeight + 'px'
     }
 
-    // Handle input
-    this.handleInput = e => {
-      e.target.style.height = 'auto'
-      e.target.style.height = e.target.scrollHeight + 'px'
-      localStorage.setItem('post-title', e.target.value)
+    // Handle initial load
+    const savedTitle = localStorage.getItem('post-title')
+    if (savedTitle) {
+      this.el.value = savedTitle
+      this.resize()
+    }
+
+    // Add input event listener
+    this.handleInput = () => {
+      this.resize()
+      localStorage.setItem('post-title', this.el.value)
     }
     this.el.addEventListener('input', this.handleInput)
 
     // Handle clear editor event
     this.handleClear = () => {
       this.el.value = ''
-      this.el.style.height = 'auto'
-      this.el.style.height = this.el.scrollHeight + 'px'
       localStorage.removeItem('post-title')
+      this.resize()
     }
     window.addEventListener('app:clearEditor', this.handleClear)
 
-    // Handle title restoration
-    this.handleTitleRestore = (e) => {
-      this.el.value = e.detail.title
-      this.el.style.height = 'auto'
-      this.el.style.height = this.el.scrollHeight + 'px'
-      // Trigger input event to update button states
-      this.el.dispatchEvent(new Event('input', { bubbles: true }))
+    // Handle title restore event
+    this.handleRestore = (e) => {
+      if (e.detail && e.detail.title !== undefined) {
+        this.el.value = e.detail.title
+        localStorage.setItem('post-title', e.detail.title)
+        this.resize()
+      }
     }
-    window.addEventListener('post-title:restored', this.handleTitleRestore)
+    window.addEventListener('app:restoreTitle', this.handleRestore)
   },
 
   destroyed() {
     this.el.removeEventListener('input', this.handleInput)
     window.removeEventListener('app:clearEditor', this.handleClear)
-    window.removeEventListener('post-title:restored', this.handleTitleRestore)
+    window.removeEventListener('app:restoreTitle', this.handleRestore)
   }
 }
 
+// Editor hook
 Hooks.Editor = {
   mounted() {
     // Get initial content first
@@ -78,7 +79,7 @@ Hooks.Editor = {
     })
 
     // Add title change listener
-    const titleInput = document.querySelector('#post_title')
+    const titleInput = document.querySelector('[data-editor-title]')
     if (titleInput) {
       titleInput.addEventListener('input', () => {
         localStorage.setItem('post-title', titleInput.value)
@@ -116,7 +117,7 @@ Hooks.Editor = {
 
     // Function to update button states
     this.updateButtonStates = () => {
-      const titleInput = document.querySelector('#post_title')
+      const titleInput = document.querySelector('[data-editor-title]')
       const hasTitle = titleInput && titleInput.value.trim() !== ''
       const hasEditorContent = this.hasEditorContent
 
@@ -241,34 +242,23 @@ Hooks.Editor = {
 
     // Clear editor handler
     window.addEventListener('app:clearEditor', () => {
+      const titleInput = document.querySelector('#post_title')
+      const currentTitle = titleInput ? titleInput.value : ''
+
       // Store current state for undo before clearing
       editor.save().then((currentData) => {
-        const currentState = JSON.stringify(currentData)
-        const titleInput = document.querySelector('#post_title')
-        const currentTitle = titleInput ? titleInput.value : ''
-
-        if ((currentState && currentData.blocks && currentData.blocks.length > 0) || currentTitle) {
-          // Save both editor content and title
+        // Only save to undo stack if there's content or title
+        if ((currentData.blocks && currentData.blocks.length > 0) || currentTitle) {
           this.undoStack.push(JSON.stringify({
             content: currentData,
             title: currentTitle
           }))
-          this.redoStack.length = 0
-          this.updateButtonStates()
+          this.redoStack = [] // Clear redo stack when making new changes
         }
 
         // Clear editor content
         this._editor.clear()
         
-        // Clear title
-        if (titleInput) {
-          titleInput.value = ''
-          localStorage.removeItem('post-title')
-          // Trigger input event to update button states and resize
-          const event = new Event('input', { bubbles: true })
-          titleInput.dispatchEvent(event)
-        }
-
         // Clear localStorage
         localStorage.removeItem('editorjs-content')
 
@@ -278,7 +268,7 @@ Hooks.Editor = {
           contentEl.value = JSON.stringify({ blocks: [] })
         }
 
-        // Reset hasEditorContent flag
+        // Reset hasEditorContent flag and update button states
         this.hasEditorContent = false
         this.updateButtonStates()
       })
@@ -288,47 +278,42 @@ Hooks.Editor = {
     window.addEventListener('app:editorUndo', () => {
       if (this.undoStack.length > 0) {
         const previousState = this.undoStack.pop()
-        const currentEditorState = localStorage.getItem('editorjs-content')
-        const titleInput = document.querySelector('#post_title')
-        const currentTitle = titleInput ? titleInput.value : ''
-        
-        // Save current state to redo stack
-        if (currentEditorState || currentTitle) {
-          this.redoStack.push(JSON.stringify({
-            content: currentEditorState ? JSON.parse(currentEditorState) : { blocks: [] },
-            title: currentTitle
-          }))
-        }
-
-        // Restore previous state
         const previousData = JSON.parse(previousState)
         
-        // Restore title first
-        if (titleInput && previousData.title !== undefined) {
-          titleInput.value = previousData.title
-          localStorage.setItem('post-title', previousData.title)
-          // Dispatch a custom event for title restoration
-          window.dispatchEvent(new CustomEvent('post-title:restored', {
-            detail: { title: previousData.title }
+        // Save current state to redo stack before restoring
+        editor.save().then((currentData) => {
+          const titleInput = document.querySelector('#post_title')
+          const currentTitle = titleInput ? titleInput.value : ''
+          
+          this.redoStack.push(JSON.stringify({
+            content: currentData,
+            title: currentTitle
           }))
-        }
 
-        // Then restore content
-        if (previousData.content) {
-          this._editor.render(previousData.content)
-          localStorage.setItem('editorjs-content', JSON.stringify(previousData.content))
-          
-          // Update content input
-          const contentEl = document.querySelector(`#${this.el.dataset.content}`)
-          if (contentEl) {
-            contentEl.value = JSON.stringify(previousData.content)
+          // Restore title through custom event
+          if (previousData.title !== undefined) {
+            window.dispatchEvent(new CustomEvent('app:restoreTitle', {
+              detail: { title: previousData.title }
+            }))
           }
-          
-          // Update hasEditorContent flag
-          this.hasEditorContent = previousData.content.blocks && previousData.content.blocks.length > 0
-        }
 
-        this.updateButtonStates()
+          // Restore content
+          if (previousData.content) {
+            this._editor.render(previousData.content)
+            localStorage.setItem('editorjs-content', JSON.stringify(previousData.content))
+            
+            // Update content input
+            const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+            if (contentEl) {
+              contentEl.value = JSON.stringify(previousData.content)
+            }
+            
+            // Update hasEditorContent flag
+            this.hasEditorContent = previousData.content.blocks && previousData.content.blocks.length > 0
+          }
+
+          this.updateButtonStates()
+        })
       }
     })
 
@@ -336,47 +321,42 @@ Hooks.Editor = {
     window.addEventListener('app:editorRedo', () => {
       if (this.redoStack.length > 0) {
         const nextState = this.redoStack.pop()
-        const currentEditorState = localStorage.getItem('editorjs-content')
-        const titleInput = document.querySelector('#post_title')
-        const currentTitle = titleInput ? titleInput.value : ''
-        
-        // Save current state to undo stack
-        if (currentEditorState || currentTitle) {
-          this.undoStack.push(JSON.stringify({
-            content: currentEditorState ? JSON.parse(currentEditorState) : { blocks: [] },
-            title: currentTitle
-          }))
-        }
-
-        // Restore next state
         const nextData = JSON.parse(nextState)
         
-        // Restore title first
-        if (titleInput && nextData.title !== undefined) {
-          titleInput.value = nextData.title
-          localStorage.setItem('post-title', nextData.title)
-          // Dispatch a custom event for title restoration
-          window.dispatchEvent(new CustomEvent('post-title:restored', {
-            detail: { title: nextData.title }
+        // Save current state to undo stack before restoring
+        editor.save().then((currentData) => {
+          const titleInput = document.querySelector('#post_title')
+          const currentTitle = titleInput ? titleInput.value : ''
+          
+          this.undoStack.push(JSON.stringify({
+            content: currentData,
+            title: currentTitle
           }))
-        }
 
-        // Then restore content
-        if (nextData.content) {
-          this._editor.render(nextData.content)
-          localStorage.setItem('editorjs-content', JSON.stringify(nextData.content))
-          
-          // Update content input
-          const contentEl = document.querySelector(`#${this.el.dataset.content}`)
-          if (contentEl) {
-            contentEl.value = JSON.stringify(nextData.content)
+          // Restore title through custom event
+          if (nextData.title !== undefined) {
+            window.dispatchEvent(new CustomEvent('app:restoreTitle', {
+              detail: { title: nextData.title }
+            }))
           }
-          
-          // Update hasEditorContent flag
-          this.hasEditorContent = nextData.content.blocks && nextData.content.blocks.length > 0
-        }
 
-        this.updateButtonStates()
+          // Restore content
+          if (nextData.content) {
+            this._editor.render(nextData.content)
+            localStorage.setItem('editorjs-content', JSON.stringify(nextData.content))
+            
+            // Update content input
+            const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+            if (contentEl) {
+              contentEl.value = JSON.stringify(nextData.content)
+            }
+            
+            // Update hasEditorContent flag
+            this.hasEditorContent = nextData.content.blocks && nextData.content.blocks.length > 0
+          }
+
+          this.updateButtonStates()
+        })
       }
     })
 
@@ -398,7 +378,7 @@ Hooks.Editor = {
   },
 
   destroyed() {
-    const titleInput = document.querySelector('#post_title')
+    const titleInput = document.querySelector('[data-editor-title]')
     if (titleInput) {
       titleInput.removeEventListener('input', this.updateButtonStates)
     }

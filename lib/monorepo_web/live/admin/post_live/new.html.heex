@@ -76,7 +76,6 @@
       <div class="flex items-center gap-x-4 lg:gap-x-6">
         <.button 
           size="sm" 
-          form={@form}
           class="pointer-events-none opacity-50"
           data-action="publish"
         >
@@ -101,6 +100,7 @@
       <div class="w-[650px] mx-auto mt-12">
         <textarea
           id={f[:post_title].id}
+          name={f[:post_title].name}
           phx-update="ignore"
           autocomplete="off"
           placeholder="Add a title"
@@ -108,6 +108,7 @@
           rows="1"
           phx-hook="AutoResizeTextarea"
           data-auto-resize="true"
+          data-editor-title="true"
         ></textarea>
       </div>
       <div 
