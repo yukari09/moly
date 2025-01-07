@@ -4,7 +4,7 @@ defmodule MonorepoWeb.AdminPostLive.New do
   @impl true
   def mount(_params, _session, socket) do
 
-    form = resource_to_form(socket)
+    form = resource_to_form()
 
     term_taxonomy_categories =
       Monorepo.Terms.read_term_taxonomy!("category", nil, actor: socket.assigns.current_user)
@@ -19,12 +19,15 @@ defmodule MonorepoWeb.AdminPostLive.New do
         term_taxonomy_categories: term_taxonomy_categories
       )
 
+
     {:ok,
       socket,
       layout: false,
       temporary_assigns: [
         selected_image_modal_id: generate_random_id(),
         create_category_modal_id: generate_random_id(),
+        slug_dropdown_id: generate_random_id(),
+        post_slug: "/#{generate_random_str(8)}",
       ]
     }
   end
@@ -34,13 +37,6 @@ defmodule MonorepoWeb.AdminPostLive.New do
     %{scheme: scheme, authority: authority} = URI.parse(uri)
     {:noreply, assign(socket, host: "#{scheme}://#{authority}/p")}
   end
-
-
-
-
-
-
-
 
   def handle_event("validate", %{"form" => params}, socket) do
     selected_categories =
@@ -56,7 +52,7 @@ defmodule MonorepoWeb.AdminPostLive.New do
     {:noreply, socket}
   end
 
-  defp resource_to_form(socket) do
+  defp resource_to_form() do
     AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post, [
       forms: [
         post_meta: [

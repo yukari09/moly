@@ -9,7 +9,7 @@ defmodule MonorepoWeb.TailwindUI do
 
   ## JS Commands
 
-  defp hide_dropdown(menu_dom_id) do
+  def hide_dropdown(menu_dom_id) do
     JS.hide(
       to: "##{menu_dom_id}",
       transition:
@@ -18,7 +18,7 @@ defmodule MonorepoWeb.TailwindUI do
     )
   end
 
-  defp show_dropdown(menu_dom_id) do
+  def show_dropdown(menu_dom_id) do
     JS.show(
       to: "##{menu_dom_id}",
       transition:
@@ -156,7 +156,7 @@ defmodule MonorepoWeb.TailwindUI do
     assigns = assign_new(assigns, :size, fn -> "md" end)
     assigns = assign_new(assigns, :class, fn -> [] end)
     assigns = assign_new(assigns, :disabled, fn -> false end)
-    
+
     ~H"""
     <.link
       :if={@navigate || @patch || @href}
@@ -458,7 +458,6 @@ defmodule MonorepoWeb.TailwindUI do
   def input(%{field: field} = assigns) do
     error_messages = error_messages(field.errors)
     assigns = assign(assigns, :errors, error_messages)
-
     ~H"""
     <div class={@container_class}>
       <input

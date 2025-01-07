@@ -27,7 +27,7 @@
 %>
 
 <.form :let={f} for={@form} class="h-screen">
-<div>
+<div id="post-create-form">
   <div class=" flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
     <.link patch={~p"/admin/posts/index"} class="flex flex-shrink-0 items-center">
       <img class="h-8 w-auto" src="/images/logo.png" alt="Your Company">
@@ -155,7 +155,7 @@
 
   <div 
       id="new-post-sidebar" 
-      class="pointer-events-auto w-screen max-w-sm hidden xl:block border-l border-gray-200 h-[calc(100vh-4rem)] overflow-y-scroll overflow-x-visible"
+      class="pointer-events-auto w-screen max-w-sm z-20 bg-white absolute right-0 xl:static xl:block border-l border-gray-200 h-[calc(100vh-4rem)] overflow-y-scroll overflow-x-visible"
       aria-expanded="true"
   >
     <div class="h-full overflow-y-scroll bg-white flex flex-col px-2 sm:px-4 space-y-4">
@@ -170,10 +170,8 @@
               <.button 
                 class="absolute top-2 right-2 !p-1 !size-6 bg-white !rounded-full shadow-md hover:bg-gray-100"
                 phx-click={
-                  JS.set_attribute({"value", nil}, to: "#thumbnail_id_meta_key")
-                  |> JS.set_attribute({"value", nil}, to: "#thumbnail_id_meta_value")
-                  |> JS.toggle_class("hidden", to: "#featured-image-container")
-                  |> JS.toggle_class("hidden", to: "#set-featured-image-btn")
+                  JS.set_attribute({"value", nil}, to: "#thumbnail_id_meta_key, #thumbnail_id_meta_value")
+                  |> JS.toggle_class("hidden", to: "#featured-image-container, #set-featured-image-btn")
                 }
                 variant="outline"
               >
@@ -181,7 +179,7 @@
               </.button>
             </div>
             <input id="thumbnail_id_meta_key" name={"#{f[:post_meta].name}[0][meta_key]"} value="thumbnail_id" type="hidden"/>
-            <input id="thumbnail_id_meta_value" name={"#{f[:post_meta].name}[0][meta_value]"} type="hidden"/>
+            <input id="thumbnail_id_meta_value" phx-update="ignore" name={"#{f[:post_meta].name}[0][meta_value]"} type="hidden"/>
             
               <.button 
                 id="set-featured-image-btn"
@@ -203,7 +201,7 @@
             <li class="flex items-center">
               <span class="font-medium w-32">Publish</span>
               <label class="text-gray-600 hover:underline cursor-pointer flex items-center gap-1" for={f[:post_date].id}>
-                <span id="post-date-immediately" class="flex items-center">Immediately <Lucideicons.calendar class="w-4 h-4 text-gray-500" /></span>
+                <span id="post-date-immediately" class="flex items-center">Immediately&nbsp;<Lucideicons.calendar class="w-4 h-4 text-gray-500" /></span>
                 <span id="post-date-calendar"></span>
               </label>
               <.input 
@@ -216,9 +214,9 @@
             </li>
             <li class="flex items-center">
               <span class="font-medium w-32">Slug</span>
-              <.dropdown id={f[:post_name].id <> "-dropdown"} class="flex-1">
+              <.dropdown id={@slug_dropdown_id} class="flex-1" phx-update="ignore">
                 <:button_slot class="text-gray-600 !p-0 !m-0">
-                  {f[:post_name].value || "#{generate_slug()}"}
+                  <span id="post-slug-label">{@post_slug}</span>
                 </:button_slot> 
                 <:menu_slot class="p-3 w-72 mt-2">
                   <div class="pb-2">
@@ -226,11 +224,20 @@
                   </div>
                   <div class="space-y-4 py-2">
                     <div>
-                      <.input field={f[:post_name]} label="Unique slug" phx-debounce="blur" autocomplete="off"/>
+                      <.input 
+                        field={f[:post_name]} 
+                        value={@post_slug} 
+                        label="Unique slug" 
+                        autocomplete="off"
+                        phx-hook="InputValueUpdater"
+                        data-target="#post-slug-label,#post-slug-txt"
+                        data-original={@post_slug}
+                        type="text"
+                      />
                     </div>
                     <div>
                       <span class="font-medium text-sm/6">
-                        Permanent link: <span id="{f[:post_name].id}-url" class="font-normal" phx-hook="BindInputToUrl" data-base-url={@host} data-target={"#"<>f[:post_name].id}>{@host}</span>
+                        Permanent link: <span  class="font-normal" id="post-permalink">{@host}<span id="post-slug-txt">{@post_slug}</span></span>
                       </span>
                     </div>
                   </div>
@@ -268,7 +275,7 @@
                 <Lucideicons.chevron_up id="sub-menu-1-icon" class="w-4 h-4" />
               </button>
               <div class="mt-1 px-2   mb-2" id="sub-menu-1">
-                <.textarea field={f[:post_excerpt]} placeholder="Add an excerpt" label={nil} rows="5" />
+                <.textarea field={f[:post_excerpt]} placeholder="Add an excerpt" label={nil} rows="5" phx-update="ignore" />
               </div>
             </div>
           </li>

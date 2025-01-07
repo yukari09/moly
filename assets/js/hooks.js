@@ -537,4 +537,37 @@ Hooks.IframeMediaSelector = {
   }
 }
 
+Hooks.InputValueUpdater = {
+  mounted() {
+    this.updateTargets = this.updateTargets.bind(this);
+    this.el.addEventListener('blur', this.updateTargets);
+    this.el.dataset.original = this.el.value;
+  },
+
+  updateTargets() {
+    const value = this.el.value.trim();
+    const targetSelector = this.el.dataset.target;
+    const targetEls = document.querySelectorAll(targetSelector);
+    const originalValue = this.el.dataset.original;
+
+    let newValue = value;
+    if (value === '/') {
+      newValue = originalValue;
+    } else if (!value.startsWith('/')) {
+      newValue = value.length > 0 ? '/' + value : originalValue;
+    }
+
+    this.el.value = newValue;
+    this.el.dataset.original = newValue;
+    targetEls.forEach(targetEl => {
+      if (targetEl) targetEl.innerText = newValue;
+    });
+  },
+
+  destroyed() {
+    this.el.removeEventListener('blur', this.updateTargets);
+  }
+};
+
+ 
 export default Hooks
