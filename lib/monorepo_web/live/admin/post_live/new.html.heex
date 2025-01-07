@@ -36,40 +36,52 @@
     <!-- Separator -->
     <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
 
-    <.link 
-      class="editor-action-btn"
-      phx-click={JS.dispatch("app:editorUndo", to: "#editorjs")}
-      data-editor-action="undo"
-    >
-      <Lucideicons.undo_2 class="size-5" />
-    </.link>
-
-    <.link 
-      class="editor-action-btn"
-      phx-click={JS.dispatch("app:editorRedo", to: "#editorjs")}
-      data-editor-action="redo"
-    >
-      <Lucideicons.redo_2 class="size-5" />
-    </.link>
+    <div class="flex items-center">
+      <.link 
+        class="editor-action-btn"
+        phx-click={JS.dispatch("app:editorUndo", to: "#editorjs")}
+        data-editor-action="undo"
+        disabled
+      >
+        <Lucideicons.undo_2 class="size-5" />
+      </.link>
+      <.link 
+        class="editor-action-btn"
+        phx-click={JS.dispatch("app:editorRedo", to: "#editorjs")}
+        data-editor-action="redo"
+        disabled
+      >
+        <Lucideicons.redo_2 class="size-5" />
+      </.link>
+    </div>
 
     <div class="flex flex-1 gap-x-4 self-stretch items-center lg:gap-x-6">
-      <.link class="text-sm text-primary text-gray-500 ml-auto" >Save draft</.link>
       <.link 
-        class="text-sm text-primary flex items-center gap-x-1 text-gray-500"
+        class="text-sm text-primary text-gray-500 ml-auto pointer-events-none" 
+        data-action="save-draft"
+      >
+        Save draft
+      </.link>
+      <.link 
+        class="text-sm text-primary flex items-center gap-x-1 text-gray-500 pointer-events-none"
         phx-click={
           JS.dispatch("app:clearEditor", to: "#editorjs")
         }
-        data-confirm="Are you sure you want to clear the editor? This action cannot be undone."
+        data-confirm="Are you sure you want to clear the editor?"
+        data-action="clear-editor"
       >
         <Lucideicons.eraser class="w-4 h-4" />
         Clear editor
       </.link>
-      <.link class="text-sm text-primary flex items-center gap-x-1 text-gray-500">
-        <Lucideicons.laptop  class="w-4 h-4" />
-        Preview
-      </.link>
       <div class="flex items-center gap-x-4 lg:gap-x-6">
-        <.button size="sm" form={@form}>Publish</.button>
+        <.button 
+          size="sm" 
+          form={@form}
+          class="pointer-events-none opacity-50"
+          data-action="publish"
+        >
+          Publish
+        </.button>
       </div>
       <.link 
         class="text-sm text-primary text-gray-500" 
