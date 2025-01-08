@@ -24,6 +24,10 @@ defmodule Monorepo.Contents.PostMeta do
       change manage_relationship(:post, :post, type: :append_and_remove)
     end
 
+    create :create_post_meta do
+      accept [:meta_key, :meta_value]
+    end
+
     update :update do
       primary? true
       accept [:meta_key, :meta_value]

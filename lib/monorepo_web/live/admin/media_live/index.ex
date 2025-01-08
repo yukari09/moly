@@ -240,8 +240,9 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
       else
         @model
         |> Ash.Query.filter(expr(contains(post_title, ^q)))
-        |> Ash.Query.filter(post_type == :attachment)
       end
+
+    data = Ash.Query.filter(data, post_type == :attachment)
 
     count_images = Ash.Query.filter(data, expr(contains(post_mime_type, ^"image"))) |> Ash.count!([actor: current_user])
     count_videos = Ash.Query.filter(data, expr(contains(post_mime_type, ^"video"))) |> Ash.count!([actor: current_user])

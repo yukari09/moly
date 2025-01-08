@@ -17,16 +17,12 @@
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
-import Alpine from 'alpinejs'
 // Establish Phoenix Socket and LiveView configuration.
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import Hooks from "./hooks"
 import Uploaders from "./uploaders"
-
-window.Alpine = Alpine
-Alpine.start()
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
@@ -133,5 +129,11 @@ window.addEventListener("app:addOverlayOnDragOver", (event) => {
   });
 });
 
+//add a listener to the window to submit the form
+window.addEventListener("app:click-el", (event) => {
+  if (event.target) {
+    event.target.click();
+  }
+});
 
  

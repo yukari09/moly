@@ -34,19 +34,16 @@ Hooks.AutoResizeTextarea = {
     }
     this.el.addEventListener('input', this.handleInput)
 
-    // Handle clear editor event
-    this.handleClear = () => {
-      this.el.value = ''
-      localStorage.removeItem('post-title')
-      this.resize()
-    }
-    window.addEventListener('app:clearEditor', this.handleClear)
-
+   
     // Handle title restore event
     this.handleRestore = (e) => {
       if (e.detail && e.detail.title !== undefined) {
         this.el.value = e.detail.title
-        localStorage.setItem('post-title', e.detail.title)
+        if (e.detail.title === '') {
+          localStorage.removeItem('post-title')
+        } else {
+          localStorage.setItem('post-title', e.detail.title)
+        }
         this.resize()
       }
     }
@@ -55,7 +52,6 @@ Hooks.AutoResizeTextarea = {
 
   destroyed() {
     this.el.removeEventListener('input', this.handleInput)
-    window.removeEventListener('app:clearEditor', this.handleClear)
     window.removeEventListener('app:restoreTitle', this.handleRestore)
   }
 }
@@ -66,7 +62,6 @@ Hooks.Editor = {
     // Get initial content first
     let initialData = {}
     const savedContent = localStorage.getItem('editorjs-content')
-    const savedTitle = localStorage.getItem('post-title')
     const initialContent = this.el.dataset.initialContent
 
     // Initialize undo/redo stacks
@@ -94,11 +89,21 @@ Hooks.Editor = {
           initialData = parsedContent
           this.hasEditorContent = true
           console.log('Using saved content:', initialData)
+          // 同步到隱藏輸入
+          const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+          if (contentEl) {
+            contentEl.value = JSON.stringify(initialData)
+          }
         } else if (initialContent) {
           initialData = JSON.parse(initialContent)
           this.hasEditorContent = initialData.blocks && initialData.blocks.length > 0
           localStorage.setItem('editorjs-content', initialContent)
           console.log('Using initial content because saved content is empty:', initialData)
+          // 同步到隱藏輸入
+          const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+          if (contentEl) {
+            contentEl.value = JSON.stringify(initialData)
+          }
         }
       } catch (error) {
         console.error('Failed to parse saved content:', error)
@@ -107,9 +112,13 @@ Hooks.Editor = {
       try {
         initialData = JSON.parse(initialContent)
         this.hasEditorContent = initialData.blocks && initialData.blocks.length > 0
-        // Save initial content to localStorage
         localStorage.setItem('editorjs-content', initialContent)
         console.log('Using initial content:', initialData)
+        // 同步到隱藏輸入
+        const contentEl = document.querySelector(`#${this.el.dataset.content}`)
+        if (contentEl) {
+          contentEl.value = JSON.stringify(initialData)
+        }
       } catch (error) {
         console.error('Failed to parse initial content:', error)
       }
@@ -123,7 +132,7 @@ Hooks.Editor = {
 
       console.log('Updating button states:', { hasTitle, hasEditorContent })
 
-      // Save draft button - 需要 editor 和 title 都有內容
+      // Save draft button
       const saveDraftBtn = document.querySelector('[data-action="save-draft"]')
       if (saveDraftBtn) {
         if (hasTitle && hasEditorContent) {
@@ -135,7 +144,7 @@ Hooks.Editor = {
         }
       }
 
-      // Clear editor button - 只要 editor 或 title 有內容就可以
+      // Clear editor button -  
       const clearEditorBtn = document.querySelector('[data-action="clear-editor"]')
       if (clearEditorBtn) {
         if (hasTitle || hasEditorContent) {
@@ -147,7 +156,7 @@ Hooks.Editor = {
         }
       }
 
-      // Publish button - 需要 editor 和 title 都有內容
+      // Publish button -  
       const publishBtn = document.querySelector('[data-action="publish"]')
       if (publishBtn) {
         if (hasTitle && hasEditorContent) {
@@ -242,7 +251,7 @@ Hooks.Editor = {
 
     // Clear editor handler
     window.addEventListener('app:clearEditor', () => {
-      const titleInput = document.querySelector('#post_title')
+      const titleInput = document.querySelector('[data-editor-title]')
       const currentTitle = titleInput ? titleInput.value : ''
 
       // Store current state for undo before clearing
@@ -258,7 +267,10 @@ Hooks.Editor = {
 
         // Clear editor content
         this._editor.clear()
-        
+
+        //Clear Title
+        titleInput && (titleInput.value = '')
+
         // Clear localStorage
         localStorage.removeItem('editorjs-content')
 
@@ -282,7 +294,7 @@ Hooks.Editor = {
         
         // Save current state to redo stack before restoring
         editor.save().then((currentData) => {
-          const titleInput = document.querySelector('#post_title')
+          const titleInput = document.querySelector('[data-editor-title]')
           const currentTitle = titleInput ? titleInput.value : ''
           
           this.redoStack.push(JSON.stringify({
@@ -325,7 +337,7 @@ Hooks.Editor = {
         
         // Save current state to undo stack before restoring
         editor.save().then((currentData) => {
-          const titleInput = document.querySelector('#post_title')
+          const titleInput = document.querySelector('[data-editor-title]')
           const currentTitle = titleInput ? titleInput.value : ''
           
           this.undoStack.push(JSON.stringify({
@@ -399,24 +411,33 @@ Hooks.lazyLoad = {
 
 Hooks.DatetimePicker = {
   mounted() {
+    const convertToLocalTime = (utcDate) => {
+      if(utcDate){
+        return DateTime.fromISO(utcDate, { zone: "utc" }).setZone(DateTime.local().zoneName);
+      }
+    }
+
+    const updateCalendarElement = (localDateTime) => {
+      const calendarEl = document.querySelector(this.el.dataset.calendar);
+      const immediatelyEl = document.querySelector(this.el.dataset.immediately);
+      if (calendarEl) {
+        calendarEl.innerText = localDateTime.toLocaleString(DateTime.DATETIME_MED);
+      }
+      if (immediatelyEl) {
+        immediatelyEl.classList.add("hidden")
+      }
+    };
+
     flatpickr(this.el, {
-      enableTime: true,   
-      time_24hr: true,          
+      enableTime: true,
+      time_24hr: true,
       dateFormat: "Y-m-d H:i",
-      readonlyInput: false,  
-      minuteIncrement: 1,   
-      onChange: (selectedDates, dateStr, instance) => {
-        const datetime = DateTime.fromJSDate(selectedDates[0]).setZone("utc")
-        this.el.value = datetime.toISO()
-        const immediatelyEl = document.querySelector(this.el.dataset.immediately)
-        const calendarEl = document.querySelector(this.el.dataset.calendar)
-        if (calendarEl) {
-          const utcDateTime = DateTime.fromISO(this.el.value, { zone: "utc" })
-          const localDateTime = utcDateTime.setZone(DateTime.local().zoneName).toLocaleString(DateTime.DATETIME_MED) 
-          calendarEl.innerText = localDateTime
-          immediatelyEl.classList.add("hidden")
-        }
-      }    
+      defaultDate: convertToLocalTime(this.el.value),
+      onChange: (selectedDates) => {
+        const utcDateTime = DateTime.fromJSDate(selectedDates[0]).setZone("utc");
+        this.el.value = utcDateTime.toISO();
+        updateCalendarElement(convertToLocalTime(this.el.value));
+      }
     });
   }
 }
@@ -471,17 +492,19 @@ Hooks.TagifyHook = {
       console.log('Tag added:', e.detail.data)
       const namePrefix = this.el.dataset.targetName
       if(e.detail.data.__tagId){
-        const taxonomyInput = document.createElement('input');
-        taxonomyInput.type = 'hidden';
-        taxonomyInput.name = `${namePrefix}[][taxonomy]`;
-        taxonomyInput.value = "post_tag";
-        targetContainer.appendChild(taxonomyInput);
+        const index = targetContainer.childElementCount / 2
 
         const termNameInput = document.createElement('input');
         termNameInput.type = 'hidden';
-        termNameInput.name = `${namePrefix}[][name]`;
+        termNameInput.name = `${namePrefix}[${index}][name]`;
         termNameInput.value = e.detail.data.value;
         targetContainer.appendChild(termNameInput);
+
+        const taxonomyInput = document.createElement('input');
+        taxonomyInput.type = 'hidden';
+        taxonomyInput.name = `${namePrefix}[${index}][term_taxonomy][taxonomy]`;
+        taxonomyInput.value = "post_tag";
+        targetContainer.appendChild(taxonomyInput);
       }
     });
 
@@ -539,8 +562,11 @@ Hooks.IframeMediaSelector = {
       confirmButton.addEventListener('click', () => {
         // 更新隱藏輸入框的值
         const metaValueInput = document.querySelector('#thumbnail_id_meta_value');
+        const metaKeyInput = document.querySelector('#thumbnail_id_meta_key');
         if (metaValueInput) {
           metaValueInput.value = mediaId;
+          metaValueInput.setAttribute('disabled', 'true');
+          metaKeyInput.setAttribute('disabled', 'true');
         }
         
         // 更新預覽圖片
@@ -624,14 +650,17 @@ Hooks.IframeMediaSelector = {
 Hooks.InputValueUpdater = {
   mounted() {
     this.updateTargets = this.updateTargets.bind(this);
-    this.el.addEventListener('blur', this.updateTargets);
+    this.el.addEventListener('input', this.updateTargets);
     this.el.dataset.original = this.el.value;
   },
 
   updateTargets() {
     const value = this.el.value.trim();
-    const targetSelector = this.el.dataset.target;
+    const targetSelector = this.el.dataset.targetLabel;
+    const targetGuidSelector = this.el.dataset.targetGuid;
+
     const targetEls = document.querySelectorAll(targetSelector);
+    const targetGuidEls = document.querySelectorAll(targetGuidSelector);
     const originalValue = this.el.dataset.original;
 
     let newValue = value;
@@ -645,6 +674,13 @@ Hooks.InputValueUpdater = {
     this.el.dataset.original = newValue;
     targetEls.forEach(targetEl => {
       if (targetEl) targetEl.innerText = newValue;
+    });
+    targetGuidEls.forEach(targetGuidEl => {
+      if (targetGuidEl) {
+        let guid = `${this.el.dataset.host}${newValue}`;
+        targetGuidEl.innerText = guid;
+        targetGuidEl.value = guid;
+      }
     });
   },
 

@@ -19,7 +19,7 @@ defmodule Monorepo.Terms.Term do
 
     role :admin do
       fields([:name, :slug, :term_group])
-      actions([:create_category, :read, :update, :destroy])
+      actions([:create, :read, :update, :destroy])
     end
   end
 
@@ -49,12 +49,12 @@ defmodule Monorepo.Terms.Term do
       filter(expr(is_nil(^arg(:taxonomy_name)) or term_taxonomy.taxonomy == ^arg(:taxonomy_name)))
     end
 
-    create :create_category do
-      accept [:name, :slug]
+    create :create do
       argument :term_taxonomy, {:array, :map}
-
       change manage_relationship(:term_taxonomy, :term_taxonomy, type: :create)
     end
+
+
     update :update, primary?: true
     destroy :destroy
   end
@@ -67,7 +67,7 @@ defmodule Monorepo.Terms.Term do
     end
 
     attribute :slug, :string do
-      allow_nil? false
+      allow_nil? true
     end
 
     attribute :term_group, :integer do

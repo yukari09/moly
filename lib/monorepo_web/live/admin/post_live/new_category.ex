@@ -62,7 +62,7 @@ defmodule MonorepoWeb.AdminPostLive.NewCategory do
   end
 
   defp category_to_form() do
-    AshPhoenix.Form.for_create(Monorepo.Terms.Term, :create_category, [
+    AshPhoenix.Form.for_create(Monorepo.Terms.Term, :create, [
       forms: [
         term_taxonomy: [
           type: :list,

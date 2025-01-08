@@ -3,26 +3,11 @@ defmodule MonorepoWeb.AdminPostLive.New do
 
   @impl true
   def mount(_params, _session, socket) do
-
-    form = resource_to_form()
-
     term_taxonomy_categories =
       Monorepo.Terms.read_term_taxonomy!("category", nil, actor: socket.assigns.current_user)
       |> Ash.load!([:term], actor: socket.assigns.current_user)
-      |> Enum.map(&%{id: &1.id, name: &1.term.name})
 
-    default_editor_content = %{
-      "time" => DateTime.utc_now() |> DateTime.to_unix(),
-      "blocks" => [
-        %{
-          "type" => "paragraph",
-          "data" => %{
-            "text" => "Start writing your post here..."
-          }
-        }
-      ],
-      "version" => "2.28.2"
-    }
+    form = resource_to_form(socket.assigns.current_user)
 
     socket =
       socket
@@ -40,7 +25,7 @@ defmodule MonorepoWeb.AdminPostLive.New do
         selected_image_modal_id: generate_random_id(),
         create_category_modal_id: generate_random_id(),
         slug_dropdown_id: generate_random_id(),
-        post_slug: "/#{generate_random_str(8)}",
+        post_slug: "/#{generate_random_str(8)}"
       ]
     }
   end
@@ -51,48 +36,43 @@ defmodule MonorepoWeb.AdminPostLive.New do
     {:noreply, assign(socket, host: "#{scheme}://#{authority}/p")}
   end
 
-  def handle_event("validate", %{"form" => params}, socket) do
-    selected_categories =
-      Map.get(params, "term_taxonomy", [])
-      |> Enum.filter(fn {_, v} -> v["taxonomy_id"] == "on" end)
-      |> Enum.map(fn {id, _} -> id end)
-
+  @impl true
+  def handle_event("save", %{"form" => params}, socket) do
     socket =
-      socket
-      |> assign(form: AshPhoenix.Form.validate(socket.assigns.form, params))
-      |> assign(:selected_categories, selected_categories)
+      case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: [actor: socket.assigns.current_user]) do
+        {:ok, post} ->
+          socket
+          |> put_flash(:info, "Saved post for #{post.post_title}!")
+          |> push_patch(to: ~p"/admin/posts/#{post}")
+        {:error, form} ->
+          # IO.inspect(form)
+          socket
+          |> assign(form: form)
+      end
 
     {:noreply, socket}
   end
 
-  defp resource_to_form() do
+  defp resource_to_form(actor) do
     AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post, [
       forms: [
         post_meta: [
           type: :list,
           resource: Monorepo.Contents.PostMeta,
           update_action: :update,
-          create_action: :create
+          create_action: :create_post_meta
         ],
-        term_taxonomy_categories: [
-          type: :list,
-          data: [],
-          resource: Monorepo.Terms.TermTaxonomy,
-          update_action: :update,
-          create_action: :create,
-          read_action: :read
-        ],
-        term_taxonomy_tags: [
-          type: :list,
-          data: [],
-          resource: Monorepo.Terms.TermTaxonomy,
-          update_action: :update,
-          create_action: :create
-        ]
-      ]
+        # term_taxonomy_tags: [
+        #   type: :list,
+        #   data: [],
+        #   resource: Monorepo.Terms.Term,
+        #   update_action: :update,
+        #   create_action: :create
+        # ]
+      ],
+      actor: actor
     ])
-    |> AshPhoenix.Form.add_form([:term_taxonomy_categories])
-    |> AshPhoenix.Form.add_form([:term_taxonomy_tags])
+    # |> AshPhoenix.Form.add_form([:term_taxonomy_tags])
     |> to_form()
   end
 

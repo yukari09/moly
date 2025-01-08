@@ -26,8 +26,8 @@
   end
 %>
 
-<.form :let={f} for={@form} class="h-screen">
-<div id="post-create-form">
+<.form :let={f} for={@form} class="h-screen" id={@form.id} phx-submit="save">
+<div>
   <div class=" flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
     <.link patch={~p"/admin/posts/index"} class="flex flex-shrink-0 items-center">
       <img class="h-8 w-auto" src="/images/logo.png" alt="Your Company">
@@ -59,6 +59,12 @@
       <.link 
         class="text-sm text-primary text-gray-500 ml-auto pointer-events-none" 
         data-action="save-draft"
+        phx-click={
+          JS.set_attribute({"value", "draft"}, to: "##{f[:post_status].id}")
+          |> JS.set_attribute({"type", "submit"}, to: "##{@form.id}-submit-btn")
+          |> JS.dispatch("app:click-el", to: "##{@form.id}-submit-btn")
+          |> JS.set_attribute({"type", "button"}, to: "##{@form.id}-submit-btn")
+        }
       >
         Save draft
       </.link>
@@ -151,13 +157,6 @@
                   "Third point"
                 ]
               }
-            },
-            %{
-              type: "quote",
-              data: %{
-                text: "Writing is an exploration. You start from nothing and learn as you go.",
-                caption: "E.L. Doctorow"
-              }
             }
           ]
         })}
@@ -184,6 +183,7 @@
                 class="absolute top-2 right-2 !p-1 !size-6 bg-white !rounded-full shadow-md hover:bg-gray-100"
                 phx-click={
                   JS.set_attribute({"value", nil}, to: "#thumbnail_id_meta_key, #thumbnail_id_meta_value")
+                  |> JS.set_attribute({"disabled", "true"}, to: "#thumbnail_id_meta_key, #thumbnail_id_meta_value")
                   |> JS.toggle_class("hidden", to: "#featured-image-container, #set-featured-image-btn")
                 }
                 variant="outline"
@@ -191,8 +191,9 @@
                 <Lucideicons.x class="w-4 h-4 text-gray-500" />
               </.button>
             </div>
-            <input id="thumbnail_id_meta_key" name={"#{f[:post_meta].name}[0][meta_key]"} value="thumbnail_id" type="hidden"/>
-            <input id="thumbnail_id_meta_value" phx-update="ignore" name={"#{f[:post_meta].name}[0][meta_value]"} type="hidden"/>
+
+            <input id="thumbnail_id_meta_key"   name={"#{f[:post_meta].name}[0][meta_key]"}   phx-update="ignore" value={:thumbnail_id}  type="hidden" disabled/>
+            <input id="thumbnail_id_meta_value" name={"#{f[:post_meta].name}[0][meta_value]"} phx-update="ignore"  type="hidden" disabled/>
             
               <.button 
                 id="set-featured-image-btn"
@@ -210,15 +211,17 @@
             <li class="flex items-center">
               <span class="font-medium w-32">Status</span>
               <span class="text-gray-600 capitalize">{@form.source.source.attributes.post_status}</span>
+              <.input field={f[:post_status]} label={nil} class="hidden" />
             </li>
-            <li class="flex items-center">
+            <li id="post-date" class="flex items-center" phx-update="ignore">
               <span class="font-medium w-32">Publish</span>
               <label class="text-gray-600 hover:underline cursor-pointer flex items-center gap-1" for={f[:post_date].id}>
                 <span id="post-date-immediately" class="flex items-center">Immediately&nbsp;<Lucideicons.calendar class="w-4 h-4 text-gray-500" /></span>
                 <span id="post-date-calendar"></span>
               </label>
               <.input 
-                field={f[:post_date]} label={nil} 
+                field={f[:post_date]} 
+                label={nil} 
                 class="!w-0 !h-0 !border-0 !m-0 !!ring-0 !p-0"  
                 phx-hook="DatetimePicker" 
                 data-immediately = "#post-date-immediately"
@@ -229,7 +232,7 @@
               <span class="font-medium w-32">Slug</span>
               <.dropdown id={@slug_dropdown_id} class="flex-1" phx-update="ignore">
                 <:button_slot class="text-gray-600 !p-0 !m-0">
-                  <span id="post-slug-label">{@post_slug}</span>
+                  <span id="post-slug-label">{f[:post_name].value || @post_slug}</span>
                 </:button_slot> 
                 <:menu_slot class="p-3 w-72 mt-2">
                   <div class="pb-2">
@@ -239,18 +242,21 @@
                     <div>
                       <.input 
                         field={f[:post_name]} 
-                        value={@post_slug} 
+                        value={f[:post_name].value || @post_slug} 
                         label="Unique slug" 
                         autocomplete="off"
                         phx-hook="InputValueUpdater"
-                        data-target="#post-slug-label,#post-slug-txt"
-                        data-original={@post_slug}
+                        data-target-label="#post-slug-label"
+                        data-target-guid={"##{f[:guid].id}, #post-permalink"}
+                        data-original={f[:post_name].value || @post_slug}
+                        data-host={@host}
                         type="text"
                       />
                     </div>
                     <div>
                       <span class="font-medium text-sm/6">
-                        Permanent link: <span  class="font-normal" id="post-permalink">{@host}<span id="post-slug-txt">{@post_slug}</span></span>
+                        <.input field={f[:guid]} value={"#{@host}#{f[:post_name].value || @post_slug}"} label={nil} class="hidden" />
+                        Permanent link: <span  class="font-normal" id="post-permalink">{"#{@host}#{f[:post_name].value || @post_slug}"}</span>
                       </span>
                     </div>
                   </div>
@@ -260,7 +266,7 @@
             <li class="flex items-center">
               <span class="font-medium w-32">Discussion</span>
               <.toggle_switch id="comments_open_toggle"  label={nil} enabled={true} on_change={JS.toggle_attribute({"value", "1", "0"}, to: "#comments_open_meta_value")} />
-              <input id="comments_open_meta_key" name={"#{f[:post_meta].name}[1][meta_key]"} value="comments_open" type="hidden"/>
+              <input id="comments_open_meta_key" name={"#{f[:post_meta].name}[1][meta_key]"} value={:comments_open} type="hidden"/>
               <input id="comments_open_meta_value" name={"#{f[:post_meta].name}[1][meta_value]"} value="1" type="hidden"/>
             </li>
             <li class="flex items-center">
@@ -288,7 +294,7 @@
                 <Lucideicons.chevron_up id="sub-menu-1-icon" class="w-4 h-4" />
               </button>
               <div class="mt-1 px-2   mb-2" id="sub-menu-1">
-                <.textarea field={f[:post_excerpt]} placeholder="Add an excerpt" label={nil} rows="5" phx-update="ignore" />
+                <.textarea field={f[:post_excerpt]} placeholder="Add an excerpt" label={nil} rows="5"></.textarea>
               </div>
             </div>
           </li>
@@ -304,17 +310,15 @@
                 <Lucideicons.chevron_up id="sub-menu-2-icon" class="w-4 h-4" />
               </button>
               <div class="mt-1 px-2 mb-2 space-y-2" id="sub-menu-2">
-                  <div id="term-taxonomy" class="space-y-1 max-h-[180px] overflow-y-scroll border my-2 px-4 py-2 rounded-sm" phx-update="ignore">
-                 
-                    <.checkbox 
-                      :for={{term_taxonomy_category,i} <- Enum.with_index(@term_taxonomy_categories) }  
-                      name={"#{f[:term_taxonomies].name}[0][id]"} 
-                      value={term_taxonomy_category.id} 
-                      label={term_taxonomy_category.name} 
-                      id={"term-taxonomy-#{i}"}
+                  <div id="term-taxonomy-category" class="space-y-1 max-h-[180px] overflow-y-scroll border my-2 px-4 py-2 rounded-sm" phx-update="ignore">
+                    <%= for {term_taxonomy, i} <- Enum.with_index(@term_taxonomy_categories) do %>
+                    <.checkbox   
+                      name={"#{f[:term_taxonomy].name}[]"} 
+                      value={term_taxonomy.id} 
+                      label={term_taxonomy.term.name} 
+                      id={"term-taxonomy-category-#{i}"}
                     />
-                 
-                  
+                    <% end %>
                   </div>
                 <div><.link class="text-gray-500 hover:underline text-sm" phx-click={show_modal(@create_category_modal_id)}>Add New Category</.link></div>
               </div>
@@ -345,11 +349,13 @@
     </div>
   </div> 
 </div>
+<button type="button" class="hidden" id={@form.id<>"-submit-btn"}></button>
 </.form>
 
 <.modal 
   id={@selected_image_modal_id}
-  inner_class="sm:!max-w-[90vw] sm:!max-h-[90vh] overflow-scroll !p-0 !m-0 h-[90vh] h-[90vh]"
+  inner_class="sm:!max-w-[90vw] sm:!max-h-[90vh] overflow-hidden !p-0 !m-0 h-[90vh] h-[90vh]"
+  data-modal-id={@selected_image_modal_id}
   on_cancel={hide_modal(@selected_image_modal_id)}
 >
 
