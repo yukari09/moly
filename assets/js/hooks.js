@@ -416,6 +416,7 @@ Hooks.DatetimePicker = {
         return DateTime.fromISO(utcDate, { zone: "utc" }).setZone(DateTime.local().zoneName);
       }
     }
+    
 
     const updateCalendarElement = (localDateTime) => {
       const calendarEl = document.querySelector(this.el.dataset.calendar);
@@ -432,7 +433,7 @@ Hooks.DatetimePicker = {
       enableTime: true,
       time_24hr: true,
       dateFormat: "Y-m-d H:i",
-      defaultDate: convertToLocalTime(this.el.value),
+      // defaultDate: convertToLocalTime(this.el.value),
       onChange: (selectedDates) => {
         const utcDateTime = DateTime.fromJSDate(selectedDates[0]).setZone("utc");
         this.el.value = utcDateTime.toISO();
@@ -502,7 +503,7 @@ Hooks.TagifyHook = {
 
         const taxonomyInput = document.createElement('input');
         taxonomyInput.type = 'hidden';
-        taxonomyInput.name = `${namePrefix}[${index}][term_taxonomy][taxonomy]`;
+        taxonomyInput.name = `${namePrefix}[${index}][term_taxonomy][][taxonomy]`;
         taxonomyInput.value = "post_tag";
         targetContainer.appendChild(taxonomyInput);
       }
@@ -565,8 +566,8 @@ Hooks.IframeMediaSelector = {
         const metaKeyInput = document.querySelector('#thumbnail_id_meta_key');
         if (metaValueInput) {
           metaValueInput.value = mediaId;
-          metaValueInput.setAttribute('disabled', 'true');
-          metaKeyInput.setAttribute('disabled', 'true');
+          metaValueInput.removeAttribute('disabled');
+          metaKeyInput.removeAttribute('disabled');
         }
         
         // 更新預覽圖片

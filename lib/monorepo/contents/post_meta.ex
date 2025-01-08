@@ -25,6 +25,7 @@ defmodule Monorepo.Contents.PostMeta do
     end
 
     create :create_post_meta do
+      primary? true
       accept [:meta_key, :meta_value]
     end
 

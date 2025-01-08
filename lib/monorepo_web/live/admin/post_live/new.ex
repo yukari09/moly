@@ -43,9 +43,8 @@ defmodule MonorepoWeb.AdminPostLive.New do
         {:ok, post} ->
           socket
           |> put_flash(:info, "Saved post for #{post.post_title}!")
-          |> push_patch(to: ~p"/admin/posts/#{post}")
+          |> push_patch(to: ~p"/admin/posts/index")
         {:error, form} ->
-          # IO.inspect(form)
           socket
           |> assign(form: form)
       end
@@ -56,12 +55,13 @@ defmodule MonorepoWeb.AdminPostLive.New do
   defp resource_to_form(actor) do
     AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post, [
       forms: [
-        post_meta: [
-          type: :list,
-          resource: Monorepo.Contents.PostMeta,
-          update_action: :update,
-          create_action: :create_post_meta
-        ],
+        # post_meta: [
+        #   type: :list,
+        #   resource: Monorepo.Contents.PostMeta,
+        #   data: [],
+        #   update_action: :update,
+        #   create_action: :create
+        # ],
         # term_taxonomy_tags: [
         #   type: :list,
         #   data: [],
@@ -69,6 +69,7 @@ defmodule MonorepoWeb.AdminPostLive.New do
         #   update_action: :update,
         #   create_action: :create
         # ]
+        auto?: true
       ],
       actor: actor
     ])

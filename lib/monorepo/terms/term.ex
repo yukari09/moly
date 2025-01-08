@@ -50,13 +50,14 @@ defmodule Monorepo.Terms.Term do
     end
 
     create :create do
+      primary? true
       argument :term_taxonomy, {:array, :map}
       change manage_relationship(:term_taxonomy, :term_taxonomy, type: :create)
     end
 
 
     update :update, primary?: true
-    destroy :destroy
+    destroy :destroy, primary?: true
   end
 
   attributes do

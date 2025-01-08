@@ -41,24 +41,14 @@ defmodule Monorepo.Contents.Post do
 
 
     create :create_post do
-      accept [:post_title, :post_content, :post_type, :post_status, :post_name, :post_excerpt, :guid]
+      accept [:post_title, :post_content, :post_type, :post_status, :post_name, :post_excerpt, :guid, :post_date]
 
-      argument :post_meta, {:array, :map} do
-        allow_nil? false
-      end
+      argument :post_meta, {:array, :map}
+      argument :term_taxonomy, {:array, :uuid}
+      argument :term_taxonomy_tags, {:array, :map}
 
-      argument :term_taxonomy, {:array, :uuid}, allow_nil?: false
-
-      # argument :term_taxonomy_tags, {:array, :map}
-
-      # change before_action(fn %{arguments: %{term_taxonomy_categories: term_taxonomy_categories} = changeset} ->
-
-      #   term_taxonomy_categories = Enum.filter(term_taxonomy_categories, &(Map.has_key?(&1, "name")))
-      #   # Ash.Changeset.set_argument(changeset, :term_taxonomy_categories, term_taxonomy_categories)
-      # end)
-
-      change manage_relationship(:post_meta, :post_meta, type: :append_and_remove)
-      # change manage_relationship(:term_taxonomy_tags, :term_taxonomy_tags, type: :append_and_remove)
+      change manage_relationship(:post_meta, :post_meta, type: :create)
+      change manage_relationship(:term_taxonomy_tags, :term_taxonomy_tags, type: :direct_control)
       change manage_relationship(:term_taxonomy, :term_taxonomy, type: :append_and_remove)
       change relate_actor(:author)
     end
@@ -202,7 +192,6 @@ defmodule Monorepo.Contents.Post do
 
     has_many :post_meta, Monorepo.Contents.PostMeta
     has_many :posts, Monorepo.Contents.Post, destination_attribute: :post_parent
-    # has_many :term_relationships, Monorepo.Terms.TermRelationships
 
     many_to_many :term_taxonomy, Monorepo.Terms.TermTaxonomy,
       through: Monorepo.Terms.TermRelationships

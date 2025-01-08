@@ -178,7 +178,7 @@
       <div class="space-y-5">
           <div>
             <div class="relative aspect-[10/7] hidden" id="featured-image-container">
-              <img src={nil} alt="Featured image" class="w-full h-full object-cover rounded-md" />
+              <img  alt="Featured image" class="w-full h-full object-cover rounded-md"  />
               <.button 
                 class="absolute top-2 right-2 !p-1 !size-6 bg-white !rounded-full shadow-md hover:bg-gray-100"
                 phx-click={
@@ -195,14 +195,14 @@
             <input id="thumbnail_id_meta_key"   name={"#{f[:post_meta].name}[0][meta_key]"}   phx-update="ignore" value={:thumbnail_id}  type="hidden" disabled/>
             <input id="thumbnail_id_meta_value" name={"#{f[:post_meta].name}[0][meta_value]"} phx-update="ignore"  type="hidden" disabled/>
             
-              <.button 
-                id="set-featured-image-btn"
-                variant="secondary" 
-                class="w-full my-4"
-                phx-click={JS.set_attribute({"src", ~p"/admin/media?media_type=image&modal=true"}, to: "#media-iframe") |> show_modal("#{@selected_image_modal_id}")}
-              >
-                Set featured image
-              </.button>
+            <.button 
+              id="set-featured-image-btn"
+              variant="secondary" 
+              class="w-full my-4"
+              phx-click={JS.set_attribute({"src", ~p"/admin/media?media_type=image&modal=true"}, to: "#media-iframe") |> show_modal("#{@selected_image_modal_id}")}
+            >
+              Set featured image
+            </.button>
           </div>
 
           <div class="text-gray-600 text-sm mx-2">Last edited 4 hours ago.</div>
