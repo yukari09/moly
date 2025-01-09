@@ -89,7 +89,7 @@ config :swoosh, :api_client, false
 config :monorepo,
   google_oauth2_client_id:
     "486343447885-9jg87vj9h0qafcdvu4k2ugb7dggbsion.apps.googleusercontent.com",
-  google_oauth2_redirect_uri: "http://192.168.6.8:4000/auth/user/google/callback",
+  google_oauth2_redirect_uri: "http://localhost:4000/auth/user/google/callback",
   google_oauth2_client_secret: "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",
   email_name: "monorepo@monorepo.dev",
   email_address: "monorepo@monorepo.dev"
@@ -125,3 +125,6 @@ config :imgproxy,
   prefix: "http://192.168.6.8:8008",
   key: "31dde3553997eb7bd3ad1ce2700c2f2e32dc15fffcd19969399e65b7c7d47c81",
   salt: "38d48531bc85ac8273a0cb9f057223349141a53954937b97785b9cbf15ee34ee"
+
+# Path to install SaladUI components
+config :salad_ui, components_path: Path.join(File.cwd!(), "lib/monorepo_web/components")

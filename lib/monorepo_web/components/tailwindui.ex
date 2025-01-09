@@ -260,7 +260,7 @@ defmodule MonorepoWeb.TailwindUI do
 
   def table(assigns) do
     ~H"""
-    <table class={["min-w-full divide-y divide-gray-300", @class]}>
+    <table class={["min-w-full divide-y divide-gray-300 ", @class]}>
       <thead>
         <tr>
           <th :for={col <- @col}
@@ -1074,7 +1074,7 @@ defmodule MonorepoWeb.TailwindUI do
 
   def pagination(assigns) do
     ~H"""
-    <div class={["flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6", @class]} {@rest}>
+    <div class={["flex items-center justify-between border-t border-gray-200 bg-white  py-3", @class]} {@rest}>
       <div class="flex flex-1 justify-between sm:hidden">
         <.link
           :if={@page_meta.prev}
@@ -1106,9 +1106,11 @@ defmodule MonorepoWeb.TailwindUI do
         <div>
           <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
             <.link
-              :if={@page_meta.prev}
-              patch={generate_page_url(@current_url, @page_meta.prev)}
-              class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+              patch={@page_meta.prev && generate_page_url(@current_url, @page_meta.prev)}
+              class={[
+                "relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0",
+                !@page_meta.prev && "pointer-events-none opacity-50"
+              ]}
             >
               <span class="sr-only">Previous</span>
               <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
@@ -1132,9 +1134,11 @@ defmodule MonorepoWeb.TailwindUI do
             <span :if={@page_meta.ellipsis} class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">...</span>
 
             <.link
-              :if={@page_meta.next}
-              patch={generate_page_url(@current_url, @page_meta.next)}
-              class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+              patch={@page_meta.next && generate_page_url(@current_url, @page_meta.next)}
+              class={[
+                "relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0",
+                !@page_meta.next && "pointer-events-none opacity-50"
+              ]}
             >
               <span class="sr-only">Next</span>
               <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">

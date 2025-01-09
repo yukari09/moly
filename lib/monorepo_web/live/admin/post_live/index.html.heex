@@ -1,0 +1,34 @@
+<div>
+    <.header title="Posts" description="A list of all the posts in your account including their name, title, email and role.">
+        <.button 
+            class="flex items-center gap-2" 
+            patch={~p"/admin/post/new"}
+        >
+            Add Post
+        </.button>
+    </.header>
+
+
+    <div class="mt-8 flow-root" :if={@posts.results != []}>
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <.table
+            rows={@posts.results}
+            class="table-auto"
+            >
+            <:col :let={row} label="Title"> 
+                <span class="font-medium">{row.post_title}</span>
+            </:col>
+            <:col :let={row} label="" align="right"> 
+                <.link class="text-gray-500" patch={~p"/admin/post/#{row.id}/edit"} >
+                    Edit
+                </.link>
+            </:col>
+            </.table>
+            </div>
+        </div>
+    </div>
+
+    <.pagination current_url={generate_live_url(@params)} page_meta={@page_meta} />
+</div>
+ 

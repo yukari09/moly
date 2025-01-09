@@ -1,25 +1,97 @@
-<.form :let={f} for={@form} class="h-screen">
+<%
+  toggle_sidebar = fn toggle_el ->
+    hide_el = "#{toggle_el}[aria-expanded='false']"
+    show_el = "#{toggle_el}[aria-expanded='true']"
+
+    JS.hide(
+      transition:
+        {"transition ease-in-out duration-300 transform", "translate-x-0", "translate-x-full"},
+      to: show_el,
+      time: 300
+    )
+    |> JS.show(
+      transition:
+        {"transition ease-in-out duration-300 transform", "translate-x-full", "translate-x-0"},
+      to: hide_el,
+      time: 300
+    )
+    |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: toggle_el)
+  end
+
+
+  accordion = fn icon_el, target_el ->
+    JS.toggle_class("block hidden", to: target_el, transition: "easy-in-out duration-50", time: 50)
+    |> JS.toggle_class("border-b", transition: "easy-in-out duration-50", time: 50)
+    |> JS.toggle_class("rotate-180 text-gray-500 text-gray-400", transition: "easy-in-out duration-50", time: 50, to: icon_el)
+  end
+%>
+
+<.form :let={f} for={@form} class="h-screen" id={@form.id} phx-submit="save">
 <div>
-  <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
-    <.link patch={~p"/admin/posts/index"} class="flex flex-shrink-0 items-center">
+  <div class=" flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
+    <.link patch={~p"/admin/posts"} class="flex flex-shrink-0 items-center">
       <img class="h-8 w-auto" src="/images/logo.png" alt="Your Company">
     </.link>
+
     <!-- Separator -->
     <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
 
+    <div class="flex items-center">
+      <.link 
+        class="editor-action-btn"
+        phx-click={JS.dispatch("app:editorUndo", to: "#editorjs")}
+        data-editor-action="undo"
+        disabled
+      >
+        <Lucideicons.undo_2 class="size-5" />
+      </.link>
+      <.link 
+        class="editor-action-btn"
+        phx-click={JS.dispatch("app:editorRedo", to: "#editorjs")}
+        data-editor-action="redo"
+        disabled
+      >
+        <Lucideicons.redo_2 class="size-5" />
+      </.link>
+    </div>
+
     <div class="flex flex-1 gap-x-4 self-stretch items-center lg:gap-x-6">
-      <.link class="text-sm text-primary text-gray-500 ml-auto">Save draft</.link>
-      <.link class="text-sm text-primary flex items-center gap-x-1 text-gray-500">
-        <Lucideicons.laptop  class="w-4 h-4" />
-        Preview
+      <.link 
+        class="text-sm text-primary text-gray-500 ml-auto pointer-events-none" 
+        data-action="save-draft"
+        phx-click={
+          JS.set_attribute({"value", "draft"}, to: "##{f[:post_status].id}")
+          |> JS.set_attribute({"type", "submit"}, to: "##{@form.id}-submit-btn")
+          |> JS.dispatch("app:click-el", to: "##{@form.id}-submit-btn")
+          |> JS.set_attribute({"type", "button"}, to: "##{@form.id}-submit-btn")
+        }
+      >
+        Save draft
+      </.link>
+      <.link 
+        class="text-sm text-primary flex items-center gap-x-1 text-gray-500 pointer-events-none"
+        phx-click={
+          JS.dispatch("app:clearEditor", to: "#editorjs")
+        }
+        data-confirm="Are you sure you want to clear the editor?"
+        data-action="clear-editor"
+      >
+        <Lucideicons.eraser class="w-4 h-4" />
+        Clear editor
       </.link>
       <div class="flex items-center gap-x-4 lg:gap-x-6">
-        <.button size="sm" >Publish</.button>
+        <.button 
+          size="sm" 
+          class="pointer-events-none opacity-50"
+          data-action="publish"
+        >
+          Publish
+        </.button>
       </div>
       <.link 
         class="text-sm text-primary text-gray-500" 
         phx-click={
-          toggle_sidebar("#new-post-sidebar")
+          toggle_sidebar.("#new-post-sidebar")
         }
       >
         <Lucideicons.panel_right  class="w-4 h-4" />
@@ -31,152 +103,260 @@
 <div class="flex items-top justify-between mx-auto h-[calc(100vh-4rem)]">
   <div class="flex-1 h-full overflow-y-scroll">
     <div class="mx-auto lg:w-[840px]">
-      <div class="w-[650px] mx-auto mt-8">
-        <input type="text" placeholder="Add a title" class="w-full border-0 p-0 text-3xl font-bold text-gray-900 focus-visible:outline-none" />
+      <div class="w-[650px] mx-auto mt-12">
+        <textarea
+          id={f[:post_title].id}
+          name={f[:post_title].name}
+          phx-update="ignore"
+          autocomplete="off"
+          placeholder="Add a title"
+          class="w-full !border-0 !p-0 !text-4xl font-bold !text-gray-900 !outline-none break-words resize-none overflow-hidden"
+          rows="1"
+          phx-hook="AutoResizeTextarea"
+          data-auto-resize="true"
+          data-editor-title="true"
+        ></textarea>
       </div>
       <div 
         id="editorjs" 
         phx-hook="Editor" 
         class="pt-8"
         data-placeholder="Type text or paste a link"
+        phx-update="ignore"
+        data-content={"#{f[:post_content].id}"}
+        data-initial-content={Jason.encode!(%{
+          time: DateTime.utc_now() |> DateTime.to_unix(),
+          blocks: [
+            %{
+              type: "header",
+              data: %{
+                text: "Start Writing Your New Article",
+                level: 2
+              }
+            },
+            %{
+              type: "paragraph",
+              data: %{
+                text: "This is the starting point of your article. You can begin writing or use the toolbar to add more content blocks."
+              }
+            },
+            %{
+              type: "header",
+              data: %{
+                text: "Article Outline",
+                level: 3
+              }
+            },
+            %{
+              type: "list",
+              data: %{
+                style: "unordered",
+                items: [
+                  "First point",
+                  "Second point",
+                  "Third point"
+                ]
+              }
+            }
+          ]
+        })}
       ></div> 
+      <.input phx-update="ignore" field={f[:post_content]} type="hidden" class="hidden" label={nil}  />
     </div> 
   </div>
 
   <div 
       id="new-post-sidebar" 
-      class="pointer-events-auto w-screen max-w-sm border-l border-gray-200 h-[calc(100vh-4rem)] overflow-y-scroll"
+      class="pointer-events-auto w-screen max-w-sm z-20 bg-white absolute right-0 xl:static xl:block border-l border-gray-200 h-[calc(100vh-4rem)] overflow-y-scroll overflow-x-visible"
       aria-expanded="true"
   >
     <div class="h-full overflow-y-scroll bg-white flex flex-col px-2 sm:px-4 space-y-4">
-      <div class="flex items-start justify-between border-b pb-4 mt-6">
+      <div class="flex items-start justify-between border-b pb-4 pt-6 sticky top-0 bg-white z-20">
         <h2 class="text-base font-semibold text-gray-900" id="slide-over-title">Post settings</h2>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-5">
           <div>
-            <%= if false do %>
-              <div class="relative">
-                <img src={@featured_image_url} alt="Featured image" class="w-full h-auto rounded-md" />
-                <button 
-                  class="absolute top-2 right-2 p-1 bg-white rounded-full shadow-md hover:bg-gray-100"
-                  phx-click="remove_featured_image"
-                >
-                  <Lucideicons.x class="w-4 h-4 text-gray-600" />
-                </button>
-              </div>
-            <% else %>
+            <div class="relative aspect-[10/7] hidden" id="featured-image-container">
+              <img  alt="Featured image" class="w-full h-full object-cover rounded-md"  />
               <.button 
-                variant="secondary" 
-                class="w-full"
-                phx-click={JS.set_attribute({"src", ~p"/admin/media?media_type=image&modal=true"}, to: "#media-iframe") |> show_modal("post-image-selector")}
+                class="absolute top-2 right-2 !p-1 !size-6 bg-white !rounded-full shadow-md hover:bg-gray-100"
+                phx-click={
+                  JS.set_attribute({"value", nil}, to: "#thumbnail_id_meta_key, #thumbnail_id_meta_value")
+                  |> JS.set_attribute({"disabled", "true"}, to: "#thumbnail_id_meta_key, #thumbnail_id_meta_value")
+                  |> JS.toggle_class("hidden", to: "#featured-image-container, #set-featured-image-btn")
+                }
+                variant="outline"
               >
-                Set featured image
+                <Lucideicons.x class="w-4 h-4 text-gray-500" />
               </.button>
-            <% end %>
+            </div>
+
+            <input id="thumbnail_id_meta_key"   name={"#{f[:post_meta].name}[0][meta_key]"}   phx-update="ignore" value={:thumbnail_id}  type="hidden" disabled/>
+            <input id="thumbnail_id_meta_value" name={"#{f[:post_meta].name}[0][meta_value]"} phx-update="ignore"  type="hidden" disabled/>
+            
+            <.button 
+              id="set-featured-image-btn"
+              variant="secondary" 
+              class="w-full my-4"
+              phx-click={JS.set_attribute({"src", ~p"/admin/media?media_type=image&modal=true"}, to: "#media-iframe") |> show_modal("#{@selected_image_modal_id}")}
+            >
+              Set featured image
+            </.button>
           </div>
 
           <div class="text-gray-600 text-sm mx-2">Last edited 4 hours ago.</div>
 
-          <ul class="space-y-4 mx-2">
-            <li class="flex items-center text-sm">
+          <ul class="space-y-4 mx-2 text-sm">
+            <li class="flex items-center">
               <span class="font-medium w-32">Status</span>
-              <span class="text-gray-600">Draft</span>
+              <span class="text-gray-600 capitalize">{@form.source.source.attributes.post_status}</span>
+              <.input field={f[:post_status]} label={nil} class="hidden" />
             </li>
-            <li class="flex items-center text-sm">
+            <li id="post-date" class="flex items-center" phx-update="ignore">
               <span class="font-medium w-32">Publish</span>
-              <span class="text-gray-600">Immediately</span>
+              <label class="text-gray-600 hover:underline cursor-pointer flex items-center gap-1" for={f[:post_date].id}>
+                <span id="post-date-immediately" class="flex items-center">Immediately&nbsp;<Lucideicons.calendar class="w-4 h-4 text-gray-500" /></span>
+                <span id="post-date-calendar"></span>
+              </label>
+              <.input 
+                field={f[:post_date]} 
+                label={nil} 
+                class="!w-0 !h-0 !border-0 !m-0 !!ring-0 !p-0"  
+                phx-hook="DatetimePicker" 
+                data-immediately = "#post-date-immediately"
+                data-calendar = "#post-date-calendar"
+              />
             </li>
-            <li class="flex items-center text-sm">
+            <li class="flex items-center">
               <span class="font-medium w-32">Slug</span>
-              <span class="text-gray-600">slug</span>
+              <.dropdown id={@slug_dropdown_id} class="flex-1" phx-update="ignore">
+                <:button_slot class="text-gray-600 !p-0 !m-0">
+                  <span id="post-slug-label">{f[:post_name].value || @post_slug}</span>
+                </:button_slot> 
+                <:menu_slot class="p-3 w-72 mt-2">
+                  <div class="pb-2">
+                    <span class="font-semibold text-sm">Slug</span>
+                  </div>
+                  <div class="space-y-4 py-2">
+                    <div>
+                      <.input 
+                        field={f[:post_name]} 
+                        value={f[:post_name].value || @post_slug} 
+                        label="Unique slug" 
+                        autocomplete="off"
+                        phx-hook="InputValueUpdater"
+                        data-target-label="#post-slug-label"
+                        data-target-guid={"##{f[:guid].id}, #post-permalink"}
+                        data-original={f[:post_name].value || @post_slug}
+                        data-host={@host}
+                        type="text"
+                      />
+                    </div>
+                    <div>
+                      <span class="font-medium text-sm/6">
+                        <.input field={f[:guid]} value={"#{@host}#{f[:post_name].value || @post_slug}"} label={nil} class="hidden" />
+                        Permanent link: <span  class="font-normal" id="post-permalink">{"#{@host}#{f[:post_name].value || @post_slug}"}</span>
+                      </span>
+                    </div>
+                  </div>
+                </:menu_slot>
+              </.dropdown>
             </li>
-            <li class="flex items-center text-sm">
+            <li class="flex items-center">
               <span class="font-medium w-32">Discussion</span>
-              <span class="text-gray-600">Open</span>
+              <.toggle_switch id="comments_open_toggle"  label={nil} enabled={true} on_change={JS.toggle_attribute({"value", "1", "0"}, to: "#comments_open_meta_value")} />
+              <input id="comments_open_meta_key" name={"#{f[:post_meta].name}[1][meta_key]"} value={:comments_open} type="hidden"/>
+              <input id="comments_open_meta_value" name={"#{f[:post_meta].name}[1][meta_value]"} value="1" type="hidden"/>
             </li>
-            <li class="flex items-center text-sm">
+            <li class="flex items-center">
+              <span class="font-medium w-32">Author</span>
+              <span class="text-gray-600">{Monorepo.Accounts.Helper.current_user_name(@current_user)}</span>
+            </li>
+            <%!-- <li class="flex items-center">
               <span class="font-medium w-32">Revisions</span>
               <span class="text-gray-600">4</span>
-            </li>
+            </li> --%>
           </ul>
-          <div><.button variant="secondary" class="w-full text-red-600 hover:text-red-500">Move to trash</.button></div>
+          <%!-- <div><.button variant="secondary" class="w-full text-red-600 hover:text-red-500">Move to trash</.button></div> --%>
         </div>
 
 
-      <ul role="list" class="-mx-2 divide-y border-y">
+      <ul role="list" class="divide-y border-y">
         <li>
           <div>
-              <button type="button" class="hover:bg-gray-50 flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700" aria-controls="sub-menu-1"  aria-expanded="false">
+              <button 
+                type="button" 
+                class="hover:bg-gray-50 border-b flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700" aria-controls="sub-menu-1"  aria-expanded="false"
+                phx-click={accordion.("#sub-menu-1-icon", "#sub-menu-1")}                
+              >
                 Excerpt
-                <Lucideicons.chevron_down class="w-4 h-4" />
+                <Lucideicons.chevron_up id="sub-menu-1-icon" class="w-4 h-4" />
               </button>
-              <ul  class="mt-1 px-2 hidden">
-                <li>
-                    <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Engineering</a>
-                  </li>
-                <li>
-                    <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Human Resources</a>
-                  </li>
-                <li>
-                    <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Customer Success</a>
-                  </li>
-                
-              </ul>
+              <div class="mt-1 px-2   mb-2" id="sub-menu-1">
+                <.textarea field={f[:post_excerpt]} placeholder="Add an excerpt" label={nil} rows="5"></.textarea>
+              </div>
+            </div>
+          </li>
+
+          <li>
+           <div>
+              <button 
+                type="button" 
+                class="hover:bg-gray-50 border-b flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700" aria-controls="sub-menu-1"  aria-expanded="false"
+                phx-click={accordion.("#sub-menu-2-icon", "#sub-menu-2")}                
+              >
+                Categories
+                <Lucideicons.chevron_up id="sub-menu-2-icon" class="w-4 h-4" />
+              </button>
+              <div class="mt-1 px-2 mb-2 space-y-2" id="sub-menu-2">
+                  <div id="term-taxonomy-category" class="space-y-1 max-h-[180px] overflow-y-scroll border my-2 px-4 py-2 rounded-sm" phx-update="ignore">
+                    <%= for {term_taxonomy, i} <- Enum.with_index(@term_taxonomy_categories) do %>
+                    <.checkbox   
+                      name={"#{f[:term_taxonomy].name}[]"} 
+                      value={term_taxonomy.id} 
+                      label={term_taxonomy.term.name} 
+                      id={"term-taxonomy-category-#{i}"}
+                    />
+                    <% end %>
+                  </div>
+                <div><.link class="text-gray-500 hover:underline text-sm" phx-click={show_modal(@create_category_modal_id)}>Add New Category</.link></div>
+              </div>
             </div>
           </li>
 
           <li>
             <div>
-                <button type="button" class="hover:bg-gray-50 flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700" aria-controls="sub-menu-1"  aria-expanded="false">
-                  Categories
-                  <Lucideicons.chevron_down class="w-4 h-4" />
-                </button>
-                <ul  class="mt-1 px-2 hidden">
-                  <li>
-                      <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Engineering</a>
-                    </li>
-                  <li>
-                      <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Human Resources</a>
-                    </li>
-                  <li>
-                      <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Customer Success</a>
-                    </li>
-                  
-                </ul>
-              </div>
-          </li>
-
-          <li>
-            <div>
-                <button type="button" class="hover:bg-gray-50 flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700" aria-controls="sub-menu-1"  aria-expanded="false">
+                <button 
+                  type="button" 
+                  class="hover:bg-gray-50 border-b flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700" 
+                  aria-controls="sub-menu-3"  
+                  aria-expanded="false"
+                  phx-click={accordion.("#sub-menu-3-icon", "#sub-menu-3")}    
+                >
                   Tags
-                  <Lucideicons.chevron_down class="w-4 h-4" />
+                  <Lucideicons.chevron_up class="w-4 h-4" id="sub-menu-3-icon" />
                 </button>
-                <ul  class="mt-1 px-2 hidden">
-                  <li>
-                      <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Engineering</a>
-                    </li>
-                  <li>
-                      <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Human Resources</a>
-                    </li>
-                  <li>
-                      <a href="#" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700">Customer Success</a>
-                    </li>
-                </ul>
+                <div  class="mt-1 px-2   py-2" id="sub-menu-3">
+                  <div id="tagify-input-container" phx-update="ignore">
+                    <input class="w-full rounded-md" type="text" id="tagify-input" phx-hook="TagifyHook" data-target-name={"#{@form[:term_taxonomy_tags].name}"}  data-target-container="#tagify-input-target" />
+                  </div>
+                  <div class="mb-12" id="tagify-input-target" phx-update="ignore"></div>
+                </div>
               </div>
           </li>
       </ul>
     </div>
   </div> 
 </div>
+<button type="button" class="hidden" id={@form.id<>"-submit-btn"}></button>
 </.form>
 
-
 <.modal 
-  id="post-image-selector"
-  inner_class="sm:!max-w-[90vw] sm:!max-h-[90vh] overflow-scroll !p-0 !m-0 h-[90vh] h-[90vh]"
-  on_cancel={hide_modal("post-image-selector") |> JS.push("clear_selected_media")}
+  id={@selected_image_modal_id}
+  inner_class="sm:!max-w-[90vw] sm:!max-h-[90vh] overflow-hidden !p-0 !m-0 h-[90vh] h-[90vh]"
+  data-modal-id={@selected_image_modal_id}
+  on_cancel={hide_modal(@selected_image_modal_id)}
 >
 
   <div class="flex flex-col h-full">
@@ -187,13 +367,37 @@
       </div>
 
       <div class="px-4 lg:px-6 flex-1">
-        <iframe id="media-iframe" class="w-full h-full"></iframe>
+        <iframe id="media-iframe" class="w-full h-full" phx-hook="IframeMediaSelector" data-modal-id={@selected_image_modal_id}></iframe>
       </div>
 
       <div class="flex justify-end px-4 pt-2.5 pb-4 gap-2 border-t border-gray-200 mt-1">
-        <.button variant="primary" class={["w-20", is_nil(@selected_media_id) && "opacity-50 cursor-not-allowed"]} phx-value-media-id={@selected_media_id} phx-click="set_featured_image"  disable={is_nil(@selected_media_id)} >Insert</.button>
-        <.button variant="gray" class="w-20" phx-click={hide_modal("post-image-selector") |> JS.push("clear_selected_media")}>Cancel</.button>
+        <.button 
+          id="modal-cancel-button" 
+          variant="gray" 
+          class="w-20" 
+          phx-click={
+            JS.exec("data-cancel", to: "##{@selected_image_modal_id}")
+            |> JS.set_attribute({"disabled", "disabled"}, to: "#modal-comfirm-button")
+          }
+        >
+          Cancel
+        </.button>
+        <.button 
+          id="modal-comfirm-button"
+          variant="primary" 
+          class={["w-20"]}
+          disabled={true}
+        >
+          Insert
+        </.button>
       </div>
   </div>
+</.modal>
 
+<.modal 
+  id={@create_category_modal_id}
+  inner_class=""
+  phx-update="replace"
+>
+  {live_render(@socket, MonorepoWeb.AdminPostLive.NewCategory, id: "sub-menu-container", session: %{"modal_id"=>@create_category_modal_id},  sticky: false) }
 </.modal>

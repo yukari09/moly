@@ -3,68 +3,68 @@ defmodule MonorepoWeb.AdminPostLive.Edit do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
+    term_taxonomy_categories =
+      Monorepo.Terms.read_term_taxonomy!("category", nil, actor: socket.assigns.current_user)
+      |> Ash.load!([:term], actor: socket.assigns.current_user)
 
     post =
       Ash.get!(Monorepo.Contents.Post, id, actor: socket.assigns.current_user)
-      |> Ash.load!([:post_meta])
+      |> Ash.load!([:post_meta], actor: socket.assigns.current_user)
 
-    form = resource_to_form(post)
+    form = resource_to_form(socket.assigns.current_user)
 
-    socket
-    |> assign(form: form)
-    |> assign(post: post)
+    socket =
+      socket
+      |> assign(
+        selected_categories: [],
+        form: form,
+        term_taxonomy_categories: term_taxonomy_categories
+      )
+
 
     {:ok,
       socket,
-      layout: {MonorepoWeb.Layouts, :admin_modal},
-      temporary_assigns: [selected_media_id: nil]
+      layout: false,
+      temporary_assigns: [
+        selected_image_modal_id: generate_random_id(),
+        create_category_modal_id: generate_random_id(),
+        slug_dropdown_id: generate_random_id(),
+        post_slug: "/#{generate_random_str(8)}"
+      ]
     }
   end
 
   @impl true
-  def handle_info({:broadcast_selected, id}, socket) do
+  def handle_params(_unsigned_params, uri, socket) do
+    %{scheme: scheme, authority: authority} = URI.parse(uri)
+    {:noreply, assign(socket, host: "#{scheme}://#{authority}/p")}
+  end
+
+  @impl true
+  def handle_event("save", %{"form" => params}, socket) do
     socket =
-      socket
-      |> assign(:selected_media_id, id)
+      case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: [actor: socket.assigns.current_user]) do
+        {:ok, post} ->
+          socket
+          |> put_flash(:info, "Saved post for #{post.post_title}!")
+          |> push_patch(to: ~p"/admin/posts")
+        {:error, form} ->
+          socket
+          |> assign(form: form)
+      end
 
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("clear_selected_media", _, socket) do
-    {:noreply, socket |> assign(:selected_media_id, nil)}
-  end
-
-  defp toggle_sidebar(toggle_el) do
-    hide_el = "#{toggle_el}[aria-expanded='false']"
-    show_el = "#{toggle_el}[aria-expanded='true']"
-
-    JS.hide(
-      transition:
-        {"transition ease-in-out duration-300 transform", "translate-x-0", "translate-x-full"},
-      to: show_el,
-      time: 300
-    )
-    |> JS.show(
-      transition:
-        {"transition ease-in-out duration-300 transform", "translate-x-full", "translate-x-0"},
-      to: hide_el,
-      time: 300
-    )
-    |> JS.toggle_attribute({"aria-expanded", "true", "false"}, to: toggle_el)
-  end
-
-
-  defp resource_to_form(post_or_changeset) do
-    AshPhoenix.Form.for_update(post_or_changeset, :update_post,     forms: [
-      post_meta: [
-        type: :list,
-        data: post_or_changeset.post_meta,
-        resource: Monorepo.Contents.PostMeta,
-        update_action: :update,
-        create_action: :create
-      ]
+  defp resource_to_form(actor) do
+    AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post, [
+      forms: [
+        auto?: true
+      ],
+      actor: actor
     ])
     |> to_form()
   end
+
+
 end
