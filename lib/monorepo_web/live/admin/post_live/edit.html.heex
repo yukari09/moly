@@ -27,7 +27,7 @@
 %>
 
 <.form :let={f} for={@form} class="h-screen" id={@form.id} phx-submit="save">
-<div>
+<div id="post-container" phx-hook="ConfirmLeave">
   <div class=" flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
     <.link patch={~p"/admin/posts"} class="flex flex-shrink-0 items-center">
       <img class="h-8 w-auto" src="/images/logo.png" alt="Your Company">
@@ -41,7 +41,6 @@
         class="editor-action-btn"
         phx-click={JS.dispatch("app:editorUndo", to: "#editorjs")}
         data-editor-action="undo"
-        disabled
       >
         <Lucideicons.undo_2 class="size-5" />
       </.link>
@@ -49,7 +48,6 @@
         class="editor-action-btn"
         phx-click={JS.dispatch("app:editorRedo", to: "#editorjs")}
         data-editor-action="redo"
-        disabled
       >
         <Lucideicons.redo_2 class="size-5" />
       </.link>
@@ -57,7 +55,7 @@
 
     <div class="flex flex-1 gap-x-4 self-stretch items-center lg:gap-x-6">
       <.link 
-        class="text-sm text-primary text-gray-500 ml-auto pointer-events-none" 
+        class="text-sm  text-gray-500 ml-auto pointer-events-none" 
         data-action="save-draft"
         phx-click={
           JS.set_attribute({"value", "draft"}, to: "##{f[:post_status].id}")
@@ -69,7 +67,7 @@
         Save draft
       </.link>
       <.link 
-        class="text-sm text-primary flex items-center gap-x-1 text-gray-500 pointer-events-none"
+        class="text-sm   flex items-center gap-x-1 text-gray-500 pointer-events-none"
         phx-click={
           JS.dispatch("app:clearEditor", to: "#editorjs")
         }
@@ -115,7 +113,7 @@
           phx-hook="AutoResizeTextarea"
           data-auto-resize="true"
           data-editor-title="true"
-        ></textarea>
+        >{f[:post_title].value}</textarea>
       </div>
       <div 
         id="editorjs" 
@@ -124,42 +122,7 @@
         data-placeholder="Type text or paste a link"
         phx-update="ignore"
         data-content={"#{f[:post_content].id}"}
-        data-initial-content={Jason.encode!(%{
-          time: DateTime.utc_now() |> DateTime.to_unix(),
-          blocks: [
-            %{
-              type: "header",
-              data: %{
-                text: "Start Writing Your New Article",
-                level: 2
-              }
-            },
-            %{
-              type: "paragraph",
-              data: %{
-                text: "This is the starting point of your article. You can begin writing or use the toolbar to add more content blocks."
-              }
-            },
-            %{
-              type: "header",
-              data: %{
-                text: "Article Outline",
-                level: 3
-              }
-            },
-            %{
-              type: "list",
-              data: %{
-                style: "unordered",
-                items: [
-                  "First point",
-                  "Second point",
-                  "Third point"
-                ]
-              }
-            }
-          ]
-        })}
+        data-initial-content={@post.post_content}
       ></div> 
       <.input phx-update="ignore" field={f[:post_content]} type="hidden" class="hidden" label={nil}  />
     </div> 
@@ -178,7 +141,7 @@
       <div class="space-y-5">
           <div>
             <div class="relative aspect-[10/7] hidden" id="featured-image-container">
-              <img  alt="Featured image" class="w-full h-full object-cover rounded-md"  />
+              <img src=""  alt="Featured image" class="w-full h-full object-cover rounded-md"  />
               <.button 
                 class="absolute top-2 right-2 !p-1 !size-6 bg-white !rounded-full shadow-md hover:bg-gray-100"
                 phx-click={
@@ -210,7 +173,7 @@
           <ul class="space-y-4 mx-2 text-sm">
             <li class="flex items-center">
               <span class="font-medium w-32">Status</span>
-              <span class="text-gray-600 capitalize">{@form.source.source.attributes.post_status}</span>
+              <span class="text-gray-600 capitalize">{@post.post_status}</span>
               <.input field={f[:post_status]} label={nil} class="hidden" />
             </li>
             <li id="post-date" class="flex items-center" phx-update="ignore">

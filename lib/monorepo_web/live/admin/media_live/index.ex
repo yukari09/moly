@@ -6,6 +6,8 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
   @per_page "12"
   @model Monorepo.Contents.Post
 
+  import Monorepo.Contents.Helpers
+
   @impl true
   def mount(params, _session, socket) do
 

@@ -4,7 +4,7 @@ import Config
 config :monorepo, Monorepo.Repo,
   username: "yukari",
   password: "83233167",
-  hostname: "localhost",
+  hostname: "192.168.6.8",
   database: "monorepo_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
@@ -19,7 +19,7 @@ config :monorepo, Monorepo.Repo,
 config :monorepo, MonorepoWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {0, 0, 0, 0}, port: 4000],
+  http: [ip: {0, 0, 0, 0}, port: 4001],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
@@ -125,6 +125,3 @@ config :imgproxy,
   prefix: "http://192.168.6.8:8008",
   key: "31dde3553997eb7bd3ad1ce2700c2f2e32dc15fffcd19969399e65b7c7d47c81",
   salt: "38d48531bc85ac8273a0cb9f057223349141a53954937b97785b9cbf15ee34ee"
-
-# Path to install SaladUI components
-config :salad_ui, components_path: Path.join(File.cwd!(), "lib/monorepo_web/components")

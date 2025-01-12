@@ -24,8 +24,8 @@
             },
             %{
                 title: "Create new post",
-                url: ~p"/admin/post/new",
-                view: [MonorepoWeb.AdminPostLive.New],
+                url: ~p"/admin/post/create",
+                view: [MonorepoWeb.AdminPostLive.Create],
                 show: true
             },
             %{
@@ -290,11 +290,9 @@
       </div>
     </div>
 
-    <main class="py-10" id="admin-main">
+    <main class="py-10 px-4 sm:px-6 lg:px-8 min-h-[calc(100vh_-_4rem)]" id="admin-main">
       <MonorepoWeb.TailwindUI.flash_group flash={@flash} id="admin-flash" />
-      <div class="px-4 sm:px-6 lg:px-8">
-        <%= @inner_content %>
-      </div>
+      <%= @inner_content %>
     </main>
   </div>
 </div>

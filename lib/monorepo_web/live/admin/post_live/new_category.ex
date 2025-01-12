@@ -1,7 +1,8 @@
 defmodule MonorepoWeb.AdminPostLive.NewCategory do
+alias Ash.Notifier.PubSub
   use MonorepoWeb.Admin, :live_view
 
-  def mount(_params, %{"user" => "user?id="<>user_id, "modal_id" => modal_id}, socket) do
+  def mount(_params, %{"user" => "user?id="<>user_id}, socket) do
     current_user =
       Ash.get!(Monorepo.Accounts.User, user_id, context: %{private: %{ash_authentication?: true}})
 
@@ -14,7 +15,6 @@ defmodule MonorepoWeb.AdminPostLive.NewCategory do
       |> assign(:parent_categories, parent_categories)
       |> assign(:form, category_to_form())
       |> assign(:current_user, current_user)
-      |> assign(:modal_id, modal_id)
 
     {:ok, socket}
   end
@@ -30,7 +30,11 @@ defmodule MonorepoWeb.AdminPostLive.NewCategory do
       {:ok, result} ->
         socket =
           socket
-          |> push_event("js-exec", %{to: "##{socket.assigns.modal_id}", attr: "phx-remove"})
+          |> push_event("js-exec", %{to: "#create_category_modal_id", attr: "phx-remove"})
+          |> assign(:form, category_to_form())
+
+        send_update(socket.parent_pid, MonorepoWeb.AdminPostLive.FormField.PostCategories, id: "form-field-post-categories")
+
         {:noreply, socket}
 
       {:error, form} ->
@@ -54,7 +58,7 @@ defmodule MonorepoWeb.AdminPostLive.NewCategory do
       </.inputs_for>
       </div>
       <div class="flex justify-end">
-        <.button type="button" variant="outline" phx-click={hide_modal(@modal_id)}>Cancel</.button>
+        <.button type="button" variant="outline" phx-click={hide_modal("create_category_modal_id")}>Cancel</.button>
         <.button type="submit" form={f} phx-disable-with="Saving...">Save</.button>
       </div>
     </.form>

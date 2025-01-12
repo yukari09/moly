@@ -24,4 +24,14 @@ defmodule MonorepoWeb.Admin do
       import MonorepoWeb.TailwindUI
     end
   end
+
+  def topic(topic_name) when is_atom(topic_name) do
+    topics = [
+      post:  "channel:admin:post",
+      media: "channel:admin:media",
+      user:  "channel:admin:user",
+      comment:  "channel:admin:comment",
+    ]
+    Keyword.fetch!(topics, topic_name)
+  end
 end

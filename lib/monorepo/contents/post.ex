@@ -39,7 +39,6 @@ defmodule Monorepo.Contents.Post do
       end
     end
 
-
     create :create_post do
       accept [:post_title, :post_content, :post_type, :post_status, :post_name, :post_excerpt, :guid, :post_date]
 
@@ -53,13 +52,18 @@ defmodule Monorepo.Contents.Post do
       change relate_actor(:author)
     end
 
-    create :update_post do
-      accept [:post_title, :post_content, :post_type, :post_status]
+    # update :update_post do
+    #   accept [:post_title, :post_content, :post_type, :post_status, :post_name, :post_excerpt, :guid, :post_date]
 
-      argument :post_meta, {:array, :map} do
-        allow_nil? false
-      end
-    end
+    #   argument :post_meta, {:array, :map}
+    #   argument :term_taxonomy, {:array, :uuid}
+    #   argument :term_taxonomy_tags, {:array, :map}
+
+    #   change manage_relationship(:post_meta, :post_meta, type: :create)
+    #   change manage_relationship(:term_taxonomy_tags, :term_taxonomy_tags, type: :direct_control)
+    #   change manage_relationship(:term_taxonomy, :term_taxonomy, type: :append_and_remove)
+    #   change relate_actor(:author)
+    # end
 
 
     update :update_media do
@@ -161,7 +165,6 @@ defmodule Monorepo.Contents.Post do
     attribute :post_date,  :utc_datetime do
       description "The date the post was created"
       allow_nil? false
-      default DateTime.utc_now()
     end
 
     attribute :comment_count, :integer do

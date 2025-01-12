@@ -11,7 +11,7 @@ defmodule MonorepoWeb.AdminPostLive.Edit do
       Ash.get!(Monorepo.Contents.Post, id, actor: socket.assigns.current_user)
       |> Ash.load!([:post_meta], actor: socket.assigns.current_user)
 
-    form = resource_to_form(socket.assigns.current_user)
+    form = resource_to_form(post, socket.assigns.current_user)
 
     socket =
       socket
@@ -29,7 +29,8 @@ defmodule MonorepoWeb.AdminPostLive.Edit do
         selected_image_modal_id: generate_random_id(),
         create_category_modal_id: generate_random_id(),
         slug_dropdown_id: generate_random_id(),
-        post_slug: "/#{generate_random_str(8)}"
+        post_slug: "/#{generate_random_str(8)}",
+        post: post
       ]
     }
   end
@@ -56,8 +57,13 @@ defmodule MonorepoWeb.AdminPostLive.Edit do
     {:noreply, socket}
   end
 
-  defp resource_to_form(actor) do
-    AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post, [
+  def terminate(reason, socket) do
+    IO.puts "Terminating with reason: #{inspect(reason)}"
+    {:noreply, socket}
+  end
+
+  defp resource_to_form(post, actor) do
+    AshPhoenix.Form.for_update(post, :update_post, [
       forms: [
         auto?: true
       ],

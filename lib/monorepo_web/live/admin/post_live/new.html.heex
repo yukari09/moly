@@ -27,7 +27,7 @@
 %>
 
 <.form :let={f} for={@form} class="h-screen" id={@form.id} phx-submit="save">
-<div>
+<div phx-hook="ConfirmLeave" id="post-container">
   <div class=" flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
     <.link patch={~p"/admin/posts"} class="flex flex-shrink-0 items-center">
       <img class="h-8 w-auto" src="/images/logo.png" alt="Your Company">
@@ -57,7 +57,7 @@
 
     <div class="flex flex-1 gap-x-4 self-stretch items-center lg:gap-x-6">
       <.link 
-        class="text-sm text-primary text-gray-500 ml-auto pointer-events-none" 
+        class="text-sm text-gray-500 ml-auto pointer-events-none" 
         data-action="save-draft"
         phx-click={
           JS.set_attribute({"value", "draft"}, to: "##{f[:post_status].id}")
@@ -69,7 +69,7 @@
         Save draft
       </.link>
       <.link 
-        class="text-sm text-primary flex items-center gap-x-1 text-gray-500 pointer-events-none"
+        class="text-sm flex items-center gap-x-1 text-gray-500 pointer-events-none"
         phx-click={
           JS.dispatch("app:clearEditor", to: "#editorjs")
         }
@@ -125,40 +125,7 @@
         phx-update="ignore"
         data-content={"#{f[:post_content].id}"}
         data-initial-content={Jason.encode!(%{
-          time: DateTime.utc_now() |> DateTime.to_unix(),
-          blocks: [
-            %{
-              type: "header",
-              data: %{
-                text: "Start Writing Your New Article",
-                level: 2
-              }
-            },
-            %{
-              type: "paragraph",
-              data: %{
-                text: "This is the starting point of your article. You can begin writing or use the toolbar to add more content blocks."
-              }
-            },
-            %{
-              type: "header",
-              data: %{
-                text: "Article Outline",
-                level: 3
-              }
-            },
-            %{
-              type: "list",
-              data: %{
-                style: "unordered",
-                items: [
-                  "First point",
-                  "Second point",
-                  "Third point"
-                ]
-              }
-            }
-          ]
+          time: DateTime.utc_now() |> DateTime.to_unix()
         })}
       ></div> 
       <.input phx-update="ignore" field={f[:post_content]} type="hidden" class="hidden" label={nil}  />

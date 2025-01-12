@@ -101,6 +101,7 @@ defmodule MonorepoWeb.TailwindUI do
         tabindex="-1"
         phx-click-away={hide_dropdown("#{@menu_id}-#{index}")}
         data-menu-id={Map.get(slot, :"data-menu-id", "#{@menu_id}-#{index}")}
+        data-id={Map.get(slot, :"data-id", "#{@menu_id}-#{index}")}
       >
         { render_slot(slot) }
       </div>
@@ -354,7 +355,7 @@ defmodule MonorepoWeb.TailwindUI do
   def badge_span(assigns) do
     ~H"""
     <span :if={@badge} class={[
-      "hidden rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-900 md:inline-block",
+      "hidden rounded-full bg-gray-100 px-2.5 text-xs py-0.5 font-medium text-gray-900 md:inline-block",
       @class
     ]}>
       { @badge }
@@ -523,7 +524,7 @@ defmodule MonorepoWeb.TailwindUI do
     ~H"""
     <div>
       <label for={@field.id} class="block text-sm/6 font-medium text-gray-900"><%= @label %></label>
-      <div class={["mt-2", @errors != [] && "grid grid-cols-1"]}>
+      <div class={[@label && "mt-2", @errors != [] && "grid grid-cols-1"]}>
         <textarea
           name={@field.name}
           id={@field.id}
@@ -680,6 +681,7 @@ defmodule MonorepoWeb.TailwindUI do
   attr(:block_click_away, :boolean, default: false)
   attr(:on_cancel, JS, default: %JS{})
   slot(:inner_block, required: true)
+  attr(:rest, :global)
 
   def modal(assigns) do
     ~H"""
@@ -692,6 +694,7 @@ defmodule MonorepoWeb.TailwindUI do
         phx-mounted={@show && show_modal(@id)}
         phx-remove={hide_modal(@id)}
         data-cancel={JS.exec(@on_cancel, "phx-remove")}
+        {@rest}
       >
       <div id={"#{@id}-backdrop"} class="fixed inset-0 bg-gray-500/75 transition-opacity z-20" aria-hidden="true"></div>
 
@@ -824,7 +827,7 @@ defmodule MonorepoWeb.TailwindUI do
           </svg>
         </div>
       </div>
-      <label class="text-sm/6 cursor-pointer" for={@id || @field.id}>
+      <label class="text-sm/6 cursor-pointer flex-1" for={@id || @field.id}>
         <span :if={@label} for={@id || @field.id} class="font-medium text-gray-900"><%= @label %></span>
         <span :if={@description} id={"#{@id || @field.id}-description"} class="text-gray-500"><span class="sr-only"><%= @label %> </span><%= @description %></span>
       </label>
@@ -891,16 +894,52 @@ defmodule MonorepoWeb.TailwindUI do
         <div class={["border-b border-gray-200",@inner_class]}>
           <nav class="-mb-px flex space-x-8" aria-label="Tabs">
             <.link :for={tab <- @tabs} patch={!tab[:disabled] &&tab.href} class={[
-              "flex whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium",
+              "flex whitespace-nowrap px-1 py-4 text-sm font-medium border-b-2 ",
               tab.value == @current_tab && "border-gray-500 text-gray-600",
-              tab.value != @current_tab && "border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700",
-              tab[:disabled] && "cursor-not-allowed opacity-50"
+              tab.value != @current_tab && "border-b-transparent text-gray-500 hover:border-b-gray-200 hover:text-gray-700",
+              tab[:disabled] && "pointer-events-none opacity-50"
             ]}>
               <%= tab.label %>
               <.badge_span class="ml-3"  badge={tab.badge} />
             </.link>
           </nav>
         </div>
+      </div>
+    </div>
+    """
+  end
+
+
+  attr :tabs, :list, required: true
+  attr :class, :string, default: nil
+  attr :id, :string, default: nil
+  attr :selected, :string, required: true
+
+  def tabs(assigns) do
+    ~H"""
+    <div id={@id} class={@class}>
+      <div class="grid grid-cols-1 sm:hidden">
+        <select aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600">
+          <%= for tab <- @tabs do %>
+            <option selected={tab.value == @selected} value={tab.value}><%= tab.label %></option>
+          <% end %>
+        </select>
+        <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+          <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="hidden sm:block">
+        <nav class="flex space-x-4" aria-label="Tabs">
+          <%= for tab <- @tabs do %>
+            <.link patch={tab.href} class={[
+              "rounded-md px-3 py-2 text-sm font-medium",
+              tab.value == @selected && "bg-gray-100 text-gray-700",
+              tab.value != @selected && "text-gray-500 hover:text-gray-700"
+            ]} aria-current={tab.value == @selected && "page"}>
+              <%= tab.label %>
+            </.link>
+          <% end %>
+        </nav>
       </div>
     </div>
     """
@@ -1148,6 +1187,17 @@ defmodule MonorepoWeb.TailwindUI do
           </nav>
         </div>
       </div>
+    </div>
+    """
+  end
+  def no_results(assigns) do
+    ~H"""
+    <div class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <h3 class="mt-2 text-sm font-semibold text-gray-900">No results found</h3>
+      <p class="mt-1 text-sm text-gray-500">We couldn't find anything matching your search. <br/>Try adjusting your filters or search terms.</p>
     </div>
     """
   end

@@ -29,9 +29,7 @@ defmodule Monorepo.Application do
         max_concurrency: 8,
         idle_shutdown_after: 120_000,
         log: :debug
-      },
-
-      TwMerge.Cache
+      }
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

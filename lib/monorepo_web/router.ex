@@ -82,8 +82,9 @@ defmodule MonorepoWeb.Router do
       live("/dashboard", AdminDashboardLive)
       live("/users", AdminUserLive.Index, :index)
       live("/posts", AdminPostLive.Index, :index)
-      live("/post/new", AdminPostLive.New, :new)
-      live("/post/:id/edit", AdminPostLive.Edit, :edit)
+      live("/post/create", AdminPostLive.NewOrEdit)
+      live("/post/:id/edit", AdminPostLive.NewOrEdit)
+      # live("/post/:id/edit", AdminPostLive.Edit, :edit)
       live("/media", AdminMediaLive.Index, :index)
       live("/media/:id/edit", AdminMediaLive.Edit)
       # live "/categories", CategoryLive.Index, :index
