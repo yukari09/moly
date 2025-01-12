@@ -75,7 +75,7 @@ defmodule MonorepoWeb.AdminPostLive.FormField.PostCategories do
             <%= for {term_taxonomy, i} <- Enum.with_index(@term_taxonomy_categories) do %>
               <.checkbox
                 id={"term-taxonomy-category-#{i}"}
-                name={"#{@form[:term_taxonomy].name}[]"}
+                name={"#{@form[:categories].name}[]"}
                 value={term_taxonomy.id}
                 label={term_taxonomy.term.name}
                 phx-click="add-or-remove-category"

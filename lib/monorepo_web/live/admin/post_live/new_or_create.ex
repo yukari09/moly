@@ -24,7 +24,7 @@ defmodule MonorepoWeb.AdminPostLive.NewOrEdit do
         {:ok, post} ->
           socket
           |> put_flash(:info, "Saved post for #{post.post_title}!")
-          |> push_patch(to: ~p"/admin/posts")
+          |> push_patch(to: "/admin/posts")
         {:error, form} ->
           socket
           |> assign(form: form)

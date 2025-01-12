@@ -19,7 +19,7 @@ defmodule MonorepoWeb.AdminPostLive.SideBar do
           <h2 class="text-base font-semibold text-gray-900" id="slide-over-title">Post settings</h2>
         </div>
         <div class="space-y-5">
-          <.live_component id="feature-image" module={MonorepoWeb.AdminPostLive.FormField.Thumbnail} current_user={@current_user} />
+          <.live_component id="feature-image" module={MonorepoWeb.AdminPostLive.FormField.Thumbnail} form={@form} current_user={@current_user} />
 
           <div class="text-gray-600 text-sm mx-2">Last edited 4 hours ago.</div>
           <ul class="space-y-4 mx-2 text-sm">
@@ -79,7 +79,7 @@ defmodule MonorepoWeb.AdminPostLive.SideBar do
                 </button>
                 <div  class="space-y-1  border px-4 py-2.5 rounded-sm border-t-0 rounded-br-md rounded-bl-md" id="sub-menu-3">
                   <div id="tagify-input-container" class="mt-2" phx-update="ignore">
-                    <input class="w-full rounded-md" type="text" id="tagify-input" phx-hook="TagsTagify" data-target-name={"#{@form[:term_taxonomy_tags].name}"}  data-target-container="#tagify-input-target" />
+                    <input class="w-full rounded-md" type="text" id="tagify-input" phx-hook="TagsTagify" data-target-name={"#{@form[:tags].name}"}  data-target-container="#tagify-input-target" />
                   </div>
                   <div class="mb-12 text-xs text-gray-500 py-2" id="tagify-input-target" phx-update="ignore">
                   Separate with commas or the Enter key.

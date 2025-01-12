@@ -18,6 +18,14 @@ defmodule Monorepo.Terms.TermRelationships do
     create :create_term_relationships do
       accept [:term_taxonomy_id, :term_order]
     end
+
+    create :create_term_relationships_by_relation_id do
+      argument :term_taxonomy_id, :uuid
+      argument :post_id, :uuid
+
+      change manage_relationship :term_taxonomy_id, :term_taxonomy, type: :append_and_remove
+      change manage_relationship :post_id, :post, type: :append_and_remove
+    end
   end
 
 

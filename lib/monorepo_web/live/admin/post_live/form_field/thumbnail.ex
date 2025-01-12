@@ -2,11 +2,12 @@ defmodule MonorepoWeb.AdminPostLive.FormField.Thumbnail do
   use MonorepoWeb.Admin, :live_component
 
   @impl true
-  def update(%{current_user: current_user}, socket) do
+  def update(%{current_user: current_user, form: form}, socket) do
     socket =
       socket
       |> assign(:modal_id, generate_random_id())
       |> assign(:current_user, current_user)
+      |> assign(:form, form)
 
     {:ok, socket}
   end

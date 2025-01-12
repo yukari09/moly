@@ -1,5 +1,5 @@
 {application,monorepo,
-             [{config_mtime,1736487724},
+             [{config_mtime,1736671572},
               {compile_env,[{monorepo,['Elixir.MonorepoWeb.Gettext'],error},
                             {monorepo,[dev_routes],{ok,true}}]},
               {optional_applications,[]},
