@@ -35,8 +35,4 @@ defmodule Monorepo.Contents.Helpers do
         |> List.first()
     end
   end
-
-  def post_media() do
-
-  end
 end

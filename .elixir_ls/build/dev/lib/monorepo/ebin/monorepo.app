@@ -63,7 +63,6 @@
                         'Elixir.MonorepoWeb.AdminPostLive.FormField.Thumbnail',
                         'Elixir.MonorepoWeb.AdminPostLive.Index',
                         'Elixir.MonorepoWeb.AdminPostLive.NavBar',
-                        'Elixir.MonorepoWeb.AdminPostLive.New',
                         'Elixir.MonorepoWeb.AdminPostLive.NewCategory',
                         'Elixir.MonorepoWeb.AdminPostLive.NewOrEdit',
                         'Elixir.MonorepoWeb.AdminPostLive.SideBar',

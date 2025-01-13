@@ -1,4 +1,5 @@
 defmodule Monorepo.Contents.Post do
+  require Ash.Resource.Change.Builtins
   use Ash.Resource,
     otp_app: :monorepo,
     domain: Monorepo.Contents,
@@ -48,62 +49,21 @@ defmodule Monorepo.Contents.Post do
       change manage_relationship(:post_meta, :post_meta, type: :create)
       change relate_actor(:author)
 
-      change after_action(fn %{arguments: arguments}, post, context ->
-        categories = Map.get(arguments, :categories, [])
-        tags = Map.get(arguments, :tags, [])
-
-        term_names = Enum.map(tags, & &1["name"])
-
-        Monorepo.Terms.TermRelationships
-        |> Ash.Query.filter(post_id == ^post.id)
-        |> Ash.bulk_destroy(:destroy, %{}, actor: context.actor)
-
-        categories_term_relation_ships = Enum.map(categories, &(%{term_taxonomy_id: &1, post_id: post.id}))
-
-        existed_tags =
-          Monorepo.Terms.TermTaxonomy
-          |> Ash.Query.filter(term.name in ^term_names and taxonomy == "post_tag")
-          |> Ash.read!(actor: context.actor)
-          |> Ash.load!([:term])
-
-        existed_tag_names = Enum.map(existed_tags, & &1.term.name)
-
-        tags_term_relation_ships = Enum.map(existed_tags, & %{term_taxonomy_id: &1.id, post_id: post.id})
-
-        rest_not_exist_tags = Enum.filter(tags, & &1["name"] not in existed_tag_names)
-
-        rest_tags_term_relation_ships =
-          if rest_not_exist_tags == [] do
-            []
-          else
-            %{status: :success, errors: nil, records: records} =
-              Ash.bulk_create!(rest_not_exist_tags, Monorepo.Terms.Term, :create, actor: context.actor, return_records?: true)
-
-            Enum.map(records, fn record ->
-              term_taxonomy = record.term_taxonomy |> List.first()
-              %{term_taxonomy_id: term_taxonomy.id, post_id: post.id}
-            end)
-          end
-
-        term_relation_ships = categories_term_relation_ships ++ tags_term_relation_ships ++ rest_tags_term_relation_ships
-
-        Ash.bulk_create!(term_relation_ships, Monorepo.Terms.TermRelationships, :create_term_relationships_by_relation_id, actor: context.actor, return_errors?: true)
-        {:ok, post}
-      end)
+      change after_action(&after_create_post/3)
     end
 
-    # update :update_post do
-    #   accept [:post_title, :post_content, :post_type, :post_status, :post_name, :post_excerpt, :guid, :post_date]
+    update :update_post do
+      accept [:post_title, :post_content, :post_type, :post_status, :post_name, :post_excerpt, :guid, :post_date]
 
-    #   argument :post_meta, {:array, :map}
-    #   argument :term_taxonomy, {:array, :uuid}
-    #   argument :term_taxonomy_tags, {:array, :map}
+      argument :post_meta, {:array, :map}
+      argument :categories, {:array, :uuid}
+      argument :tags, {:array, :map}
 
-    #   change manage_relationship(:post_meta, :post_meta, type: :create)
-    #   change manage_relationship(:term_taxonomy_tags, :term_taxonomy_tags, type: :direct_control)
-    #   change manage_relationship(:term_taxonomy, :term_taxonomy, type: :append_and_remove)
-    #   change relate_actor(:author)
-    # end
+      change manage_relationship(:post_meta, :post_meta, type: :create)
+      change relate_actor(:author)
+
+      change after_action(&after_create_post/3)
+    end
 
 
     update :update_media do
@@ -239,13 +199,13 @@ defmodule Monorepo.Contents.Post do
     many_to_many :term_taxonomy, Monorepo.Terms.TermTaxonomy,
       through: Monorepo.Terms.TermRelationships
 
-    many_to_many :term_taxonomy_categories, Monorepo.Terms.Term,
-      join_relationship: :term_taxonomy,
-      filter: expr(taxonomy == "category")
+    # many_to_many :term_taxonomy_categories, Monorepo.Terms.Term,
+    #   join_relationship: :term_taxonomy,
+    #   filter: expr(term_taxonomy.taxonomy == "category")
 
-    many_to_many :term_taxonomy_tags, Monorepo.Terms.Term,
-      join_relationship: :term_taxonomy,
-      filter: expr(taxonomy == "post_tag")
+    # many_to_many :term_taxonomy_tags, Monorepo.Terms.Term,
+    #   join_relationship: :term_taxonomy,
+    #   filter: expr(term_taxonomy.taxonomy == "post_tag")
   end
 
   identities do
@@ -285,6 +245,47 @@ defmodule Monorepo.Contents.Post do
       Ash.update!(changeset, %{meta_value: meta_value}, actor: context.actor)
     end)
 
+    {:ok, post}
+  end
+
+  defp after_create_post(%{arguments: arguments}, post, context) do
+    categories = Map.get(arguments, :categories, [])
+    tags = Map.get(arguments, :tags, [])
+
+    term_names = Enum.map(tags, & &1["name"])
+
+    Monorepo.Terms.TermRelationships
+    |> Ash.Query.filter(post_id == ^post.id)
+    |> Ash.bulk_destroy(:destroy, %{}, actor: context.actor)
+
+    categories_term_relation_ships = Enum.map(categories, &(%{term_taxonomy_id: &1, post_id: post.id}))
+
+    existed_tags =
+      Monorepo.Terms.TermTaxonomy
+      |> Ash.Query.filter(term.name in ^term_names and taxonomy == "post_tag")
+      |> Ash.read!(actor: context.actor)
+      |> Ash.load!([:term], actor: context.actor)
+
+    existed_tag_names = Enum.map(existed_tags, & &1.term.name)
+    rest_not_exist_tags = Enum.filter(tags, & &1["name"] not in existed_tag_names)
+
+    rest_tags_term_relation_ships =
+      if rest_not_exist_tags == [] do
+        []
+      else
+        %{status: :success, errors: nil, records: records} =
+          Ash.bulk_create!(rest_not_exist_tags, Monorepo.Terms.Term, :create, actor: context.actor, return_records?: true)
+
+        Enum.map(records, fn record ->
+          term_taxonomy = record.term_taxonomy |> List.first()
+          %{term_taxonomy_id: term_taxonomy.id, post_id: post.id}
+        end)
+      end
+
+    tags_term_relation_ships = Enum.map(existed_tags, & %{term_taxonomy_id: &1.id, post_id: post.id})
+    term_relation_ships = categories_term_relation_ships ++ tags_term_relation_ships ++ rest_tags_term_relation_ships
+
+    Ash.bulk_create!(term_relation_ships, Monorepo.Terms.TermRelationships, :create_term_relationships_by_relation_id, actor: context.actor, return_errors?: true)
     {:ok, post}
   end
 

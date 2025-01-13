@@ -86,6 +86,7 @@ defmodule MonorepoWeb.AdminPostLive.FormField.PostCategories do
             <% end %>
           </div>
       </div>
+      {@form.data.source}
     </div>
     """
   end
