@@ -36,7 +36,17 @@ defmodule MonorepoWeb.AdminPostLive.NavBar do
           Clear editor
         </.link>
         <div class="flex items-center gap-x-4 lg:gap-x-6">
-          <.button size="sm" class={["pointer-events-none opacity-50"]} data-id="publish-button">
+          <.button
+            size="sm"
+            class={["pointer-events-none opacity-50"]}
+            data-id="publish-button"
+            phx-click={
+            JS.set_attribute({"value", "publish"}, to: "[data-id='post-status-input']")
+            |> JS.set_attribute({"type", "submit"}, to: "[data-id='post-submit-btn']")
+            |> JS.dispatch("app:click-el", to: "[data-id='post-submit-btn']")
+            |> JS.set_attribute({"type", "button"}, to: "[data-id='post-submit-btn']")
+          }
+          >
             Publish
           </.button>
         </div>

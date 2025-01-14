@@ -15,7 +15,7 @@ defmodule MonorepoWeb.AdminPostLive.NewOrEdit do
     post =
       if Map.get(params, "id") do
         Ash.get!(Monorepo.Contents.Post, params["id"], actor: socket.assigns.current_user)
-        |> Ash.load!([:term_taxonomy_categories, :term_taxonomy_tags], actor: socket.assigns.current_user)
+        |> Ash.load!([:post_meta, :post_categories, :post_tags], actor: socket.assigns.current_user)
       else
         nil
       end
@@ -39,6 +39,7 @@ defmodule MonorepoWeb.AdminPostLive.NewOrEdit do
           |> put_flash(:info, "Saved post for #{post.post_title}!")
           |> push_navigate(to: ~p"/admin/posts")
         {:error, form} ->
+          IO.inspect(form)
           socket
           |> assign(form: form)
           |> put_flash(:error, "Oops, some thing wrong.")

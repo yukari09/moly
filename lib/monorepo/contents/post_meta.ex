@@ -34,8 +34,8 @@ defmodule Monorepo.Contents.PostMeta do
       accept [:meta_key, :meta_value]
     end
 
-
     destroy :destroy do
+      primary? true
       change after_action(&remove_attachment/3)
     end
   end

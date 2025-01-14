@@ -10,7 +10,6 @@ const get_document_el = (key) => {
   return document.querySelector(`[data-id="${key}"]`);
 }
 
-
 const convert_to_camel = (str) => {
   return str.replace(/-([a-z])/g, (match, p1) => p1.toUpperCase());
 }
@@ -32,6 +31,42 @@ const enabled_el = (el) => {
   el.removeAttribute("disabled")
 }
 
+
+export const FormChangeListener = {
+  mounted() {
+    const formElements = this.el.querySelectorAll('[name^="form"]');
+
+    formElements.forEach(element => {
+      element.dataset.prevValue = element.value;
+
+      const observer = new MutationObserver(() => {
+        if (element.dataset.prevValue !== element.value) {
+          window.dispatchEvent(new CustomEvent('re_set_btn'));
+          element.dataset.prevValue = element.value; 
+        }
+      });
+
+      observer.observe(element, {
+        attributes: true,
+        attributeFilter: ['value']
+      });
+
+      element._mutationObserver = observer;
+    });
+  },
+
+  destroyed() {
+    const formElements = this.el.querySelectorAll('[name^="form"]');
+    formElements.forEach(element => {
+      const observer = element._mutationObserver;
+      if (observer) {
+        observer.disconnect();
+      }
+    });
+  }
+};
+
+
 export const SetFeatureImage = {
   injection(iframe) {
     iframe.onload = () => {
@@ -40,10 +75,12 @@ export const SetFeatureImage = {
         this.liveSocket.execJS(modal, `[["exec",{"attr":"phx-remove"}]]`);
       })
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-      this.bindClickEvent(iframeDoc);
-      const observer = new MutationObserver(() => this.bindClickEvent(iframeDoc));
+      this.bindClickImageSelecte(iframeDoc);
+      const observer = new MutationObserver(() => this.bindClickImageSelecte(iframeDoc));
+      this.bindClickEvent()
       observer.observe(iframeDoc.body, { childList: true, subtree: true });
-    };
+    }
+    this.bindClickEvent()
   },
 
   document_el() {
@@ -60,12 +97,25 @@ export const SetFeatureImage = {
     this.injection(this.el);
   },
 
-  bindClickEvent(iframeDoc) {
+  toggleElement(element, isVisible) {element.classList.toggle('hidden', !isVisible)},
+
+  toggleButton(button, isEnabled) {
+    button.disabled = !isEnabled;
+    button.classList.toggle('pointer-events-none', !isEnabled);
+    button.classList.toggle('opacity-50', !isEnabled);
+  },
+
+  toggleInput(input, isEnabled) {
+    if(isEnabled){
+      input.removeAttribute("disabled")
+    }else{
+      input.setAttribute("disabled", "disabled")
+    }
+  },
+
+  bindClickImageSelecte(iframeDoc){
     const mediaElements = iframeDoc.querySelectorAll('[data-media-id]');
-    const {
-      confirmButton, metaValueInput, metaKeyInput, image,
-      imageContainer, setImageButton, modal, removeImageButton
-    } = this.document_el();
+    const {confirmButton, metaValueInput, image} = this.document_el();
 
     mediaElements.forEach((el) => {
       if (!el.hasAttribute('data-click-processed')) {
@@ -78,46 +128,40 @@ export const SetFeatureImage = {
           confirmButton.removeAttribute("disabled");
 
           metaValueInput.value = el.getAttribute('data-media-id');
-          metaKeyInput.value = "thumbnail_id";
           image.setAttribute('src', el.getAttribute('data-media-url'));
-
-          const toggleElement = (element, isVisible) => element.classList.toggle('hidden', !isVisible);
-          const toggleInput = (input, isEnabled) => {
-            if(isEnabled){
-              input.removeAttribute("disabled")
-            }else{
-              input.setAttribute("disabled", "disabled")
-            }
-          }
-          const toggleButton = (button, isEnabled) => {
-            button.disabled = !isEnabled;
-            button.classList.toggle('pointer-events-none', !isEnabled);
-            button.classList.toggle('opacity-50', !isEnabled);
-          };
-
-          const confirmEvent = () => {
-            toggleElement(imageContainer, true);
-            toggleElement(setImageButton, false);
-            toggleInput(metaValueInput, true);
-            toggleInput(metaKeyInput, true);
-            toggleButton(confirmButton, false);
-            liveSocket.execJS(modal, `[["exec",{"attr":"phx-remove"}]]`);
-          };
-
-          const removeEvent = () => {
-            toggleElement(imageContainer, false);
-            toggleElement(setImageButton, true);
-            toggleInput(metaValueInput, false);
-            toggleInput(metaKeyInput, false);
-          };
-
-          [confirmButton, removeImageButton].forEach(button => {
-            button.addEventListener('click', button === confirmButton ? confirmEvent : removeEvent);
-          });
-        });
+        })
         el.setAttribute('data-click-processed', 'true');
       }
-    });
+    })
+
+  },
+
+  bindClickEvent() {
+    const {
+      confirmButton, metaValueInput, metaKeyInput,
+      imageContainer, setImageButton, modal, removeImageButton
+    } = this.document_el();
+
+
+    const confirmEvent = () => {
+      this.toggleInput(metaValueInput, true);
+      this.toggleInput(metaKeyInput, true);
+      this.toggleElement(imageContainer, true);
+      this.toggleElement(setImageButton, false);
+      this.toggleButton(confirmButton, false);
+      liveSocket.execJS(modal, `[["exec",{"attr":"phx-remove"}]]`);
+    };
+
+    const removeEvent = () => {
+      this.toggleInput(metaValueInput, false);
+      this.toggleInput(metaKeyInput, false);
+      this.toggleElement(imageContainer, false);
+      this.toggleElement(setImageButton, true);
+    };
+
+    [confirmButton, removeImageButton].forEach(button => {
+      button.addEventListener('click', button === confirmButton ? confirmEvent : removeEvent);
+    })
   }
 };
 
@@ -128,27 +172,29 @@ export const PostDatetimePicker = {
   },
 
   mounted() {
-    const {postDateImmediately, postDateSchedule} = this.document_el()
+    const {postDateImmediately, postDateSchedule, postDateInput} = this.document_el()
     let utc_now = this.el.value;
     if(utc_now == ""){
       utc_now = DateTime.now().setZone('utc').toISO();
-      this.el.value = utc_now;
+      postDateInput.value = utc_now; //replace
     }else{
       utc_now = DateTime.fromISO(utc_now, { zone: 'utc' }).setZone('local').toJSDate();
+      postDateSchedule.innerHTML = DateTime.fromJSDate(utc_now).setZone('local').toLocaleString(DateTime.DATETIME_MED)
     }
     flatpickr(this.el, {
       enableTime: true,
       time_24hr: true,
-      dateFormat: "Y-m-d H:i",
+      dateFormat: "Y/m/d H:i",
       defaultDate: utc_now,
       onReady: function(selectedDates, dateStr, instance) {
         instance.calendarContainer.style.marginTop = "12px";
       },
       onChange: (selected_date, dateStr, instance) => {
-        this.el.value = DateTime.fromJSDate(selected_date[0]).setZone('utc').toISO();
+        postDateInput.value = DateTime.fromJSDate(selected_date[0]).setZone('utc').toISO(); //replace
         postDateImmediately.classList.add("hidden");
         postDateSchedule.classList.remove("hidden");
         postDateSchedule.innerHTML = DateTime.fromJSDate(selected_date[0]).setZone('local').toLocaleString(DateTime.DATETIME_MED);
+        window.dispatchEvent(new CustomEvent('re_set_btn'))
       }
     });
   }
@@ -246,6 +292,7 @@ export const TagsTagify = {
         taxonomyInput.name = `${namePrefix}[${index}][term_taxonomy][][taxonomy]`;
         taxonomyInput.value = "post_tag";
         targetContainer.appendChild(taxonomyInput);
+        window.dispatchEvent(new CustomEvent('re_set_btn'))
       }
     });
 
@@ -257,6 +304,7 @@ export const TagsTagify = {
           targetContainer.removeChild(input)
         }
       })
+      window.dispatchEvent(new CustomEvent('re_set_btn'))
     });
   },
 
@@ -296,7 +344,7 @@ export const Editor = {
     }
     this.currentState = newState
     this.redoStack = []
-    this.re_set_btn()
+    // this.re_set_btn()
   },
 
   undo() {
@@ -306,7 +354,7 @@ export const Editor = {
     this.redoStack.push(this.currentState) 
     this.currentState = this.undoStack.pop()
     this.editor.render(this.currentState)
-    this.re_set_btn()
+    // this.re_set_btn()
     this.targetInput.value = JSON.stringify(this.currentState)
   },
 
@@ -317,7 +365,7 @@ export const Editor = {
     this.undoStack.push(this.currentState)
     this.currentState = this.redoStack.pop()
     this.editor.render(this.currentState)
-    this.re_set_btn()
+    // this.re_set_btn()
     this.targetInput.value = JSON.stringify(this.currentState)
   },
 
@@ -328,7 +376,7 @@ export const Editor = {
     this.resize = () => {
       postTitle.style.height = 'auto'
       postTitle.style.height = postTitle.scrollHeight + 'px'
-      this.re_set_btn()
+      // this.re_set_btn()
     }
 
     postTitle.addEventListener('input', this.resize)
@@ -366,20 +414,21 @@ export const Editor = {
         api.saver.save().then(outputData => {
           this.targetInput.value = JSON.stringify(outputData);
           this.setState(outputData);
-          this.re_set_btn()
+          // this.re_set_btn()
         })
       }
     })
 
     window.addEventListener('undo', _ => {this.undo()})
     window.addEventListener('redo', _ => {this.redo()})
+    window.addEventListener('re_set_btn', _ => {this.re_set_btn()})
     window.addEventListener('clear_editor', _ => {
       this.targetInput.value=""
       this.editor.render(empty_data)
       this.undoStack = []
       this.redoStack = []
       this.currentState = empty_data
-      this.re_set_btn()
+      // this.re_set_btn()
     })
   }
 }

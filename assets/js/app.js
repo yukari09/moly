@@ -75,12 +75,9 @@ window.addEventListener("app:disabledFormElement", (event) => {
       })
     }, 2000)
   }
-});
+})
 
-
-window.addEventListener("app:historyback", (_) => {history.back()})
-window.addEventListener("app:contentWindowHistoryback", (event) => {event.target.contentWindow.history.back()})
-
+window.addEventListener("app:historyback", (event) => {event.target.tagName === "IFRAME"? event.target.contentWindow.history.back() : history.back()})
 
 window.addEventListener("app:saveLocalStorage", ({detail}) => {
   localStorage.setItem(detail.key, btoa(detail.value))

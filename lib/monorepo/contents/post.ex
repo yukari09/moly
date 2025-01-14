@@ -53,13 +53,14 @@ defmodule Monorepo.Contents.Post do
     end
 
     update :update_post do
+      require_atomic? false
       accept [:post_title, :post_content, :post_type, :post_status, :post_name, :post_excerpt, :guid, :post_date]
 
       argument :post_meta, {:array, :map}
       argument :categories, {:array, :uuid}
       argument :tags, {:array, :map}
 
-      change manage_relationship(:post_meta, :post_meta, type: :create)
+      change manage_relationship(:post_meta, :post_meta, type: :direct_control)
       change relate_actor(:author)
 
       change after_action(&after_create_post/3)
@@ -199,13 +200,13 @@ defmodule Monorepo.Contents.Post do
     many_to_many :term_taxonomy, Monorepo.Terms.TermTaxonomy,
       through: Monorepo.Terms.TermRelationships
 
-    # many_to_many :term_taxonomy_categories, Monorepo.Terms.Term,
-    #   join_relationship: :term_taxonomy,
-    #   filter: expr(term_taxonomy.taxonomy == "category")
+    has_many :post_categories, Monorepo.Terms.Term do
+      manual Monorepo.Contents.Relations.PostCategories
+    end
 
-    # many_to_many :term_taxonomy_tags, Monorepo.Terms.Term,
-    #   join_relationship: :term_taxonomy,
-    #   filter: expr(term_taxonomy.taxonomy == "post_tag")
+    has_many :post_tags, Monorepo.Terms.Term do
+      manual Monorepo.Contents.Relations.PostTags
+    end
   end
 
   identities do
@@ -284,8 +285,8 @@ defmodule Monorepo.Contents.Post do
 
     tags_term_relation_ships = Enum.map(existed_tags, & %{term_taxonomy_id: &1.id, post_id: post.id})
     term_relation_ships = categories_term_relation_ships ++ tags_term_relation_ships ++ rest_tags_term_relation_ships
-
     Ash.bulk_create!(term_relation_ships, Monorepo.Terms.TermRelationships, :create_term_relationships_by_relation_id, actor: context.actor, return_errors?: true)
+
     {:ok, post}
   end
 

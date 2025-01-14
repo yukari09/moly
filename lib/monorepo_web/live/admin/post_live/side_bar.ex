@@ -21,7 +21,7 @@ defmodule MonorepoWeb.AdminPostLive.SideBar do
         <div class="space-y-5">
           <.live_component id="feature-image" module={MonorepoWeb.AdminPostLive.FormField.Thumbnail} form={@form} current_user={@current_user} />
 
-          <div class="text-gray-600 text-sm mx-2">Last edited 4 hours ago.</div>
+          <div :if={@form.data} class="text-gray-600 text-sm mx-2">Last edited {Timex.Format.DateTime.Formatters.Relative.format!(@form.data.updated_at, "{relative}")}.</div>
           <ul class="space-y-4 mx-2 text-sm">
             <li id="post-status" class="flex items-center">
                 <span class="font-medium w-32">Status</span>
@@ -37,7 +37,7 @@ defmodule MonorepoWeb.AdminPostLive.SideBar do
             <li class="flex items-center">
               <span class="font-medium w-32">Discussion</span>
               <.toggle_switch id="comments_open_toggle"  label={nil} enabled={true} on_change={JS.toggle_attribute({"value", "1", "0"}, to: "[data-id='meta-value-comments-open']")} />
-              <input data-id="meta-key-comments-open" name={"#{@form[:post_meta].name}[1][meta_key]"} value="comments_open" type="hidden"/>
+              <input data-id="meta-key-comments-open" name={"#{@form[:post_meta].name}[1][meta_key]"} value={:comments_open} type="hidden"/>
               <input data-id="meta-value-comments-open" name={"#{@form[:post_meta].name}[1][meta_value]"} value="1" type="hidden"/>
             </li>
             <li class="flex items-center">
@@ -79,10 +79,12 @@ defmodule MonorepoWeb.AdminPostLive.SideBar do
                 </button>
                 <div  class="space-y-1  border px-4 py-2.5 rounded-sm border-t-0 rounded-br-md rounded-bl-md" id="sub-menu-3">
                   <div id="tagify-input-container" class="mt-2" phx-update="ignore">
-                    <input class="w-full rounded-md" type="text" id="tagify-input" phx-hook="TagsTagify" data-target-name={"#{@form[:tags].name}"}  data-target-container="#tagify-input-target" />
+                    <input class="w-full rounded-md" type="text" id="tagify-input" phx-hook="TagsTagify" data-target-name={"#{@form[:tags].name}"}  data-target-container="#tagify-input-target" value={@form.data && Enum.map_join(@form.data.post_tags,",", & &1.name) || []} />
                   </div>
                   <div class="mb-12 text-xs text-gray-500 py-2" id="tagify-input-target" phx-update="ignore">
-                  Separate with commas or the Enter key.
+                    <input :for={{tag, i} <- Enum.with_index(@form.data && @form.data.post_tags || [])} name={"#{@form[:tags].name}[#{i}][name]"} value={tag.name}  type="hidden"/>
+                    <input :for={{tag, i} <- Enum.with_index(@form.data && @form.data.post_tags || [])} name={"#{@form[:tags].name}[#{i}][term_taxonomy][][taxonomy]"}  value={hd(tag.term_taxonomy) |> Map.get(:id)} type="hidden"/>
+                    Separate with commas or the Enter key.
                   </div>
                 </div>
               </div>

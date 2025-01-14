@@ -1,4 +1,4 @@
-<.form :let={f} for={@form} class="h-screen" id={@form.id} phx-submit="save">
+<.form :let={f} for={@form} class="h-screen" id={@form.id} phx-submit="save" phx-hook="FormChangeListener">
   <div id="post-container">
       <.live_component id="nav-bar" module={MonorepoWeb.AdminPostLive.NavBar} form={f}/>
   </div>
@@ -11,7 +11,6 @@
           <textarea
             id={f[:post_title].id}
             name={f[:post_title].name}
-            phx-update="ignore"
             autocomplete="off"
             placeholder="Add a title"
             class="w-full !border-0 !p-0 !text-4xl font-bold !text-gray-900 !outline-none break-words resize-none overflow-hidden"
@@ -26,10 +25,9 @@
           class="pt-8"
           data-id="post-content-editor"
           data-placeholder="Type text or paste a link"
-          phx-update="ignore"
           data-target-id={f[:post_content].id}
         ></div> 
-        <.input phx-update="ignore" field={f[:post_content]} type="hidden" class="hidden" label={nil}  />
+        <.input field={f[:post_content]}  class="hidden" label={nil}  />
       </div> 
     </div>
     <.live_component id="side-bar" module={MonorepoWeb.AdminPostLive.SideBar} form={f} post_slug={@post_slug} host={@host} current_user={@current_user} create_category_modal_id={@create_category_modal_id} />

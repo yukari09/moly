@@ -54,10 +54,8 @@ defmodule MonorepoWeb.AdminPostLive.Index do
         Ash.Query.filter(data, post_status == ^post_status)
       end
 
-    data = Ash.Query.filter(data, post_type == :post)
-
     data =
-      data
+      Ash.Query.filter(data, post_type == :post)
       |> Ash.read!(opts)
       |> Ash.load!([:post_meta])
 
