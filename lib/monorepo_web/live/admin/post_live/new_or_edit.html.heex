@@ -1,4 +1,4 @@
-<.form :let={f} for={@form} class="h-screen" id={@form.id} phx-submit="save" phx-hook="FormChangeListener">
+<.form :let={f} for={@form} class="h-screen" id={@form.id} phx-submit="save" phx-change={JS.dispatch("re_set_btn")} phx-hook="FormChangeListener">
   <div id="post-container">
       <.live_component id="nav-bar" module={MonorepoWeb.AdminPostLive.NavBar} form={f}/>
   </div>
@@ -15,6 +15,7 @@
             placeholder="Add a title"
             class="w-full !border-0 !p-0 !text-4xl font-bold !text-gray-900 !outline-none break-words resize-none overflow-hidden"
             rows="1"
+            phx-hook="Resize"
             data-id="post-title"
           >{f[:post_title].value}</textarea>
         </div>

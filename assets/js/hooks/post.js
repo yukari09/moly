@@ -32,9 +32,22 @@ const enabled_el = (el) => {
 }
 
 
+export const Resize = {
+  mounted(){
+    resize = () => {
+      this.el.style.height = 'auto'
+      this.el.style.height = this.el.scrollHeight + 'px'
+    }
+
+    this.el.addEventListener('input', resize)
+
+    resize()
+  }
+}
+
 export const FormChangeListener = {
   mounted() {
-    const formElements = this.el.querySelectorAll('[name^="form"]');
+    const formElements = document.querySelectorAll('[name^="form"]');
 
     formElements.forEach(element => {
       element.dataset.prevValue = element.value;
@@ -184,6 +197,7 @@ export const PostDatetimePicker = {
     flatpickr(this.el, {
       enableTime: true,
       time_24hr: true,
+      minDate: "today",
       dateFormat: "Y/m/d H:i",
       defaultDate: utc_now,
       onReady: function(selectedDates, dateStr, instance) {
@@ -368,18 +382,9 @@ export const Editor = {
     // this.re_set_btn()
     this.targetInput.value = JSON.stringify(this.currentState)
   },
+ 
 
   mounted() {
-
-    const {postTitle} = this.document_el()
-
-    this.resize = () => {
-      postTitle.style.height = 'auto'
-      postTitle.style.height = postTitle.scrollHeight + 'px'
-      // this.re_set_btn()
-    }
-
-    postTitle.addEventListener('input', this.resize)
 
     this.undoStack = []
     this.redoStack = []
@@ -414,7 +419,7 @@ export const Editor = {
         api.saver.save().then(outputData => {
           this.targetInput.value = JSON.stringify(outputData);
           this.setState(outputData);
-          // this.re_set_btn()
+          this.re_set_btn()
         })
       }
     })
@@ -430,5 +435,10 @@ export const Editor = {
       this.currentState = empty_data
       // this.re_set_btn()
     })
+  },
+
+  updated() {
+    this.mounted()
   }
+
 }

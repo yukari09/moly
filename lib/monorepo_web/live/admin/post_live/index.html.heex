@@ -14,7 +14,7 @@
 
     <.tabs_with_badges 
         tabs={[
-            %{label: "All", value: "", href: ~p"/admin/posts?#{%{@params | page: 1, post_status: nil}}", badge: @page_meta.total},
+            %{label: "All", value: "", href: ~p"/admin/posts?#{%{@params | page: 1, post_status: nil}}", badge: @status_count.all},
             %{label: "Published", value: "publish", href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "publish"}}", badge: @status_count.publish},
             %{label: "Draft", value: "draft", href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "draft"}}", badge: @status_count.draft},
             %{label: "Scheduled", value: "future", href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "future"}}", badge: @status_count.future},
@@ -28,10 +28,7 @@
     </.form>
   </div>
 
-
-
-
-    <div class="mt-4 flow-root p-4 border rounded-md" :if={@posts.results != []}>
+    <div class="mt-4 flow-root p-4 border rounded-md"   :if={@posts.results != []}>
         <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <.table
@@ -50,9 +47,14 @@
               {row.inserted_at |> Timex.format!("{Mfull} {D}, {YYYY} {h24}:{m}")}
             </:col>
             <:col :let={row} label="" align="right"> 
+              <div class="flex items-center gap-1 text-gray-500 justify-end">
                 <.link class="text-gray-500" patch={~p"/admin/post/#{row.id}/edit"} >
-                    Edit
+                    <Lucideicons.pen class="size-4" />
                 </.link>
+                <.link class="text-gray-500" phx-click="delete" data-confirm="Are you sure to delete this post?" phx-value-id={row.id} >
+                    <Lucideicons.trash class="size-4" />
+                </.link>
+              </div>
             </:col>
             </.table>
             </div>

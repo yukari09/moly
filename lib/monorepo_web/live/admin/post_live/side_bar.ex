@@ -44,6 +44,18 @@ defmodule MonorepoWeb.AdminPostLive.SideBar do
               <span class="font-medium w-32">Author</span>
               <span class="text-gray-600">{Monorepo.Accounts.Helper.current_user_name(@current_user)}</span>
             </li>
+            <li :if={@form.data}>
+              <.button
+                variant="gray"
+                class={["w-full my-2 gap-2", !@form.data && "hidden"]}
+                phx-click="delete"
+                phx-value-id={@form.data.id}
+                data-confirm="Are you sure?"
+              >
+                <Lucideicons.trash class="size-4" />
+                Delete
+              </.button>
+            </li>
           </ul>
         </div>
         <ul role="list" class="space-y-2">

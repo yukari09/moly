@@ -22,7 +22,7 @@ defmodule Monorepo.Contents.Post do
 
     role :admin do
       fields([:post_title, :post_name, :post_type, :post_content, :post_status, :post_mime_type, :guid, :inserted_at, :updated_at])
-      actions([:read, :create_media, :destroy_media, :update_media, :create_post, :update_post])
+      actions([:read, :create_media, :destroy_media, :update_media, :create_post, :update_post, :destroy_post])
     end
   end
 
@@ -92,6 +92,11 @@ defmodule Monorepo.Contents.Post do
       change relate_actor(:author)
 
       change after_action(&add_meta/3)
+    end
+
+    destroy :destroy_post do
+      change before_action(&delete_meta/2)
+      change before_action(&delete_term_relationships/2)
     end
 
     destroy :destroy_media do
@@ -225,6 +230,17 @@ defmodule Monorepo.Contents.Post do
 
     %Ash.BulkResult{status: :success} =
       Monorepo.Contents.PostMeta
+      |> Ash.Query.filter(post_id == ^post_id)
+      |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor, strategy: :stream)
+
+    changeset
+  end
+
+  defp delete_term_relationships(changeset, context) do
+    post_id = Ash.Changeset.get_attribute(changeset, :id)
+
+    %Ash.BulkResult{status: :success} =
+      Monorepo.Terms.TermRelationships
       |> Ash.Query.filter(post_id == ^post_id)
       |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor, strategy: :stream)
 

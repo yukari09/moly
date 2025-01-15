@@ -9,6 +9,15 @@ defmodule MonorepoWeb.AdminPostLive.Index do
     {:noreply, get_list_by_params(socket, params)}
   end
 
+  @impl true
+  def handle_event("delete", %{"id" => id}, socket) do
+    Ash.get!(Monorepo.Contents.Post, id, actor: socket.assigns.current_user)
+    |> Ash.destroy!(action: :destroy_post, actor: socket.assigns.current_user)
+
+    socket = push_patch(socket, to: ~p"/admin/posts?#{socket.assigns.params}")
+    {:noreply, socket}
+  end
+
 
   defp get_list_by_params(socket, params) do
     current_user = socket.assigns.current_user
@@ -70,15 +79,14 @@ defmodule MonorepoWeb.AdminPostLive.Index do
       end)
 
     all_posts =
-      Ash.Query.filter(@model, post_status in ^calc_status)
-      |> Ash.count!([actor: current_user])
+      Enum.reduce(status_count, 0, & &2 + elem(&1, 1))
 
     socket =
       socket
       |> assign(:posts, data)
       |> assign(:page_meta, pagination_meta(data.count, per_page, page, 9))
       |> assign(:params, %{page: page, per_page: per_page, q: q, post_status: post_status})
-      |> assign(:status_count, status_count)
+      |> assign(:status_count, Map.put(status_count, :all, all_posts))
 
     socket
   end

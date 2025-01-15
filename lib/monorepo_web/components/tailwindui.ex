@@ -854,7 +854,6 @@ defmodule MonorepoWeb.TailwindUI do
         <Lucideicons.search class="size-4 text-gray-400" />
         <input type="search" name={@name} value={@value} autocomplete="off" class={[
           "block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6",
-          "",
           @input_class
         ]} placeholder={@placeholder || "Search"} {@rest}>
     </div>

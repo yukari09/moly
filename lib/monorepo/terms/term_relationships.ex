@@ -10,7 +10,10 @@ defmodule Monorepo.Terms.TermRelationships do
   end
 
   actions do
-    read :read, primary?: true
+    read :read do
+      primary? true
+      pagination offset?: true, keyset?: true, required?: false
+    end
     create :create, primary?: true
     update :update, primary?: true
     destroy :destroy, primary?: true

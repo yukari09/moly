@@ -1,7 +1,7 @@
 import {
     SetFeatureImage, PostDatetimePicker, 
     InputValueUpdater, TagsTagify, Editor,
-    FormChangeListener} from "./hooks/post.js"
+    FormChangeListener, Resize} from "./hooks/post.js"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 
@@ -13,5 +13,6 @@ Hooks.InputValueUpdater = InputValueUpdater
 Hooks.TagsTagify = TagsTagify
 Hooks.Editor = Editor
 Hooks.FormChangeListener = FormChangeListener
+Hooks.Resize = Resize
 
 export default Hooks

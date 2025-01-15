@@ -39,12 +39,19 @@ defmodule MonorepoWeb.AdminPostLive.NewOrEdit do
           |> put_flash(:info, "Saved post for #{post.post_title}!")
           |> push_navigate(to: ~p"/admin/posts")
         {:error, form} ->
-          IO.inspect(form)
           socket
           |> assign(form: form)
           |> put_flash(:error, "Oops, some thing wrong.")
       end
 
+    {:noreply, socket}
+  end
+
+  def handle_event("delete", %{"id" => id}, socket) do
+    Ash.get!(Monorepo.Contents.Post, id, actor: socket.assigns.current_user)
+    |> Ash.destroy!(action: :destroy_post, actor: socket.assigns.current_user)
+
+    socket = push_navigate(socket, to: ~p"/admin/posts")
     {:noreply, socket}
   end
 
