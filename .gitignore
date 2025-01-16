@@ -40,3 +40,5 @@
 
 # 忽略所有包含 node_modules 的目錄
 /assets/node_modules/
+
+.elixir_ls/
