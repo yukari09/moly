@@ -92,10 +92,7 @@ defmodule MonorepoWeb.Router do
     end
   end
 
-  scope "/affiliates", MonorepoWeb.Affiliates, as: :affiliates do
-    pipe_through :browser
-    get("/", AffiliateController, :home)
-  end
+
 
   # Other scopes may use custom stacks.
   # scope "/api", MonorepoWeb do
