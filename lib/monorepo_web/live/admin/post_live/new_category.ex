@@ -1,5 +1,4 @@
 defmodule MonorepoWeb.AdminPostLive.NewCategory do
-alias Ash.Notifier.PubSub
   use MonorepoWeb.Admin, :live_view
 
   def mount(_params, %{"user" => "user?id="<>user_id}, socket) do
@@ -27,7 +26,7 @@ alias Ash.Notifier.PubSub
   def handle_event("save", %{"form" => params}, socket) do
     :timer.sleep(50)
     case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: [actor: socket.assigns.current_user]) do
-      {:ok, result} ->
+      {:ok, _result} ->
         socket =
           socket
           |> push_event("js-exec", %{to: "#create_category_modal_id", attr: "phx-remove"})

@@ -23,7 +23,7 @@
         current_tab={@params.post_status}
         inner_class = "border-none"
     />
-    <.form class="hidden sm:block" phx-save="search" phx-key="enter" phx-keydown="search">
+    <.form for={nil} class="hidden sm:block" phx-save="search" phx-key="enter" phx-keydown="search">
         <.search_input id="image-search-text-input" name="q" value={@params.q} phx-debounce="300" aria-label="Search" phx-update="ignore"/>
     </.form>
   </div>
@@ -40,7 +40,7 @@
                 <.badge variant={%{draft: "gray", published: "success", scheduled: "info", trash: "error"}[row.post_status]}>
                 {row.post_status}
                 </.badge>
-                <span class="font-medium">{row.post_title}</span>
+                <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline"><span class="font-medium">{row.post_title}</span></.link>
               </div>
             </:col>
             <:col :let={row} label="Created at"> 

@@ -90,7 +90,9 @@ config :tailwind,
     args: ~w(
       --config=tailwind.config.js
       --input=css/app.css
+      --input=css/admin.css
       --output=../priv/static/assets/app.css
+      --output=../priv/static/assets/admin.css
     ),
     cd: Path.expand("../assets", __DIR__)
   ]

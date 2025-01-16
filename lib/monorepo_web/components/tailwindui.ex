@@ -446,7 +446,7 @@ defmodule MonorepoWeb.TailwindUI do
 
   attr(:field, Phoenix.HTML.FormField, required: true)
   attr(:type, :string, default: "text")
-  attr(:label, :string, required: true)
+  attr(:label, :string, default: nil)
   attr(:placeholder, :string, default: nil)
   attr(:class, :string, default: nil)
   attr(:container_class, :string, default: nil)
@@ -509,13 +509,14 @@ defmodule MonorepoWeb.TailwindUI do
 
 
   attr(:field, Phoenix.HTML.FormField, required: true)
-  attr(:label, :string, required: true)
+  attr(:label, :string, default: nil)
   attr(:placeholder, :string, default: nil)
   attr(:class, :string, default: nil)
   attr(:help_text, :string, default: nil)
   attr(:errors, :list, default: [])
   attr(:rest, :global)
   attr(:rows, :integer, default: 3)
+  slot :inner_block
 
   def textarea(%{field: field} = assigns) do
     error_messages = error_messages(field.errors)
@@ -1033,7 +1034,7 @@ defmodule MonorepoWeb.TailwindUI do
 
 
   attr :id, :string, required: true
-  attr :label, :string, required: false
+  attr :label, :string, default: nil
   attr :description, :string, default: nil
   attr :on_change, JS, default: %JS{}
   attr :class, :string, default: nil

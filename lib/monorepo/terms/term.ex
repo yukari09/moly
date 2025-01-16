@@ -6,6 +6,8 @@ defmodule Monorepo.Terms.Term do
     extensions: [AshRbac],
     data_layer: AshPostgres.DataLayer
 
+  require Ash.Query
+
   postgres do
     table "terms"
     repo(Monorepo.Repo)
@@ -55,9 +57,21 @@ defmodule Monorepo.Terms.Term do
       change manage_relationship(:term_taxonomy, :term_taxonomy, type: :create)
     end
 
+    update :update do
+      primary? true
+      require_atomic? false
+      argument :term_taxonomy, {:array, :map}
+      change manage_relationship(:term_taxonomy, :term_taxonomy, type: :direct_control)
+    end
 
-    update :update, primary?: true
-    destroy :destroy, primary?: true
+    destroy :destroy do
+      primary? true
+      change before_action(fn changeset, context ->
+        Ash.Query.filter(Monorepo.Terms.TermTaxonomy, term_id == ^Ash.Changeset.get_attribute(changeset, :id))
+        |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
+        changeset
+      end)
+    end
   end
 
   attributes do

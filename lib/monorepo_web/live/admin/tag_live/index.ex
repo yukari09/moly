@@ -1,4 +1,4 @@
-defmodule MonorepoWeb.AdminCategoryLive.Index do
+defmodule MonorepoWeb.AdminTagLive.Index do
   use MonorepoWeb.Admin, :live_view
 
   @per_page "10"
@@ -26,19 +26,19 @@ defmodule MonorepoWeb.AdminCategoryLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    get_category_by_id(id, socket.assigns.current_user)
+    get_tag_by_id(id, socket.assigns.current_user)
     |> Ash.destroy!(actor: socket.assigns.current_user)
 
     {:noreply, push_patch(socket, to: live_url(socket.assigns.params))}
   end
 
   def handle_event("create", _, socket) do
-    socket = socket |> assign(:form, category_to_form(nil, nil))
+    socket = socket |> assign(:form, tag_to_form(nil, nil))
     {:noreply, socket}
   end
 
   def handle_event("edit", %{"id" => id}, socket) do
-    form = category_to_form(id, socket.assigns.current_user)
+    form = tag_to_form(id, socket.assigns.current_user)
     socket = socket |> assign(:form, form)
     {:noreply, socket}
   end
@@ -72,7 +72,7 @@ defmodule MonorepoWeb.AdminCategoryLive.Index do
 
     query =
       @model
-      |> Ash.Query.filter(term_taxonomy.taxonomy=="category")
+      |> Ash.Query.filter(term_taxonomy.taxonomy=="post_tag")
       |> Ash.Query.load([term_taxonomy: :parent])
 
     query =
@@ -87,7 +87,7 @@ defmodule MonorepoWeb.AdminCategoryLive.Index do
 
     socket =
       socket
-      |> assign(:categories, data)
+      |> assign(:tags, data)
       |> assign(:page_meta, pagination_meta(data.count, per_page, page, 9))
       |> assign(:params, %{page: page, per_page: per_page, q: q})
 
@@ -95,20 +95,20 @@ defmodule MonorepoWeb.AdminCategoryLive.Index do
   end
 
   defp live_url(query_params) when is_map(query_params) do
-    ~p"/admin/categories?#{query_params}"
+    ~p"/admin/tags?#{query_params}"
   end
 
-  def get_category_by_id(id, current_user) do
+  def get_tag_by_id(id, current_user) do
     Ash.get!(Monorepo.Terms.Term, id, actor: current_user)
     |> Ash.load!([:term_taxonomy], actor: current_user)
   end
 
-  defp category_to_form(nil, _) do
+  defp tag_to_form(nil, _) do
     AshPhoenix.Form.for_create(Monorepo.Terms.Term, :create, [
       forms: [
         term_taxonomy: [
           type: :list,
-          data: [%Monorepo.Terms.TermTaxonomy{taxonomy: "category"}],
+          data: [%Monorepo.Terms.TermTaxonomy{taxonomy: "tag"}],
           resource: Monorepo.Terms.TermTaxonomy,
           update_action: :create
         ]
@@ -117,8 +117,8 @@ defmodule MonorepoWeb.AdminCategoryLive.Index do
     |> to_form()
   end
 
-  defp category_to_form(categoires_id, current_user) do
-    term = get_category_by_id(categoires_id, current_user)
+  defp tag_to_form(categoires_id, current_user) do
+    term = get_tag_by_id(categoires_id, current_user)
     AshPhoenix.Form.for_update(term, :update, [
       forms: [
         term_taxonomy: [

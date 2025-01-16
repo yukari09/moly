@@ -253,12 +253,15 @@ defmodule Monorepo.Helper do
   end
   def timestamp2datetime(_), do: ""
 
-  def get_in_from_keys(map, keys) do
-    Enum.reduce_while(keys, map, fn key, map ->
-      case Map.get(map, key) do
-        nil -> {:halt, nil}
-        value -> {:cont, value}
-      end
+  def get_in_from_keys(map_or_list, keys) do
+    Enum.reduce_while(keys, map_or_list, fn key, acc ->
+      value =
+        cond  do
+          is_map(acc) -> Map.get(acc, key, nil)
+          is_list(acc) && is_integer(key) -> Enum.at(acc, key)
+          true -> nil
+        end
+      is_nil(value) && {:halt, nil} || {:cont, value}
     end)
   end
 

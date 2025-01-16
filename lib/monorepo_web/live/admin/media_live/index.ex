@@ -91,7 +91,7 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("media:broadcast:selected", %{"id" => id}, socket) do
+  def handle_event("media:broadcast:selected", %{"id" => _id}, socket) do
     {:noreply, socket}
   end
 

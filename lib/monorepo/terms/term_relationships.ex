@@ -1,4 +1,5 @@
 defmodule Monorepo.Terms.TermRelationships do
+  require Ash.Resource.Change.Builtins
   use Ash.Resource,
     otp_app: :monorepo,
     domain: Monorepo.Terms,

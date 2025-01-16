@@ -122,6 +122,7 @@ export const SetFeatureImage = {
     if(isEnabled){
       input.removeAttribute("disabled")
     }else{
+      input.value=null
       input.setAttribute("disabled", "disabled")
     }
   },
@@ -311,12 +312,12 @@ export const TagsTagify = {
     });
 
     this.tagify.on('remove', (e) => {
-      const namePrefix = this.el.dataset.targetName
-      const inputs = targetContainer.querySelectorAll(`input[name^="${namePrefix}"]`)
+      // const namePrefix = this.el.dataset.targetName
+      const inputs = targetContainer.querySelectorAll(`[data-value="${e.detail.data.value}"]`)
       inputs.forEach(input => {
-        if (input.value === e.detail.data.value || input.value === "post_tag") {
+        // if (input.value === e.detail.data.value || input.value === "post_tag") {
           targetContainer.removeChild(input)
-        }
+        // }
       })
       window.dispatchEvent(new CustomEvent('re_set_btn'))
     });

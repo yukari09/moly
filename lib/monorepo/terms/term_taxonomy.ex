@@ -59,7 +59,18 @@ defmodule Monorepo.Terms.TermTaxonomy do
       change manage_relationship(:parent_id, :parent, type: :append_and_remove)
     end
 
-    update :update, primary?: true
+    update :update do
+      primary? true
+      require_atomic? false
+
+      argument :parent_id, :uuid do
+        allow_nil? true
+      end
+
+      change manage_relationship(:parent_id, :parent, type: :append_and_remove)
+    end
+
+    # update :update, primary?: true
     destroy :destroy, primary?: true
   end
 
@@ -85,7 +96,10 @@ defmodule Monorepo.Terms.TermTaxonomy do
 
   relationships do
     belongs_to :term, Monorepo.Terms.Term
-    belongs_to :parent, Monorepo.Terms.Term
+    belongs_to :parent, Monorepo.Terms.Term do
+      source_attribute :parent_id
+      destination_attribute :id
+    end
     many_to_many :posts, Monorepo.Contents.Post, through: Monorepo.Terms.TermRelationships
   end
 end

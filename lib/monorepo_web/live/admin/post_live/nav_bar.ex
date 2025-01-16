@@ -12,10 +12,10 @@ defmodule MonorepoWeb.AdminPostLive.NavBar do
       <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
 
       <div class="flex items-center">
-        <.link class="editor-action-btn" data-id="undo-button" phx-click={JS.dispatch("undo")} disabled>
+        <.link class="editor-action-btn" data-id="undo-button" phx-click={JS.dispatch("undo")}>
           <Lucideicons.undo_2 class="size-5" />
         </.link>
-        <.link class="editor-action-btn" data-id="redo-button" phx-click={JS.dispatch("redo")} disabled>
+        <.link class="editor-action-btn" data-id="redo-button" phx-click={JS.dispatch("redo")}>
           <Lucideicons.redo_2 class="size-5" />
         </.link>
       </div>

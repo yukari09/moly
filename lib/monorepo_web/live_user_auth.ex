@@ -37,6 +37,8 @@ defmodule MonorepoWeb.LiveUserAuth do
     socket =
       if Enum.member?(roles, :admin) do
         socket
+        |> assign(:page_css, :admin)
+        |> assign(:page_js, :admin)
       else
         redirect(socket, to: ~p"/sign-in")
       end

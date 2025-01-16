@@ -1,0 +1,58 @@
+<div>
+    <.header title="Comments" description="A list of all the comments.">
+        <.button 
+            class="flex items-center gap-2" 
+            variant="primary"
+            size="sm"
+            phx-click="create"
+        >
+            Create Comments
+        </.button>
+    </.header>
+
+  <div id="comments-top-nav" class={["flex items-center justify-between bg-white py-2 sm:py-0  mt-12 border-b"]}>
+
+    <.tabs_with_badges 
+        tabs={[
+            %{label: "All", value: "", href: ~p"/admin/comments?#{%{@params | page: 1}}", badge: @page_meta.total}
+        ]}
+        current_tab={""}
+        inner_class = "border-none"
+    />
+    <.form for={nil} class="hidden sm:block" phx-change="search">
+        <.search_input id="search-text-input" name="q" value={@params.q} aria-label="Search"/>
+    </.form>
+  </div>
+
+
+    <div class="mt-4 flow-root p-4 border rounded-md" :if={@comments.results != []}>
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <.table
+            rows={@comments.results}
+            class="table-auto"
+            >
+            <:col :let={row} label="Name"> 
+              <div class="flex gap-2">
+                <span class="font-medium">{row.comment_content}</span>
+              </div>
+            </:col>
+            <:col :let={row} label="Created at"> 
+              {row.inserted_at |> Timex.format!("{Mfull} {D}, {YYYY} {h24}:{m}")}
+            </:col>
+            <:col :let={row} label="" align="right"> 
+              <div class="flex items-center gap-1 text-gray-500 justify-end">
+                <.link class={["text-gray-500 pointer-events-none text-gray-500/60"]} phx-click="delete" data-confirm="Are you sure to delete this comment?" phx-value-id={row.id} >
+                    <Lucideicons.trash class="size-4" />
+                </.link>
+              </div>
+            </:col>
+            </.table>
+            </div>
+        </div>
+    </div>
+    <.pagination :if={@page_meta.total_pages > 1} current_url={live_url(@params)} page_meta={@page_meta} class="border-none" />
+    <div :if={@comments.results == []} class="mt-24 max-w-sm mx-auto">
+        <.no_results />
+    </div>
+</div>

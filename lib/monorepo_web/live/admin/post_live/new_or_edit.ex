@@ -47,6 +47,11 @@ defmodule MonorepoWeb.AdminPostLive.NewOrEdit do
     {:noreply, socket}
   end
 
+  # def handle_event("validate", %{"form" => params}, socket) do
+  #   form = AshPhoenix.Form.validate(socket.assigns.form, params: params, action_opts: [actor: socket.assigns.current_user])
+  #   {:noreply, assign(socket, :form, form)}
+  # end
+
   def handle_event("delete", %{"id" => id}, socket) do
     Ash.get!(Monorepo.Contents.Post, id, actor: socket.assigns.current_user)
     |> Ash.destroy!(action: :destroy_post, actor: socket.assigns.current_user)

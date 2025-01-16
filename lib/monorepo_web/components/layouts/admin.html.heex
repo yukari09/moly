@@ -37,7 +37,7 @@
             %{
                 title: "Tags",
                 url: ~p"/admin/tags",
-                view: [MonorepoWeb.AdminPostLive.Tags],
+                view: [MonorepoWeb.AdminTagLive.Index],
                 show: true
             }
         ]
@@ -47,6 +47,12 @@
         icon: "hero-photo",
         url: ~p"/admin/media",
         view: [MonorepoWeb.AdminMediaLive.Index, MonorepoWeb.AdminMediaLive.Edit]
+    },
+    %{
+        title: "Comments",
+        icon: "hero-chat-bubble-left-right",
+        url: ~p"/admin/comments",
+        view: [MonorepoWeb.AdminCommentLive.Index]
     },
   ]
 
@@ -121,23 +127,27 @@
                                 :if={Map.has_key?(item, :url)} 
                                 patch={item.url} 
                                 class={[
-                                    "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700",
-                                    is_active.(item) && "bg-gray-50" || "hover:bg-gray-50"
+                                    "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
+                                    is_active.(item) && "bg-gray-50 text-gray-900" || "hover:bg-gray-50 text-gray-500"
                                 ]}
                             >
                                 <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
                                 { item.title }
                             </.link>
-                            <div :if={item && Map.has_key?(item, :items) && Enum.count(item.items) > 0}>
+                            <div :if={is_map(item) && Map.has_key?(item, :items) && Enum.count(item.items) > 0}>
                                 <button 
                                     id={ "sub-menu-#{item.icon}-button-g" } 
                                     type="button" 
-                                    class="flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold text-gray-700 hover:bg-gray-50" 
+                                    class={[
+                                      "flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold  hover:bg-gray-50",
+                                      is_active.(item) && "text-gray-900" || "text-gray-500" 
+                                    ]}
                                     aria-controls={ "sub-menu-#{item.icon}-g" }
                                     aria-expanded="false"
                                     phx-click={
                                         JS.toggle_class("block hidden", to: "#sub-menu-#{item.icon}-g")
-                                        |> JS.toggle_class("rotate-90 text-gray-500 text-gray-400", to: "#sub-menu-#{item.icon}-icon-g")
+                                        |> JS.toggle_class("rotate-90 text-gray-500 ", to: "#sub-menu-#{item.icon}-icon-g")
+                                        |> JS.toggle_attribute({"aria-expanded", "false", "true"})
                                     }
                                 >
                                     <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
@@ -148,8 +158,8 @@
                                     <li :for={sub_item <- item.items}>
                                         <.link patch={sub_item.url} 
                                           class={[
-                                            "block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50",
-                                            is_active.(sub_item) && "bg-gray-50" || ""
+                                            "block rounded-md py-2 pr-2 pl-9 text-sm/6  hover:bg-gray-50",
+                                            is_active.(sub_item) && "bg-gray-50 text-gray-900" || "text-gray-500"
                                           ]}
                                         >
                                           { sub_item.title }
@@ -173,7 +183,7 @@
     </div>
   </div>
 
-  <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+  <div class="hidden lg:fixed lg:inset-y-0 lg:z-auto lg:flex lg:w-72 lg:flex-col">
     <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
       <div class="flex h-16 shrink-0 items-center">
         <img class="h-8 w-auto" src="/images/logo.png" alt="Monorepo">
@@ -187,8 +197,8 @@
                                 :if={Map.has_key?(item, :url)} 
                                 patch={item.url} 
                                 class={[
-                                    "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700",
-                                    is_active.(item) && "bg-gray-50" || "hover:bg-gray-50"
+                                    "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
+                                    is_active.(item) && "bg-gray-50 text-gray-900" || "hover:bg-gray-50 text-gray-500"
                                 ]}
                             >
                                 <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
@@ -198,12 +208,16 @@
                                 <button 
                                     id={ "sub-menu-#{item.icon}-button" } 
                                     type="button" 
-                                    class="flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold text-gray-700 hover:bg-gray-50" 
+                                    class={[
+                                      "flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold  hover:bg-gray-50",
+                                      is_active.(item) && "text-gray-900" || "text-gray-500" 
+                                    ]}
                                     aria-controls={ "sub-menu-#{item.icon}" }
                                     aria-expanded="false"
                                     phx-click={
                                         JS.toggle_class("block hidden", to: "#sub-menu-#{item.icon}")
-                                        |> JS.toggle_class("rotate-90 text-gray-500 text-gray-400", to: "#sub-menu-#{item.icon}-icon")
+                                        |> JS.toggle_class("rotate-90 text-gray-500 ", to: "#sub-menu-#{item.icon}-icon")
+                                        |> JS.toggle_attribute({"aria-expanded", "false", "true"})
                                     }
                                 >
                                     <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
@@ -215,8 +229,8 @@
                                         <.link 
                                           patch={sub_item.url} 
                                           class={[
-                                            "block rounded-md py-2 pr-2 pl-9 text-sm/6 text-gray-700 hover:bg-gray-50",
-                                            is_active.(sub_item) && "bg-gray-50" || ""
+                                            "block rounded-md py-2 pr-2 pl-9 text-sm/6 hover:bg-gray-50",
+                                            is_active.(sub_item) && "bg-gray-50 text-gray-900" || "text-gray-500"
                                           ]}
                                         >
                                             { sub_item.title }
@@ -239,7 +253,7 @@
   </div>
 
   <div class="lg:pl-72">
-    <div id="admin-navbar" class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+    <div id="admin-navbar" class="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
       <button 
         id="off-canvas-menu-button"
         type="button" 
@@ -296,5 +310,3 @@
     </main>
   </div>
 </div>
-
-<script defer phx-track-static type="text/javascript" src={~p"/assets/admin.js"}></script> 

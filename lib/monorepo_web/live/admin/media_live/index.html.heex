@@ -19,7 +19,7 @@
 
   <div id="media-top-nav" class={["border-b flex items-center justify-between sticky z-10 bg-white py-2 sm:py-0 top-16 !mt-8"]}>
     <div class="flex items-center gap-1 sm:gap-4">
-        <.form id="upload-form"  phx-change="validate">
+        <.form for={nil} id="upload-form"  phx-change="validate">
             <.live_file_input upload={@uploads.media} class="hidden"/>
             <.button variant="secondary" class="!p-0 !m-0 sm:w-32" :if={!is_uploading?(@uploads.media)} id="media-upload-button">
                 <label for={@uploads.media.ref}  class="flex items-center gap-1 cursor-pointer px-4 py-2">
@@ -98,7 +98,7 @@
             </div>
         </:menu_slot>
       </.dropdown>
-      <.form class="hidden sm:block" phx-change="search-image" phx-submit="search-image">
+      <.form for={nil} class="hidden sm:block" phx-change="search-image" phx-submit="search-image">
         <.search_input id="image-search-text-input" name="q" value={@params.q} phx-debounce="300" aria-label="Search"/>
       </.form>
     </div>
@@ -212,7 +212,7 @@
 
   <div id="media-top-nav" class={["border-b flex items-center justify-between sticky top-0 z-40 bg-white py-2 sm:py-0"]}>
     <div class="flex items-center gap-1 sm:gap-4">
-        <.form id="upload-form"  phx-change="validate">
+        <.form for={nil} id="upload-form"  phx-change="validate">
             <.live_file_input upload={@uploads.media} class="hidden"/>
             <.button variant="secondary" class="!p-0 !m-0 sm:w-32" :if={!is_uploading?(@uploads.media)} id="media-upload-button">
                 <label for={@uploads.media.ref}  class="flex items-center gap-1 cursor-pointer px-4 py-2">
@@ -240,7 +240,7 @@
     </div>
 
     <div class="flex items-center gap-4">
-      <.form class="hidden sm:block" phx-change="search-image" phx-submit="search-image">
+      <.form for={nil} class="hidden sm:block" phx-change="search-image" phx-submit="search-image">
         <.search_input id="image-search-text-input" name="q" value={@params.q} phx-debounce="300" aria-label="Search"/>
       </.form>
     </div>

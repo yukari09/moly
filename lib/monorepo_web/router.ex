@@ -87,9 +87,14 @@ defmodule MonorepoWeb.Router do
       live("/media", AdminMediaLive.Index, :index)
       live("/media/:id/edit", AdminMediaLive.Edit)
       live "/categories", AdminCategoryLive.Index, :index
-      # live "/tags", TagLive.Index, :index
-      # live "/posts", PostLive.Index, :index
+      live "/tags", AdminTagLive.Index, :index
+      live "/comments", AdminCommentLive.Index, :index
     end
+  end
+
+  scope "/affiliates", MonorepoWeb.Affiliates, as: :affiliates do
+    pipe_through :browser
+    get("/", AffiliateController, :home)
   end
 
   # Other scopes may use custom stacks.

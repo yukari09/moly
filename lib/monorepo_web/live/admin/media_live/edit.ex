@@ -8,7 +8,6 @@ defmodule MonorepoWeb.AdminMediaLive.Edit do
       Ash.get!(Monorepo.Contents.Post, id, actor: socket.assigns.current_user)
       |> Ash.load!([:post_meta])
 
-
     socket =
       socket
       |> assign(:media, media)
