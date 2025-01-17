@@ -101,6 +101,7 @@ defmodule Monorepo.MixProject do
       "assets.build": ["tailwind monorepo", "esbuild monorepo"],
       "assets.deploy": [
         "tailwind monorepo --minify",
+        "tailwind admin --minify",
         "esbuild monorepo --minify",
         "phx.digest"
       ]
