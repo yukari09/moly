@@ -1,1 +1,84 @@
-{ @inner_content }
+<div class="drawer">
+  <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
+  <div class="drawer-content flex flex-col">
+    <!-- Navbar -->
+    <div class="navbar bg-base-100 w-full border-b z-[1]">
+      <div class="flex-none lg:hidden">
+        <label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block h-6 w-6 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </label>
+      </div>
+      <div class="navbar-start">
+        <div class="flex items-center gap-1">
+          <img src={~p"/images/logo.svg"} class="w-auto h-8" />
+          <span class="text-2xl text-gray-600">affinew</span>
+        </div>
+      </div>
+      <div class="hidden navbar-center lg:block">
+        <ul class="menu items-center bg-base-100 rounded-box menu-horizontal">
+          <li><.link class="hover:bg-inherit hover:text-gray-900 text-sm/6 font-semibold text-gray-500" navigate={~p"/"}>Affinew</.link></li>
+          <li><.link class="hover:bg-inherit hover:text-gray-900 text-sm/6 font-semibold text-gray-500" navigate={~p"/affiliate-products"}>Products</.link></li>
+          <li><.link class="hover:bg-inherit hover:text-gray-900 text-sm/6 font-semibold text-gray-500" navigate={~p"/affiliate-advertisers"}>Advertisers</.link></li>
+          <li><.link class="hover:bg-inherit hover:text-gray-900 text-sm/6 font-semibold text-gray-500" navigate={~p"/blog"}>Blog</.link></li>
+        </ul>
+      </div>
+      <div class="hidden navbar-end lg:block">
+        <ul class="flex items-center justify-end gap-4">
+          <li><.link navigate={~p"/submit"} class="btn btn-sm">Free Submit</.link></li>
+          <li :if={@current_user} class="dropdown dropdown-end">
+            <div class="avatar" tabindex="0" role="button">
+              <div class="w-8 rounded-full" :if={@current_user.avatar}>
+                <img src={~p"/uploads/#{@current_user.avatar}"} />
+              </div>
+            <div class="avatar placeholder">
+            <div class="bg-primary text-base-100 w-8 rounded-full">
+                <span class="capitalize">{Monorepo.Accounts.Helper.current_user_name(@current_user) |> String.slice(0, 1)}</span>
+            </div>
+            </div>
+            </div>
+            <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-56 p-2 shadow-md border divide-y">
+              <li class="pb-0">
+                <div class="block space-y-1 hover:bg-inherit">
+                  <div class="font-bold">{Monorepo.Accounts.Helper.current_user_name(@current_user)}</div>
+                  <div class="text-gray-500">{@current_user.email}</div>
+                </div>
+              </li>
+              <li class="py-1">
+                <ul class="mx-0 px-0 before:!bg-inherit">
+                  <li class="text-gray-600 hover:text-gray-900"><a><.icon name="hero-user-circle" class="size-4" />Profile</a></li>
+                  <li class="text-gray-600 hover:text-gray-900"><a><.icon name="hero-bookmark" class="size-4" />Bookmark</a></li>
+                </ul>
+              </li>
+              <li class="py-1">
+                <ul class="mx-0 px-0 before:!bg-inherit">
+                  <li class="text-gray-600 hover:text-gray-900"><.link navigate={~p"/sign-out"}><.icon name="hero-arrow-right" class="size-4" />Logout</.link></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li :if={!@current_user}>
+            <.link navigate={~p"/sign-in"} class="btn btn-primary btn-sm">Login</.link>
+          </li>
+        </ul>
+      </div>
+    </div>
+    { @inner_content }
+  </div>
+  <div class="drawer-side">
+    <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
+    <ul class="menu bg-base-200 min-h-full w-80 p-4">
+      <li><a>Sidebar Item 1</a></li>
+      <li>
+        <div class="dropdown">
+          <div tabindex="0" role="button" class="btn m-1">Click</div>
+          <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+            <li><a>Item 1</a></li>
+            <li><a>Item 2</a></li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

@@ -20,6 +20,10 @@ defmodule MonorepoWeb.Router do
     plug(:load_from_bearer)
   end
 
+  pipeline :root_admin_layout do
+    plug(:put_root_layout, html: {MonorepoWeb.Layouts, :root_admin})
+  end
+
   scope "/", MonorepoWeb do
     pipe_through(:browser)
 
@@ -74,7 +78,7 @@ defmodule MonorepoWeb.Router do
   # end
 
   scope "/admin", MonorepoWeb do
-    pipe_through(:browser)
+    pipe_through([:browser, :root_admin_layout])
 
     ash_authentication_live_session :live_admin,
       on_mount: {MonorepoWeb.LiveUserAuth, :live_admin_required},

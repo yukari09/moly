@@ -51,7 +51,6 @@ defmodule MonorepoWeb.AdminMediaLive.Edit do
     {:noreply, socket}
   end
 
-
   def for_update_form(media) do
     AshPhoenix.Form.for_update(media, :update_media, forms: [
       post_meta: [

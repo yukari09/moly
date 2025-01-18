@@ -14,7 +14,7 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors: require("./tailwind.colors.json"),
+      // colors: require("./tailwind.colors.json"),
       fontFamily: {
         sans: [
           '"Inter var", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',         

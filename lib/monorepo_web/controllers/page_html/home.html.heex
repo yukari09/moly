@@ -1,59 +1,22 @@
-<!-- Navigation Bar -->
-<nav class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-  <div class="flex items-center space-x-6">
-    <div class="flex items-center space-x-4">
-      <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white">K</div>
-      <span class="font-medium">Kari Yu</span>
-    </div>
-    <button class="p-2 hover:bg-gray-100 rounded-full">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-      </svg>
-    </button>
-    <img src="https://www.figma.com/favicon.ico" alt="Figma" class="w-6 h-6"/>
-  </div>
-  
-  <div class="flex items-center space-x-6">
-    <div class="flex space-x-4">
-      <button class="hover:bg-gray-100 px-3 py-2 rounded-lg">Design resources</button>
-      <button class="hover:bg-gray-100 px-3 py-2 rounded-lg">Plugins</button>
-      <button class="hover:bg-gray-100 px-3 py-2 rounded-lg">Whiteboarding</button>
-      <button class="hover:bg-gray-100 px-3 py-2 rounded-lg">Presentations</button>
-    </div>
-    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-      Publish
-    </button>
-  </div>
-</nav>
-
-<!-- Main Content -->
-<main class="max-w-6xl mx-auto px-4 py-12">
+<div class="w-full mx-auto px-4">
   <!-- Hero Section -->
-  <div class="text-center mb-12">
-    <div class="flex justify-center items-center space-x-8 mb-6">
-      <div class="flex flex-col items-center">
-        <div class="w-12 h-12 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
-          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-          </svg>
-        </div>
-      </div>
-    </div>
-    
+  <div class="max-w-2xl mx-auto text-center mt-24 mb-40">
+   
     <h1 class="text-4xl font-medium mb-2">
-      Discover community-made <span class="text-blue-500">libraries</span>,
+      <span class="text-primary">Explore High-Reward</span> <span class="text-secondary">Unique Products</span>
     </h1>
-    <h2 class="text-4xl font-medium mb-8">
-      <span class="text-gray-500">plugins, icon sets,</span> and more
+
+    <h2 class="text-3xl font-medium mb-12">
+      <span class="text-gray-500">stand out in a low-competition market</span>
     </h2>
     
     <!-- Search Bar -->
-    <div class="max-w-2xl mx-auto relative">
+    <div class="relative">
       <div class="relative">
         <input 
           type="text" 
-          placeholder='Search for resources like "portfolio"'
-          class="w-full px-12 py-3 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder='Explore Now and Find Your Next Opportunity!'
+          class="w-full px-12 py-3 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:bg-gray-50 focus:ring-green-500"
         />
         <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -62,21 +25,22 @@
     </div>
   </div>
 
-  <!-- Presentations Section -->
-  <div class="mb-12">
+
+
+  <div class="max-w-7xl mx-auto">
     <div class="flex justify-between items-center mb-6">
       <div>
-        <h2 class="text-xl font-medium mb-2">Build beautiful presentations</h2>
-        <p class="text-gray-600">Find decks to help you quickly design out your ideas. Easy to use, whether you're a beginner or an expert.</p>
+        <h2 class="font-medium mb-1">Build beautiful presentations</h2>
+        <p class="text-gray-500 text-xs">Find decks to help you quickly design out your ideas. Easy to use, whether you're a beginner or an expert.</p>
       </div>
-      <a href="#" class="text-blue-500 hover:underline">Browse all presentations →</a>
+      <a href="#" class="text-green-600 hover:underline text-sm">Browse all presentations<.icon name="hero-chevron-right-solid" class="size-4" /></a>
     </div>
 
     <!-- Presentation Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- Mobile Strategy Card -->
       <div class="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-        <div class="h-48 bg-gradient-to-br from-purple-500 to-blue-600 p-6">
+        <div class="h-48 bg-gradient-to-br from-purple-500 to-green-600 p-6">
           <h3 class="text-white text-2xl font-medium">Mobile Strategy Review</h3>
         </div>
       </div>
@@ -96,4 +60,4 @@
       </div>
     </div>
   </div>
-</main>
+</div>

@@ -96,7 +96,7 @@ config :tailwind,
   ],
   admin: [
     args: ~w(
-      --config=tailwind.config.admin.js
+      --config=tailwind.admin.config.js
       --input=css/admin.css
       --output=../priv/static/assets/admin.css
     ),

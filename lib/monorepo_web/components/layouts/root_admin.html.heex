@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="[scrollbar-gutter:stable]" data-theme="light">
+<html lang="en" class="[scrollbar-gutter:stable]">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,11 +10,11 @@
     <%= if assigns[:meta_tags] do %> 
       <.dynamic_tag :for={tag_attrs <- assigns[:meta_tags]} :if={is_map(tag_attrs)} name="meta" {tag_attrs} /> 
     <% end %>
-    <link rel="icon" href={assigns[:favicon] || "favicon.ico"} type="image/x-icon">
+    <link rel="icon" href={~p"/favicon.ico"} type="image/x-icon">
     <link rel="preconnect" href="https://rsms.me/">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-    <link phx-track-static rel="stylesheet" href={"/assets/app.css"} />
-    <script defer phx-track-static type="text/javascript" src={"/assets/app.js"}></script> 
+    <link phx-track-static rel="stylesheet" href={~p"/assets/admin.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/admin.js"}></script> 
   </head>
   <body class="bg-white">
     { @inner_content }

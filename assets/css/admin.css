@@ -5,6 +5,7 @@
 @import "@yaireo/tagify/dist/tagify.css";
 
 /* This file is for your main application CSS */
+
 .tagify{
   --tags-disabled-bg: rgb(243, 244, 246); /* gray-100 */
   --tags-border-color: rgb(229, 231, 235); /* gray-200 */

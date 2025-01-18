@@ -2,3 +2,9 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+.icon2 {
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+    fill: currentColor;
+}

@@ -12,9 +12,40 @@ module.exports = {
     "../lib/monorepo_web/**/*.*ex",
     "../deps/ash_authentication_phoenix/**/*.*ex"
   ],
+  daisyui: {
+    themes: [
+      {
+        dark: {
+          ...require("daisyui/src/theming/themes")["dark"],
+        }
+      },
+      {
+        light: {
+          ...require("daisyui/src/theming/themes")["light"],
+          primary: "#017802",
+          "primary-content": "#ffffff",
+          secondary: "#BED73B",
+          accent: "#744C29",
+        }
+      }
+    ]
+  },
   theme: {
     extend: {
-      colors: require("./tailwind.colors.json"),
+      colors: {
+        green: {
+          50: '#e7f9e7',    // 很淺的綠色
+          100: '#c0f0c0',    // 稍淺的綠色
+          200: '#92e692',    // 淺綠色
+          300: '#65db65',    // 較亮的綠色
+          400: '#38d238',    // 中等淺綠色
+          500: '#1ac11a',    // 中等綠色
+          600: '#19a019',    // 稍深的綠色
+          700: '#178c17',    // 深綠色
+          800: '#017802',    // 設為 #017802，最深的綠色
+          900: '#005a02',    // 更深的綠色，為了讓綠色更深   
+        }
+      },
       fontFamily: {
         sans: [
           '"Inter var", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',         
