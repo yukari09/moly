@@ -36,4 +36,8 @@ defmodule Monorepo.Comments.CommentMeta do
   relationships do
     belongs_to :comment, Monorepo.Comments.Comment
   end
+
+  identities do
+    identity :meta_key_with_comment_id, [:meta_key, :comment_id]
+  end
 end

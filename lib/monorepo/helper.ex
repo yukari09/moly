@@ -5,9 +5,24 @@ defmodule Monorepo.Helper do
 
   require Logger
 
+
   @doc """
   Uploads a file to S3
   """
+  def put_object_from_url(url) do
+    body =
+      Enum.reduce_while(1..5, nil, fn _, _ ->
+        case Finch.build("GET", url) |> Finch.request(Monorepo.Finch) do
+          {:ok, %{status: 200, body: body}} -> {:halt, body}
+          _ -> {:cont, nil}
+        end
+      end)
+
+    ext = Path.extname(url)
+    filename = Ash.UUID.generate() <> ext
+    put_object(filename, body)
+  end
+
   def put_object(%Phoenix.LiveView.UploadEntry{} = upload_entry, body_or_path) do
     entry_filename(upload_entry)
     |> put_object(body_or_path)

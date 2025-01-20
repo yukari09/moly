@@ -236,25 +236,6 @@ defmodule Monorepo.Contents.Post do
     changeset
   end
 
-  # defp delete_term_relationships(changeset, context) do
-  #   post_id = Ash.Changeset.get_attribute(changeset, :id)
-
-  #   %Ash.BulkResult{status: :success, records: records} =
-  #     Monorepo.Terms.TermRelationships
-  #     |> Ash.Query.filter(post_id == ^post_id)
-  #     |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor, strategy: :stream, return_records?: true)
-
-  #   term_taxonomy_ids = Enum.map(records, & &1.term_taxonomy_id)
-
-  #   {:ok, term_taxonomy} =
-  #     Monorepo.Terms.TermTaxonomy
-  #     |> Ash.Query.filter(id in ^term_taxonomy_ids)
-  #     |> Ash.Query.data_layer_query()
-
-  #   Monorepo.Repo.update_all(term_taxonomy, [inc: [count: -1]])
-
-  #   changeset
-  # end
 
   defp change_post_name(changeset, _) do
     hash = Monorepo.Helper.generate_random_str()

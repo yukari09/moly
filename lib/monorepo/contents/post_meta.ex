@@ -59,6 +59,11 @@ defmodule Monorepo.Contents.PostMeta do
     belongs_to :post, Monorepo.Contents.Post, allow_nil?: false
   end
 
+  identities do
+    identity :meta_key_with_post_id, [:meta_key, :post_id]
+  end
+
+
   policies do
     policy always() do
       authorize_if always()

@@ -13,6 +13,7 @@ defmodule MonorepoWeb.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(:load_from_session)
+    plug(MonorepoWeb.Plugs.UserMeta)
   end
 
   pipeline :api do
@@ -27,17 +28,21 @@ defmodule MonorepoWeb.Router do
   scope "/", MonorepoWeb do
     pipe_through(:browser)
 
-    ash_authentication_live_session :authenticated_routes do
-      # in each liveview, add one of the following at the top of the module:
-      #
-      # If an authenticated user must be present:
-      # on_mount {MonorepoWeb.LiveUserAuth, :live_user_required}
-      #
-      # If an authenticated user *may* be present:
-      # on_mount {MonorepoWeb.LiveUserAuth, :live_user_optional}
-      #
-      # If an authenticated user must *not* be present:
-      # on_mount {MonorepoWeb.LiveUserAuth, :live_no_user}
+    # ash_authentication_live_session :authenticated_routes do
+    #   # in each liveview, add one of the following at the top of the module:
+    #   #
+    #   # If an authenticated user must be present:
+    #   # on_mount {MonorepoWeb.LiveUserAuth, :live_user_required}
+    #   #
+    #   # If an authenticated user *may* be present:
+    #   # on_mount {MonorepoWeb.LiveUserAuth, :live_user_optional}
+    #   #
+    #   # If an authenticated user must *not* be present:
+    #   # on_mount {MonorepoWeb.LiveUserAuth, :live_no_user}
+    # end
+
+    ash_authentication_live_session :authenticated_routes, on_mount: {MonorepoWeb.LiveUserAuth, :live_user_required} do
+      live("/products/submit", Affiliate.ProductSubmitLive)
     end
   end
 
@@ -95,7 +100,6 @@ defmodule MonorepoWeb.Router do
       live "/comments", AdminCommentLive.Index, :index
     end
   end
-
 
 
   # Other scopes may use custom stacks.

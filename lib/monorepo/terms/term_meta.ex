@@ -29,4 +29,9 @@ defmodule Monorepo.Terms.TermMeta do
   relationships do
     belongs_to :term, Monorepo.Terms.Term
   end
+
+  identities do
+    identity :term_meta_key_with_term_id, [:term_id, :term_key]
+  end
+
 end

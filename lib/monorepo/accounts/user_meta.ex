@@ -12,6 +12,8 @@ defmodule Monorepo.Accounts.UserMeta do
   end
 
   actions do
+    default_accept [:meta_key, :meta_value]
+
     read :read do
       primary? true
       prepare build(sort: [inserted_at: :desc])
@@ -23,19 +25,25 @@ defmodule Monorepo.Accounts.UserMeta do
         countable true
       end
     end
+
+    # create :create_by_user_ids do
+    #   argument :user_id, :uuid, allow_nil?: false
+    #   change manage_relationship :user_id, :user, on_match: :relate
+    # end
+
+    create :create, primary?: true
+    update :update, primary?: true
+    destroy :destroy
   end
 
   attributes do
     uuid_primary_key :id
 
-    attribute :meta_key, :string do
-      length(min: 1, max: 255)
+    attribute :meta_key, :atom do
       allow_nil? false
     end
 
-    attribute :meta_value, :string do
-      allow_nil? false
-    end
+    attribute :meta_value, :string
 
     timestamps()
   end
@@ -43,6 +51,11 @@ defmodule Monorepo.Accounts.UserMeta do
   relationships do
     belongs_to :user, Monorepo.Accounts.User
   end
+
+  identities do
+    identity :meta_key_with_user_id, [:meta_key, :user_id]
+  end
+
 
   # rbac do
   #   role :guest do

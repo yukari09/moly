@@ -27,11 +27,11 @@
                 <div class="size-11 shrink-0">
                     <.avatar class="!size-11">
                     <.avatar_image src={row.avatar} />
-                    <.avatar_fallback initials={current_user_short_name(row)} />
+                    <.avatar_fallback initials={row.email |> String.slice(0, 1)} />
                     </.avatar>
                 </div>
                 <div class="ml-4">
-                    <div class="font-medium text-gray-900"><%= current_user_name(row) %></div>
+                    <div class="font-medium text-gray-900"><%= row.email %></div>
                     <div class="mt-1 text-gray-500"><%= row.email %></div>
                 </div>
                 </div>

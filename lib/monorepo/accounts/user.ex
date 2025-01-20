@@ -136,6 +136,11 @@ defmodule Monorepo.Accounts.User do
         sensitive? true
       end
 
+      change before_action(fn %{arguments: %{email: email}} = changeset, _context ->
+        user_meta = register_relation_user_meta(email)
+        Ash.Changeset.manage_relationship(changeset, :user_meta, user_meta, type: :create)
+      end)
+
       # Sets the email from the argument
       change set_attribute(:email, arg(:email))
 
@@ -167,21 +172,24 @@ defmodule Monorepo.Accounts.User do
 
       change fn changeset, _ ->
         user_info = Ash.Changeset.get_argument(changeset, :user_info)
-
         Ash.Changeset.change_attributes(changeset, Map.take(user_info, ["email"]))
       end
 
       # Required if you're using the password & confirmation strategies
       upsert_fields []
-      change set_attribute(:confirmed_at, &DateTime.utc_now/0)
-      change set_attribute(:status, :active)
 
-      change after_action(fn _changeset, user, _context ->
-               case user.confirmed_at do
-                 nil -> {:error, "Unconfirmed user exists already"}
-                 _ -> {:ok, user}
-               end
-             end)
+      change after_action(fn changeset, user, context ->
+        case user.confirmed_at do
+          nil -> {:error, "Unconfirmed user exists already"}
+          _ ->
+            if DateTime.diff(DateTime.utc_now, user.inserted_at) < 2 do
+              user_info = Ash.Changeset.get_argument(changeset, :user_info)
+              user_meta = register_relation_user_meta(user_info)
+              Ash.update(user, %{user_meta: user_meta}, action: :update_user_meta, return_errors?: true, context: %{private: %{ash_authentication?: true}})
+            end
+            {:ok, user}
+        end
+      end)
     end
 
     create :create_manually do
@@ -286,6 +294,18 @@ defmodule Monorepo.Accounts.User do
 
       change set_attribute(:status, arg(:status))
     end
+
+    update :update_user_meta do
+      require_atomic? false
+
+      argument :user_meta, {:array, :map} do
+        allow_nil? false
+      end
+
+      change manage_relationship :user_meta, :user_meta, on_lookup: :relate, on_no_match: :create
+    end
+
+    update :update, primary?: true
   end
 
   policies do
@@ -322,21 +342,6 @@ defmodule Monorepo.Accounts.User do
       constraints one_of: [:active, :inactive, :deleted]
     end
 
-    attribute :nickname, :string do
-      allow_nil? true
-      length(min: 1, max: 50)
-    end
-
-    attribute :display_name, :string do
-      allow_nil? true
-      length(min: 1, max: 50)
-    end
-
-    attribute :avatar, :string do
-      allow_nil? true
-      length(min: 1, max: 255)
-    end
-
     timestamps()
   end
 
@@ -348,6 +353,28 @@ defmodule Monorepo.Accounts.User do
 
   identities do
     identity :unique_email, [:email]
-    identity :unique_display_name, [:display_name]
   end
+
+  defp register_relation_user_meta(email_or_user_info) do
+    [name, username, avatar] =
+      case email_or_user_info do
+        %Ash.CiString{} ->
+          email = Ash.CiString.value(email_or_user_info)
+          name = extract_name_from_email(email)
+          [name, name, nil]
+        email_or_user_info when is_map(email_or_user_info) ->
+          name = email_or_user_info["name"]
+          username = email_or_user_info["name"] |> String.replace(" ", "")
+          avatar = Monorepo.Accounts.Helper.generate_avatar_from_url(email_or_user_info["picture"])
+          [name, username, avatar]
+      end
+    [
+      %{meta_key: :name, meta_value: name},
+      %{meta_key: :username, meta_value: username},
+      %{meta_key: :avatar, meta_value: avatar}
+    ]
+  end
+
+  defp extract_name_from_email(email), do: email |> to_string() |> String.split("@") |> List.first()
+
 end
