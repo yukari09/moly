@@ -2,9 +2,57 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-.icon2 {
-    display: inline-block;
-    height: 1em;
-    width: 1em;
-    fill: currentColor;
+.btn{
+    @apply font-medium;
+}
+
+form[data-current-step]{
+    div[data-step]{
+        @apply hidden;
+    }
+}
+
+form[data-current-step='1']{
+    div[data-step='1']{
+        @apply block;
+    }
+    li[data-step-siginal='1']{
+        @apply step-primary;
+    }
+    li[data-step-siginal='2'],li[data-step-siginal='3'],li[data-step-siginal='4']{
+        @apply text-gray-500;
+    }
+}
+
+form[data-current-step='2']{
+    div[data-step='2']{
+        @apply block;
+    }
+    li[data-step-siginal='1'],li[data-step-siginal='2']{
+        @apply step-primary;
+    }
+    li[data-step-siginal='3'],li[data-step-siginal='4']{
+        @apply text-gray-500;
+    }
+}
+
+form[data-current-step='3']{
+    div[data-step='3']{
+        @apply block;
+    }
+    li[data-step-siginal='1'],li[data-step-siginal='2'],li[data-step-siginal='3']{
+        @apply step-primary;
+    }
+    li[data-step-siginal='4']{
+        @apply text-gray-500;
+    }
+}
+
+form[data-current-step='4']{
+    div[data-step='4']{
+        @apply block;
+    }
+    li[data-step-siginal='1'],li[data-step-siginal='2'],li[data-step-siginal='3'],li[data-step-siginal='4']{
+        @apply step-primary;
+    }
 }

@@ -32,20 +32,20 @@
           <li :if={@current_user} class="dropdown dropdown-end">
             <div tabindex="0" class="cursor-pointer">
               <div class="avatar" role="button">
-                <div class="w-8 rounded-full" :if={@current_user.avatar}>
-                  <img src={@current_user.avatar["64"]} />
+                <div class="w-8 rounded-full" :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)}>
+                  <img src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)["64"]} />
                 </div>
               </div>
-              <div class="avatar placeholder" :if={!@current_user.avatar}>
+              <div class="avatar placeholder" :if={!Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)}>
                 <div class="bg-primary text-base-100 w-8 rounded-full">
-                    <span class="capitalize">{@current_user.name |> String.slice(0, 1)}</span>
+                    <span class="capitalize">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :name) |> String.slice(0, 1)}</span>
                 </div>
               </div>
             </div>
             <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-56 p-2 shadow-md border divide-y">
               <li class="pb-0">
                 <div class="block space-y-1 hover:bg-inherit">
-                  <div class="font-bold">{@current_user.username}</div>
+                  <div class="font-bold">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :username)}</div>
                   <div class="text-gray-500">{@current_user.email}</div>
                 </div>
               </li>
@@ -68,6 +68,7 @@
         </ul>
       </div>
     </div>
+    <MonorepoWeb.DaisyUi.flash_group flash={@flash} />
     { @inner_content }
   </div>
   <div class="drawer-side">

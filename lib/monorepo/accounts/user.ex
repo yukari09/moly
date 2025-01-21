@@ -63,6 +63,10 @@ defmodule Monorepo.Accounts.User do
       argument :subject, :string, allow_nil?: false
       get? true
       prepare AshAuthentication.Preparations.FilterBySubject
+      prepare fn query, _context ->
+        query
+        |> Ash.Query.load([:user_meta])
+      end
     end
 
     read :sign_in_with_password do
@@ -302,7 +306,7 @@ defmodule Monorepo.Accounts.User do
         allow_nil? false
       end
 
-      change manage_relationship :user_meta, :user_meta, on_lookup: :relate, on_no_match: :create
+      change manage_relationship :user_meta, :user_meta, on_lookup: :relate, on_no_match: :create, on_match: :update, use_identities: [:meta_key_with_user_id]
     end
 
     update :update, primary?: true

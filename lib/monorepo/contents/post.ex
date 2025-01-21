@@ -24,6 +24,11 @@ defmodule Monorepo.Contents.Post do
       fields([:post_title, :post_name, :post_type, :post_content, :post_status, :post_mime_type, :guid, :inserted_at, :updated_at])
       actions([:read, :create_media, :destroy_media, :update_media, :create_post, :update_post, :destroy_post])
     end
+
+    role :owner do
+      fields([:post_title, :post_name, :post_type, :post_content, :post_status, :post_mime_type, :guid, :inserted_at, :updated_at])
+      actions([:read, :create_media, :destroy_media, :update_media, :create_post, :update_post, :destroy_post])
+    end
   end
 
   actions do

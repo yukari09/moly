@@ -20,19 +20,15 @@ defmodule Monorepo.Accounts.Helper do
     |> Jason.encode!()
   end
 
-  def load_user_meta(%Monorepo.Accounts.User{} = user) do
-    user = Ash.load!(user, [:user_meta])
-    user_map = Map.take(user, [:email, :confirmed_at, :id, :roles, :status, :inserted_at, :updated_at])
-    Enum.reduce(user.user_meta, user_map, &format_user_meta/2)
+  def load_meta_value_by_meta_key(%Monorepo.Accounts.User{user_meta: user_meta}, meta_key) when is_atom(meta_key) do
+    Enum.find(user_meta, & &1.meta_key == meta_key)
+    |> format_meta_value()
   end
 
-  defp format_user_meta(%{meta_key: :avatar, meta_value: meta_value}, user_map) do
-    Map.put(user_map, :avatar, Jason.decode!(meta_value))
-  end
-
-  defp format_user_meta(%{meta_key: meta_key, meta_value: meta_value}, user_map) do
-    Map.put(user_map, meta_key, meta_value)
-  end
+  defp format_meta_value(nil), do: nil
+  defp format_meta_value(%{meta_value: nil}), do: nil
+  defp format_meta_value(%{meta_key: :avatar, meta_value: meta_value}), do: Jason.decode!(meta_value)
+  defp format_meta_value(%{meta_value: meta_value}), do: meta_value
 
 
 end

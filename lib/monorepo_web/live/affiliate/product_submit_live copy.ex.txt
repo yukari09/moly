@@ -2,21 +2,14 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
 require Ash.Query
   use MonorepoWeb, :live_view
 
-  # def mount(%{"id" => id}, _session, socket) do
-  #   form = resource_form(id, socket.assigns.current_user)
-  #   {:ok, assign(socket, :form, form)}
-  # end
+  def mount(%{"id" => id}, _session, socket) do
+    form = resource_form(id, socket.assigns.current_user)
+    {:ok, assign(socket, :form, form)}
+  end
 
   def mount(_params, _session, socket) do
     form = resource_form(socket.assigns.current_user)
-    socket =
-      assign(socket, form: form, step: 1)
-    {:ok, socket}
-  end
-
-  def handle_event("next-step", _, socket) do
-    socket = assign(socket, :step, socket.assigns.step + 1)
-    {:noreply, socket}
+    {:ok, assign(socket, :form, form)}
   end
 
   def handle_event("partial_update", %{"_target" => ["user_meta", i, _], "user_meta" => user_meta}, socket) do
@@ -60,8 +53,7 @@ require Ash.Query
         AshPhoenix.Form.for_update(post, :create_post, [
           forms: [
             auto?: true
-          ],
-          data: post
+          ]
         ])
       end
     to_form(data)
@@ -145,82 +137,66 @@ require Ash.Query
   <button class="btn" phx-click={JS.dispatch("phx:show-modal", detail: %{el: "#submit_modal"})}>open modal</button>
 
   <dialog id="submit_modal" class="modal">
-    <div class="modal-box space-y-2 p-0">
-      <.form id="steps-form" :let={f} for={@form} data-current-step="1">
-      <ul class="steps text-sm w-full py-6 border-b">
-        <li data-step-siginal="1" class="step">Info</li>
-        <li data-step-siginal="2" class="step">Category</li>
-        <li data-step-siginal="3" class="step">Meida</li>
-        <li data-step-siginal="4" class="step">Receive Product</li>
-      </ul>
-      <div class="pt-4 space-y-2">
-        <div id="form-step-1" class="px-6 max-h-[calc(80vh)] overflow-scroll-y" data-step="1">
-          <label class="form-control w-full">
-            <div class="label">
-              <span class="label-text font-medium">Product or Service Title</span>
-            </div>
-            <input
-              type="text"
-              id={f[:title].id}
-              name={f[:title].name}
-              value={f[:title].value}
-              placeholder="Product or Service Title"
-              phx-change={
-                JS.dispatch("app:validate_input")
-                |> JS.dispatch("app:enable_btn_from_form_inputs")
-              }
-              class="input input-bordered w-full"
-              data-validator="length"
-              data-validator-params="10,255"
-              data-target-btn="#next-btn"
-              data-target-els={"##{f[:title].id},##{f[:post_content].id}"}
-            />
-            <div class="label">
-              <span id={"#{f[:title].id}-helper"} class="label-text-alt text-gray-500">Product or Service Title must be more than 10 words long.</span>
-              <span id={"#{f[:title].id}-error"}  class="label-text-alt text-red-500 hidden"></span>
-            </div>
-          </label>
-          <label class="form-control w-full">
-            <div class="label">
-              <span class="label-text font-medium">Description</span>
-            </div>
-            <textarea
-              id={f[:post_content].id}
-              type="text"
-              name={f[:post_content].name}
-              placeholder="Description"
-              rows="5"
-              class="textarea textarea-bordered resize-none w-full"
-              phx-debounce="50"
-              phx-change={
-                JS.dispatch("app:count_word")
-                |> JS.dispatch("app:fill_text_with_attribute", detail: %{to_el: "#count_word_text", from_attr: "data-count-word"})
-                |> JS.dispatch("app:validate_input")
-                |> JS.dispatch("app:enable_btn_from_form_inputs")
-              }
-              data-validator="length"
-              data-validator-params="20,3000"
-              data-target-btn="#next-btn"
-              data-target-els={"##{f[:title].id},##{f[:post_content].id}"}
-            >{f[:title].value}</textarea>
-            <div class="label">
-              <span class="label-text-alt text-red-500 hidden" id={"#{f[:post_content].id}-error"}></span>
-              <span class="label-text-alt text-gray-500" id={"#{f[:post_content].id}-helper"}></span>
-              <span class="label-text-alt text-gray-500"><span id="count_word_text">0</span>/3000</span>
-            </div>
-          </label>
-        </div>
-        <div id="form-step-2" class="px-6 max-h-[calc(80vh)] overflow-scroll-y" data-step="2">
-        step-2
-        </div>
-        <div class="border-t flex justify-end px-6 py-4">
-          <button id="next-btn" type="button" class="btn btn-sm btn-diabled" phx-click={
-            JS.set_attribute({"data-current-step", "2"}, to: "#steps-form")
-            |> JS.set_attribute({"disabled", "disabled"})
-            |> JS.add_class("btn-disabled")
-          } disabled>Next</button>
-        </div>
+    <div class="modal-box space-y-2">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 class="text-lg text-gray-500">Service info</h3>
+        <button id="next-btn" class="btn btn-sm btn-primary btn-disabled">Next</button>
       </div>
+      <.form :let={f} for={@form} class="py-2 space-y-2" >
+        <%!-- <label class="form-control w-full">
+          <div class="label">
+            <span class="label-text font-medium">Product or Service Title</span>
+          </div>
+          <input
+            type="text"
+            id={f[:title].id}
+            name={f[:title].name}
+            value={f[:title].value}
+            placeholder="Product or Service Title"
+            phx-change={
+              JS.dispatch("app:validate_input")
+              |> JS.dispatch("app:enable_btn_from_form_inputs")
+            }
+            class="input input-bordered w-full"
+            data-validator="length"
+            data-validator-params="10,255"
+            data-target-btn="#next-btn"
+            data-target-els={"##{f[:title].id},##{f[:post_content].id}"}
+          />
+          <div class="label">
+            <span id={"#{f[:title].id}-helper"} class="label-text-alt text-gray-500">Product or Service Title must be more than 10 words long.</span>
+            <span id={"#{f[:title].id}-error"}  class="label-text-alt text-red-500 hidden"></span>
+          </div>
+        </label>
+        <label class="form-control w-full">
+          <div class="label">
+            <span class="label-text font-medium">Description</span>
+          </div>
+          <textarea
+            id={f[:post_content].id}
+            type="text"
+            name={f[:post_content].name}
+            placeholder="Description"
+            rows="5"
+            class="textarea textarea-bordered resize-none w-full"
+            phx-debounce="50"
+            phx-change={
+              JS.dispatch("app:count_word")
+              |> JS.dispatch("app:fill_text_with_attribute", detail: %{to_el: "#count_word_text", from_attr: "data-count-word"})
+              |> JS.dispatch("app:validate_input")
+              |> JS.dispatch("app:enable_btn_from_form_inputs")
+            }
+            data-validator="length"
+            data-validator-params="20,3000"
+            data-target-btn="#next-btn"
+            data-target-els={"##{f[:title].id},##{f[:post_content].id}"}
+          >{f[:title].value}</textarea>
+          <div class="label">
+            <span class="label-text-alt text-red-500 hidden" id={"#{f[:post_content].id}-error"}></span>
+            <span class="label-text-alt text-gray-500" id={"#{f[:post_content].id}-helper"}></span>
+            <span class="label-text-alt text-gray-500"><span id="count_word_text">0</span>/3000</span>
+          </div>
+        </label> --%>
       </.form>
     </div>
     <form method="dialog" class="modal-backdrop">

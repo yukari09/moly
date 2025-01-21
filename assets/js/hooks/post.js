@@ -33,15 +33,17 @@ const enabled_el = (el) => {
 
 
 export const Resize = {
-  mounted(){
-    resize = () => {
+  resize() {
       this.el.style.height = 'auto'
       this.el.style.height = this.el.scrollHeight + 'px'
-    }
-
-    this.el.addEventListener('input', resize)
-
-    resize()
+  },
+  mounted(){
+    this.el.addEventListener('input', this.resize)
+    this.resize()
+  },
+  updated() {
+    this.el.addEventListener('input', this.resize)
+    this.resize()
   }
 }
 

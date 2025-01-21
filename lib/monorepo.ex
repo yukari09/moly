@@ -7,8 +7,15 @@ defmodule Monorepo do
   if it comes from the database, an external API or others.
   """
 
-
   def test() do
+    require Ash.Query
+    current_user = Ash.get!(Monorepo.Accounts.User, "8867319c-7951-4a59-b581-e5d4c6b751fe", context: %{private: %{ash_authentication?: true}})
+    new_user_meta_party = [%{"meta_key" => "description", "meta_value" => "test for update or insert"}]
+    # Ash.Changeset.new(current_user)
+    # |> Ash.Changeset.manage_relationship(:user_meta, new_user_meta_party, type: :create)
+    Ash.update(current_user, %{user_meta: new_user_meta_party}, action: :update_user_meta, context: %{private: %{ash_authentication?: true}})
+  end
+  # def test() do
     # require Ash.Query
 
     # current_user =
@@ -23,7 +30,7 @@ defmodule Monorepo do
     # IO.inspect(post.term_taxonomy_tags)
     # IO.inspect(post.term_taxonomy_categories)
 
-  end
+  # end
 
 
 end
