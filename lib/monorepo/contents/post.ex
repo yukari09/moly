@@ -261,7 +261,7 @@ defmodule Monorepo.Contents.Post do
   end
 
   defp create_or_update_term_relationships(%{arguments: arguments}, post, context) do
-    categories = Map.get(arguments, :categories, [])
+    categories = Map.get(arguments, :categories, []) #[%{term_taxonomy_id: some_term_taxonomy_id}]
     tags = Map.get(arguments, :tags, [])
 
     term_names = Enum.map(tags, & &1["name"])

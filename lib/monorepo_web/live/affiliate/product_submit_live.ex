@@ -1,17 +1,21 @@
 defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
-require Ash.Query
   use MonorepoWeb, :live_view
 
-  # def mount(%{"id" => id}, _session, socket) do
-  #   form = resource_form(id, socket.assigns.current_user)
-  #   {:ok, assign(socket, :form, form)}
-  # end
+  require Ash.Query
+
 
   def mount(_params, _session, socket) do
-    form = resource_form(socket.assigns.current_user)
+    current_user = socket.assigns.current_user
+
+    form = resource_form(current_user)
     socket =
       assign(socket, form: form, step: 1)
-    {:ok, socket}
+      |> allow_upload(:media, accept: ~w(.jpg .jpeg, .png .webp .avif), max_entries: 12)
+
+    categories = get_term_taxonomy("countries", current_user)
+    industries = get_term_taxonomy("industries", current_user)
+
+    {:ok, socket, temporary_assigns: [categories: categories, industries: industries], layout: false}
   end
 
   def handle_event("next-step", _, socket) do
@@ -67,81 +71,15 @@ require Ash.Query
     to_form(data)
   end
 
+  #terms  slug
+  defp get_term_taxonomy(slug, current_user) do
+    Ash.Query.filter(Monorepo.Terms.TermTaxonomy, parent.slug == ^slug)
+    |> Ash.Query.load([:term])
+    |> Ash.read!(actor: current_user)
+  end
+
   def render(assigns) do
-    ~H"""
-    <div class="relative min-h-[200px] bg-primary">
-      <a class="btn btn-sm rounded-md absolute top-2 right-2 px-2"><.icon name="hero-pencil-solid" class="size-4 text-gray-500" /></a>
-    </div>
-    <div class="px-4 -mt-12">
-        <div class="avatar" role="button">
-          <div class="size-24 rounded-full" :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)}>
-            <img src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)["128"]} />
-          </div>
-        </div>
-        <div class="avatar placeholder" :if={!Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)}>
-          <div class="bg-primary text-base-100 size-24 rounded-full border-base-200 border-4">
-              <span class="capitalize text-5xl">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :name) |> String.slice(0, 1)}</span>
-          </div>
-        </div>
-    </div>
-    <form phx-change="partial_update">
-    <div class="flex items-start gap-8">
-      <div class="w-80 py-4 px-2">
-        <div class="text-2xl px-4 text-gray-900">
-          <p><%= Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :name) %></p>
-          <p class="text-xs/8">@{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :username)}</p>
-        </div>
-        <div class="space-y-3 mb-12">
-          <div>
-            <textarea id="user_meta_0_meta_value" class="textarea resize-none w-full" name="user_meta[0][meta_value]" placeholder="Add a description"  phx-hook="Resize" rows="1" phx-debounce="blur">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :description)}</textarea>
-            <input type="hidden" name="user_meta[0][meta_key]" value={:description}/>
-          </div>
-
-          <label class="input input-sm flex items-center gap-1">
-            <.icon name="hero-map-pin" class="size-4" />
-            <input type="text" name="user_meta[1][meta_value]" placeholder="Add a location" class="grow" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :location)} phx-debounce="blur"/>
-            <input type="hidden" name="user_meta[1][meta_key]" value={:location}/>
-          </label>
-
-          <label class="input input-sm flex items-center gap-1">
-            <.icon name="hero-globe-alt" class="size-4" />
-            <input type="text" name="user_meta[2][meta_value]" placeholder="Add a website URL" class="grow" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :website)} phx-debounce="blur"/>
-            <input type="hidden" name="user_meta[2][meta_key]" value={:website}/>
-          </label>
-
-
-          <label class="input input-sm flex items-center gap-1">
-            <Lucideicons.twitter class="size-4" />
-            <input type="text" name="user_meta[3][meta_value]" placeholder="Add a X(twiiter)" class="grow" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :twitter)} phx-debounce="blur"/>
-            <input type="hidden" name="user_meta[3][meta_key]" value={:twitter}/>
-          </label>
-
-          <label class="input input-sm flex items-center gap-1">
-            <Lucideicons.facebook class="size-4" />
-            <input type="text" name="user_meta[4][meta_value]" placeholder="Add a Facebook" class="grow" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :facebook)} phx-debounce="blur"/>
-            <input type="hidden" name="user_meta[4][meta_key]" value={:facebook}/>
-          </label>
-
-          <label class="input input-sm flex items-center gap-1">
-            <Lucideicons.instagram class="size-4" />
-            <input type="text" name="user_meta[5][meta_value]" placeholder="Add a Instagram" class="grow" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :instagram)} phx-debounce="blur"/>
-            <input type="hidden" name="user_meta[5][meta_key]" value={:instagram}/>
-          </label>
-        </div>
-      </div>
-      <div class="border-b flex item-center justify-between w-full pr-2">
-        <div role="tablist" class="tabs tabs-bordered w-auto max-w-sm">
-          <a role="tab" class="tab">Published</a>
-          <a role="tab" class="tab tab-active">Saved</a>
-        </div>
-        <label class="input input-sm flex items-center gap-1 max-w-xs input-bordered my-1" autocomplete="off">
-            <Lucideicons.search class="size-4" />
-            <input type="text" name="search" placeholder="Search..." class="grow" phx-debounce="blur"/>
-        </label>
-      </div>
-    </div>
-  </form>
-
+  ~H"""
   <button class="btn" phx-click={JS.dispatch("phx:show-modal", detail: %{el: "#submit_modal"})}>open modal</button>
 
   <dialog id="submit_modal" class="modal">
@@ -164,11 +102,11 @@ require Ash.Query
               id={f[:title].id}
               name={f[:title].name}
               value={f[:title].value}
-              placeholder="Product or Service Title"
               phx-change={
                 JS.dispatch("app:validate_input")
                 |> JS.dispatch("app:enable_btn_from_form_inputs")
               }
+              autocomplete="off"
               class="input input-bordered w-full"
               data-validator="length"
               data-validator-params="10,255"
@@ -210,9 +148,85 @@ require Ash.Query
             </div>
           </label>
         </div>
+        <!--Start step 2-->
         <div id="form-step-2" class="px-6 max-h-[calc(80vh)] overflow-scroll-y" data-step="2">
-        step-2
+          <label class="form-control w-full">
+            <div class="label">
+              <span class="label-text font-medium">Select a country where your service(product) from?</span>
+            </div>
+            <select
+              id={"#{f[:categories].id}_0_term_taxonomy"}
+              class="select select-bordered"
+              name={"#{f[:categories].id}[0][term_taxonomy_id]"}
+              phx-change={
+                JS.dispatch("app:validate_input")
+                |> JS.dispatch("app:enable_btn_from_form_inputs")
+              }
+              autocomplete="off"
+              class="input input-bordered w-full"
+              data-validator="length"
+              data-validator-params="5,255"
+              data-target-btn="#next-btn"
+              data-target-els={"##{f[:categories].id}_0_term_taxonomy"}
+            >
+              <option :for={category <- @categories}>{category.term.name}</option>
+            </select>
+            <div class="label">
+              <span id={"#{f[:categories].id}_0_term_taxonomy-helper"} class="label-text-alt text-gray-500"></span>
+              <span id={"#{f[:categories].id}_0_term_taxonomy-error"}  class="label-text-alt text-red-500 hidden"></span>
+            </div>
+          </label>
+          <label class="form-control w-full">
+            <div class="label">
+              <span class="label-text font-medium">What industry is your service(product) in?</span>
+            </div>
+            <select class="select select-bordered" name={"#{f[:industries].id}[0][term_taxonomy_id]"}>
+              <option :for={industry <- @industries}>{industry.term.name}</option>
+            </select>
+            <div class="label">
+              <span id={"#{f[:industries].id}[0][term_taxonomy_id]-error"}  class="label-text-alt text-red-500 hidden"></span>
+            </div>
+          </label>
+          <label>
+              <div class="label"><span class="label-text font-medium">What is the link to your service(product)?</span></div>
+              <input
+              type="text"
+              id={"#{f[:post_meta].id}_0_meta_value"}
+              name={"#{f[:post_meta].name}[0][meta_value]"}
+              phx-change={
+                JS.dispatch("app:validate_input")
+                |> JS.dispatch("app:enable_btn_from_form_inputs")
+              }
+              autocomplete="off"
+              class="input input-bordered w-full"
+              data-validator="isURL"
+              data-target-btn="#next-btn"
+              data-target-els={"##{f[:post_meta].id}_0_meta_value"}
+            />
+            <div class="label">
+              <span id={"#{f[:post_meta].id}_0_meta_value-helper"} class="label-text-alt text-gray-500">The link of your service(product).</span>
+              <span id={"#{f[:post_meta].id}_0_meta_value-error"}  class="label-text-alt text-red-500 hidden"></span>
+            </div>
+          </label>
         </div>
+        <!--End step 2-->
+        <!--End step 3-->
+        <div class="flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+            <div class="text-center">
+              <svg class="mx-auto size-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z" clip-rule="evenodd" />
+              </svg>
+              <div class="mt-4 flex text-sm/6 text-gray-600">
+                <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+                  <span>Upload a file</span>
+                  <input id="file-upload" name="file-upload" type="file" class="sr-only">
+                </label>
+                <p class="pl-1">or drag and drop</p>
+              </div>
+              <p class="text-xs/5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+            </div>
+          </div>
+        <!--End step 3-->
         <div class="border-t flex justify-end px-6 py-4">
           <button id="next-btn" type="button" class="btn btn-sm btn-diabled" phx-click={
             JS.set_attribute({"data-current-step", "2"}, to: "#steps-form")

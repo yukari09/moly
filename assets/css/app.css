@@ -8,7 +8,10 @@
 
 form[data-current-step]{
     div[data-step]{
-        @apply hidden;
+        /* @apply hidden; */
+    }
+    li[data-step-siginal]{
+        @apply text-sm
     }
 }
 
