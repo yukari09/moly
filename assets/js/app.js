@@ -53,33 +53,55 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+
+function countWords(text) {
+  /**
+   * 計算文本中不同語言的字數，支持多語言混合。
+   *
+   * @param {string} text - 輸入的文本。
+   * @returns {object} 各類字符的字數統計。
+   */
+
+  // 定義正則表達式匹配不同類型的字符
+  const patterns = {
+      chinese: /[\u4e00-\u9fff]/g, // 中文字符
+      japanese: /[\u3040-\u30ff\u31f0-\u31ff\uff66-\uff9f]/g, // 日文假名
+      korean: /[\uac00-\ud7af\u1100-\u11ff\u3130-\u318f]/g, // 韓文字母
+      english: /\b[a-zA-Z]+\b/g, // 英文字母（單詞）
+      russian: /\b[\u0400-\u04FF]+\b/g, // 俄文字母（單詞）
+      digits: /\b[0-9]+\b/g, // 數字（整體匹配）
+      symbols: /[!@#$%^&*(),.?\":{}|<>\[\]\\/;']/g, // 符號
+      others: /[^\s\w\u4e00-\u9fff\u3040-\u30ff\u31f0-\u31ff\uff66-\uff9f\uac00-\ud7af\u1100-\u11ff\u3130-\u318f\u0400-\u04FF]/g // 其他字符
+  };
+
+  // 初始化統計結果
+  const counts = Object.fromEntries(Object.keys(patterns).map(key => [key, 0]));
+
+  // 計算每一類字符的數量
+  for (const [key, pattern] of Object.entries(patterns)) {
+      const matches = text.match(pattern);
+      if (matches) {
+          counts[key] = matches.length; // 確保所有類型按匹配次數計算
+      }
+  }
+
+  // 計算總字數（不包括符號和其他非語言字符）
+  counts.total = Object.entries(counts)
+      .filter(([key]) => key !== "symbols" && key !== "others") // 排除符號和其他非語言字符
+      .reduce((sum, [_, count]) => sum + count, 0);
+
+  return counts.total;
+}
+
+
 window.addEventListener("phx:show-modal", async (event) => {  
   let el = document.querySelector(event.detail.el)
   el.showModal()
 })
 
-
-const text_length = (text) => {
-  if (!text) return 0; 
-
-  const isChineseOrJapanese = /[\u4e00-\u9fa5\u3040-\u30ff\u31f0-\u31ff\u4e00-\u9fff]/.test(text);
-  const isPureEnglish = /^[a-zA-Z]+$/.test(text); 
-
-  if (isChineseOrJapanese) {
-    return text.length; 
-  }
-
-  if (isPureEnglish) {
-    return text.length; 
-  }
-
-  return text.trim().split(/\s+/).length;
-}
-
-
 window.addEventListener("app:count_word", async (event) => {
   const text = event.target.value.trim()
-  event.target.setAttribute("data-count-word", text_length(text))
+  event.target.setAttribute("data-count-word", countWords(text))
 })
 
 //fill attr value to other el textContent
@@ -100,36 +122,21 @@ window.addEventListener("app:fill_text_with_attribute", async (event) => {
   if(from_el, to_el, from_attr){ to_el.textContent =  from_el.getAttribute(from_attr)}
 })
 
-// HTML
-/*
-<label>
-  <input phx-change={JS.dispatch("app:form_enabled_button")} 
-    id="input-id"
-    data-validator="length" 
-    data-validator-params="1,2,3" 
-    data-error-msg="Must be between 1 and 3 characters." 
-  />
-  <span id="input-id-helper">Input your name</span>
-  <span id="input-id-error" class="hidden"></span>
-</label>
-*/
 
-window.addEventListener("app:validate_input", async (event) => {
-  const { validator, validatorParams, errorMsg } = event.target.dataset;
-  const this_el_id = event.target.getAttribute("id")
-  if(!this_el_id){
-    return;
-  }
+window.addEventListener("app:input-validate", async(event) => {
+  const {validator, params, error_msg} = event.detail
+
   if (validator != "undefined" && typeof validators[validator] === "function") {
-    let function_var = [event.target.value];
-    if (validatorParams) {
-      function_var = function_var.concat(validatorParams.split(","))
+    let function_var = [event.target.value]
+    if (params) {
+      function_var = function_var.concat(params)
     }
 
-    if(errorMsg){
-      function_var.push(errorMsg)
+    if(error_msg != "undefined"){
+      function_var.push(error_msg)
     }
 
+    const this_el_id = event.target.getAttribute("id")
     const validateResult = validators[validator](...function_var)
     const elHelper = document.querySelector(`#${this_el_id}-helper`)
     const elError = document.querySelector(`#${this_el_id}-error`)
@@ -156,29 +163,52 @@ window.addEventListener("app:validate_input", async (event) => {
   }
 })
 
-window.addEventListener("app:enable_btn_from_form_inputs", event => {
-  const target_btn_selector = event.target.dataset.targetBtn
-  const els = event.target.dataset.targetEls
-  if(els && target_btn_selector){
-    const target_btn = document.querySelector(target_btn_selector)
-    const all_el_selector = els.split(",")
-    let validated_status = []
-    all_el_selector.forEach(el_selector => {
-      if(document.querySelector(el_selector).dataset.validate === "1") validated_status.push("1")
+window.addEventListener("app:validate-and-exec", async(event) => {
+  if(event.target.dataset.inputDispatch != "undefined"){
+    JSON.parse(event.target.dataset.inputDispatch).forEach(e => {
+      const event_name = e[0]
+      const data_name = `data-${event_name.replace(":","-")}`
+      let event_detail = {}
+      if(e.length == 2) event_detail = e[1].detail
+      const exec_event = new CustomEvent(event_name, {
+        detail: event_detail,
+        bubbles: true
+      })
+      event.target.dispatchEvent(exec_event)
+      event.target.setAttribute(data_name, 'true')
     })
-    if(all_el_selector.length == validated_status.length){
-      target_btn.classList.remove("btn-disabled")    
-      target_btn.removeAttribute("disabled")
+  }
+
+  const name = event.target.getAttribute("name")
+  let prefix =  name.match(/^([^\[]+)/)
+  prefix = prefix ? prefix[0] : null
+  if(prefix){
+    const formElements = document.querySelectorAll(`[name^="${prefix}"]`)
+
+    let dataInputDispatch = Array.from(formElements)
+    .filter(el => {
+      return  el.dataset.inputDispatch
+    })
+
+    let validated = Array.from(formElements)
+    .filter(el => {
+      return el.dataset.validate == "1"
+    })
+
+    const submit_btn = document.querySelector(`#${prefix}_submit`)
+
+    console.log([dataInputDispatch.length , validated.length])
+
+    if(dataInputDispatch.length == validated.length){
+      submit_btn.removeAttribute("disabled")
+      submit_btn.classList.remove("btn-disabled")
     }else{
-      target_btn.classList.add("btn-disabled")    
-      target_btn.setAttribute("disabled","true")
+      submit_btn.setAttribute("disabled", "disabled")
+      submit_btn.classList.add("btn-disabled")
     }
   }
 })
 
-window.addEventListener("app:click_next_btn", event => {
-  
-})
 
 const validators = {
   required(value, msg = "This field is required.") {
@@ -189,7 +219,7 @@ const validators = {
   },
 
   length(value, min, max, msg) {
-    const len = value? text_length(value) : 0
+    const len = value? countWords(value) : 0
     if (len >= min && len <= max) {
       return true;
     }

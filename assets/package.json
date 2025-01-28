@@ -11,6 +11,7 @@
     "@editorjs/quote": "^2.7.6",
     "@mux/upchunk": "^3.4.0",
     "@yaireo/tagify": "^4.33.0",
+    "alfaaz": "^1.1.0",
     "alpinejs": "^3.14.8",
     "easymde": "^2.18.0",
     "flatpickr": "^4.6.13",

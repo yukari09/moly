@@ -5,10 +5,10 @@
 .btn{
     @apply font-medium;
 }
-
+/* 
 form[data-current-step]{
     div[data-step]{
-        /* @apply hidden; */
+        @apply hidden;
     }
     li[data-step-siginal]{
         @apply text-sm
@@ -58,4 +58,4 @@ form[data-current-step='4']{
     li[data-step-siginal='1'],li[data-step-siginal='2'],li[data-step-siginal='3'],li[data-step-siginal='4']{
         @apply step-primary;
     }
-}
+} */

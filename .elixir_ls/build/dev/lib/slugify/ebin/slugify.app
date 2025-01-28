@@ -1,8 +1,7 @@
 {application,slugify,
-             [{config_mtime,1734824147},
+             [{modules,['Elixir.Slug']},
               {optional_applications,[]},
               {applications,[kernel,stdlib,elixir]},
               {description,"Transform strings from any language to slugs for URLs, filenames or fun"},
-              {modules,['Elixir.Slug']},
               {registered,[]},
               {vsn,"1.3.1"}]}.

@@ -56,7 +56,7 @@ defmodule MonorepoWeb.DaisyUi do
 
   def flash_group(assigns) do
     ~H"""
-    <div id={@id} class="relate">
+    <div id={@id} class="relate z-10">
       <div class="toast toast-center">
       <.flash kind={:info} title={gettext("Success!")} flash={@flash} />
       <.flash kind={:error} title={gettext("Error!")} flash={@flash} />
