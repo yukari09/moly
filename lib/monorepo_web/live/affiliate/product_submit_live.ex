@@ -30,11 +30,95 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
             |> put_flash(:error, "Up to 6 pictures can be uploaded.")
         end
     end)
+
+    socket = push_event(socket, "validate-and-exec", %{form_name: "form"})
     {:noreply, socket}
   end
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
-    socket = cancel_upload(socket, :media, ref)
+    socket =
+      cancel_upload(socket, :media, ref)
+      |>  push_event("validate-and-exec", %{form_name: "form"})
+    {:noreply, socket}
+  end
+
+  def handle_event("save", %{"form" => params}, socket) do
+    uploaded_files =
+      consume_uploaded_entries(socket, :media, fn %{path: path}, entry ->
+        media_info = Monorepo.Helper.upload_entry_information(entry, path)
+        case media_info do
+          :error ->
+            {:error, "Error uploading file \"#{entry.client_name}\""}
+
+          %{mime_type: mime_type, file: file, filename: filename, filesize: filesize} = meta_data ->
+            client_name_with_extension = Monorepo.Helper.extract_filename_without_extension(entry.client_name)
+            metas =
+              [
+                %{meta_key: :attached_file, meta_value: filename},
+                %{meta_key: :attachment_filesize, meta_value: "#{filesize}"},
+                %{meta_key: :attachment_metadata, meta_value: Jason.encode!(meta_data)},
+                %{meta_key: :attachment_image_alt, meta_value: client_name_with_extension},
+                %{meta_key: :attachment_image_caption, meta_value: client_name_with_extension},
+              ]
+
+            attrs = %{
+              post_title: client_name_with_extension,
+              post_mime_type: mime_type,
+              guid: file,
+              post_content: "",
+              metas: metas
+            }
+            Monorepo.Contents.create_media(attrs, actor: socket.assigns.current_user)
+        end
+      end)
+
+      # params =
+      #   uploaded_files
+      #   |> List.first()
+      #   |> case do
+      #     nil -> params
+      #     media ->
+      #       put_in(params, ["post_meta", "6"], %{"meta_key" => "commission_min", "meta_value" => "10"})
+      #   end
+
+      socket =
+        case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: [actor: socket.assigns.current_user]) do
+          {:ok, post} ->
+            socket
+            |> put_flash(:info, "Saved post for #{post.post_title}!")
+            |> push_navigate(to: ~p"/admin/posts")
+          {:error, form} ->
+            socket
+            |> assign(form: form)
+            |> put_flash(:error, "Oops, some thing wrong.")
+        end
+
+      {:noreply, socket}
+
+        # %{
+        #   "categories" => %{
+        #     "0" => %{"term_taxonomy_id" => "America"},
+        #     "1" => %{"term_taxonomy_id" => "Ai Service"}
+        #   },
+        #   "form" => %{
+        #     "post_content" => "[STUDIO CHOOM ORIGINAL] GFRIEND 'Season of Memories' (Full Focused)\n[스튜디오 춤 오리지널] 여자친구 '우리의 다정한 계절 속에' (Full Focused)\n\n📺COME AND SEE 📺\nGFRIEND(여자친구) '우리의 다정한 계절 속에 (Season of Memories)'\n   • GFRIEND(여자친구) '우리의 다정한 계절 속에 (Season ...  ",
+        #     "post_meta" => %{
+        #       "1" => %{"meta_key" => "commission_min", "meta_value" => "10"},
+        #       "2" => %{"meta_key" => "commission_max", "meta_value" => "20"},
+        #       "3" => %{"meta_key" => "commission_unit", "meta_value" => "%"},
+        #       "4" => %{"meta_key" => "commission_model", "meta_value" => "CPC"},
+        #       "5" => %{
+        #         "meta_key" => "affiliate_link",
+        #         "meta_value" => "https://www.youtube.com/watch?v=rzglDl831QQ"
+        #       }
+        #     },
+        #     "title" => "(Full Focused) GFRIEND(여자친구) '우리의 다정한 계절 속에 (Season of Memories)' 4K | STUDIO CHOOM ORIGINAL"
+        #   }
+        # }
+
+
+
+
     {:noreply, socket}
   end
 
@@ -73,7 +157,7 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
   <div class="xl:w-[1280px] mx-auto">
     <div class="mt-8 mb-12">
       <div class="px-6 py-4  text-4xl">Create Competitive Products</div>
-      <.form :let={f} for={@form} class="space-y-2 px-6 my-6" phx-change={JS.dispatch("app:validate-and-exec")}>
+      <.form :let={f} for={@form} class="space-y-2 px-6 my-6" phx-submit="save" phx-change={JS.dispatch("app:validate-and-exec")}>
         <!--Start title-->
         <label class="form-control w-full">
           <div class="label">
@@ -109,6 +193,8 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
                 id={"#{f[:post_meta].id}_1_meta_value"}
                 name={"#{f[:post_meta].name}[1][meta_value]"}
                 class="input input-bordered w-full" placeholder="min"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 phx-update="ignore"
                 data-input-dispatch={JSON.encode!([
                   ["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]
@@ -133,6 +219,8 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
                 type="text" name={"#{f[:post_meta].name}[2][meta_value]"}
                 class="input input-bordered w-full" placeholder="max"
                 phx-update="ignore"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 data-input-dispatch={JSON.encode!([
                   ["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]
                 ])}
@@ -231,16 +319,16 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
             <span class="label-text font-medium">Select a country where your service(product) from? <span class="text-red-500">*</span></span>
           </div>
           <select
-            id={"#{f[:categories].id}_0_term_taxonomy"}
+            id={"categories_0_term_taxonomy"}
             phx-update="ignore"
             class="select select-bordered"
-            name={"#{f[:categories].id}[0][term_taxonomy_id]"}
+            name={"#{f[:categories].name}[]"}
           >
-            <option :for={category <- @categories}>{category.term.name}</option>
+            <option :for={category <- @categories} value={category.id}>{category.term.name}</option>
           </select>
           <div class="label">
-            <span id={"#{f[:categories].id}_0_term_taxonomy-helper"} class="label-text-alt text-gray-500"></span>
-            <span id={"#{f[:categories].id}_0_term_taxonomy-error"}  class="label-text-alt text-red-500 hidden"></span>
+            <span id={"categories_0_term_taxonomy-helper"} class="label-text-alt text-gray-500"></span>
+            <span id={"categories_0_term_taxonomy-error"}  class="label-text-alt text-red-500 hidden"></span>
           </div>
         </label>
         <!--End Country-->
@@ -249,11 +337,11 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
             <div class="label">
               <span class="label-text font-medium">What industry is your service(product) in? <span class="text-red-500">*</span></span>
             </div>
-            <select id={"#{f[:categories].id}_1_term_taxonomy_id"} class="select select-bordered" phx-update="ignore" name={"#{f[:categories].id}[1][term_taxonomy_id]"}>
-              <option :for={industry <- @industries}>{industry.term.name}</option>
+            <select id={"categories_1_term_taxonomy_id"} class="select select-bordered" phx-update="ignore" name={"#{f[:categories].name}[]"}>
+              <option :for={industry <- @industries}  value={industry.id}>{industry.term.name}</option>
             </select>
             <div class="label">
-              <span id={"#{f[:categories].id}_1_term_taxonomy_id-error"}  class="label-text-alt text-red-500 hidden"></span>
+              <span id={"categories_1_term_taxonomy_id-error"}  class="label-text-alt text-red-500 hidden"></span>
             </div>
           </label>
         <!--End industry-->
@@ -272,6 +360,8 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
             ])}
 
           />
+          <input name={"#{f[:post_meta].name}[5][meta_key]"} type="hidden" value={:affiliate_link}/>
+          <input name={f[:post_type].name} type="hidden" value={:product}/>
           <div class="label">
             <span id={"#{f[:post_meta].id}_5_meta_value-helper"} class="label-text-alt text-gray-500">The link of your service(product).</span>
             <span id={"#{f[:post_meta].id}_5_meta_value-error"}  class="label-text-alt text-red-500 hidden"></span>
@@ -303,14 +393,14 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
               </div>
             </div>
           </div>
-          <.live_file_input id="file-upload" class="hidden" phx-change="upload-media" upload={@uploads.media} />
+          <.live_file_input class="hidden" phx-change="upload-media" upload={@uploads.media} data-input-dispatch="[]"  data-form-name="form" data-validate={Enum.count(@uploads.media.entries) > 0 && Enum.count(@uploads.media.entries) < 7 && "1" || "0"}/>
           <%!-- <input id="upload-file-meida-id" type="file" class="hidden"/> --%>
         </div>
         <!--End media-->
-      </.form>
-      <div class="border-t flex justify-end px-6 py-4">
-          <button id={@form[:submit].id} type="button" class="btn btn-primary w-32  btn-diabled" disabled>Submit</button>
+        <div class="flex justify-end p-4 border-t !mt-6">
+          <button id={@form[:submit].id} type="submit" phx-disable-with="Saving..." class="btn btn-primary w-32  btn-diabled"  disabled>Submit</button>
       </div>
+      </.form>
     </div>
   </div>
   """
