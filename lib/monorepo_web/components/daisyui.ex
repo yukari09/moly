@@ -64,4 +64,12 @@ defmodule MonorepoWeb.DaisyUi do
     </div>
     """
   end
+
+
+  def alert_group(assigns) do
+    ~H"""
+
+    """
+  end
+
 end

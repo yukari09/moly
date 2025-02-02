@@ -21,8 +21,7 @@ defmodule Monorepo.Comments.CommentMeta do
   attributes do
     uuid_primary_key :id
 
-    attribute :meta_key, :string do
-      length(min: 1, max: 255)
+    attribute :meta_key, :atom do
       allow_nil? true
     end
 

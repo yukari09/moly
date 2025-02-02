@@ -43,6 +43,7 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
   end
 
   def handle_event("save", %{"form" => params}, socket) do
+    # IO.inspect(socket.assigns.form)
     uploaded_files =
       consume_uploaded_entries(socket, :media, fn %{path: path}, entry ->
         media_info = Monorepo.Helper.upload_entry_information(entry, path)
@@ -72,74 +73,63 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
         end
       end)
 
-      # params =
-      #   uploaded_files
-      #   |> List.first()
-      #   |> case do
-      #     nil -> params
-      #     media ->
-      #       put_in(params, ["post_meta", "6"], %{"meta_key" => "commission_min", "meta_value" => "10"})
-      #   end
 
-      socket =
-        case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: [actor: socket.assigns.current_user]) do
-          {:ok, post} ->
-            socket
-            |> put_flash(:info, "Saved post for #{post.post_title}!")
-            |> push_navigate(to: ~p"/admin/posts")
-          {:error, form} ->
-            socket
-            |> assign(form: form)
-            |> put_flash(:error, "Oops, some thing wrong.")
+    params =
+      Enum.with_index(uploaded_files)
+      |> Enum.reduce(params, fn {media, i}, params ->
+        insert_index = Enum.count(params["post_meta"]) + 1
+        post_meta = %{"meta_key" => :attachment_affiliate_media, "meta_value" => media.id}
+        params = put_in(params, ["post_meta", "#{insert_index}"], post_meta)
+        if i == 0 do
+          put_in(params, ["post_meta", "#{insert_index + 1}"], Map.put(post_meta, "meta_key", :attachment_affiliate_media_feature))
+        else
+          params
         end
-
-      {:noreply, socket}
-
-        # %{
-        #   "categories" => %{
-        #     "0" => %{"term_taxonomy_id" => "America"},
-        #     "1" => %{"term_taxonomy_id" => "Ai Service"}
-        #   },
-        #   "form" => %{
-        #     "post_content" => "[STUDIO CHOOM ORIGINAL] GFRIEND 'Season of Memories' (Full Focused)\n[스튜디오 춤 오리지널] 여자친구 '우리의 다정한 계절 속에' (Full Focused)\n\n📺COME AND SEE 📺\nGFRIEND(여자친구) '우리의 다정한 계절 속에 (Season of Memories)'\n   • GFRIEND(여자친구) '우리의 다정한 계절 속에 (Season ...  ",
-        #     "post_meta" => %{
-        #       "1" => %{"meta_key" => "commission_min", "meta_value" => "10"},
-        #       "2" => %{"meta_key" => "commission_max", "meta_value" => "20"},
-        #       "3" => %{"meta_key" => "commission_unit", "meta_value" => "%"},
-        #       "4" => %{"meta_key" => "commission_model", "meta_value" => "CPC"},
-        #       "5" => %{
-        #         "meta_key" => "affiliate_link",
-        #         "meta_value" => "https://www.youtube.com/watch?v=rzglDl831QQ"
-        #       }
-        #     },
-        #     "title" => "(Full Focused) GFRIEND(여자친구) '우리의 다정한 계절 속에 (Season of Memories)' 4K | STUDIO CHOOM ORIGINAL"
-        #   }
-        # }
+      end)
 
 
-
+    socket =
+      case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
+        {:ok, post} ->
+          socket
+          |> put_flash(:info, "Saved post for #{post.post_title}!")
+          |> push_navigate(to: ~p"/admin/posts")
+        {:error, form} ->
+          IO.inspect(form)
+          socket
+          |> assign(form: form)
+          |> put_flash(:error, "Oops, some thing wrong.")
+      end
 
     {:noreply, socket}
   end
 
   defp resource_form(id \\ nil, current_user) do
+    current_user =
+      %{
+        current_user |
+        roles: [:owner | current_user.roles]
+      }
+
     data =
       if is_nil(id) do
         AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post, [
           forms: [
             auto?: true
-          ]
+          ],
+          actor: current_user
         ])
       else
         post =
           Ash.Query.filter(Monorepo.Contents.Post, id == ^id and auth author_id == current_user.id)
           |> Ash.read_first!(actor: current_user)
 
-        AshPhoenix.Form.for_update(post, :create_post, [
+        AshPhoenix.Form.for_update(post, :update_post, [
           forms: [
             auto?: true
           ],
-          data: post
+          data: post,
+          actor: current_user
         ])
       end
     to_form(data)
@@ -165,9 +155,9 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
           </div>
           <input
             type="text"
-            id={f[:title].id}
-            name={f[:title].name}
-            value={f[:title].value}
+            id={f[:post_title].id}
+            name={f[:post_title].name}
+            value={f[:post_title].value}
             autocomplete="off"
             class="input input-bordered w-full"
             phx-update="ignore"
@@ -176,8 +166,8 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
             ])}
           />
           <div class="label">
-            <span id={"#{f[:title].id}-helper"} class="label-text-alt text-gray-500">Product or Service Title must be more than 10 words long.</span>
-            <span id={"#{f[:title].id}-error"}  class="label-text-alt text-red-500 hidden"></span>
+            <span id={"#{f[:post_title].id}-helper"} class="label-text-alt text-gray-500">Product or Service Title must be more than 10 words long.</span>
+            <span id={"#{f[:post_title].id}-error"}  class="label-text-alt text-red-500 hidden"></span>
           </div>
         </label>
         <!--End title-->
@@ -361,7 +351,6 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
 
           />
           <input name={"#{f[:post_meta].name}[5][meta_key]"} type="hidden" value={:affiliate_link}/>
-          <input name={f[:post_type].name} type="hidden" value={:product}/>
           <div class="label">
             <span id={"#{f[:post_meta].id}_5_meta_value-helper"} class="label-text-alt text-gray-500">The link of your service(product).</span>
             <span id={"#{f[:post_meta].id}_5_meta_value-error"}  class="label-text-alt text-red-500 hidden"></span>
@@ -400,6 +389,8 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
         <div class="flex justify-end p-4 border-t !mt-6">
           <button id={@form[:submit].id} type="submit" phx-disable-with="Saving..." class="btn btn-primary w-32  btn-diabled"  disabled>Submit</button>
       </div>
+      <input name={f[:post_type].name} type="hidden" value={:affiliate}/>
+      <input name={f[:post_date].name} type="hidden" value={DateTime.utc_now()}/>
       </.form>
     </div>
   </div>

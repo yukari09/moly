@@ -44,7 +44,6 @@ defmodule Monorepo.Contents.PostMeta do
     uuid_primary_key :id
 
     attribute :meta_key, :atom do
-      length(min: 1, max: 255)
       allow_nil? false
     end
 
