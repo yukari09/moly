@@ -66,10 +66,4 @@ defmodule MonorepoWeb.DaisyUi do
   end
 
 
-  def alert_group(assigns) do
-    ~H"""
-
-    """
-  end
-
 end

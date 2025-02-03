@@ -6,16 +6,24 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
 
   def mount(_params, _session, socket) do
     current_user = socket.assigns.current_user
+    is_active_user = Monorepo.Accounts.Helper.is_active_user(current_user)
 
-    form = resource_form(current_user)
-    socket =
-      assign(socket, form: form)
-      |> allow_upload(:media, accept: ~w(.jpg .jpeg .png .gif), max_entries: 6)
+    if is_active_user do
+      form = resource_form(current_user)
+      socket =
+        assign(socket, form: form)
+        |> allow_upload(:media, accept: ~w(.jpg .jpeg .png .gif), max_entries: 6)
+        |> assign(:is_active_user, is_active_user)
 
-    categories = get_term_taxonomy("countries", current_user)
-    industries = get_term_taxonomy("industries", current_user)
+      categories = get_term_taxonomy("countries", current_user)
+      industries = get_term_taxonomy("industries", current_user)
 
-    {:ok, socket, temporary_assigns: [categories: categories, industries: industries]}
+      {:ok, socket, temporary_assigns: [categories: categories, industries: industries]}
+    else
+      socket =
+        push_navigate(socket, to: ~p"/")
+      {:ok, socket}
+    end
   end
 
   def handle_event("upload-media", _, socket) do
@@ -34,6 +42,7 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
     socket = push_event(socket, "validate-and-exec", %{form_name: "form"})
     {:noreply, socket}
   end
+
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
     socket =
@@ -147,7 +156,7 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
   <div class="xl:w-[1280px] mx-auto">
     <div class="mt-8 mb-12">
       <div class="px-6 py-4  text-4xl">Create Competitive Products</div>
-      <.form :let={f} for={@form} class="space-y-2 px-6 my-6" phx-submit="save" phx-change={JS.dispatch("app:validate-and-exec")}>
+      <.form :let={f} for={@form} class="space-y-2 px-6 my-6" phx-submit="save" phx-change={JS.dispatch("app:validate-and-exec")} disabled={!@is_active_user}>
         <!--Start title-->
         <label class="form-control w-full">
           <div class="label">

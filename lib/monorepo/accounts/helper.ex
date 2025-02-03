@@ -1,15 +1,4 @@
 defmodule Monorepo.Accounts.Helper do
-  # def current_user_name(%{display_name: nil} = user),
-  #   do: user.email |> to_string() |> String.split("@") |> List.first()
-
-  # def current_user_name(user), do: user.display_name
-
-
-  # def current_user_short_name(user, upcase \\ true) do
-  #   current_user_name(user)
-  #   |> String.slice(0, 2)
-  #   |> (fn s -> if upcase, do: String.upcase(s), else: s end).()
-  # end
 
   def generate_avatar_from_url(url) do
     hashed_path = Monorepo.Helper.put_object_from_url(url)
@@ -24,6 +13,10 @@ defmodule Monorepo.Accounts.Helper do
     Enum.find(user_meta, & &1.meta_key == meta_key)
     |> format_meta_value()
   end
+
+  def is_active_user(%Monorepo.Accounts.User{confirmed_at: nil}), do: false
+  def is_active_user(%Monorepo.Accounts.User{status: "active", confirmed_at: _}), do: true
+  def is_active_user(%Monorepo.Accounts.User{}), do: false
 
   defp format_meta_value(nil), do: nil
   defp format_meta_value(%{meta_value: nil}), do: nil
