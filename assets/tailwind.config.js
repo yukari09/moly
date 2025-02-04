@@ -12,24 +12,24 @@ module.exports = {
     "../lib/monorepo_web/**/*.*ex",
     "../deps/ash_authentication_phoenix/**/*.*ex"
   ],
-  daisyui: {
-    themes: [
-      {
-        dark: {
-          ...require("daisyui/src/theming/themes")["dark"],
-        }
-      },
-      {
-        light: {
-          ...require("daisyui/src/theming/themes")["light"],
-          primary: "#017802",
-          "primary-content": "#ffffff",
-          secondary: "#BED73B",
-          accent: "#744C29",
-        }
-      }
-    ]
-  },
+  // daisyui: {
+  //   themes: [
+  //     {
+  //       dark: {
+  //         ...require("daisyui/src/theming/themes")["dark"],
+  //       }
+  //     },
+  //     {
+  //       light: {
+  //         ...require("daisyui/src/theming/themes")["light"],
+  //         primary: "#017802",
+  //         "primary-content": "#ffffff",
+  //         secondary: "#BED73B",
+  //         accent: "#744C29",
+  //       }
+  //     }
+  //   ]
+  // },
   theme: {
     extend: {
       colors: {
@@ -44,7 +44,11 @@ module.exports = {
           700: '#178c17',    // 深綠色
           800: '#017802',    // 設為 #017802，最深的綠色
           900: '#005a02',    // 更深的綠色，為了讓綠色更深   
-        }
+        },
+        primary: "#017802",
+        "primary-content": "#ffffff",
+        secondary: "#BED73B",
+        accent: "#744C29",
       },
       fontFamily: {
         sans: [
@@ -63,7 +67,7 @@ module.exports = {
     require("@tailwindcss/typography"),
     require("tailwindcss-animate"),
     // require("@tailwindcss/forms"),
-    require('daisyui'),
+    // require('daisyui'),
     // Allows prefixing tailwind classes with LiveView classes to add rules
     // only when LiveView classes are applied, for example:
     //
