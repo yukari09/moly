@@ -6,6 +6,8 @@ defmodule Monorepo.Accounts.User do
     extensions: [AshAuthentication],
     data_layer: AshPostgres.DataLayer
 
+  require Ash.Query
+
   authentication do
     tokens do
       enabled?(true)
@@ -21,6 +23,7 @@ defmodule Monorepo.Accounts.User do
           sender(Monorepo.Accounts.User.Senders.SendPasswordResetEmail)
         end
       end
+
 
       google do
         client_id(Monorepo.Secrets)
@@ -287,6 +290,26 @@ defmodule Monorepo.Accounts.User do
       # Generates an authentication token for the user
       change AshAuthentication.GenerateTokenChange
     end
+
+    # update :resend_confirmation do
+    #   description "Resend email to user."
+
+    #   argument :updated_at, :datetime do
+    #     allow_nil? false
+    #   end
+
+    #   change after_action(fn changeset, user, context ->
+    #     Monorepo.Accounts.Token
+    #     |> Ash.Query.filter(subject == ^"user?id=#{user.id}" and purpose == "confirm_new_user" and expires_at < now())
+    #     |> Ash.Query.limit(1)
+    #     |> Ash.read_one()
+    #     |> case do
+    #       {:ok, nil} ->
+
+    #     end
+    #     {:ok, user}
+    #   end)
+    # end
 
     update :update_user_status do
       description "Update the status of a user to active"

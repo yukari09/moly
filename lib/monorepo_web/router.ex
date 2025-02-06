@@ -40,6 +40,10 @@ defmodule MonorepoWeb.Router do
     #   # on_mount {MonorepoWeb.LiveUserAuth, :live_no_user}
     # end
 
+    ash_authentication_live_session :authenticated_maybe_routes,  on_mount: {MonorepoWeb.LiveUserAuth, :live_user_optional} do
+      live("/", Affiliate.PageIndexLive)
+    end
+
     ash_authentication_live_session :authenticated_routes, on_mount: {MonorepoWeb.LiveUserAuth, :live_user_required} do
       live("/products/submit", Affiliate.ProductSubmitLive)
     end
@@ -48,7 +52,7 @@ defmodule MonorepoWeb.Router do
   scope "/", MonorepoWeb do
     pipe_through(:browser)
 
-    get("/", PageController, :home)
+    # get("/", PageController, :home)
     auth_routes(AuthController, Monorepo.Accounts.User, path: "/auth")
     sign_out_route(AuthController)
 

@@ -43,7 +43,7 @@ defmodule Monorepo.MixProject do
       {:ash_authentication_phoenix, "~> 2.0"},
       {:bcrypt_elixir, "~> 3.2"},
       {:picosat_elixir, "~> 0.2"},
-      {:ash_authentication, "~> 4.3"},
+      {:ash_authentication, "~> 4.4.8"},
       {:ash_postgres, "~> 2.0"},
       {:ash_phoenix, "~> 2.1"},
       {:ash, "~> 3.0"},

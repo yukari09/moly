@@ -10,7 +10,8 @@ defmodule MonorepoWeb.AuthController do
         {:confirm_new_user, :confirm} ->
           if user.status != :active do
             Ash.update!(user,
-              action: :update_user_status_to_active,
+              %{status: :active},
+              action: :update_user_status,
               context: %{private: %{ash_authentication?: true}}
             )
           end
@@ -34,7 +35,7 @@ defmodule MonorepoWeb.AuthController do
   end
 
   def failure(conn, activity, reason) do
-    # message =
+    message =
     case {activity, reason} do
       {{:magic_link, _},
         %AshAuthentication.Errors.AuthenticationFailed{
@@ -49,7 +50,7 @@ defmodule MonorepoWeb.AuthController do
     end
 
   conn
-  |> put_flash(:error, "Incorrect email or password")
+  |> put_flash(:error, message)
   |> redirect(to: ~p"/sign-in")
   end
 
