@@ -20,7 +20,6 @@ defmodule Monorepo.Application do
       MonorepoWeb.Endpoint,
       {AshAuthentication.Supervisor, [otp_app: :monorepo]},
       {Cachex, [:cache]},
-
       {
         FLAME.Pool,
         name: Monorepo.SamplePool,

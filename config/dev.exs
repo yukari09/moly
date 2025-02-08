@@ -84,7 +84,6 @@ config :phoenix_live_view,
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
 
-
 # Customize env for this app
 config :monorepo,
   google_oauth2_client_id:
@@ -119,7 +118,6 @@ config :ex_aws, :s3,
   bucket: "local",
   domain: "192.168.6.8:9000/local",
   domain_scheme: "http"
-
 
 config :imgproxy,
   prefix: "http://192.168.6.8:8008",

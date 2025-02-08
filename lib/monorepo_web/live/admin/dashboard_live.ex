@@ -7,6 +7,4 @@ defmodule MonorepoWeb.AdminDashboardLive do
     <div>...</div>
     """
   end
-
-
 end

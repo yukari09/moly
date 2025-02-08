@@ -15,13 +15,19 @@ defmodule Monorepo.Contents.Relations.PostTags do
       |> Ash.load!([:term_taxonomy], opts)
 
     return_result =
-      Monorepo.Terms.TermRelationships |> Ash.Query.filter(post_id in ^post_ids) |> Ash.read!(opts) |> Enum.group_by(& &1.post_id)
+      Monorepo.Terms.TermRelationships
+      |> Ash.Query.filter(post_id in ^post_ids)
+      |> Ash.read!(opts)
+      |> Enum.group_by(& &1.post_id)
       |> Enum.reduce(%{}, fn {post_id, relationships}, acc ->
         term_taxonomy_ids = Enum.map(relationships, & &1.term_taxonomy_id)
-        terms = Enum.filter(result, fn r ->
+
+        terms =
+          Enum.filter(result, fn r ->
             new_term_taxonomy_ids = Enum.map(r.term_taxonomy, & &1.id)
-            (term_taxonomy_ids -- new_term_taxonomy_ids) != term_taxonomy_ids
-        end)
+            term_taxonomy_ids -- new_term_taxonomy_ids != term_taxonomy_ids
+          end)
+
         Map.put(acc, post_id, terms)
       end)
 

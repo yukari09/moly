@@ -10,7 +10,6 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
 
   @impl true
   def mount(params, _session, socket) do
-
     socket =
       socket
       |> allow_upload(
@@ -54,21 +53,27 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
     {:noreply, socket}
   end
 
-
   @impl true
   def handle_event("validate", _params, socket) do
     error_entries =
       Enum.reduce(socket.assigns.uploads.media.entries, [], fn entry, acc ->
         case upload_errors(socket.assigns.uploads.media, entry) do
-          [] -> acc
+          [] ->
+            acc
+
           entry_errors ->
             errors =
               Enum.map(entry_errors, &upload_error_message(entry.client_name, &1))
+
             acc ++ [{entry, errors}]
         end
       end)
 
-    socket = Enum.reduce(error_entries, socket, fn {entry, _}, socket -> cancel_upload(socket, :media, entry.ref) end)
+    socket =
+      Enum.reduce(error_entries, socket, fn {entry, _}, socket ->
+        cancel_upload(socket, :media, entry.ref)
+      end)
+
     errors = Enum.reduce(error_entries, [], fn {_, errors}, acc -> acc ++ errors end)
 
     socket =
@@ -102,19 +107,26 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
 
     socket =
       Enum.reduce(data_id, socket, fn id, socket ->
-        start_async(socket, "delete_media_#{id}", fn -> Ash.get!(@model, id, actor: current_user) end)
+        start_async(socket, "delete_media_#{id}", fn ->
+          Ash.get!(@model, id, actor: current_user)
+        end)
       end)
 
     {:noreply, socket}
   end
 
   def handle_event("load-more", _params, socket) do
-    page = is_integer(socket.assigns.page) && socket.assigns.page || String.to_integer(socket.assigns.page)
+    page =
+      (is_integer(socket.assigns.page) && socket.assigns.page) ||
+        String.to_integer(socket.assigns.page)
+
     page = page + 1
+
     socket =
       socket
       |> assign(:page, page)
       |> get_list_by_params()
+
     {:noreply, socket}
   end
 
@@ -124,6 +136,7 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
       |> assign(:q, q)
       |> assign(:page, 1)
       |> get_list_by_params(true)
+
     {:noreply, socket}
   end
 
@@ -131,12 +144,15 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
     if entry.done? do
       consume_uploaded_entry(socket, entry, fn %{path: path} ->
         new_path = "#{path}-#{entry.uuid}"
+
         case File.rename(path, new_path) do
           :ok ->
             Task.async(fn ->
               {:media_upload, {entry, new_path}}
             end)
+
             {:ok, nil}
+
           {:error, reason} ->
             {:error, reason}
         end
@@ -151,11 +167,19 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
   end
 
   @impl true
-  def handle_async("delete_media"<>_, {:ok, media}, socket) do
+  def handle_async("delete_media" <> _, {:ok, media}, socket) do
     :ok = Ash.destroy(media, action: :destroy_media, actor: socket.assigns.current_user)
     count_all = socket.assigns.count_all - 1
-    count_videos = if is_video_mime_type(media.post_mime_type), do: socket.assigns.count_videos - 1, else: socket.assigns.count_videos
-    count_images = if is_image_mime_type(media.post_mime_type), do: socket.assigns.count_images - 1, else: socket.assigns.count_images
+
+    count_videos =
+      if is_video_mime_type(media.post_mime_type),
+        do: socket.assigns.count_videos - 1,
+        else: socket.assigns.count_videos
+
+    count_images =
+      if is_image_mime_type(media.post_mime_type),
+        do: socket.assigns.count_images - 1,
+        else: socket.assigns.count_images
 
     socket =
       stream_delete_by_dom_id(socket, :medias, "medias-#{media.id}")
@@ -174,8 +198,8 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
         :error ->
           socket
           |> put_flash(:error, "Error uploading file \"#{entry.client_name}\"")
-        %{mime_type: mime_type, file: file, filename: filename, filesize: filesize} = meta_data ->
 
+        %{mime_type: mime_type, file: file, filename: filename, filesize: filesize} = meta_data ->
           client_name_with_extension = extract_filename_without_extension(entry.client_name)
 
           metas =
@@ -184,7 +208,7 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
               %{meta_key: :attachment_filesize, meta_value: "#{filesize}"},
               %{meta_key: :attachment_metadata, meta_value: Jason.encode!(meta_data)},
               %{meta_key: :attachment_image_alt, meta_value: client_name_with_extension},
-              %{meta_key: :attachment_image_caption, meta_value: client_name_with_extension},
+              %{meta_key: :attachment_image_caption, meta_value: client_name_with_extension}
             ]
 
           attrs = %{
@@ -199,8 +223,16 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
           media = media |> Ash.load!([:post_meta])
 
           count_all = socket.assigns.count_all + 1
-          count_videos = if is_video_mime_type(media.post_mime_type), do: socket.assigns.count_videos + 1, else: socket.assigns.count_videos
-          count_images = if is_image_mime_type(media.post_mime_type), do: socket.assigns.count_images + 1, else: socket.assigns.count_images
+
+          count_videos =
+            if is_video_mime_type(media.post_mime_type),
+              do: socket.assigns.count_videos + 1,
+              else: socket.assigns.count_videos
+
+          count_images =
+            if is_image_mime_type(media.post_mime_type),
+              do: socket.assigns.count_images + 1,
+              else: socket.assigns.count_images
 
           socket =
             socket
@@ -218,15 +250,23 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
     {:noreply, stream_delete_by_dom_id(socket, :medias, "medias-#{entry.uuid}")}
   end
 
-  def handle_info({:media_update, media}, socket), do: {:noreply, stream_insert(socket, :medias, media)}
+  def handle_info({:media_update, media}, socket),
+    do: {:noreply, stream_insert(socket, :medias, media)}
+
   def handle_info(_msg, socket), do: {:noreply, socket}
 
-
   defp get_list_by_params(socket, stream_force_reset \\ false) do
-    %{page: page, per_page: per_page, q: q, media_type: media_type, order_by: order_by, current_user: current_user} = socket.assigns
+    %{
+      page: page,
+      per_page: per_page,
+      q: q,
+      media_type: media_type,
+      order_by: order_by,
+      current_user: current_user
+    } = socket.assigns
 
-    page = is_integer(page) && page || String.to_integer(page)
-    per_page = is_integer(per_page) && per_page || String.to_integer(per_page)
+    page = (is_integer(page) && page) || String.to_integer(page)
+    per_page = (is_integer(per_page) && per_page) || String.to_integer(per_page)
 
     limit = per_page
     offset = (page - 1) * per_page
@@ -246,15 +286,22 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
 
     data = Ash.Query.filter(data, post_type == :attachment)
 
-    count_images = Ash.Query.filter(data, expr(contains(post_mime_type, ^"image"))) |> Ash.count!([actor: current_user])
-    count_videos = Ash.Query.filter(data, expr(contains(post_mime_type, ^"video"))) |> Ash.count!([actor: current_user])
-    count_all =  Ash.count!(data, [actor: current_user])
+    count_images =
+      Ash.Query.filter(data, expr(contains(post_mime_type, ^"image")))
+      |> Ash.count!(actor: current_user)
+
+    count_videos =
+      Ash.Query.filter(data, expr(contains(post_mime_type, ^"video")))
+      |> Ash.count!(actor: current_user)
+
+    count_all = Ash.count!(data, actor: current_user)
 
     data =
       case order_by do
-        "-"<>field ->
+        "-" <> field ->
           sort = Keyword.put([], String.to_atom(field), :desc)
           Ash.Query.sort(data, sort)
+
         field ->
           sort = Keyword.put([], String.to_atom(field), :asc)
           Ash.Query.sort(data, sort)
@@ -281,7 +328,13 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
 
     socket =
       socket
-      |> assign(:params, %{page: page, per_page: per_page, q: q, media_type: media_type, order_by: order_by})
+      |> assign(:params, %{
+        page: page,
+        per_page: per_page,
+        q: q,
+        media_type: media_type,
+        order_by: order_by
+      })
       |> assign(:count_all, count_all)
       |> assign(:data_count, data.count)
       |> assign(:count_images, count_images)
@@ -292,12 +345,17 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
     socket
   end
 
-  defp upload_error_message(client_name, :too_large), do: "\"#{client_name}\" exceeds size limit. Choose smaller file."
-  defp upload_error_message(client_name, :not_accepted), do: "\"#{client_name}\" is not an accepted file type. Try another format."
-  defp upload_error_message(client_name, :too_many_files), do: "Too many files with \"#{client_name}\". Reduce and retry."
+  defp upload_error_message(client_name, :too_large),
+    do: "\"#{client_name}\" exceeds size limit. Choose smaller file."
+
+  defp upload_error_message(client_name, :not_accepted),
+    do: "\"#{client_name}\" is not an accepted file type. Try another format."
+
+  defp upload_error_message(client_name, :too_many_files),
+    do: "Too many files with \"#{client_name}\". Reduce and retry."
 
   defp is_uploading?(upload_config) do
-    length(upload_config.entries) > 0 && Enum.any?(upload_config.entries, &(&1.valid?))
+    length(upload_config.entries) > 0 && Enum.any?(upload_config.entries, & &1.valid?)
   end
 
   defp live_url(query_params) when is_map(query_params) do
@@ -310,6 +368,7 @@ defmodule MonorepoWeb.AdminMediaLive.Index do
     q = Map.get(params, "q", "")
     media_type = Map.get(params, "media_type", "")
     order_by = Map.get(params, "order_by", "-inserted_at")
+
     %{
       page: page,
       per_page: per_page,

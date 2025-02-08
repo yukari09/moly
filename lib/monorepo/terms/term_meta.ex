@@ -33,5 +33,4 @@ defmodule Monorepo.Terms.TermMeta do
   identities do
     identity :term_meta_key_with_term_id, [:term_id, :term_key]
   end
-
 end

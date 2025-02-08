@@ -9,7 +9,8 @@ defmodule MonorepoWeb.AuthController do
       case activity do
         {:confirm_new_user, :confirm} ->
           if user.status != :active do
-            Ash.update!(user,
+            Ash.update!(
+              user,
               %{status: :active},
               action: :update_user_status,
               context: %{private: %{ash_authentication?: true}}
@@ -36,22 +37,22 @@ defmodule MonorepoWeb.AuthController do
 
   def failure(conn, activity, reason) do
     message =
-    case {activity, reason} do
-      {{:magic_link, _},
-        %AshAuthentication.Errors.AuthenticationFailed{
-          caused_by: %Ash.Error.Forbidden{
-            errors: [%AshAuthentication.Errors.CannotConfirmUnconfirmedUser{}]
-          }
-        }} ->
-        "You have already signed in another way, but have not confirmed your account. Please confirm your account."
+      case {activity, reason} do
+        {{:magic_link, _},
+         %AshAuthentication.Errors.AuthenticationFailed{
+           caused_by: %Ash.Error.Forbidden{
+             errors: [%AshAuthentication.Errors.CannotConfirmUnconfirmedUser{}]
+           }
+         }} ->
+          "You have already signed in another way, but have not confirmed your account. Please confirm your account."
 
-      _ ->
-        "Incorrect email or password"
-    end
+        _ ->
+          "Incorrect email or password"
+      end
 
-  conn
-  |> put_flash(:error, message)
-  |> redirect(to: ~p"/sign-in")
+    conn
+    |> put_flash(:error, message)
+    |> redirect(to: ~p"/sign-in")
   end
 
   def sign_out(conn, _params) do

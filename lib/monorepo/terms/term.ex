@@ -47,8 +47,8 @@ defmodule Monorepo.Terms.Term do
         countable true
       end
 
-      filter(expr(is_nil(^arg(:parent)) or term_taxonomy.parent_id == ^arg(:parent)))
-      filter(expr(is_nil(^arg(:taxonomy_name)) or term_taxonomy.taxonomy == ^arg(:taxonomy_name)))
+      filter expr(is_nil(^arg(:parent)) or term_taxonomy.parent_id == ^arg(:parent))
+      filter expr(is_nil(^arg(:taxonomy_name)) or term_taxonomy.taxonomy == ^arg(:taxonomy_name))
     end
 
     create :create do
@@ -66,11 +66,16 @@ defmodule Monorepo.Terms.Term do
 
     destroy :destroy do
       primary? true
+
       change before_action(fn changeset, context ->
-        Ash.Query.filter(Monorepo.Terms.TermTaxonomy, term_id == ^Ash.Changeset.get_attribute(changeset, :id))
-        |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
-        changeset
-      end)
+               Ash.Query.filter(
+                 Monorepo.Terms.TermTaxonomy,
+                 term_id == ^Ash.Changeset.get_attribute(changeset, :id)
+               )
+               |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
+
+               changeset
+             end)
     end
   end
 

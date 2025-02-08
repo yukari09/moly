@@ -24,7 +24,6 @@ defmodule Monorepo.Accounts.User do
         end
       end
 
-
       google do
         client_id(Monorepo.Secrets)
         redirect_uri(Monorepo.Secrets)
@@ -66,6 +65,7 @@ defmodule Monorepo.Accounts.User do
       argument :subject, :string, allow_nil?: false
       get? true
       prepare AshAuthentication.Preparations.FilterBySubject
+
       prepare fn query, _context ->
         query
         |> Ash.Query.load([:user_meta])
@@ -144,9 +144,9 @@ defmodule Monorepo.Accounts.User do
       end
 
       change before_action(fn %{arguments: %{email: email}} = changeset, _context ->
-        user_meta = register_relation_user_meta(email)
-        Ash.Changeset.manage_relationship(changeset, :user_meta, user_meta, type: :create)
-      end)
+               user_meta = register_relation_user_meta(email)
+               Ash.Changeset.manage_relationship(changeset, :user_meta, user_meta, type: :create)
+             end)
 
       # Sets the email from the argument
       change set_attribute(:email, arg(:email))
@@ -186,17 +186,25 @@ defmodule Monorepo.Accounts.User do
       upsert_fields []
 
       change after_action(fn changeset, user, context ->
-        case user.confirmed_at do
-          nil -> {:error, "Unconfirmed user exists already"}
-          _ ->
-            if DateTime.diff(DateTime.utc_now, user.inserted_at) < 2 do
-              user_info = Ash.Changeset.get_argument(changeset, :user_info)
-              user_meta = register_relation_user_meta(user_info)
-              Ash.update(user, %{user_meta: user_meta}, action: :update_user_meta, return_errors?: true, context: %{private: %{ash_authentication?: true}})
-            end
-            {:ok, user}
-        end
-      end)
+               case user.confirmed_at do
+                 nil ->
+                   {:error, "Unconfirmed user exists already"}
+
+                 _ ->
+                   if DateTime.diff(DateTime.utc_now(), user.inserted_at) < 2 do
+                     user_info = Ash.Changeset.get_argument(changeset, :user_info)
+                     user_meta = register_relation_user_meta(user_info)
+
+                     Ash.update(user, %{user_meta: user_meta},
+                       action: :update_user_meta,
+                       return_errors?: true,
+                       context: %{private: %{ash_authentication?: true}}
+                     )
+                   end
+
+                   {:ok, user}
+               end
+             end)
     end
 
     create :create_manually do
@@ -291,25 +299,67 @@ defmodule Monorepo.Accounts.User do
       change AshAuthentication.GenerateTokenChange
     end
 
-    # update :resend_confirmation do
-    #   description "Resend email to user."
+    update :resend_confirmation do
+      description "Resend email to user."
+      require_atomic? false
 
-    #   argument :updated_at, :datetime do
-    #     allow_nil? false
-    #   end
+      argument :updated_at, :datetime do
+        allow_nil? false
+      end
 
-    #   change after_action(fn changeset, user, context ->
-    #     Monorepo.Accounts.Token
-    #     |> Ash.Query.filter(subject == ^"user?id=#{user.id}" and purpose == "confirm_new_user" and expires_at < now())
-    #     |> Ash.Query.limit(1)
-    #     |> Ash.read_one()
-    #     |> case do
-    #       {:ok, nil} ->
+      change after_action(fn changeset, user, context ->
+               claims = %{"act" => "confirm"}
 
-    #     end
-    #     {:ok, user}
-    #   end)
-    # end
+               token =
+                 Monorepo.Accounts.Token
+                 |> Ash.Query.filter(
+                   subject == ^"user?id=#{user.id}" and purpose == "confirm_new_user" and
+                     expires_at > now()
+                 )
+                 |> Ash.Query.limit(1)
+                 |> Ash.read_one(context: %{private: %{ash_authentication?: true}})
+                 |> case do
+                   {:ok, nil} ->
+                     {:ok, strategy} =
+                       AshAuthentication.Info.strategy(Monorepo.Accounts.User, :confirm_new_user)
+
+                     {:ok, token, _} =
+                       AshAuthentication.Jwt.token_for_user(user, claims,
+                         token_lifetime: strategy.token_lifetime
+                       )
+
+                     Ash.create(
+                       Monorepo.Accounts.Token,
+                       %{
+                         extra_data: %{email: user.email},
+                         purpose: "confirm_new_user",
+                         token: token
+                       },
+                       action: :store_token,
+                       context: %{private: %{ash_authentication?: true}}
+                     )
+
+                     token
+
+                   {:ok, user_token} ->
+                     claims =
+                       Map.merge(claims, %{"jti" => user_token.jti, "sub" => user_token.subject})
+
+                     {:ok, strategy} =
+                       AshAuthentication.Info.strategy(Monorepo.Accounts.User, :confirm_new_user)
+
+                     {:ok, token, _} =
+                       AshAuthentication.Jwt.token_for_user(user, claims,
+                         token_lifetime: strategy.token_lifetime
+                       )
+
+                     token
+                 end
+
+               Monorepo.Accounts.User.Senders.SendNewUserConfirmationEmail.send(user, token, nil)
+               {:ok, user}
+             end)
+    end
 
     update :update_user_status do
       description "Update the status of a user to active"
@@ -329,7 +379,12 @@ defmodule Monorepo.Accounts.User do
         allow_nil? false
       end
 
-      change manage_relationship :user_meta, :user_meta, on_lookup: :relate, on_no_match: :create, on_match: :update, use_identities: [:meta_key_with_user_id]
+      change manage_relationship(:user_meta, :user_meta,
+               on_lookup: :relate,
+               on_no_match: :create,
+               on_match: :update,
+               use_identities: [:meta_key_with_user_id]
+             )
     end
 
     update :update, primary?: true
@@ -389,12 +444,17 @@ defmodule Monorepo.Accounts.User do
           email = Ash.CiString.value(email_or_user_info)
           name = extract_name_from_email(email)
           [name, name, nil]
+
         email_or_user_info when is_map(email_or_user_info) ->
           name = email_or_user_info["name"]
           username = email_or_user_info["name"] |> String.replace(" ", "")
-          avatar = Monorepo.Accounts.Helper.generate_avatar_from_url(email_or_user_info["picture"])
+
+          avatar =
+            Monorepo.Accounts.Helper.generate_avatar_from_url(email_or_user_info["picture"])
+
           [name, username, avatar]
       end
+
     [
       %{meta_key: :name, meta_value: name},
       %{meta_key: :username, meta_value: username},
@@ -402,6 +462,6 @@ defmodule Monorepo.Accounts.User do
     ]
   end
 
-  defp extract_name_from_email(email), do: email |> to_string() |> String.split("@") |> List.first()
-
+  defp extract_name_from_email(email),
+    do: email |> to_string() |> String.split("@") |> List.first()
 end

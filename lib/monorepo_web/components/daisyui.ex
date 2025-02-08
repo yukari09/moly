@@ -19,7 +19,6 @@ defmodule MonorepoWeb.DaisyUi do
     )
   end
 
-
   attr(:id, :string, doc: "the optional id of flash container")
   attr(:flash, :map, default: %{}, doc: "the map of flash messages to display")
   attr(:title, :string, default: nil)
@@ -50,7 +49,6 @@ defmodule MonorepoWeb.DaisyUi do
     """
   end
 
-
   attr(:flash, :map, required: true, doc: "the map of flash messages")
   attr(:id, :string, default: "flash-group", doc: "the optional id of flash container")
 
@@ -64,6 +62,4 @@ defmodule MonorepoWeb.DaisyUi do
     </div>
     """
   end
-
-
 end

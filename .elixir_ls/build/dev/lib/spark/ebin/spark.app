@@ -39,4 +39,4 @@
                              igniter]},
               {description,"Generic tooling for building DSLs"},
               {registered,[]},
-              {vsn,"2.2.37"}]}.
+              {vsn,"2.2.45"}]}.

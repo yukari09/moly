@@ -45,8 +45,8 @@ defmodule Monorepo.Terms.TermTaxonomy do
         allow_nil? true
       end
 
-      filter(expr(is_nil(^arg(:parent)) or parent_id == ^arg(:parent)))
-      filter(expr(is_nil(^arg(:taxonomy_name)) or taxonomy == ^arg(:taxonomy_name)))
+      filter expr(is_nil(^arg(:parent)) or parent_id == ^arg(:parent))
+      filter expr(is_nil(^arg(:taxonomy_name)) or taxonomy == ^arg(:taxonomy_name))
     end
 
     create :create do
@@ -96,10 +96,12 @@ defmodule Monorepo.Terms.TermTaxonomy do
 
   relationships do
     belongs_to :term, Monorepo.Terms.Term
+
     belongs_to :parent, Monorepo.Terms.Term do
       source_attribute :parent_id
       destination_attribute :id
     end
+
     many_to_many :posts, Monorepo.Contents.Post, through: Monorepo.Terms.TermRelationships
   end
 end

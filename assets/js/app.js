@@ -141,6 +141,10 @@ window.addEventListener("app:input-validate", async(event) => {
     const validateResult = Validators[validator](...function_var)
     const elHelper = document.querySelector(`#${this_el_id}-helper`)
     const elError = document.querySelector(`#${this_el_id}-error`)
+    const elErrorIcon = document.querySelector(`.${this_el_id}-icon`)
+
+    const normalClass = event.target.dataset.normalClass
+    const errorClass = event.target.dataset.errorClass
 
     if (validateResult !== true) {
       if (elError) {
@@ -151,6 +155,13 @@ window.addEventListener("app:input-validate", async(event) => {
         elHelper.classList.add("hidden");
       }
       event.target.setAttribute("data-validate", "0")
+      if(normalClass && errorClass){
+        let nc = normalClass.split(" ")
+        let ec = errorClass.split(" ")
+        event.target.classList.remove(...nc)
+        event.target.classList.add(...ec)
+      }
+      if(elErrorIcon) elErrorIcon.classList.remove("hidden")
     } else {
       if (elError) {
         elError.textContent = "";
@@ -160,6 +171,13 @@ window.addEventListener("app:input-validate", async(event) => {
         elHelper.classList.remove("hidden");
       }
       event.target.setAttribute("data-validate", "1")
+      if(normalClass && errorClass){
+        let nc = normalClass.split(" ")
+        let ec = errorClass.split(" ")
+        event.target.classList.remove(...ec)
+        event.target.classList.add(...nc)
+      }
+      if(elErrorIcon) elErrorIcon.classList.add("hidden")
     }
   }
 })
@@ -199,7 +217,7 @@ window.addEventListener("app:validate-and-exec", async(event) => {
 
   const name = event.target.getAttribute("name")
   let prefix =  name.match(/^([^\[]+)/)
-  prefix = prefix ? prefix[0] : event.target.dataset.formName
+  prefix = prefix ? prefix[0].split("_")[0] : event.target.dataset.formName
 
   if(prefix){
     const formElements = document.querySelectorAll(`[data-input-dispatch]`)
@@ -213,10 +231,8 @@ window.addEventListener("app:validate-and-exec", async(event) => {
 
     if(formElements.length == validated.length){
       submit_btn.removeAttribute("disabled")
-      submit_btn.classList.remove("btn-disabled")
     }else{
       submit_btn.setAttribute("disabled", "disabled")
-      submit_btn.classList.add("btn-disabled")
     }
 
   }

@@ -18,7 +18,19 @@ defmodule Monorepo.Comments.Comment do
     end
 
     role :admin do
-      fields([:comment_content, :inserted_at, :updated_at, :comment_author_email, :comment_author_url, :comment_author_ip, :comment_type, :comment_approved, :inserted_at, :updated_at])
+      fields([
+        :comment_content,
+        :inserted_at,
+        :updated_at,
+        :comment_author_email,
+        :comment_author_url,
+        :comment_author_ip,
+        :comment_type,
+        :comment_approved,
+        :inserted_at,
+        :updated_at
+      ])
+
       actions([:read, :update, :create, :destroy])
     end
   end

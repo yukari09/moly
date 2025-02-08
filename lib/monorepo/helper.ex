@@ -5,7 +5,6 @@ defmodule Monorepo.Helper do
 
   require Logger
 
-
   @doc """
   Uploads a file to S3
   """
@@ -52,6 +51,7 @@ defmodule Monorepo.Helper do
 
   def remove_object(filename) do
     bucket = load_s3_config(:bucket)
+
     Enum.reduce_while(1..5, nil, fn _, _ ->
       ExAws.S3.delete_object(bucket, filename)
       |> ExAws.request()
@@ -72,7 +72,8 @@ defmodule Monorepo.Helper do
         expires_in: 7200,
         query_params: [{"Content-Type", upload_entry.client_type}]
       )
-     {:ok, %{uploader: "S3", key: key, url: url}, socket}
+
+    {:ok, %{uploader: "S3", key: key, url: url}, socket}
   end
 
   def image_resize(filename, width \\ nil, height \\ nil) do
@@ -80,11 +81,14 @@ defmodule Monorepo.Helper do
       Imgproxy.new("s3://#{s3_path(filename)}")
       |> Imgproxy.set_extension("avif")
 
-    o = case [width, height] do
-      [nil, nil] -> new_img
-      [_, _] ->
-        Imgproxy.resize(new_img, width, height, type: "fill")
-    end
+    o =
+      case [width, height] do
+        [nil, nil] ->
+          new_img
+
+        [_, _] ->
+          Imgproxy.resize(new_img, width, height, type: "fill")
+      end
 
     to_string(o)
   end
@@ -94,17 +98,24 @@ defmodule Monorepo.Helper do
     "#{bucket}/#{filename}"
   end
 
-  def s3_file_with_domain(filename), do: "#{load_s3_config(:domain_scheme)}://#{load_s3_config(:domain)}/#{filename}"
+  def s3_file_with_domain(filename),
+    do: "#{load_s3_config(:domain_scheme)}://#{load_s3_config(:domain)}/#{filename}"
 
-  def upload_entry_information(%Phoenix.LiveView.UploadEntry{client_type: mime_type} = entry, file_path) do
+  def upload_entry_information(
+        %Phoenix.LiveView.UploadEntry{client_type: mime_type} = entry,
+        file_path
+      ) do
     case ffprobe(file_path) do
       {:ok, data} ->
         video_stream = Enum.find(data["streams"], &(&1["codec_type"] == "video"))
         width = video_stream["width"]
         height = video_stream["height"]
         duration = format_duration(video_stream["duration"])
+
         case put_object(entry, file_path) do
-          nil -> nil
+          nil ->
+            nil
+
           filename ->
             entry_information(mime_type, width, height, duration, filename)
             |> Map.put(:filesize, entry.client_size)
@@ -114,17 +125,29 @@ defmodule Monorepo.Helper do
             |> Map.put(:height, height)
             |> Map.put(:type, Path.extname(entry.client_name))
         end
-      _ -> :error
+
+      _ ->
+        :error
     end
   end
 
-  def entry_information("image"<>_, width, height, _, filename) do
+  def entry_information("image" <> _, width, height, _, filename) do
     original_ratio = width / height
+
     sizes =
-      [full: width, thumbnail: 180, medium: 360, large: 1024, xlarge: 1280, xxlarge: 2048, huge: 4096]
+      [
+        full: width,
+        thumbnail: 180,
+        medium: 360,
+        large: 1024,
+        xlarge: 1280,
+        xxlarge: 2048,
+        huge: 4096
+      ]
       |> Enum.filter(fn {_, width_size} -> width >= width_size end)
       |> Enum.reduce(%{}, fn {key, width_size}, acc ->
         height_size = round(width_size / original_ratio)
+
         Map.put(acc, key, %{
           file: image_resize(filename, width_size, height_size),
           width: width_size,
@@ -132,17 +155,20 @@ defmodule Monorepo.Helper do
           mime_type: "image/webp"
         })
       end)
+
     %{file: image_resize(filename), sizes: sizes}
   end
 
-  def entry_information("video"<>_, _, _, duration, filename) do
+  def entry_information("video" <> _, _, _, duration, filename) do
     %{file: s3_file_with_domain(filename), duration: duration}
   end
 
-
   def ffprobe(media_path) do
     FLAME.call(Monorepo.SamplePool, fn ->
-      case System.cmd("ffprobe", ~w(-v quiet -print_format json -show_format -show_streams -i #{media_path})) do
+      case System.cmd(
+             "ffprobe",
+             ~w(-v quiet -print_format json -show_format -show_streams -i #{media_path})
+           ) do
         {output, 0} -> Jason.decode(output)
         _ -> {:error, nil}
       end
@@ -156,7 +182,7 @@ defmodule Monorepo.Helper do
 
   defp load_s3_config(key \\ nil) do
     config = ExAws.Config.new(:s3)
-    key && Map.get(config, key) || config
+    (key && Map.get(config, key)) || config
   end
 
   @doc """
@@ -209,6 +235,7 @@ defmodule Monorepo.Helper do
         |> String.to_float()
         |> Float.floor()
         |> trunc()
+
       false ->
         String.to_integer(duration)
     end
@@ -234,15 +261,18 @@ defmodule Monorepo.Helper do
   def format_number(value) when value >= 1_000_000 do
     "#{div(value, 1000)}M"
   end
+
   def format_number(value) when value >= 1000 do
     "#{div(value, 1000)}K"
   end
+
   def format_number(value), do: Integer.to_string(value)
 
   @doc """
   Format time ago
   """
   def ago(nil), do: ""
+
   def ago(timestamp) when is_float(timestamp) do
     {:ok, ago} =
       timestamp
@@ -252,6 +282,7 @@ defmodule Monorepo.Helper do
 
     ago
   end
+
   def ago(year, month, day, hour, minute \\ 0, second \\ 0)
       when is_integer(year) and is_integer(month) and is_integer(hour) do
     {:ok, ago} =
@@ -266,21 +297,24 @@ defmodule Monorepo.Helper do
     |> Timex.from_unix()
     |> Timex.format!("{h24}:{0m}  {D},{Mshort} {YYYY}")
   end
+
   def timestamp2datetime(_), do: ""
 
   def get_in_from_keys(map_or_list, keys) do
     Enum.reduce_while(keys, map_or_list, fn key, acc ->
       value =
-        cond  do
+        cond do
           is_map(acc) -> Map.get(acc, key, nil)
           is_list(acc) && is_integer(key) -> Enum.at(acc, key)
           true -> nil
         end
-      is_nil(value) && {:halt, nil} || {:cont, value}
+
+      (is_nil(value) && {:halt, nil}) || {:cont, value}
     end)
   end
 
   def bits_to_readable(bits) when is_binary(bits), do: bits_to_readable(String.to_integer(bits))
+
   def bits_to_readable(bits) when is_integer(bits) do
     cond do
       bits >= 1_000_000_000 -> "#{div(bits, 1_000_000_000)} GB"
@@ -289,6 +323,7 @@ defmodule Monorepo.Helper do
       true -> "#{bits} B"
     end
   end
+
   def bits_to_readable(nil), do: 0
 
   def pagination_meta(total, page_size, page, show_item)

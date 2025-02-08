@@ -33,16 +33,17 @@ defmodule MonorepoWeb.LiveUserAuth do
     end
   end
 
-  defp check_roles(%{assigns: %{current_user: %{roles: roles, status: :active}}}  = socket) do
+  defp check_roles(%{assigns: %{current_user: %{roles: roles, status: :active}}} = socket) do
     socket =
       if Enum.member?(roles, :admin) do
         socket
         |> assign(:page_css, :admin)
         |> assign(:page_js, :admin)
+        {:cont, socket}
       else
-        redirect(socket, to: ~p"/sign-in")
+        socket = redirect(socket, to: ~p"/sign-in")
+        {:halt, socket}
       end
-    {:cont, socket}
   end
 
   defp check_roles(socket), do: {:halt, redirect(socket, to: ~p"/sign-in")}

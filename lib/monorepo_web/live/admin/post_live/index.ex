@@ -18,7 +18,6 @@ defmodule MonorepoWeb.AdminPostLive.Index do
     {:noreply, socket}
   end
 
-
   defp get_list_by_params(socket, params) do
     current_user = socket.assigns.current_user
 
@@ -74,12 +73,13 @@ defmodule MonorepoWeb.AdminPostLive.Index do
       Enum.reduce(calc_status, %{}, fn post_status, acc ->
         count =
           Ash.Query.filter(@model, post_status == ^post_status)
-          |> Ash.count!([actor: current_user])
+          |> Ash.count!(actor: current_user)
+
         Map.put(acc, post_status, count)
       end)
 
     all_posts =
-      Enum.reduce(status_count, 0, & &2 + elem(&1, 1))
+      Enum.reduce(status_count, 0, &(&2 + elem(&1, 1)))
 
     socket =
       socket

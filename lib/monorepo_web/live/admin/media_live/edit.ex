@@ -3,7 +3,7 @@ defmodule MonorepoWeb.AdminMediaLive.Edit do
 
   import Monorepo.Contents.Helpers
 
-  def mount(%{"id" =>id}, _session, socket) do
+  def mount(%{"id" => id}, _session, socket) do
     media =
       Ash.get!(Monorepo.Contents.Post, id, actor: socket.assigns.current_user)
       |> Ash.load!([:post_meta])
@@ -15,7 +15,6 @@ defmodule MonorepoWeb.AdminMediaLive.Edit do
 
     {:ok, socket, layout: {MonorepoWeb.Layouts, :admin_modal}}
   end
-
 
   def update(%{id: id, current_user: current_user}, socket) do
     media =
@@ -33,7 +32,12 @@ defmodule MonorepoWeb.AdminMediaLive.Edit do
 
   def handle_event("partial_update", %{"form" => params}, socket) do
     old_form = socket.assigns.form
-    updated_media = AshPhoenix.Form.submit(old_form, params: params, action_opts: [actor: socket.assigns.current_user])
+
+    updated_media =
+      AshPhoenix.Form.submit(old_form,
+        params: params,
+        action_opts: [actor: socket.assigns.current_user]
+      )
 
     socket =
       case updated_media do
@@ -48,19 +52,22 @@ defmodule MonorepoWeb.AdminMediaLive.Edit do
           socket
           |> assign(form: form)
       end
+
     {:noreply, socket}
   end
 
   def for_update_form(media) do
-    AshPhoenix.Form.for_update(media, :update_media, forms: [
-      post_meta: [
-        type: :list,
-        data: media.post_meta,
-        resource: Monorepo.Contents.PostMeta,
-        update_action: :update,
-        create_action: :create
+    AshPhoenix.Form.for_update(media, :update_media,
+      forms: [
+        post_meta: [
+          type: :list,
+          data: media.post_meta,
+          resource: Monorepo.Contents.PostMeta,
+          update_action: :update,
+          create_action: :create
+        ]
       ]
-    ])
+    )
     |> to_form()
   end
 end

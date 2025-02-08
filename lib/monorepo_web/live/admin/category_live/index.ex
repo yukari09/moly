@@ -6,10 +6,7 @@ defmodule MonorepoWeb.AdminCategoryLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-      socket,
-      temporary_assigns: [modal_id: generate_random_id()]
-    }
+    {:ok, socket, temporary_assigns: [modal_id: generate_random_id()]}
   end
 
   @impl true
@@ -43,7 +40,6 @@ defmodule MonorepoWeb.AdminCategoryLive.Index do
     {:noreply, socket}
   end
 
-
   defp get_list_by_params(socket, params) do
     current_user = socket.assigns.current_user
 
@@ -72,8 +68,8 @@ defmodule MonorepoWeb.AdminCategoryLive.Index do
 
     query =
       @model
-      |> Ash.Query.filter(term_taxonomy.taxonomy=="category")
-      |> Ash.Query.load([term_taxonomy: :parent])
+      |> Ash.Query.filter(term_taxonomy.taxonomy == "category")
+      |> Ash.Query.load(term_taxonomy: :parent)
 
     query =
       if is_nil(q) do
@@ -104,7 +100,7 @@ defmodule MonorepoWeb.AdminCategoryLive.Index do
   end
 
   defp category_to_form(nil, _) do
-    AshPhoenix.Form.for_create(Monorepo.Terms.Term, :create, [
+    AshPhoenix.Form.for_create(Monorepo.Terms.Term, :create,
       forms: [
         term_taxonomy: [
           type: :list,
@@ -113,13 +109,14 @@ defmodule MonorepoWeb.AdminCategoryLive.Index do
           update_action: :create
         ]
       ]
-    ])
+    )
     |> to_form()
   end
 
   defp category_to_form(categoires_id, current_user) do
     term = get_category_by_id(categoires_id, current_user)
-    AshPhoenix.Form.for_update(term, :update, [
+
+    AshPhoenix.Form.for_update(term, :update,
       forms: [
         term_taxonomy: [
           type: :list,
@@ -128,7 +125,7 @@ defmodule MonorepoWeb.AdminCategoryLive.Index do
           update_action: :update
         ]
       ]
-    ])
+    )
     |> to_form()
   end
 end

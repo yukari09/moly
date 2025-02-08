@@ -1,5 +1,6 @@
 defmodule Monorepo.Contents.Post do
   require Ash.Resource.Change.Builtins
+
   use Ash.Resource,
     otp_app: :monorepo,
     domain: Monorepo.Contents,
@@ -16,18 +17,67 @@ defmodule Monorepo.Contents.Post do
 
   rbac do
     role :user do
-      fields([:post_title, :post_name, :post_type, :post_content, :post_status, :post_mime_type, :guid, :inserted_at, :updated_at])
+      fields([
+        :post_title,
+        :post_name,
+        :post_type,
+        :post_content,
+        :post_status,
+        :post_mime_type,
+        :guid,
+        :inserted_at,
+        :updated_at
+      ])
+
       actions([:read])
     end
 
     role :admin do
-      fields([:post_title, :post_name, :post_type, :post_content, :post_status, :post_mime_type, :guid, :inserted_at, :updated_at])
-      actions([:read, :create_media, :destroy_media, :update_media, :create_post, :update_post, :destroy_post])
+      fields([
+        :post_title,
+        :post_name,
+        :post_type,
+        :post_content,
+        :post_status,
+        :post_mime_type,
+        :guid,
+        :inserted_at,
+        :updated_at
+      ])
+
+      actions([
+        :read,
+        :create_media,
+        :destroy_media,
+        :update_media,
+        :create_post,
+        :update_post,
+        :destroy_post
+      ])
     end
 
     role :owner do
-      fields([:post_title, :post_name, :post_type, :post_content, :post_status, :post_mime_type, :guid, :inserted_at, :updated_at])
-      actions([:read, :create_media, :destroy_media, :update_media, :create_post, :update_post, :destroy_post])
+      fields([
+        :post_title,
+        :post_name,
+        :post_type,
+        :post_content,
+        :post_status,
+        :post_mime_type,
+        :guid,
+        :inserted_at,
+        :updated_at
+      ])
+
+      actions([
+        :read,
+        :create_media,
+        :destroy_media,
+        :update_media,
+        :create_post,
+        :update_post,
+        :destroy_post
+      ])
     end
   end
 
@@ -45,7 +95,16 @@ defmodule Monorepo.Contents.Post do
     end
 
     create :create_post do
-      accept [:post_title, :post_content, :post_type, :post_status, :post_name, :post_excerpt, :guid, :post_date]
+      accept [
+        :post_title,
+        :post_content,
+        :post_type,
+        :post_status,
+        :post_name,
+        :post_excerpt,
+        :guid,
+        :post_date
+      ]
 
       argument :post_meta, {:array, :map}
       argument :categories, {:array, :uuid}
@@ -59,7 +118,17 @@ defmodule Monorepo.Contents.Post do
 
     update :update_post do
       require_atomic? false
-      accept [:post_title, :post_content, :post_type, :post_status, :post_name, :post_excerpt, :guid, :post_date]
+
+      accept [
+        :post_title,
+        :post_content,
+        :post_type,
+        :post_status,
+        :post_name,
+        :post_excerpt,
+        :guid,
+        :post_date
+      ]
 
       argument :post_meta, {:array, :map}
       argument :categories, {:array, :uuid}
@@ -70,7 +139,6 @@ defmodule Monorepo.Contents.Post do
 
       change after_action(&create_or_update_term_relationships/3)
     end
-
 
     update :update_media do
       require_atomic? false
@@ -92,7 +160,7 @@ defmodule Monorepo.Contents.Post do
 
       change set_attribute(:post_type, :attachment)
       change set_attribute(:post_status, :inherit)
-      change set_attribute(:post_date,  DateTime.utc_now())
+      change set_attribute(:post_date, DateTime.utc_now())
       change &change_post_name/2
       change relate_actor(:author)
 
@@ -130,13 +198,28 @@ defmodule Monorepo.Contents.Post do
     attribute :post_status, :atom do
       allow_nil? false
       default :draft
-      validations(one_of: [:publish, :future, :draft, :pending, :private, :trash, :auto_draft, :inherit])
+
+      validations(
+        one_of: [:publish, :future, :draft, :pending, :private, :trash, :auto_draft, :inherit]
+      )
     end
 
     attribute :post_type, :atom do
       allow_nil? false
       default :post
-      validations(one_of: [:post, :page, :attachment, :revision, :nav_menu_item, :product, :portfolio, :event])
+
+      validations(
+        one_of: [
+          :post,
+          :page,
+          :attachment,
+          :revision,
+          :nav_menu_item,
+          :product,
+          :portfolio,
+          :event
+        ]
+      )
     end
 
     attribute :comment_status, :boolean do
@@ -173,7 +256,7 @@ defmodule Monorepo.Contents.Post do
       default "post"
     end
 
-    attribute :post_date,  :utc_datetime do
+    attribute :post_date, :utc_datetime do
       description "The date the post was created"
       allow_nil? false
     end
@@ -223,10 +306,12 @@ defmodule Monorepo.Contents.Post do
     identity :unique_post_name, [:post_name]
   end
 
-
   defp add_meta(%{arguments: %{metas: metas}} = _changeset, post, context) do
-    metas = Enum.map(metas, &(Map.put(&1, :post, post.id)))
-    %Ash.BulkResult{status: :success} = Ash.bulk_create!(metas, Monorepo.Contents.PostMeta, :create, actor: context.actor)
+    metas = Enum.map(metas, &Map.put(&1, :post, post.id))
+
+    %Ash.BulkResult{status: :success} =
+      Ash.bulk_create!(metas, Monorepo.Contents.PostMeta, :create, actor: context.actor)
+
     {:ok, post}
   end
 
@@ -241,13 +326,13 @@ defmodule Monorepo.Contents.Post do
     changeset
   end
 
-
   defp change_post_name(changeset, _) do
     hash = Monorepo.Helper.generate_random_str()
     Ash.Changeset.force_change_attribute(changeset, :post_name, hash)
   end
 
-  defp update_media_meta(%{arguments: %{post_meta: post_meta}} = _changeset, post, context) when is_list(post_meta) do
+  defp update_media_meta(%{arguments: %{post_meta: post_meta}} = _changeset, post, context)
+       when is_list(post_meta) do
     Enum.filter(post_meta, fn
       %{"id" => _id, "meta_value" => _meta_value, "_form_type" => "update"} -> true
       _ -> false
@@ -261,7 +346,8 @@ defmodule Monorepo.Contents.Post do
   end
 
   defp create_or_update_term_relationships(%{arguments: arguments}, post, context) do
-    categories = Map.get(arguments, :categories, []) #[%{term_taxonomy_id: some_term_taxonomy_id}]
+    # [%{term_taxonomy_id: some_term_taxonomy_id}]
+    categories = Map.get(arguments, :categories, [])
     tags = Map.get(arguments, :tags, [])
 
     term_names = Enum.map(tags, & &1["name"])
@@ -280,9 +366,10 @@ defmodule Monorepo.Contents.Post do
       |> Ash.Query.filter(id in ^term_taxonomy_ids)
       |> Ash.Query.data_layer_query()
 
-    Monorepo.Repo.update_all(term_taxonomy, [inc: [count: -1]])
+    Monorepo.Repo.update_all(term_taxonomy, inc: [count: -1])
 
-    categories_term_relation_ships = Enum.map(categories, &(%{term_taxonomy_id: &1, post_id: post.id}))
+    categories_term_relation_ships =
+      Enum.map(categories, &%{term_taxonomy_id: &1, post_id: post.id})
 
     existed_tags =
       Monorepo.Terms.TermTaxonomy
@@ -291,14 +378,17 @@ defmodule Monorepo.Contents.Post do
       |> Ash.load!([:term], actor: context.actor)
 
     existed_tag_names = Enum.map(existed_tags, & &1.term.name)
-    rest_not_exist_tags = Enum.filter(tags, & &1["name"] not in existed_tag_names)
+    rest_not_exist_tags = Enum.filter(tags, &(&1["name"] not in existed_tag_names))
 
     rest_tags_term_relation_ships =
       if rest_not_exist_tags == [] do
         []
       else
         %Ash.BulkResult{status: :success, records: records} =
-          Ash.bulk_create!(rest_not_exist_tags, Monorepo.Terms.Term, :create, actor: context.actor, return_records?: true)
+          Ash.bulk_create!(rest_not_exist_tags, Monorepo.Terms.Term, :create,
+            actor: context.actor,
+            return_records?: true
+          )
 
         Enum.map(records, fn record ->
           term_taxonomy = record.term_taxonomy |> List.first()
@@ -306,11 +396,20 @@ defmodule Monorepo.Contents.Post do
         end)
       end
 
-    tags_term_relation_ships = Enum.map(existed_tags, & %{term_taxonomy_id: &1.id, post_id: post.id})
-    term_relation_ships = categories_term_relation_ships ++ tags_term_relation_ships ++ rest_tags_term_relation_ships
+    tags_term_relation_ships =
+      Enum.map(existed_tags, &%{term_taxonomy_id: &1.id, post_id: post.id})
+
+    term_relation_ships =
+      categories_term_relation_ships ++ tags_term_relation_ships ++ rest_tags_term_relation_ships
 
     %Ash.BulkResult{status: :success} =
-      Ash.bulk_create!(term_relation_ships, Monorepo.Terms.TermRelationships, :create_term_relationships_by_relation_id, actor: context.actor, return_records?: true)
+      Ash.bulk_create!(
+        term_relation_ships,
+        Monorepo.Terms.TermRelationships,
+        :create_term_relationships_by_relation_id,
+        actor: context.actor,
+        return_records?: true
+      )
 
     term_taxonomy_ids = Enum.map(term_relation_ships, & &1.term_taxonomy_id)
 
@@ -319,10 +418,8 @@ defmodule Monorepo.Contents.Post do
       |> Ash.Query.filter(id in ^term_taxonomy_ids)
       |> Ash.Query.data_layer_query()
 
-    Monorepo.Repo.update_all(term_taxonomy, [inc: [count: 1]])
+    Monorepo.Repo.update_all(term_taxonomy, inc: [count: 1])
 
     {:ok, post}
   end
-
-
 end

@@ -2,8 +2,7 @@ defmodule MonorepoWeb.AdminPostLive.FormField.PostName do
   use MonorepoWeb.Admin, :live_component
 
   def render(assigns) do
-
-    slug_dropdown_id  = generate_random_id()
+    slug_dropdown_id = generate_random_id()
 
     assigns = assign(assigns, slug_dropdown_id: slug_dropdown_id)
 

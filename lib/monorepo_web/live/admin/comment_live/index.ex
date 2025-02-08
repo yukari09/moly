@@ -6,9 +6,7 @@ defmodule MonorepoWeb.AdminCommentLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-      socket
-    }
+    {:ok, socket}
   end
 
   @impl true
@@ -22,7 +20,6 @@ defmodule MonorepoWeb.AdminCommentLive.Index do
     socket = socket |> push_patch(to: live_url(%{page: 1, q: q}))
     {:noreply, socket}
   end
-
 
   defp get_list_by_params(socket, params) do
     current_user = socket.assigns.current_user
@@ -52,7 +49,7 @@ defmodule MonorepoWeb.AdminCommentLive.Index do
 
     query =
       @model
-      |> Ash.Query.filter(comment_type=="comment")
+      |> Ash.Query.filter(comment_type == "comment")
       |> Ash.Query.load([:comment_author])
 
     query =
@@ -77,5 +74,4 @@ defmodule MonorepoWeb.AdminCommentLive.Index do
   defp live_url(query_params) when is_map(query_params) do
     ~p"/admin/comments?#{query_params}"
   end
-
 end

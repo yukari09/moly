@@ -40,13 +40,15 @@ defmodule MonorepoWeb.Router do
     #   # on_mount {MonorepoWeb.LiveUserAuth, :live_no_user}
     # end
 
-    ash_authentication_live_session :authenticated_maybe_routes,  on_mount: {MonorepoWeb.LiveUserAuth, :live_user_optional} do
-      live("/", Affiliate.PageIndexLive)
-    end
+    # ash_authentication_live_session :authenticated_maybe_routes,
+    #   on_mount: {MonorepoWeb.LiveUserAuth, :live_user_optional} do
+    #   live("/", Affiliate.PageIndexLive)
+    # end
 
-    ash_authentication_live_session :authenticated_routes, on_mount: {MonorepoWeb.LiveUserAuth, :live_user_required} do
-      live("/products/submit", Affiliate.ProductSubmitLive)
-    end
+    # ash_authentication_live_session :authenticated_routes,
+    #   on_mount: {MonorepoWeb.LiveUserAuth, :live_user_required} do
+    #   live("/products/submit", Affiliate.ProductSubmitLive)
+    # end
   end
 
   scope "/", MonorepoWeb do
@@ -76,6 +78,16 @@ defmodule MonorepoWeb.Router do
         AshAuthentication.Phoenix.Overrides.Default
       ]
     )
+
+    ash_authentication_live_session :authenticated_maybe_routes,
+      on_mount: {MonorepoWeb.LiveUserAuth, :live_user_optional} do
+      live("/", Affiliate.PageIndexLive)
+    end
+
+    ash_authentication_live_session :authenticated_routes,
+      on_mount: {MonorepoWeb.LiveUserAuth, :live_user_required} do
+      live("/products/submit", Affiliate.ProductSubmitLive)
+    end
   end
 
   # scope "/" do
@@ -98,12 +110,11 @@ defmodule MonorepoWeb.Router do
       live("/post/:id/edit", AdminPostLive.NewOrEdit)
       live("/media", AdminMediaLive.Index, :index)
       live("/media/:id/edit", AdminMediaLive.Edit)
-      live "/categories", AdminCategoryLive.Index, :index
-      live "/tags", AdminTagLive.Index, :index
-      live "/comments", AdminCommentLive.Index, :index
+      live("/categories", AdminCategoryLive.Index, :index)
+      live("/tags", AdminTagLive.Index, :index)
+      live("/comments", AdminCommentLive.Index, :index)
     end
   end
-
 
   # Other scopes may use custom stacks.
   # scope "/api", MonorepoWeb do

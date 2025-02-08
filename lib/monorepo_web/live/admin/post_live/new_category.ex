@@ -1,7 +1,7 @@
 defmodule MonorepoWeb.AdminPostLive.NewCategory do
   use MonorepoWeb.Admin, :live_view
 
-  def mount(_params, %{"user" => "user?id="<>user_id}, socket) do
+  def mount(_params, %{"user" => "user?id=" <> user_id}, socket) do
     current_user =
       Ash.get!(Monorepo.Accounts.User, user_id, context: %{private: %{ash_authentication?: true}})
 
@@ -19,20 +19,26 @@ defmodule MonorepoWeb.AdminPostLive.NewCategory do
   end
 
   def handle_event("validate", %{"form" => params}, socket) do
-    form =  AshPhoenix.Form.validate(socket.assigns.form, params)
+    form = AshPhoenix.Form.validate(socket.assigns.form, params)
     {:noreply, assign(socket, :form, form)}
   end
 
   def handle_event("save", %{"form" => params}, socket) do
     :timer.sleep(50)
-    case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: [actor: socket.assigns.current_user]) do
+
+    case AshPhoenix.Form.submit(socket.assigns.form,
+           params: params,
+           action_opts: [actor: socket.assigns.current_user]
+         ) do
       {:ok, _result} ->
         socket =
           socket
           |> push_event("js-exec", %{to: "#create_category_modal_id", attr: "phx-remove"})
           |> assign(:form, category_to_form())
 
-        send_update(socket.parent_pid, MonorepoWeb.AdminPostLive.FormField.PostCategories, id: "form-field-post-categories")
+        send_update(socket.parent_pid, MonorepoWeb.AdminPostLive.FormField.PostCategories,
+          id: "form-field-post-categories"
+        )
 
         {:noreply, socket}
 
@@ -65,7 +71,7 @@ defmodule MonorepoWeb.AdminPostLive.NewCategory do
   end
 
   defp category_to_form() do
-    AshPhoenix.Form.for_create(Monorepo.Terms.Term, :create, [
+    AshPhoenix.Form.for_create(Monorepo.Terms.Term, :create,
       forms: [
         term_taxonomy: [
           type: :list,
@@ -74,9 +80,7 @@ defmodule MonorepoWeb.AdminPostLive.NewCategory do
           update_action: :create
         ]
       ]
-    ])
+    )
     |> to_form()
   end
-
-
 end

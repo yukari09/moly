@@ -74,7 +74,7 @@
   
   <main class="mt-20">
     <MonorepoWeb.TailwindUI.flash_group flash={@flash} id="app-flash" />
-    <.live_component module={MonorepoWeb.Affiliate.PageIndexAlert} id="user_email_alert" current_user={@current_user} />
+    <.live_component module={MonorepoWeb.Affiliate.PageIndexAlert} id="user_email_alert" :if={Monorepo.Accounts.Helper.is_active_user(@current_user) == false} current_user={@current_user} />
     { @inner_content }  
   </main>
 

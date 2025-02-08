@@ -56,7 +56,6 @@ defmodule Monorepo.Accounts.UserMeta do
     identity :meta_key_with_user_id, [:meta_key, :user_id]
   end
 
-
   # rbac do
   #   role :guest do
   #     fields([:meta_key, :meta_value, :inserted_at, :updated_at])

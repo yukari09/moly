@@ -7,4 +7,4 @@
               {applications,[kernel,stdlib,elixir,logger]},
               {description,"Splode helps you deal with errors and exceptions in your application that are aggregatable and consistent.\n"},
               {registered,[]},
-              {vsn,"0.2.7"}]}.
+              {vsn,"0.2.8"}]}.

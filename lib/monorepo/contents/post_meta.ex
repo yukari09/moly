@@ -40,6 +40,12 @@ defmodule Monorepo.Contents.PostMeta do
     end
   end
 
+  policies do
+    policy always() do
+      authorize_if always()
+    end
+  end
+
   attributes do
     uuid_primary_key :id
 
@@ -62,15 +68,9 @@ defmodule Monorepo.Contents.PostMeta do
     identity :meta_key_with_post_id, [:meta_key, :post_id]
   end
 
-
-  policies do
-    policy always() do
-      authorize_if always()
-    end
-  end
-
   defp remove_attachment(_changeset, postmeta, _context) do
     meta_key = postmeta.meta_key
+
     if meta_key == :attached_file do
       remove_object(postmeta.meta_value)
       {:ok, postmeta}

@@ -1,8 +1,11 @@
 defmodule MonorepoWeb.AdminTagLive.Form do
-
   use MonorepoWeb.Admin, :live_component
 
-  def update(%{form: form, modal_id: modal_id, patch_url: patch_url, current_user: current_user} = _assigns, socket) do
+  def update(
+        %{form: form, modal_id: modal_id, patch_url: patch_url, current_user: current_user} =
+          _assigns,
+        socket
+      ) do
     parent_categories =
       Monorepo.Terms.read_by_term_taxonomy!("category", nil, actor: current_user)
       |> Enum.map(&{&1.id, &1.name})
@@ -18,15 +21,18 @@ defmodule MonorepoWeb.AdminTagLive.Form do
     {:ok, socket}
   end
 
-
   def handle_event("validate", %{"form" => params}, socket) do
-    form =  AshPhoenix.Form.validate(socket.assigns.form, params)
+    form = AshPhoenix.Form.validate(socket.assigns.form, params)
     {:noreply, assign(socket, :form, form)}
   end
 
   def handle_event("save", %{"form" => params}, socket) do
     :timer.sleep(50)
-    case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: [actor: socket.assigns.current_user]) do
+
+    case AshPhoenix.Form.submit(socket.assigns.form,
+           params: params,
+           action_opts: [actor: socket.assigns.current_user]
+         ) do
       {:ok, _result} ->
         socket =
           socket
@@ -64,5 +70,4 @@ defmodule MonorepoWeb.AdminTagLive.Form do
     </div>
     """
   end
-
 end

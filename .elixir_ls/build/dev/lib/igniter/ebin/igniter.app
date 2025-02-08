@@ -16,7 +16,6 @@
                         'Elixir.Igniter.Mix.Task.Args',
                         'Elixir.Igniter.Mix.Task.Info',
                         'Elixir.Igniter.Phoenix.Generator',
-                        'Elixir.Igniter.Phoenix.Single',
                         'Elixir.Igniter.Project.Application',
                         'Elixir.Igniter.Project.Config',
                         'Elixir.Igniter.Project.Deps',
@@ -53,8 +52,8 @@
               {optional_applications,[phx_new]},
               {applications,[kernel,stdlib,elixir,logger,public_key,ssl,inets,
                              eex,rewrite,glob_ex,spitfire,sourceror,jason,req,
-                             phx_new]},
+                             phx_new,inflex,owl]},
               {description,"A code generation and project patching framework\n"},
               {registered,[]},
-              {vsn,"0.5.14"},
+              {vsn,"0.5.21"},
               {plt_add_apps,[mix]}]}.

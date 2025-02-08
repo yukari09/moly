@@ -1,5 +1,6 @@
 defmodule Monorepo.Terms.TermRelationships do
   require Ash.Resource.Change.Builtins
+
   use Ash.Resource,
     otp_app: :monorepo,
     domain: Monorepo.Terms,
@@ -15,6 +16,7 @@ defmodule Monorepo.Terms.TermRelationships do
       primary? true
       pagination offset?: true, keyset?: true, required?: false
     end
+
     create :create, primary?: true
     update :update, primary?: true
     destroy :destroy, primary?: true
@@ -27,11 +29,10 @@ defmodule Monorepo.Terms.TermRelationships do
       argument :term_taxonomy_id, :uuid
       argument :post_id, :uuid
 
-      change manage_relationship :term_taxonomy_id, :term_taxonomy, type: :append_and_remove
-      change manage_relationship :post_id, :post, type: :append_and_remove
+      change manage_relationship(:term_taxonomy_id, :term_taxonomy, type: :append_and_remove)
+      change manage_relationship(:post_id, :post, type: :append_and_remove)
     end
   end
-
 
   attributes do
     uuid_primary_key :id

@@ -51,14 +51,13 @@ defmodule MonorepoWeb.TailwindUI do
     )
   end
 
-
   @doc """
   Dropdown menu.
   """
   attr(:id, :string, required: true)
   attr(:class, :string, default: nil)
-  slot :button_slot, required: true
-  slot :menu_slot, required: true
+  slot(:button_slot, required: true)
+  slot(:menu_slot, required: true)
 
   def dropdown(assigns) do
     menu_id = generate_random_id(8)
@@ -109,12 +108,11 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
-
   attr(:id, :string, default: nil)
   attr(:class, :string, default: nil)
   attr(:active, :boolean, default: false)
   attr(:rest, :global)
-  attr :disabled, :boolean, default: false
+  attr(:disabled, :boolean, default: false)
   slot(:inner_block, required: true)
 
   def dropdown_link(assigns) do
@@ -137,7 +135,6 @@ defmodule MonorepoWeb.TailwindUI do
     </a>
     """
   end
-
 
   attr(:type, :string, default: "button")
   attr(:class, :string, default: nil)
@@ -348,9 +345,8 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
-
-  attr :badge, :string, default: nil
-  attr :class, :string, default: nil
+  attr(:badge, :string, default: nil)
+  attr(:class, :string, default: nil)
 
   def badge_span(assigns) do
     ~H"""
@@ -459,6 +455,7 @@ defmodule MonorepoWeb.TailwindUI do
   def input(%{field: field} = assigns) do
     error_messages = error_messages(field.errors)
     assigns = assign(assigns, :errors, error_messages)
+
     ~H"""
     <div class={@container_class}>
       <input
@@ -501,12 +498,11 @@ defmodule MonorepoWeb.TailwindUI do
           <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" />
         </svg>
       </div>
-        <p :if={@help_text && @errors == []} class="mt-2 text-sm text-gray-500" id={"#{@field.id}-description"}>{ @help_text }</p>
-        <p :if={@errors != [] && @show_error} class="mt-2 text-sm text-red-600" id={"#{@field.id}-error"}>{ @label } { List.first(@errors) }</p>
+      <p :if={@help_text && @errors == []} class="mt-2 text-sm text-gray-500" id={"#{@field.id}-description"}>{ @help_text }</p>
+      <p :if={@errors != [] && @show_error} class="mt-2 text-sm text-red-600" id={"#{@field.id}-error"}>{ @label } { List.first(@errors) }</p>
     </div>
     """
   end
-
 
   attr(:field, Phoenix.HTML.FormField, required: true)
   attr(:label, :string, default: nil)
@@ -516,7 +512,7 @@ defmodule MonorepoWeb.TailwindUI do
   attr(:errors, :list, default: [])
   attr(:rest, :global)
   attr(:rows, :integer, default: 3)
-  slot :inner_block
+  slot(:inner_block)
 
   def textarea(%{field: field} = assigns) do
     error_messages = error_messages(field.errors)
@@ -754,8 +750,8 @@ defmodule MonorepoWeb.TailwindUI do
   attr(:field, Phoenix.HTML.FormField, required: true)
   attr(:options, :list, required: true)
   attr(:class, :string, default: nil)
-  attr :multiple, :boolean, default: false
-  attr :prompt, :string, default: nil
+  attr(:multiple, :boolean, default: false)
+  attr(:prompt, :string, default: nil)
   attr(:rest, :global)
 
   def select(assigns) do
@@ -790,8 +786,8 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
-  attr :id, :string, default: nil
-  attr :name, :string, default: nil
+  attr(:id, :string, default: nil)
+  attr(:name, :string, default: nil)
   attr(:field, Phoenix.HTML.FormField, default: nil)
   attr(:value, :string, default: nil)
   attr(:label, :string, required: false, default: nil)
@@ -836,13 +832,14 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
-  attr :id, :string, required: true
-  attr :name, :string, required: true
-  attr :class, :string, default: nil
-  attr :input_class, :string, default: nil
-  attr :value, :string, default: nil
-  attr :placeholder, :string, default: nil
-  attr :rest, :global
+  attr(:id, :string, required: true)
+  attr(:name, :string, required: true)
+  attr(:class, :string, default: nil)
+  attr(:input_class, :string, default: nil)
+  attr(:value, :string, default: nil)
+  attr(:placeholder, :string, default: nil)
+  attr(:rest, :global)
+
   def search_input(assigns) do
     ~H"""
     <div
@@ -864,7 +861,7 @@ defmodule MonorepoWeb.TailwindUI do
   @doc """
   Tabs with underline and badges.
   """
-  attr :id, :string, required: true
+  attr(:id, :string, required: true)
   attr(:tabs, :list, required: true)
   attr(:current_tab, :string, required: true)
   attr(:class, :string, default: nil)
@@ -909,11 +906,10 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
-
-  attr :tabs, :list, required: true
-  attr :class, :string, default: nil
-  attr :id, :string, default: nil
-  attr :selected, :string, required: true
+  attr(:tabs, :list, required: true)
+  attr(:class, :string, default: nil)
+  attr(:id, :string, default: nil)
+  attr(:selected, :string, required: true)
 
   def tabs(assigns) do
     ~H"""
@@ -944,7 +940,6 @@ defmodule MonorepoWeb.TailwindUI do
     </div>
     """
   end
-
 
   @doc """
   Renders flash notices.
@@ -1032,14 +1027,13 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
-
-  attr :id, :string, required: true
-  attr :label, :string, default: nil
-  attr :description, :string, default: nil
-  attr :on_change, JS, default: %JS{}
-  attr :class, :string, default: nil
-  attr :enabled, :boolean, default: false
-  attr :rest, :global
+  attr(:id, :string, required: true)
+  attr(:label, :string, default: nil)
+  attr(:description, :string, default: nil)
+  attr(:on_change, JS, default: %JS{})
+  attr(:class, :string, default: nil)
+  attr(:enabled, :boolean, default: false)
+  attr(:rest, :global)
 
   def toggle_switch(assigns) do
     ~H"""
@@ -1080,9 +1074,6 @@ defmodule MonorepoWeb.TailwindUI do
     """
   end
 
-
-
-
   defp generate_page_url(url, new_page) do
     uri = URI.parse(url)
     query_params = URI.decode_query(uri.query) || %{}
@@ -1103,8 +1094,6 @@ defmodule MonorepoWeb.TailwindUI do
   defp error_messages(errors) do
     Enum.map(errors, &translate_error(&1))
   end
-
-
 
   attr(:class, :string, default: nil)
   attr(:page_meta, :map, required: true)
@@ -1190,6 +1179,7 @@ defmodule MonorepoWeb.TailwindUI do
     </div>
     """
   end
+
   def no_results(assigns) do
     ~H"""
     <div class="text-center py-12">

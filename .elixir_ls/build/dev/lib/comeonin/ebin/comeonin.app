@@ -6,4 +6,4 @@
               {applications,[kernel,stdlib,elixir,logger]},
               {description,"A specification for password hashing libraries"},
               {registered,[]},
-              {vsn,"5.5.0"}]}.
+              {vsn,"5.5.1"}]}.

@@ -8,9 +8,11 @@ defmodule MonorepoWeb.AdminPostLive.FormField.Thumbnail do
     cur_feature_image =
       if form.data do
         form.data.post_meta
-        |> Enum.find(& &1.meta_key == :thumbnail_id)
+        |> Enum.find(&(&1.meta_key == :thumbnail_id))
         |> case do
-          nil -> nil
+          nil ->
+            nil
+
           %{meta_value: media_id} ->
             Monorepo.Contents.PostMeta
             |> Ash.Query.filter(post_id == ^media_id and meta_key == :attachment_metadata)

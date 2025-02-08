@@ -107,10 +107,20 @@ defmodule MonorepoWeb.AdminPostLive.SideBar do
     """
   end
 
-
   def accordion(icon_el, target_el) do
-    JS.toggle_class("block hidden", to: target_el, transition: "easy-in-out duration-50", time: 50)
-    |> JS.toggle_class("border-b rounded-bl-none rounded-br-none", transition: "easy-in-out duration-50", time: 50)
-    |> JS.toggle_class("rotate-180 text-gray-500 text-gray-400", transition: "easy-in-out duration-50", time: 50, to: icon_el)
+    JS.toggle_class("block hidden",
+      to: target_el,
+      transition: "easy-in-out duration-50",
+      time: 50
+    )
+    |> JS.toggle_class("border-b rounded-bl-none rounded-br-none",
+      transition: "easy-in-out duration-50",
+      time: 50
+    )
+    |> JS.toggle_class("rotate-180 text-gray-500 text-gray-400",
+      transition: "easy-in-out duration-50",
+      time: 50,
+      to: icon_el
+    )
   end
 end

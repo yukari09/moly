@@ -20,8 +20,8 @@ defmodule MonorepoWeb.AdminPostLive.FormField.PostCategories do
     selected_categories =
       if form.data do
         form.data.post_categories
-        |> Enum.reduce([], fn %{term_taxonomy: term_taxonomy},acc ->
-          acc ++ Enum.reduce(term_taxonomy, [], & [&1.id | &2])
+        |> Enum.reduce([], fn %{term_taxonomy: term_taxonomy}, acc ->
+          acc ++ Enum.reduce(term_taxonomy, [], &[&1.id | &2])
         end)
       else
         []
@@ -40,6 +40,7 @@ defmodule MonorepoWeb.AdminPostLive.FormField.PostCategories do
     term_taxonomy_categories =
       Monorepo.Terms.read_term_taxonomy!("category", nil, actor: current_user)
       |> Ash.load!([:term], actor: current_user)
+
     socket =
       socket
       |> assign(:term_taxonomy_categories, term_taxonomy_categories)
@@ -53,7 +54,7 @@ defmodule MonorepoWeb.AdminPostLive.FormField.PostCategories do
 
     selected_categories =
       if Enum.member?(selected_categories, id) do
-        Enum.reject(selected_categories, & &1 == id)
+        Enum.reject(selected_categories, &(&1 == id))
       else
         [id | selected_categories]
       end
@@ -64,8 +65,6 @@ defmodule MonorepoWeb.AdminPostLive.FormField.PostCategories do
 
     {:noreply, socket}
   end
-
-
 
   @impl true
   def render(assigns) do
