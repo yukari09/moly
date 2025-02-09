@@ -69,7 +69,7 @@ defmodule MonorepoWeb.Affiliate.UserPage do
           </div>
           <div class="space-y-1 mb-12">
             <div>
-              <textarea type="textarea" id="user_meta_0_meta_value" class="px-4 w-full !border-0  text-sm  !text-gray-500 !outline-none break-words resize-none overflow-hidden" rows="4" name="user_meta[0][meta_value]" placeholder="Add a description"   rows="1" phx-debounce="blur">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :description)}</textarea>
+              <textarea type="textarea" id="user_meta_0_meta_value" class="px-4 w-full !border-0  text-sm  !text-gray-500 !outline-none break-words resize-none overflow-hidden" rows="2" name="user_meta[0][meta_value]" placeholder="Add a description"   rows="1" phx-debounce="blur">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :description)}</textarea>
               <input type="hidden" name="user_meta[0][meta_key]" value={:description}/>
             </div>
 
