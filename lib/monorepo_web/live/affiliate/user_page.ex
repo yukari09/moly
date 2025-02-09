@@ -46,22 +46,19 @@ defmodule MonorepoWeb.Affiliate.UserPage do
   def render(assigns) do
     ~H"""
       <div class="relative min-h-[200px] bg-primary">
-        <a class="rounded bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600 shadow-sm hover:bg-indigo-100 absolute top-2 right-2"><.icon name="hero-pencil-solid" class="size-4 text-gray-500" /></a>
-      </div>
-      <div class="px-4 -mt-12">
-          <div class="avatar" role="button">
-            <div class="size-24 rounded-full" :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)}>
-              <img src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)["128"]} />
-            </div>
+        <a class="rounded bg-gray-50 px-2 py-1 text-xs font-semibold text-gray-600 shadow-sm hover:bg-gray-100 absolute top-2 right-2"><.icon name="hero-pencil-solid" class="size-4 text-gray-500" /></a>
+        <div class="px-4 -bottom-10 absolute">
+          <img :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-block size-24 rounded-full" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)["128"]} alt="">
+          <span :if={!Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-flex size-24 items-center justify-center rounded-full bg-primary border-2 border-white">
+            <span class="font-medium text-white uppercase text-4xl">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :name) |> String.slice(0, 1)}</span>
+          </span>
+          <div class="ml-4 absolute inset-0 size-24 justify-center hidden hover:flex items-center bg-black rounded-full opacity-30">
+            <.icon name="hero-pencil-square" class="size-6 text-white" />
           </div>
-          <div class="avatar placeholder" :if={!Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)}>
-            <div class="bg-primary text-base-100 size-24 rounded-full border-base-200 border-4">
-                <span class="capitalize text-5xl">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :name) |> String.slice(0, 1)}</span>
-            </div>
-          </div>
+        </div>
       </div>
       <form phx-change="partial_update">
-      <div class="flex items-start gap-8">
+      <div class="flex items-start gap-8 mt-12">
         <div class="w-80 py-4 px-2">
           <div class="text-2xl px-4 text-gray-900">
             <p><%= Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :name) %></p>
@@ -117,16 +114,47 @@ defmodule MonorepoWeb.Affiliate.UserPage do
 
           </div>
         </div>
-        <div class="border-b flex item-center justify-between w-full pr-2">
-          <div role="tablist" class="tabs tabs-bordered w-auto max-w-sm">
-            <a role="tab" class="tab">Published</a>
-            <a role="tab" class="tab tab-active">Saved</a>
-          </div>
-          <label class="input input-sm flex items-center gap-1 max-w-xs input-bordered my-1" autocomplete="off">
-              <Lucideicons.search class="size-4" />
-              <input type="text" name="search" placeholder="Search..." class="grow" phx-debounce="blur"/>
-          </label>
-        </div>
+
+
+<!--start tab-->
+<div class="grow px-2">
+<div class="relative border-b border-gray-200 pb-5 sm:pb-0">
+  <%!-- <div class="md:flex md:items-center md:justify-between">
+    <div class="mt-3 flex md:absolute md:top-3 md:right-0 md:mt-0">
+      <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50">Share</button>
+      <button type="button" class="ml-3 inline-flex items-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">Create</button>
+    </div>
+  </div> --%>
+  <div class="mt-4">
+    <div class="grid grid-cols-1 sm:hidden">
+      <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
+      <select aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600">
+        <option>Applied</option>
+        <option>Phone Screening</option>
+        <option selected>Interview</option>
+        <option>Offer</option>
+        <option>Hired</option>
+      </select>
+      <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+        <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+      </svg>
+    </div>
+    <!-- Tabs at small breakpoint and up -->
+    <div class="hidden sm:block">
+      <nav class="-mb-px flex space-x-8">
+        <!-- Current: "border-gray-500 text-gray-600", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
+        <a href="#" class="border-b-2 border-gray-500 px-1 pb-4 text-sm font-medium whitespace-nowrap text-gray-600" aria-current="page">Published</a>
+        <a href="#" class="border-b-2 border-transparent px-1 pb-4 text-sm font-medium whitespace-nowrap text-gray-500 hover:border-gray-300 hover:text-gray-700">Saved</a>
+      </nav>
+    </div>
+  </div>
+</div>
+</div>
+<!--end-->
+
+
+
+
       </div>
     </form>
     """
