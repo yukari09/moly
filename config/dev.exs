@@ -4,7 +4,7 @@ import Config
 config :monorepo, Monorepo.Repo,
   username: "yukari",
   password: "83233167",
-  hostname: "192.168.6.8",
+  hostname: "localhost",
   database: "monorepo_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
