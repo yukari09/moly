@@ -117,11 +117,9 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
         {:ok, post} ->
           socket
           |> put_flash(:info, "Saved post for #{post.post_title}!")
-          |> push_navigate(to: ~p"/admin/posts")
+          |> push_navigate(to: ~p"/product/#{post.id}")
 
         {:error, form} ->
-          IO.inspect(form)
-
           socket
           |> assign(form: form)
           |> put_flash(:error, "Oops, some thing wrong.")

@@ -46,7 +46,7 @@ defmodule MonorepoWeb.Affiliate.UserPage do
   def render(assigns) do
     ~H"""
       <div class="relative min-h-[200px] bg-primary">
-        <a class="btn btn-sm rounded-md absolute top-2 right-2 px-2"><.icon name="hero-pencil-solid" class="size-4 text-gray-500" /></a>
+        <a class="rounded bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600 shadow-sm hover:bg-indigo-100 absolute top-2 right-2"><.icon name="hero-pencil-solid" class="size-4 text-gray-500" /></a>
       </div>
       <div class="px-4 -mt-12">
           <div class="avatar" role="button">
@@ -67,42 +67,54 @@ defmodule MonorepoWeb.Affiliate.UserPage do
             <p><%= Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :name) %></p>
             <p class="text-xs/8">@{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :username)}</p>
           </div>
-          <div class="space-y-3 mb-12">
+          <div class="space-y-1 mb-12">
             <div>
-              <textarea id="user_meta_0_meta_value" class="textarea resize-none w-full" name="user_meta[0][meta_value]" placeholder="Add a description"  phx-hook="Resize" rows="1" phx-debounce="blur">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :description)}</textarea>
+              <textarea type="textarea" id="user_meta_0_meta_value" class="px-4 w-full !border-0  text-sm  !text-gray-500 !outline-none break-words resize-none overflow-hidden" rows="4" name="user_meta[0][meta_value]" placeholder="Add a description"   rows="1" phx-debounce="blur">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :description)}</textarea>
               <input type="hidden" name="user_meta[0][meta_key]" value={:description}/>
             </div>
 
-            <label class="input input-sm flex items-center gap-1">
-              <.icon name="hero-map-pin" class="size-4" />
-              <input type="text" name="user_meta[1][meta_value]" placeholder="Add a location" class="grow" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :location)} phx-debounce="blur"/>
+
+            <div>
+              <div class="grid grid-cols-1">
+                <input type="text" name="user_meta[1][meta_value]" placeholder="Add a location" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :location)} phx-debounce="blur" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-none placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:pl-9 sm:text-sm/6"/>
+                <.icon name="hero-map-pin" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
+              </div>
               <input type="hidden" name="user_meta[1][meta_key]" value={:location}/>
-            </label>
+            </div>
 
-            <label class="input input-sm flex items-center gap-1">
-              <.icon name="hero-globe-alt" class="size-4" />
-              <input type="text" name="user_meta[2][meta_value]" placeholder="Add a website URL" class="grow" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :website)} phx-debounce="blur"/>
+            <div>
+              <div class="grid grid-cols-1">
+                <input type="text" name="user_meta[2][meta_value]" placeholder="Add a website URL" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :website)} phx-debounce="blur" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-none placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:pl-9 sm:text-sm/6"/>
+                <.icon name="hero-globe-alt" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
+              </div>
               <input type="hidden" name="user_meta[2][meta_key]" value={:website}/>
-            </label>
+            </div>
 
-
-            <label class="input input-sm flex items-center gap-1">
-              <Lucideicons.twitter class="size-4" />
-              <input type="text" name="user_meta[3][meta_value]" placeholder="Add a X(twiiter)" class="grow" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :twitter)} phx-debounce="blur"/>
+            <div>
+              <div class="grid grid-cols-1">
+                <input type="text" name="user_meta[3][meta_value]" placeholder="Add a X(twiiter)" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :twitter)} phx-debounce="blur" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-none placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:pl-9 sm:text-sm/6"/>
+                <Lucideicons.twitter name="hero-globe-alt" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
+              </div>
               <input type="hidden" name="user_meta[3][meta_key]" value={:twitter}/>
-            </label>
+            </div>
 
-            <label class="input input-sm flex items-center gap-1">
-              <Lucideicons.facebook class="size-4" />
-              <input type="text" name="user_meta[4][meta_value]" placeholder="Add a Facebook" class="grow" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :facebook)} phx-debounce="blur"/>
+            <div>
+              <div class="grid grid-cols-1">
+                <input type="text" name="user_meta[4][meta_value]" placeholder="Add a Facebook" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :facebook)} phx-debounce="blur" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-none placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:pl-9 sm:text-sm/6"/>
+                <Lucideicons.facebook name="hero-globe-alt" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
+              </div>
               <input type="hidden" name="user_meta[4][meta_key]" value={:facebook}/>
-            </label>
+            </div>
 
-            <label class="input input-sm flex items-center gap-1">
-              <Lucideicons.instagram class="size-4" />
-              <input type="text" name="user_meta[5][meta_value]" placeholder="Add a Instagram" class="grow" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :instagram)} phx-debounce="blur"/>
+            <div>
+              <div class="grid grid-cols-1">
+                <input type="text" name="user_meta[5][meta_value]" placeholder="Add a Instagram" value={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :instagram)} phx-debounce="blur" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-none placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:pl-9 sm:text-sm/6"/>
+                <Lucideicons.instagram name="hero-globe-alt" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
+              </div>
               <input type="hidden" name="user_meta[5][meta_key]" value={:instagram}/>
-            </label>
+            </div>
+
+
           </div>
         </div>
         <div class="border-b flex item-center justify-between w-full pr-2">
