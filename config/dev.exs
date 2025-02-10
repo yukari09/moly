@@ -113,13 +113,13 @@ config :ex_aws,
 
 config :ex_aws, :s3,
   scheme: "http://",
-  host: "157.173.98.211",
+  host: "192.168.6.8",
   port: 9000,
   bucket: "local",
-  domain: "157.173.98.211:9000/local",
+  domain: "192.168.6.8:9000/local",
   domain_scheme: "http"
 
 config :imgproxy,
-  prefix: "http://157.173.98.211:8008",
+  prefix: "http://192.168.6.8:8008",
   key: "31dde3553997eb7bd3ad1ce2700c2f2e32dc15fffcd19969399e65b7c7d47c81",
   salt: "38d48531bc85ac8273a0cb9f057223349141a53954937b97785b9cbf15ee34ee"

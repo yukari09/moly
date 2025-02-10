@@ -1,0 +1,6 @@
+{
+"tailwindCSS.includeLanguages": { 
+    "phoenix-heex": "html", 
+    "elixir": "html",
+  }
+}

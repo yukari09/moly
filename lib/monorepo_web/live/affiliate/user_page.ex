@@ -2,6 +2,9 @@ defmodule MonorepoWeb.Affiliate.UserPage do
   use MonorepoWeb, :live_view
 
   def mount(_params, _session, socket) do
+    socket =
+      allow_upload(socket, :avatar, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1)
+      |> allow_upload(:banner, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1)
     {:ok, socket}
   end
 
@@ -43,6 +46,14 @@ defmodule MonorepoWeb.Affiliate.UserPage do
     {:noreply, socket}
   end
 
+  def handle_event(
+        "partial_update",
+        %{"_target" => ["avatar"]},
+        socket
+      ) do
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~H"""
       <div class="relative min-h-[200px] bg-primary">
@@ -52,12 +63,14 @@ defmodule MonorepoWeb.Affiliate.UserPage do
           <span :if={!Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-flex size-24 items-center justify-center rounded-full bg-primary border-2 border-white">
             <span class="font-medium text-white uppercase text-4xl">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :name) |> String.slice(0, 1)}</span>
           </span>
-          <div class="ml-4 absolute inset-0 size-24 justify-center hidden hover:flex items-center bg-black rounded-full opacity-30">
-            <.icon name="hero-pencil-square" class="size-6 text-white" />
+          <img :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-block size-24 rounded-full" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)["128"]} alt="">
+          <div for={@uploads.avatar.ref} class="ml-4 absolute inset-0 size-24 justify-center  flex items-cente rounded-full">
+            <.live_img_preview :for={entry <- @uploads.avatar.entries} entry={entry} />
           </div>
+          <label for={@uploads.avatar.ref} class="ml-4 absolute inset-0 size-24 justify-center  flex items-center bg-black rounded-full opacity-0 hover:opacity-10 cursor-pointer"></label>
         </div>
       </div>
-      <form phx-change="partial_update">
+      <.form phx-change="partial_update">
       <div class="flex items-start gap-8 mt-12">
         <div class="w-80 py-4 px-2">
           <div class="text-2xl px-4 text-gray-900">
@@ -110,53 +123,47 @@ defmodule MonorepoWeb.Affiliate.UserPage do
               </div>
               <input type="hidden" name="user_meta[5][meta_key]" value={:instagram}/>
             </div>
-
-
           </div>
         </div>
-
-
-<!--start tab-->
-<div class="grow px-2">
-<div class="relative border-b border-gray-200 pb-5 sm:pb-0">
-  <%!-- <div class="md:flex md:items-center md:justify-between">
-    <div class="mt-3 flex md:absolute md:top-3 md:right-0 md:mt-0">
-      <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50">Share</button>
-      <button type="button" class="ml-3 inline-flex items-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">Create</button>
-    </div>
-  </div> --%>
-  <div class="mt-4">
-    <div class="grid grid-cols-1 sm:hidden">
-      <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
-      <select aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600">
-        <option>Applied</option>
-        <option>Phone Screening</option>
-        <option selected>Interview</option>
-        <option>Offer</option>
-        <option>Hired</option>
-      </select>
-      <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
-        <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-      </svg>
-    </div>
-    <!-- Tabs at small breakpoint and up -->
-    <div class="hidden sm:block">
-      <nav class="-mb-px flex space-x-8">
-        <!-- Current: "border-gray-500 text-gray-600", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
-        <a href="#" class="border-b-2 border-gray-500 px-1 pb-4 text-sm font-medium whitespace-nowrap text-gray-600" aria-current="page">Published</a>
-        <a href="#" class="border-b-2 border-transparent px-1 pb-4 text-sm font-medium whitespace-nowrap text-gray-500 hover:border-gray-300 hover:text-gray-700">Saved</a>
-      </nav>
-    </div>
-  </div>
-</div>
-</div>
-<!--end-->
-
-
-
-
+        <!--start tab-->
+        <div class="grow px-2">
+        <div class="relative border-b border-gray-200 pb-5 sm:pb-0">
+          <%!-- <div class="md:flex md:items-center md:justify-between">
+            <div class="mt-3 flex md:absolute md:top-3 md:right-0 md:mt-0">
+              <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50">Share</button>
+              <button type="button" class="ml-3 inline-flex items-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">Create</button>
+            </div>
+          </div> --%>
+          <div class="mt-4">
+            <div class="grid grid-cols-1 sm:hidden">
+              <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
+              <select aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600">
+                <option>Applied</option>
+                <option>Phone Screening</option>
+                <option selected>Interview</option>
+                <option>Offer</option>
+                <option>Hired</option>
+              </select>
+              <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <!-- Tabs at small breakpoint and up -->
+            <div class="hidden sm:block">
+              <nav class="-mb-px flex space-x-8">
+                <!-- Current: "border-gray-500 text-gray-600", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
+                <a href="#" class="border-b-2 border-gray-500 px-1 pb-4 text-sm font-medium whitespace-nowrap text-gray-600" aria-current="page">Published</a>
+                <a href="#" class="border-b-2 border-transparent px-1 pb-4 text-sm font-medium whitespace-nowrap text-gray-500 hover:border-gray-300 hover:text-gray-700">Saved</a>
+              </nav>
+            </div>
+          </div>
+        </div>
+        </div>
+        <!--end-->
       </div>
-    </form>
+      <.live_file_input id="upload-avatar" class="size-0" upload={@uploads.avatar} />
+      <.live_file_input id="upload-banner" class="size-0" upload={@uploads.banner} />
+    </.form>
     """
   end
 end
