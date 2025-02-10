@@ -56,18 +56,23 @@ defmodule MonorepoWeb.Affiliate.UserPage do
 
   def render(assigns) do
     ~H"""
-      <div class="relative min-h-[200px] bg-primary">
-        <a class="rounded bg-gray-50 px-2 py-1 text-xs font-semibold text-gray-600 shadow-sm hover:bg-gray-100 absolute top-2 right-2"><.icon name="hero-pencil-solid" class="size-4 text-gray-500" /></a>
-        <div class="px-4 -bottom-10 absolute">
-          <img :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-block size-24 rounded-full" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)["128"]} alt="">
-          <span :if={!Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-flex size-24 items-center justify-center rounded-full bg-primary border-2 border-white">
-            <span class="font-medium text-white uppercase text-4xl">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :name) |> String.slice(0, 1)}</span>
-          </span>
-          <img :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-block size-24 rounded-full" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)["128"]} alt="">
-          <div for={@uploads.avatar.ref} class="ml-4 absolute inset-0 size-24 justify-center  flex items-cente rounded-full">
-            <.live_img_preview :for={entry <- @uploads.avatar.entries} entry={entry} />
+      <div>
+        <div class="relative lg:h-[200px] bg-primary">
+          <a class="rounded bg-gray-50 px-2 py-1 text-xs font-semibold text-gray-600 shadow-sm hover:bg-gray-100 absolute top-2 right-2"><.icon name="hero-pencil-solid" class="size-4 text-gray-500" /></a>
+          <div class="w-full h-full overflow-hidden">
+            <img class="w-full h-full object-cover overflow-hidden" src="/images/element-hd.jpg" />
           </div>
-          <label for={@uploads.avatar.ref} class="ml-4 absolute inset-0 size-24 justify-center  flex items-center bg-black rounded-full opacity-0 hover:opacity-10 cursor-pointer"></label>
+          <div class="px-4 -bottom-10 absolute">
+            <img :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-block size-24 rounded-full" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)["128"]} alt="">
+            <span :if={!Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-flex size-24 items-center justify-center rounded-full bg-primary border-2 border-white">
+              <span class="font-medium text-white uppercase text-4xl">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :name) |> String.slice(0, 1)}</span>
+            </span>
+            <img :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-block size-24 rounded-full" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)["128"]} alt="">
+            <div for={@uploads.avatar.ref} class="ml-4 absolute inset-0 size-24 justify-center  flex items-cente rounded-full">
+              <.live_img_preview class="size-24 rounded-full object-cover" :for={entry <- @uploads.avatar.entries} entry={entry} />
+            </div>
+            <label for={@uploads.avatar.ref} class="ml-4 absolute inset-0 size-24 justify-center  flex items-center bg-black rounded-full opacity-0 hover:opacity-10 cursor-pointer"></label>
+          </div>
         </div>
       </div>
       <.form phx-change="partial_update">
@@ -82,7 +87,6 @@ defmodule MonorepoWeb.Affiliate.UserPage do
               <textarea type="textarea" id="user_meta_0_meta_value" class="px-4 w-full !border-0  text-sm  !text-gray-500 !outline-none break-words resize-none overflow-hidden" rows="2" name="user_meta[0][meta_value]" placeholder="Add a description"   rows="1" phx-debounce="blur">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :description)}</textarea>
               <input type="hidden" name="user_meta[0][meta_key]" value={:description}/>
             </div>
-
 
             <div>
               <div class="grid grid-cols-1">

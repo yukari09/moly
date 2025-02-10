@@ -9,6 +9,7 @@ defmodule Monorepo.Accounts.Helper do
     |> Jason.encode!()
   end
 
+
   def load_meta_value_by_meta_key(%Monorepo.Accounts.User{user_meta: user_meta}, meta_key)
       when is_atom(meta_key) do
     Enum.find(user_meta, &(&1.meta_key == meta_key))
