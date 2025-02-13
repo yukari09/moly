@@ -1,10 +1,11 @@
-defmodule MonorepoWeb.Affiliate.UserPage do
+defmodule MonorepoWeb.Affiliate.UserPageLive2 do
   use MonorepoWeb, :live_view
 
   def mount(_params, _session, socket) do
     socket =
-      allow_upload(socket, :avatar, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1)
-      |> allow_upload(:banner, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1)
+      socket
+      |> allow_upload(:avatar, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1, auto_upload: true, progress: &handle_progress/3)
+      |> allow_upload(:banner, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1, auto_upload: true, progress: &handle_progress/3)
     {:ok, socket}
   end
 
@@ -21,7 +22,7 @@ defmodule MonorepoWeb.Affiliate.UserPage do
       Monorepo.Accounts.Helper.load_meta_value_by_meta_key(socket.assigns.current_user, meta_key)
 
     socket =
-      if old_meta_value != meta_value do
+      if !is_nil(meta_value) && old_meta_value != meta_value do
         new_user_meta_party = [%{meta_key: meta_key, meta_value: meta_value}]
         changeset = Ash.Changeset.new(socket.assigns.current_user)
 
@@ -46,36 +47,72 @@ defmodule MonorepoWeb.Affiliate.UserPage do
     {:noreply, socket}
   end
 
-  def handle_event(
-        "partial_update",
-        %{"_target" => ["avatar"]},
-        socket
-      ) do
+  def handle_event("partial_update", _, socket) do
     {:noreply, socket}
   end
 
+  defp handle_progress(uploader, entry, socket) do
+    if entry.done? do
+      uploaded_file =
+        consume_uploaded_entry(socket, entry, fn %{path: path} = _meta ->
+          old_file =
+            Monorepo.Accounts.Helper.load_meta_value_by_meta_key(socket.assigns.current_user, uploader)
+          if old_file do
+            filename = old_file["filename"]
+            Monorepo.Helper.remove_object(filename)
+          end
+          uploaded_file = case uploader do
+            :avatar -> Monorepo.Accounts.Helper.generate_avatar_from_entry(entry, path)
+            :banner -> Monorepo.Accounts.Helper.generate_banner_from_entry(entry, path)
+          end
+          {:ok, uploaded_file}
+        end)
+
+      new_user_meta_party = [%{meta_key: uploader, meta_value: uploaded_file}]
+      changeset = Ash.Changeset.new(socket.assigns.current_user)
+
+      result = Ash.update(changeset, %{user_meta: new_user_meta_party},
+        action: :update_user_meta,
+        context: %{private: %{ash_authentication?: true}}
+      )
+
+      socket =
+        case result do
+          {:ok, new_current_user} ->
+            put_flash(socket, :info, "Your information has been updated.")
+            |> assign(:current_user, new_current_user)
+
+          {:error, _} ->
+            put_flash(socket, :error, "Your information update failed, please try again later")
+        end
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
+  end
+
+
+
   def render(assigns) do
     ~H"""
-      <div>
-        <div class="relative lg:h-[200px] bg-primary">
-          <a class="rounded bg-gray-50 px-2 py-1 text-xs font-semibold text-gray-600 shadow-sm hover:bg-gray-100 absolute top-2 right-2"><.icon name="hero-pencil-solid" class="size-4 text-gray-500" /></a>
+    <div>
+      <.form phx-change="partial_update">
+        <div class="relative lg:h-[250px] bg-primary">
+          <label for={@uploads.banner.ref} class="rounded bg-gray-50 px-2 py-1 text-xs font-semibold text-gray-600 shadow-sm hover:bg-gray-100 absolute top-2 right-2 cursor-pointer"><.icon name="hero-pencil-solid" class="size-4 text-gray-500" /></label>
           <div class="w-full h-full overflow-hidden">
-            <img class="w-full h-full object-cover overflow-hidden" src="/images/element-hd.jpg" />
+            <img  class="w-full h-full object-cover overflow-hidden" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :banner)["xxl"]} />
           </div>
-          <div class="px-4 -bottom-10 absolute">
-            <img :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-block size-24 rounded-full" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)["128"]} alt="">
-            <span :if={!Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-flex size-24 items-center justify-center rounded-full bg-primary border-2 border-white">
+          <.live_file_input class="size-0" upload={@uploads.banner} />
+          <label for={@uploads.avatar.ref} class="-bottom-10 absolute size-24 cursor-pointer">
+            <img :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar) && Enum.count(@uploads.avatar.entries) == 0} class="inline-block size-24 rounded-full" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)["128"]} alt="">
+            <span :if={!Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar) && Enum.count(@uploads.avatar.entries) == 0} class="inline-flex size-24 items-center justify-center rounded-full bg-primary border-2 border-white">
               <span class="font-medium text-white uppercase text-4xl">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :name) |> String.slice(0, 1)}</span>
             </span>
-            <img :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)} class="inline-block size-24 rounded-full" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :avatar)["128"]} alt="">
-            <div for={@uploads.avatar.ref} class="ml-4 absolute inset-0 size-24 justify-center  flex items-cente rounded-full">
-              <.live_img_preview class="size-24 rounded-full object-cover" :for={entry <- @uploads.avatar.entries} entry={entry} />
-            </div>
-            <label for={@uploads.avatar.ref} class="ml-4 absolute inset-0 size-24 justify-center  flex items-center bg-black rounded-full opacity-0 hover:opacity-10 cursor-pointer"></label>
-          </div>
+            <div class="w-full h-full rounded-full absolute inset-0 opacity-0 hover:opacity-10 bg-black"></div>
+          </label>
+          <.live_file_input class="size-0" upload={@uploads.avatar} />
         </div>
-      </div>
-      <.form phx-change="partial_update">
+
       <div class="flex items-start gap-8 mt-12">
         <div class="w-80 py-4 px-2">
           <div class="text-2xl px-4 text-gray-900">
@@ -156,7 +193,7 @@ defmodule MonorepoWeb.Affiliate.UserPage do
             <div class="hidden sm:block">
               <nav class="-mb-px flex space-x-8">
                 <!-- Current: "border-gray-500 text-gray-600", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
-                <a href="#" class="border-b-2 border-gray-500 px-1 pb-4 text-sm font-medium whitespace-nowrap text-gray-600" aria-current="page">Published</a>
+                <a href="#" class="border-b-2 border-green-500 px-1 pb-4 text-sm font-medium whitespace-nowrap text-green-600" aria-current="page">Published</a>
                 <a href="#" class="border-b-2 border-transparent px-1 pb-4 text-sm font-medium whitespace-nowrap text-gray-500 hover:border-gray-300 hover:text-gray-700">Saved</a>
               </nav>
             </div>
@@ -165,9 +202,8 @@ defmodule MonorepoWeb.Affiliate.UserPage do
         </div>
         <!--end-->
       </div>
-      <.live_file_input id="upload-avatar" class="size-0" upload={@uploads.avatar} />
-      <.live_file_input id="upload-banner" class="size-0" upload={@uploads.banner} />
     </.form>
+    </div>
     """
   end
 end

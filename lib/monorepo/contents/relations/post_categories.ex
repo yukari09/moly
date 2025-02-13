@@ -11,7 +11,7 @@ defmodule Monorepo.Contents.Relations.PostCategories do
       query
       |> Ash.Query.filter(term_taxonomy.taxonomy == "category")
       |> Ash.Query.filter(term_taxonomy.posts.id in ^post_ids)
-      |> Ash.read!(Ash.Context.to_opts(context))
+      |> Ash.read!(opts)
       |> Ash.load!([:term_taxonomy], opts)
 
     return_result =

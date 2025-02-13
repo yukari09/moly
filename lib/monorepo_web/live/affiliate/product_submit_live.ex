@@ -112,6 +112,10 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
         end
       end)
 
+
+    params = Map.put(params, "post_status", "pending")
+    params = Map.put(params, "post_name", Monorepo.Helper.generate_random_str())
+
     socket =
       case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
         {:ok, post} ->

@@ -87,7 +87,7 @@ defmodule MonorepoWeb.Router do
     ash_authentication_live_session :authenticated_routes,
       on_mount: {MonorepoWeb.LiveUserAuth, :live_user_required} do
       live("/products/submit", Affiliate.ProductSubmitLive)
-      live("/user/profile", Affiliate.UserPage)
+      live("/user/page/:username", Affiliate.UserPageLive)
     end
   end
 

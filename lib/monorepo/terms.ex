@@ -4,6 +4,7 @@ defmodule Monorepo.Terms do
   resources do
     resource Monorepo.Terms.Term do
       define :read_by_term_taxonomy, action: :read, args: [:taxonomy_name, :parent]
+      define :read_by_term_slug, action: :read, args: [:slug]
     end
 
     resource Monorepo.Terms.TermRelationships

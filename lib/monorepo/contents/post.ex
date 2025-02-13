@@ -1,6 +1,4 @@
 defmodule Monorepo.Contents.Post do
-  require Ash.Resource.Change.Builtins
-
   use Ash.Resource,
     otp_app: :monorepo,
     domain: Monorepo.Contents,
@@ -173,6 +171,7 @@ defmodule Monorepo.Contents.Post do
     end
 
     destroy :destroy_media do
+      require_atomic? false
       change before_action(&delete_meta/2)
     end
   end

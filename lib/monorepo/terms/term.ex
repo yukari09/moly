@@ -32,13 +32,11 @@ defmodule Monorepo.Terms.Term do
       primary? true
       prepare build(sort: [inserted_at: :desc])
 
-      argument :parent, :uuid do
-        allow_nil? true
-      end
+      argument :parent, :uuid, do: allow_nil? true
 
-      argument :taxonomy_name, :string do
-        allow_nil? true
-      end
+      argument :slug, :string, do: allow_nil? true
+
+      argument :taxonomy_name, :string, do: allow_nil? true
 
       pagination do
         required? false
@@ -49,6 +47,7 @@ defmodule Monorepo.Terms.Term do
 
       filter expr(is_nil(^arg(:parent)) or term_taxonomy.parent_id == ^arg(:parent))
       filter expr(is_nil(^arg(:taxonomy_name)) or term_taxonomy.taxonomy == ^arg(:taxonomy_name))
+      filter expr(is_nil(^arg(:slug)) or slug == ^arg(:slug))
     end
 
     create :create do

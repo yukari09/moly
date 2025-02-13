@@ -8,7 +8,7 @@ defmodule Monorepo.Helper do
   @doc """
   Uploads a file to S3
   """
-  def put_object_from_url(url) do
+  def put_object_from_url(url, bucket_prefix \\ "") do
     body =
       Enum.reduce_while(1..5, nil, fn _, _ ->
         case Finch.build("GET", url) |> Finch.request(Monorepo.Finch) do
@@ -19,15 +19,23 @@ defmodule Monorepo.Helper do
 
     ext = Path.extname(url)
     filename = Ash.UUID.generate() <> ext
-    put_object(filename, body)
+    put_object(filename, body, bucket_prefix)
   end
 
-  def put_object(%Phoenix.LiveView.UploadEntry{} = upload_entry, body_or_path) do
-    entry_filename(upload_entry)
-    |> put_object(body_or_path)
-  end
+  # def put_object(%Phoenix.LiveView.UploadEntry{} = upload_entry, body_or_path, bucket_prefix \\ "") do
+  #   entry_filename(upload_entry)
+  #   |> put_object(body_or_path, bucket_prefix)
+  # end
 
-  def put_object(filename, body_or_path) when is_binary(filename) do
+  def put_object(filename_or_entry, body_or_path, bucket_prefix \\ "") when is_map(filename_or_entry) or is_binary(filename_or_entry) do
+
+    filename = case filename_or_entry do
+      %Phoenix.LiveView.UploadEntry{} -> entry_filename(filename_or_entry)
+      filename_or_entry -> filename_or_entry
+    end
+
+    filename = Path.join(bucket_prefix, filename)
+
     bucket = load_s3_config(:bucket)
 
     body =
@@ -79,7 +87,7 @@ defmodule Monorepo.Helper do
   def image_resize(filename, width \\ nil, height \\ nil) do
     new_img =
       Imgproxy.new("s3://#{s3_path(filename)}")
-      |> Imgproxy.set_extension("avif")
+      |> Imgproxy.set_extension("webp")
 
     o =
       case [width, height] do
@@ -169,7 +177,7 @@ defmodule Monorepo.Helper do
              "ffprobe",
              ~w(-v quiet -print_format json -show_format -show_streams -i #{media_path})
            ) do
-        {output, 0} -> Jason.decode(output)
+        {output, 0} -> JSON.decode(output)
         _ -> {:error, nil}
       end
     end)
@@ -311,6 +319,11 @@ defmodule Monorepo.Helper do
 
       (is_nil(value) && {:halt, nil}) || {:cont, value}
     end)
+  end
+
+  def is_url?(str) do
+    regex = ~r/^(https?|ftp):\/\/([a-z0-9-]+\.)+[a-z]{2,6}(:\d+)?(\/[^\s]*)?(\?[^\s]*)?(#[^\s]*)?$/i
+    Regex.match?(regex, str)
   end
 
   def bits_to_readable(bits) when is_binary(bits), do: bits_to_readable(String.to_integer(bits))

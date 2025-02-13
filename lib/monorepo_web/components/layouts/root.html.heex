@@ -10,7 +10,7 @@
     <%= if assigns[:meta_tags] do %> 
       <.dynamic_tag :for={tag_attrs <- assigns[:meta_tags]} :if={is_map(tag_attrs)} name="meta" {tag_attrs} /> 
     <% end %>
-    <link rel="icon" href={assigns[:favicon] || "favicon.ico"} type="image/x-icon">
+    <link rel="icon" href={assigns[:favicon] || "/favicon.ico"} type="image/x-icon">
     <link rel="preconnect" href="https://rsms.me/">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <link phx-track-static rel="stylesheet" href={"/assets/app.css"} />
