@@ -1,0 +1,96 @@
+<div class="bg-white">
+  <div class="mx-auto px-4 py-12 sm:px-6 lg:max-w-7xl lg:px-8">
+ 
+
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-700 text-sm">Filter By</span>
+        <MonorepoWeb.TailwindUI.dropdown id="categories">
+          <:button_slot>
+            <Lucideicons.chevron_down class="size-4 text-gray-700" /><span class="text-sm text-gray-700">All Countries</span>
+          </:button_slot>
+
+          <:menu_slot class="w-32 left-0">
+            <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-0">Your profile</a>
+            <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-1">Sign out</a>
+          </:menu_slot>
+        </MonorepoWeb.TailwindUI.dropdown>
+
+        <MonorepoWeb.TailwindUI.dropdown id="industries">
+          <:button_slot>
+            <Lucideicons.chevron_down class="size-4 text-gray-700" /><span class="text-sm text-gray-700">All Industries</span>
+          </:button_slot>
+
+          <:menu_slot class="w-32 left-0">
+            <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-10">Your profile</a>
+            <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-11">Sign out</a>
+          </:menu_slot>
+        </MonorepoWeb.TailwindUI.dropdown>
+
+        <MonorepoWeb.TailwindUI.dropdown id="commision-rate">
+          <:button_slot>
+            <Lucideicons.chevron_down class="size-4 text-gray-700" /><span class="text-sm text-gray-700">All Commision Rate</span>
+          </:button_slot>
+
+          <:menu_slot class="w-32 left-0">
+            <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-3">Your profile</a>
+            <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-4">Sign out</a>
+          </:menu_slot>
+        </MonorepoWeb.TailwindUI.dropdown>
+      </div>
+      <MonorepoWeb.TailwindUI.dropdown id="commision-model">
+        <:button_slot>
+          <Lucideicons.chevron_down class="size-4 text-gray-700" /><span class="text-sm text-gray-700">Latest</span>
+        </:button_slot>
+
+        <:menu_slot class="w-32">
+          <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-5">Your profile</a>
+          <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-6">Sign out</a>
+        </:menu_slot>
+      </MonorepoWeb.TailwindUI.dropdown>
+    </div>
+
+    <div class="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-x-4 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      <article :for={post <- @post} class="flex flex-col items-start justify-between">
+        <div class="relative w-full">
+          <img src={Monorepo.Utilities.MetaValue.post_feature_image(post, :attachment_affiliate_media_feature, "medium")} alt="" class="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
+          <.link class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" navigate={~p"/product/#{post.post_name}"}>&nbsp;</.link>
+        </div>
+        <div class="max-w-xl">
+          <div class="mt-4 flex items-top gap-x-2 text-xs">
+            <.link class="size-10"  :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(post.author, :avatar)} patch={~p"/user/page/@#{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(post.author, :username)}"}>
+              <img class="rounded-full w-full h-full" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(post.author, :avatar)["64"]} alt="">
+            </.link>
+            <div class="flex-1 space-y-2">
+              <h3 class="text-base/6 font-semibold text-gray-900 group-hover:text-gray-600 line-clamp-2">
+                <.link navigate={~p"/product/#{post.post_name}"}>
+                  {post.post_title}
+                </.link>
+              </h3>
+              <div class="space-x-1">
+                <.link navigate={"/c/#{Monorepo.Utilities.Term.get_first_and_return_by_keys(post.post_categories, "category", [:slug], @industry_category.id)}"}  >
+                  <span class="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">{Monorepo.Utilities.Term.get_first_and_return_by_keys(post.post_categories, "category", [:name], @industry_category.id)}</span>
+                </.link>
+                <span class="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">
+                  {Monorepo.Utilities.MetaValue.format_meta_value(post, :commission_model)}
+                </span>
+
+                <div class="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">
+                  <span class="font-bold text-green-500">
+                    {Monorepo.Utilities.MetaValue.format_meta_value(post, :commission_min)}
+                    {Monorepo.Utilities.MetaValue.format_meta_value(post, :commission_unit)}
+                  </span>
+                  <span class="text-green-300">-</span>
+                  <span class="font-bold text-green-500">
+                    {Monorepo.Utilities.MetaValue.format_meta_value(post, :commission_max)}
+                    {Monorepo.Utilities.MetaValue.format_meta_value(post, :commission_unit)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>

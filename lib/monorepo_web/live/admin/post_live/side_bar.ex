@@ -42,7 +42,7 @@ defmodule MonorepoWeb.AdminPostLive.SideBar do
             </li>
             <li class="flex items-center">
               <span class="font-medium w-32">Author</span>
-              <span class="text-gray-600">{Monorepo.Accounts.Helper.current_user_name(@current_user)}</span>
+              <span class="text-gray-600">{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :name)}</span>
             </li>
             <li :if={@form.data}>
               <.button

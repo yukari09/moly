@@ -431,6 +431,7 @@ defmodule Monorepo.Accounts.User do
     has_many :posts, Monorepo.Contents.Post, destination_attribute: :author_id
     has_many :user_meta, Monorepo.Accounts.UserMeta
     has_many :comments, Monorepo.Comments.Comment, destination_attribute: :comment_author_id
+    has_many :post_actions, Monorepo.Accounts.UserPostAction
   end
 
   identities do

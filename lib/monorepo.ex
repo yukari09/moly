@@ -7,14 +7,29 @@ defmodule Monorepo do
   if it comes from the database, an external API or others.
   """
 
-  def test() do
+  def t1() do
     require Ash.Query
-    alias AshAuthentication.{Info, Jwt}
+    opts = [
+      actor: %{roles: [:user]},
+      context: %{private: %{ash_authentication?: true}}
+    ]
 
-    user =
-      Ash.get!(Monorepo.Accounts.User, "8bb78136-7cfe-4611-a346-a043b4102f4e",
-        context: %{private: %{ash_authentication?: true}}
-      )
+    post =
+      Ash.get!(Monorepo.Contents.Post, "b10e5e6c-5ff5-4b26-9eae-6f45e141bc57", opts)
+      |> Ash.load!([:post_categories, :post_tags, author: :user_meta, post_meta: :children], opts)
+
+
+    Monorepo.Utilities.MetaValue.post_images(post, :attachment_affiliate_media, ["xlarge", "large", "medium"])
+  end
+
+  # def test() do
+    # require Ash.Query
+    # alias AshAuthentication.{Info, Jwt}
+
+    # user =
+    #   Ash.get!(Monorepo.Accounts.User, "8bb78136-7cfe-4611-a346-a043b4102f4e",
+    #     context: %{private: %{ash_authentication?: true}}
+    #   )
 
     # new_user_meta_party = [%{"meta_key" => "description", "meta_value" => "test for update or insert"}]
     # params = %{
@@ -97,14 +112,14 @@ defmodule Monorepo do
     # Monorepo.Accounts.User
     # |> Ash.read(action: :resend_confirmation)
 
-    Ash.update(user, %{updated_at: DateTime.utc_now()},
-      action: :resend_confirmation,
-      context: %{private: %{ash_authentication?: true}}
-    )
+    # Ash.update(user, %{updated_at: DateTime.utc_now()},
+    #   action: :resend_confirmation,
+    #   context: %{private: %{ash_authentication?: true}}
+    # )
 
     # {:ok, user} =
     # Monorepo.Accounts.User
     # |> Ash.ActionInput.for_action(:resend_confirmation, %{email: user.email}, context: %{private: %{ash_authentication?: true}})
     # |> Ash.run_action()
-  end
+  # end
 end

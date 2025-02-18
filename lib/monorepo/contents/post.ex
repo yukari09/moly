@@ -90,6 +90,7 @@ defmodule Monorepo.Contents.Post do
         keyset? true
         countable true
       end
+
     end
 
     create :create_post do
@@ -283,7 +284,11 @@ defmodule Monorepo.Contents.Post do
   end
 
   relationships do
-    belongs_to :author, Monorepo.Accounts.User, allow_nil?: false
+    belongs_to :author, Monorepo.Accounts.User,
+      allow_nil?: false,
+      source_attribute: :author_id,
+      relationship_context: %{private: %{ash_authentication?: true}}
+
     belongs_to :parent, Monorepo.Contents.Post, source_attribute: :post_parent, allow_nil?: true
 
     has_many :post_meta, Monorepo.Contents.PostMeta
@@ -291,6 +296,8 @@ defmodule Monorepo.Contents.Post do
 
     many_to_many :term_taxonomy, Monorepo.Terms.TermTaxonomy,
       through: Monorepo.Terms.TermRelationships
+
+    has_many :post_actions, Monorepo.Accounts.UserPostAction
 
     has_many :post_categories, Monorepo.Terms.Term do
       manual Monorepo.Contents.Relations.PostCategories
