@@ -5,6 +5,6 @@ defmodule Monorepo.Accounts do
     resource Monorepo.Accounts.Token
     resource Monorepo.Accounts.User
     resource Monorepo.Accounts.UserMeta
-     resource Monorepo.Accounts.UserPostAction
+    resource Monorepo.Accounts.UserPostAction
   end
 end

@@ -3,10 +3,11 @@
 @import "tailwindcss/utilities";
 @import "@yaireo/tagify/dist/tagify.css";
 
+@import "../node_modules/quill/dist/quill.snow.css";
+
 button[disabled]{
     @apply opacity-50;
 }
-
 
 .tagify{
     --tags-disabled-bg: rgb(243, 244, 246); /* gray-100 */

@@ -27,12 +27,13 @@ defmodule Monorepo.Helper do
   #   |> put_object(body_or_path, bucket_prefix)
   # end
 
-  def put_object(filename_or_entry, body_or_path, bucket_prefix \\ "") when is_map(filename_or_entry) or is_binary(filename_or_entry) do
-
-    filename = case filename_or_entry do
-      %Phoenix.LiveView.UploadEntry{} -> entry_filename(filename_or_entry)
-      filename_or_entry -> filename_or_entry
-    end
+  def put_object(filename_or_entry, body_or_path, bucket_prefix \\ "")
+      when is_map(filename_or_entry) or is_binary(filename_or_entry) do
+    filename =
+      case filename_or_entry do
+        %Phoenix.LiveView.UploadEntry{} -> entry_filename(filename_or_entry)
+        filename_or_entry -> filename_or_entry
+      end
 
     filename = Path.join(bucket_prefix, filename)
 
@@ -322,7 +323,9 @@ defmodule Monorepo.Helper do
   end
 
   def is_url?(str) do
-    regex = ~r/^(https?|ftp):\/\/([a-z0-9-]+\.)+[a-z]{2,6}(:\d+)?(\/[^\s]*)?(\?[^\s]*)?(#[^\s]*)?$/i
+    regex =
+      ~r/^(https?|ftp):\/\/([a-z0-9-]+\.)+[a-z]{2,6}(:\d+)?(\/[^\s]*)?(\?[^\s]*)?(#[^\s]*)?$/i
+
     Regex.match?(regex, str)
   end
 

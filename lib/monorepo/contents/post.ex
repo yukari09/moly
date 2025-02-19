@@ -90,7 +90,6 @@ defmodule Monorepo.Contents.Post do
         keyset? true
         countable true
       end
-
     end
 
     create :create_post do

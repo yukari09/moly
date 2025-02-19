@@ -32,11 +32,11 @@ defmodule Monorepo.Terms.Term do
       primary? true
       prepare build(sort: [inserted_at: :desc])
 
-      argument :parent, :uuid, do: allow_nil? true
+      argument :parent, :uuid, do: allow_nil?(true)
 
-      argument :slug, :string, do: allow_nil? true
+      argument :slug, :string, do: allow_nil?(true)
 
-      argument :taxonomy_name, :string, do: allow_nil? true
+      argument :taxonomy_name, :string, do: allow_nil?(true)
 
       pagination do
         required? false

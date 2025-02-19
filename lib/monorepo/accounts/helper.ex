@@ -1,5 +1,4 @@
 defmodule Monorepo.Accounts.Helper do
-
   @bucket_prefix "user_meta"
 
   def generate_avatar_from_url(url) do
@@ -27,6 +26,7 @@ defmodule Monorepo.Accounts.Helper do
       {:xl, 1280},
       {:xxl, 1536}
     ]
+
     generate_meta_value_from_upload_entry(entry, path, breakpoints)
   end
 
@@ -36,19 +36,24 @@ defmodule Monorepo.Accounts.Helper do
       |> Path.join()
       |> Monorepo.Helper.put_object(path, @bucket_prefix)
 
-    ratio = if keep_ratio do
-      {_, _, ratio} = case Monorepo.Helper.ffprobe(path) do
-        {:ok, data} ->
-          video_stream = Enum.find(data["streams"], &(&1["codec_type"] == "video"))
-          width = video_stream["width"]
-          height = video_stream["height"]
-          {width, height, width/height}
-        _ -> 1
+    ratio =
+      if keep_ratio do
+        {_, _, ratio} =
+          case Monorepo.Helper.ffprobe(path) do
+            {:ok, data} ->
+              video_stream = Enum.find(data["streams"], &(&1["codec_type"] == "video"))
+              width = video_stream["width"]
+              height = video_stream["height"]
+              {width, height, width / height}
+
+            _ ->
+              1
+          end
+
+        ratio
+      else
+        1
       end
-      ratio
-    else
-      1
-    end
 
     Enum.reduce(sizes, %{}, fn {size_key, size_width}, acc ->
       size_height = (size_width / ratio) |> trunc()

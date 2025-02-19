@@ -3,12 +3,16 @@ defmodule MonorepoWeb.Affiliate.ProductViewLive do
   require Ash.Query
 
   def mount(_params, _session, socket) do
-    country_category = Monorepo.Terms.read_by_term_slug!("countries", actor: %{roles: [:user]}) |> List.first()
-    industry_category = Monorepo.Terms.read_by_term_slug!("industries", actor: %{roles: [:user]}) |> List.first()
+    country_category =
+      Monorepo.Terms.read_by_term_slug!("countries", actor: %{roles: [:user]}) |> List.first()
+
+    industry_category =
+      Monorepo.Terms.read_by_term_slug!("industries", actor: %{roles: [:user]}) |> List.first()
 
     socket =
       socket
       |> assign(country_category: country_category, industry_category: industry_category)
+
     {:ok, socket}
   end
 
@@ -28,5 +32,4 @@ defmodule MonorepoWeb.Affiliate.ProductViewLive do
     socket = assign(socket, :post, post)
     {:noreply, socket}
   end
-
 end

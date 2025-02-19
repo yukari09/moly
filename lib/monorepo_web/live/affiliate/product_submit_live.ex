@@ -17,10 +17,10 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
         |> allow_upload(:media, accept: ~w(.jpg .jpeg .png .gif), max_entries: 6)
         |> assign(:is_active_user, is_active_user)
 
-      categories = get_term_taxonomy("countries", current_user)
+      countries = get_term_taxonomy("countries", current_user)
       industries = get_term_taxonomy("industries", current_user)
 
-      {:ok, socket, temporary_assigns: [categories: categories, industries: industries]}
+      {:ok, socket, temporary_assigns: [countries: countries, industries: industries]}
     else
       socket =
         push_navigate(socket, to: ~p"/")
@@ -95,8 +95,18 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
     meida_ids = Enum.map(uploaded_files, & &1.id) |> Enum.join(",")
     feture_id = List.first(uploaded_files) |> Map.get(:id)
 
-    params = put_in(params, ["post_meta", "10"], %{"meta_key" => "attachment_affiliate_media", "meta_value" => meida_ids})
-    params = put_in(params, ["post_meta", "11"], %{"meta_key" => "attachment_affiliate_media_feature", "meta_value" => feture_id})
+    params =
+      put_in(params, ["post_meta", "10"], %{
+        "meta_key" => "attachment_affiliate_media",
+        "meta_value" => meida_ids
+      })
+
+    params =
+      put_in(params, ["post_meta", "11"], %{
+        "meta_key" => "attachment_affiliate_media_feature",
+        "meta_value" => feture_id
+      })
+
     params = Map.put(params, "post_status", "pending")
     params = Map.put(params, "post_name", Monorepo.Helper.generate_random_str())
 
@@ -159,13 +169,13 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
     <div class="xl:w-[1280px] mx-auto my-40">
       <div>
         <div class="px-6 py-4  text-4xl">Submit Competitive Products</div>
-        <.form  :let={f} for={@form} class="space-y-2 px-6 my-6 space-y-4" phx-submit="save" phx-change={JS.dispatch("app:validate-and-exec")}>
+        <.form  :let={f} for={@form} class="px-6 my-6 space-y-4" phx-submit="save" phx-change={JS.dispatch("app:validate-and-exec")}>
           <div class="rounded-lg p-6 border space-y-4">
             <h3 class="font-semibold text-xl">Detail</h3>
             <!--Start title-->
-            <.input field={f[:post_title]}  input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "length", params: [10, 255]}}]])}>
+            <.input field={f[:post_title]}  input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "length", params: [8, 255]}}]])}>
               <:label>Product or Service Title <span class="text-red-500">*</span></:label>
-              <:input_helper>Product or Service Title must be more than 10 words.</:input_helper>
+              <:input_helper>Product or Service Title must be more than 8 words.</:input_helper>
             </.input>
             <!--End title-->
             <!--Start Link-->
@@ -180,27 +190,48 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
               <input :for={{tag, i} <- Enum.with_index(f.data && @form.data.post_tags || [])} name={"#{f[:tags].name}[#{i}][name]"} value={tag.name} data-value={tag.name}  type="hidden"/>
               <input :for={{tag, i} <- Enum.with_index(f.data && @form.data.post_tags || [])} name={"#{f[:tags].name}[#{i}][term_taxonomy][][taxonomy]"} data-value={tag.name}  value={hd(tag.term_taxonomy) |> Map.get(:id)} type="hidden"/>
             </div>
-            <.input  field={f[:post_tags]} type="text" phx-hook="TagsTagify" data-target-container="#tagify-input-target" data-target-name={"#{f[:tags].name}"}>
+            <.input  field={f[:post_tags]} type="text" phx-update="ignore" phx-hook="TagsTagify" data-target-container="#tagify-input-target" data-target-name={"#{f[:tags].name}"}>
               <:label>Tags <span class="text-red-500">*</span></:label>
             </.input>
             <!--End Tags-->
             <!--Start Description-->
-            <.input  field={f[:post_content]} type="textarea"  input_dispatch={JSON.encode!([["app:count_word"],["app:fill_text_with_attribute", %{detail: %{to_el: "#count_word_text", from_attr: "data-count-word"}}],["app:input-validate", %{detail: %{validator: "length", params: [20, 3000]}}]])}>
+            <div>
+              <div
+                id="editor"
+                phx-hook="Editor"
+                data-target={"##{f[:post_content].id}"}
+                data-config={JSON.encode!(%{
+                  theme: "snow",
+                  placeholder: "Affiliate description...",
+                  modules: %{
+                    toolbar: [
+                      [%{ header: 2 }, %{ header: 4 }, %{ header: 5 }],
+                      [%{ list: "ordered"}, %{list: "bullet"}],
+                      ["bold", "italic", "underline"],[ %{ align: [] }]
+                    ]
+                  }
+                })}
+                phx-update="ignore"
+              ></div>
+              <input class="hidden" phx-update="ignore" id={f[:post_content].id} name={f[:post_content].name} value={f[:post_content].value} input_dispatch={JSON.encode!([["app:count_word"],["app:fill_text_with_attribute", %{detail: %{to_el: "#count_word_text", from_attr: "data-count-word"}}],["app:input-validate", %{detail: %{validator: "length", params: [20, 3000]}}]])}/>
+            </div>
+            <%!-- <.input  field={f[:post_content]} type="textarea"  input_dispatch={JSON.encode!([["app:count_word"],["app:fill_text_with_attribute", %{detail: %{to_el: "#count_word_text", from_attr: "data-count-word"}}],["app:input-validate", %{detail: %{validator: "length", params: [20, 3000]}}]])}>
               <:label>Description <span class="text-red-500">*</span></:label>
+              <div id="editor" phx-hook="MarkDownEditor"></div>
               <:foot_other class="text-gray-500"><span id="count_word_text" data-count-word="0">0</span>/3000</:foot_other>
-            </.input>
+            </.input> --%>
             <!--End Description-->
           </div>
 
           <div class="rounded-lg p-6 border space-y-4">
             <h3 class="font-semibold text-xl">Location and Category</h3>
             <!--Start Location-->
-            <.input type="select"  field={%FormField{field: :categories, id: "categories_0_term_taxonomy", name: "#{f[:categories].name}[]", value: "", errors: [], form: f}}  input_dispatch = "" options={Map.new(@categories, &({&1.id, &1.term.name}))} option_selectd="">
+            <.input type="select"  field={%FormField{field: :countries, id: "categories_0_term_taxonomy", name: "#{f[:countries].name}[]", value: "", errors: [], form: f}}  input_dispatch = "" options={Map.new(@countries, &({&1.id, &1.term.name}))} option_selectd="">
               <:label>Select a country where your service(product) from?</:label>
             </.input>
             <!--End Location-->
             <!--Start Industry-->
-            <.input type="select"  field={%FormField{field: :categories, id: "categories_1_term_taxonomy_id", name: "#{f[:categories].name}[]", value: "", errors: [], form: f}}  input_dispatch = "" options={Map.new(@industries, &({&1.id, &1.term.name}))} option_selectd="">
+            <.input type="select"  field={%FormField{field: :industries, id: "categories_1_term_taxonomy_id", name: "#{f[:industries].name}[]", value: "", errors: [], form: f}}  input_dispatch = "" options={Map.new(@industries, &({&1.id, &1.term.name}))} option_selectd="">
               <:label>What industry is your service(product) in?</:label>
             </.input>
             <!--End Industry-->
@@ -283,7 +314,6 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
     """
   end
 
-
   defp form_media(assigns) do
     ~H"""
     <!--Start media-->
@@ -342,19 +372,20 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
     ]
 
   defp commission_model(), do: ["CPC", "CPS", "CPL", "CPI", "Recurring"]
-  defp set_current_user_as_owner(current_user), do: %{current_user | roles: [:owner | current_user.roles]}
 
+  defp set_current_user_as_owner(current_user),
+    do: %{current_user | roles: [:owner | current_user.roles]}
 
+  attr(:type, :string, required: false, default: "text")
+  attr(:field, FormField, required: true)
+  slot(:label, required: false)
+  slot(:input_helper, required: false)
+  slot(:foot_other, required: false)
+  attr(:input_dispatch, :string, required: false, default: nil)
+  attr(:options, :list, required: false)
+  attr(:option_selectd, :string, required: false)
+  attr(:rest, :global)
 
-  attr :type, :string, required: false, default: "text"
-  attr :field, FormField, required: true
-  slot :label, required: false
-  slot :input_helper, required: false
-  slot :foot_other, required: false
-  attr :input_dispatch, :string, required: false, default: nil
-  attr :options, :list, required: false
-  attr :option_selectd, :string, required: false
-  attr :rest, :global
   defp input(%{type: "text"} = assigns) do
     ~H"""
     <div>

@@ -9,14 +9,18 @@
     "@editorjs/header": "^2.8.8",
     "@editorjs/list": "^2.0.2",
     "@editorjs/quote": "^2.7.6",
+    "@milkdown/kit": "^7.6.3",
+    "@milkdown/theme-nord": "^7.6.3",
     "@mux/upchunk": "^3.4.0",
     "@yaireo/tagify": "^4.33.0",
     "alfaaz": "^1.1.0",
     "alpinejs": "^3.14.8",
-    "easymde": "^2.18.0",
+    "easymde": "^2.19.0",
     "flatpickr": "^4.6.13",
     "inter-ui": "^4.1.0",
     "luxon": "^3.5.0",
+    "quill": "^2.0.3",
+    "quill-delta-markdown": "^0.0.0",
     "vanilla-lazyload": "^19.1.3"
   }
 }

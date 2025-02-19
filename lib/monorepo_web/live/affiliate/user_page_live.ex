@@ -7,14 +7,29 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
   @per_page 20
 
   def mount(_params, _session, socket) do
-    country_category = Monorepo.Terms.read_by_term_slug!("countries", actor: %{roles: [:user]}) |> List.first()
-    industry_category = Monorepo.Terms.read_by_term_slug!("industries", actor: %{roles: [:user]}) |> List.first()
+    country_category =
+      Monorepo.Terms.read_by_term_slug!("countries", actor: %{roles: [:user]}) |> List.first()
+
+    industry_category =
+      Monorepo.Terms.read_by_term_slug!("industries", actor: %{roles: [:user]}) |> List.first()
+
     socket =
       socket
       |> assign(country_category: country_category, industry_category: industry_category)
       |> assign(:modal_id, Monorepo.Helper.generate_random_id())
-      |> allow_upload(:avatar, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1, auto_upload: true, progress: &handle_progress/3)
-      |> allow_upload(:banner, accept: ~w(.jpg .jpeg .png .webp), max_entries: 1, auto_upload: true, progress: &handle_progress/3)
+      |> allow_upload(:avatar,
+        accept: ~w(.jpg .jpeg .png .webp),
+        max_entries: 1,
+        auto_upload: true,
+        progress: &handle_progress/3
+      )
+      |> allow_upload(:banner,
+        accept: ~w(.jpg .jpeg .png .webp),
+        max_entries: 1,
+        auto_upload: true,
+        progress: &handle_progress/3
+      )
+
     {:ok, socket}
   end
 
@@ -27,15 +42,24 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
       Ash.Query.new(Monorepo.Accounts.User)
       |> Ash.Query.filter(user_meta.meta_key == :username and user_meta.meta_value == ^username)
       |> Ash.Query.load([:user_meta])
-      |> Ash.read_first!(actor: %{roles: [:user]}, context: %{private: %{ash_authentication?: true}})
+      |> Ash.read_first!(
+        actor: %{roles: [:user]},
+        context: %{private: %{ash_authentication?: true}}
+      )
 
     form = generate_form(user, socket.assigns.current_user)
 
     socket =
-      assign(socket, page: page, post_type: post_type, end_of_timeline?: false, username: username)
+      assign(socket,
+        page: page,
+        post_type: post_type,
+        end_of_timeline?: false,
+        username: username
+      )
       |> stream(:posts, posts)
       |> assign(:user, user)
       |> assign(:form, form)
+
     {:noreply, socket}
   end
 
@@ -45,21 +69,29 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
 
   def handle_event("save", %{"form" => form}, socket) do
     user_meta = Monorepo.Helper.get_in_from_keys(form, ["user_meta"])
+
     user_meta =
       case user_meta do
         %{"1" => %{"meta_key" => "username", "meta_value" => username}} ->
-          username = if Regex.match?(~r/^@/, username) do
-            String.replace(username, "@", "")
-          else
-            username
-          end
+          username =
+            if Regex.match?(~r/^@/, username) do
+              String.replace(username, "@", "")
+            else
+              username
+            end
+
           Map.put_new(user_meta, "1", %{"meta_value" => username, "meta_key" => "username"})
-        _ -> user_meta
+
+        _ ->
+          user_meta
       end
 
     {_result, record} =
       Ash.Changeset.new(socket.assigns.current_user)
-      |> Ash.update(%{"user_meta" => user_meta}, action: :update_user_meta, context: %{private: %{ash_authentication?: true}})
+      |> Ash.update(%{"user_meta" => user_meta},
+        action: :update_user_meta,
+        context: %{private: %{ash_authentication?: true}}
+      )
 
     new_username = Monorepo.Accounts.Helper.load_meta_value_by_meta_key(record, :username)
 
@@ -75,25 +107,33 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
       uploaded_file =
         consume_uploaded_entry(socket, entry, fn %{path: path} = _meta ->
           old_file =
-            Monorepo.Accounts.Helper.load_meta_value_by_meta_key(socket.assigns.current_user, uploader)
+            Monorepo.Accounts.Helper.load_meta_value_by_meta_key(
+              socket.assigns.current_user,
+              uploader
+            )
+
           if old_file do
             filename = old_file["filename"]
             Monorepo.Helper.remove_object(filename)
           end
-          uploaded_file = case uploader do
-            :avatar -> Monorepo.Accounts.Helper.generate_avatar_from_entry(entry, path)
-            :banner -> Monorepo.Accounts.Helper.generate_banner_from_entry(entry, path)
-          end
+
+          uploaded_file =
+            case uploader do
+              :avatar -> Monorepo.Accounts.Helper.generate_avatar_from_entry(entry, path)
+              :banner -> Monorepo.Accounts.Helper.generate_banner_from_entry(entry, path)
+            end
+
           {:ok, uploaded_file}
         end)
 
       new_user_meta_party = [%{meta_key: uploader, meta_value: uploaded_file}]
       changeset = Ash.Changeset.new(socket.assigns.current_user)
 
-      result = Ash.update(changeset, %{user_meta: new_user_meta_party},
-        action: :update_user_meta,
-        context: %{private: %{ash_authentication?: true}}
-      )
+      result =
+        Ash.update(changeset, %{user_meta: new_user_meta_party},
+          action: :update_user_meta,
+          context: %{private: %{ash_authentication?: true}}
+        )
 
       socket =
         case result do
@@ -104,12 +144,12 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
           {:error, _} ->
             put_flash(socket, :error, "Your information update failed, please try again later")
         end
+
       {:noreply, socket}
     else
       {:noreply, socket}
     end
   end
-
 
   defp get_user_posts(username, page, "published") do
     offset = (page - 1) * @per_page
@@ -120,8 +160,13 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
       page: [limit: @per_page, offset: offset, count: true]
     ]
 
-    Ash.Query.filter(Monorepo.Contents.Post, post_type == :affiliate and post_status in [:pending, :publish])
-    |> Ash.Query.filter(author.user_meta.meta_key == :username and author.user_meta.meta_value == ^username)
+    Ash.Query.filter(
+      Monorepo.Contents.Post,
+      post_type == :affiliate and post_status in [:pending, :publish]
+    )
+    |> Ash.Query.filter(
+      author.user_meta.meta_key == :username and author.user_meta.meta_value == ^username
+    )
     |> Ash.Query.load([:author, :post_tags, :post_categories, post_meta: :children])
     |> Ash.read!(opts)
     |> Map.get(:results)
@@ -137,14 +182,18 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
     ]
 
     Ash.Query.filter(Monorepo.Contents.Post, post_type == :affiliate)
-    |> Ash.Query.filter(author.user_meta.meta_key == :username and author.user_meta.meta_value == ^username)
+    |> Ash.Query.filter(
+      author.user_meta.meta_key == :username and author.user_meta.meta_value == ^username
+    )
     |> Ash.Query.filter(post_actions.action == :saved)
     |> Ash.read!(opts)
     |> Map.get(:results)
   end
 
   defp generate_form(_, nil), do: nil
-  defp generate_form(%{id: user_id} = user, %{id: current_user_id}) when user_id == current_user_id do
+
+  defp generate_form(%{id: user_id} = user, %{id: current_user_id})
+       when user_id == current_user_id do
     AshPhoenix.Form.for_update(user, :update_user_meta,
       forms: [
         auto?: true
@@ -392,6 +441,7 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
     username = Monorepo.Accounts.Helper.load_meta_value_by_meta_key(user, :username)
     name = Monorepo.Accounts.Helper.load_meta_value_by_meta_key(user, :name)
     email = user.email
+
     if username == name and String.contains?(email, name) do
       false
     else

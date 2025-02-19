@@ -1,6 +1,4 @@
 defmodule Monorepo.Utilities.Term do
-
-
   def get_first_and_return_by_keys(relation_data, taxonomy, keys, parent_id \\ nil) do
     get_taxonomy(relation_data, taxonomy, parent_id, 1)
     |> List.first()

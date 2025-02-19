@@ -6,7 +6,9 @@ defmodule MonorepoWeb.Affiliate.ProductBrowseLive do
   @per_page 20
 
   def mount(_params, _session, socket) do
-    industry_category = Monorepo.Terms.read_by_term_slug!("industries", actor: %{roles: [:user]}) |> List.first()
+    industry_category =
+      Monorepo.Terms.read_by_term_slug!("industries", actor: %{roles: [:user]}) |> List.first()
+
     {:ok, socket, temporary_assigns: [industry_category: industry_category]}
   end
 
@@ -24,7 +26,10 @@ defmodule MonorepoWeb.Affiliate.ProductBrowseLive do
       page: [limit: @per_page, offset: offset, count: true]
     ]
 
-    Ash.Query.filter(Monorepo.Contents.Post, post_type == :affiliate and post_status in [:publish])
+    Ash.Query.filter(
+      Monorepo.Contents.Post,
+      post_type == :affiliate and post_status in [:publish]
+    )
     |> Ash.Query.load([:post_tags, :post_categories, author: :user_meta, post_meta: :children])
     |> Ash.read!(opts)
     |> Map.get(:results)

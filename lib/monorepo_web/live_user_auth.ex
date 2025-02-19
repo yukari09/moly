@@ -38,6 +38,7 @@ defmodule MonorepoWeb.LiveUserAuth do
       socket
       |> assign(:page_css, :admin)
       |> assign(:page_js, :admin)
+
       {:cont, socket}
     else
       socket = redirect(socket, to: ~p"/sign-in")

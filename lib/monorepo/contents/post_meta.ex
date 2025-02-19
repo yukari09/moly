@@ -62,6 +62,7 @@ defmodule Monorepo.Contents.PostMeta do
 
   relationships do
     belongs_to :post, Monorepo.Contents.Post, allow_nil?: false
+
     has_many :children, Monorepo.Contents.PostMeta do
       manual Monorepo.Contents.Relations.PostMetaChildren
     end

@@ -8,16 +8,16 @@ defmodule MonorepoWeb.UI do
   # import Monorepo.Helper, only: [generate_random_id: 1]
   import MonorepoWeb.CoreComponents, only: [icon: 1]
 
+  attr(:type, :string, required: false, default: "text")
+  attr(:field, FormField, required: true)
+  slot(:label, required: false)
+  slot(:input_helper, required: false)
+  slot(:foot_other, required: false)
+  attr(:input_dispatch, :string, required: false, default: nil)
+  attr(:options, :list, required: false)
+  attr(:option_selectd, :string, required: false)
+  attr(:rest, :global)
 
-  attr :type, :string, required: false, default: "text"
-  attr :field, FormField, required: true
-  slot :label, required: false
-  slot :input_helper, required: false
-  slot :foot_other, required: false
-  attr :input_dispatch, :string, required: false, default: nil
-  attr :options, :list, required: false
-  attr :option_selectd, :string, required: false
-  attr :rest, :global
   def input(%{type: "text"} = assigns) do
     ~H"""
     <div>
@@ -46,7 +46,6 @@ defmodule MonorepoWeb.UI do
     </div>
     """
   end
-
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
@@ -98,5 +97,4 @@ defmodule MonorepoWeb.UI do
     </div>
     """
   end
-
 end
