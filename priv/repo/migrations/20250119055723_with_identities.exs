@@ -19,6 +19,10 @@ defmodule Monorepo.Repo.Migrations.WithIdentities do
     create unique_index(:comment_meta, [:meta_key, :comment_id],
              name: "comment_meta_meta_key_with_comment_id_index"
            )
+
+    create unique_index(:term_meta, [:term_id, :term_key],
+           name: "term_meta_term_meta_key_with_term_id_index"
+         )
   end
 
   def down do
@@ -37,6 +41,12 @@ defmodule Monorepo.Repo.Migrations.WithIdentities do
     drop_if_exists(
       unique_index(:user_meta, [:meta_key, :user_id],
         name: "user_meta_meta_key_with_user_id_index"
+      )
+    )
+
+    drop_if_exists(
+      unique_index(:term_meta, [:term_id, :term_key],
+        name: "term_meta_term_meta_key_with_term_id_index"
       )
     )
   end

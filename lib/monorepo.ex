@@ -7,123 +7,20 @@ defmodule Monorepo do
   if it comes from the database, an external API or others.
   """
 
-  def t1() do
-    require Ash.Query
 
-    opts = [
-      actor: %{roles: [:user]},
-      context: %{private: %{ash_authentication?: true}}
-    ]
+
+  def t() do
+
+    actor = Ash.get!(Monorepo.Accounts.User, "c111ac40-5b95-424d-92ff-16286f209acb", context: %{private: %{ash_authentication?: true}})
 
     post =
-      Ash.get!(Monorepo.Contents.Post, "b10e5e6c-5ff5-4b26-9eae-6f45e141bc57", opts)
-      |> Ash.load!([:post_categories, :post_tags, author: :user_meta, post_meta: :children], opts)
+      Ash.get!(Monorepo.Contents.Post, "a668e623-c7c4-4826-9c6e-077e6c27de77", actor: %{roles: [:admin]})
+      |> Ash.load!([:post_meta, :post_categories, :post_tags],
+        actor: %{roles: [:admin]}
+      )
 
-    Monorepo.Utilities.MetaValue.post_images(post, :attachment_affiliate_media, [
-      "xlarge",
-      "large",
-      "medium"
-    ])
+    params =  %{"categories" => ["fbc0244e-6d61-43d9-8902-12c717475a44", "dcf63611-0920-4b63-b842-323772cc8413", "346f9639-5ea7-4153-9e32-33434b40948a"], "guid" => "http://localhost:4000/p/Ivo-BhUbJsHP", "post_content" => "{\"time\":1739671394204,\"blocks\":[{\"id\":\"kZ8TBNjOWZ\",\"type\":\"paragraph\",\"data\":{\"text\":\"Step into the picturesque paradise of Kamakura, Japan, where pristine beaches meet immaculate residential streets. \"}},{\"id\":\"i_LVngN4Qs\",\"type\":\"paragraph\",\"data\":{\"text\":\"Join us on a captivating walking tour as we explore the stunning scenery and charming neighbourhoods that define this coastal town of Kanagawa. \"}},{\"id\":\"MDKx-mj-iw\",\"type\":\"paragraph\",\"data\":{\"text\":\"From the crystal-clear waters of the beach to the perfectly manicured houses lined with cherry blossoms, Kamakura is a visual delight at every turn. \"}},{\"id\":\"UeoL7Bxmgq\",\"type\":\"paragraph\",\"data\":{\"text\":\"Discover the beauty of Japan's coastal gem and immerse yourself in its serene landscapes as the Enoden Train rushes through the alleyways and cuts through the village streets. \"}}],\"version\":\"2.30.7\"}", "post_date" => "2025-02-18T02:02:00Z", "post_excerpt" => "Step into the picturesque paradise of Kamakura, Japan, where pristine beaches meet immaculate residential streets.", "post_meta" => %{"0" => %{"meta_key" => "thumbnail_id", "meta_value" => "df747756-a356-4e58-b52c-5428b6b9b56a"}, "1" => %{"meta_key" => "comments_open", "meta_value" => "1"}}, "post_name" => "Ivo-BhUbJsHP", "post_status" => "publish", "post_title" => "4K Japan Seaside Village Walk - Kamakura Enoden Train Line Kanagawa Suburbs Walking Tour | HDR 60fps", "tags" => %{"0" => %{"name" => "方舟子", "term_taxonomy" => [%{"taxonomy" => "eeebf9db-a4ba-42fe-928b-c444151f4b89"}]}}}
+
+    Ash.update(post, params, action: :update_post, actor: actor)
   end
-
-  # def test() do
-  # require Ash.Query
-  # alias AshAuthentication.{Info, Jwt}
-
-  # user =
-  #   Ash.get!(Monorepo.Accounts.User, "8bb78136-7cfe-4611-a346-a043b4102f4e",
-  #     context: %{private: %{ash_authentication?: true}}
-  #   )
-
-  # new_user_meta_party = [%{"meta_key" => "description", "meta_value" => "test for update or insert"}]
-  # params = %{
-  #   "categories" => ["a1590d06-d245-4e55-9e96-c1723c0f228d","e715145a-a215-42ab-9c09-5ad589c0b835"],
-  #   "post_content" => "探索這些天然健康補充品，享受最佳健康效果！購買啟動！立即體驗！",
-  #   "post_date" => "2025-02-02T08:22:16.577088Z",
-  #   "post_meta" => %{
-  #     "0" => %{"meta_key" => :commission_min, "meta_value" => "10"},
-  #     "1" => %{"meta_key" => :commission_max, "meta_value" => "20"},
-  #     "2" => %{"meta_key" => :commission_unit, "meta_value" => "%"},
-  #     "3" => %{"meta_key" => :commission_model, "meta_value" => "CPC"},
-  #     "4" => %{
-  #       "meta_key" => :affiliate_link,
-  #       "meta_value" => "https://www.youtube.com/watch?v=es9MaJPb_U8"
-  #     },
-  #     "5" => %{
-  #       "meta_key" => :attachment_affiliate_media,
-  #       "meta_value" => "2269f7a4-c2ed-42f7-bc15-fbea2e001be2"
-  #     },
-  #     "6" => %{
-  #       "meta_key" => :attachment_affiliate_media_feature,
-  #       "meta_value" => "2269f7a4-c2ed-42f7-bc15-fbea2e001be2"
-  #     }
-  #   },
-  #   "post_title" => "超值健康補充品 - 10% 佣金",
-  #   "post_type" => "affiliate"
-  # }
-  # current_user = %{
-  #   current_user |
-  #   roles: [:owner | current_user.roles]
-  # }
-  # # current_user = %{roles: current_user.rows}
-  # form = AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post, [
-  #   forms: [
-  #     auto?: true
-  #   ],
-  #   actor: current_user
-  # ])
-  # |> Phoenix.Component.to_form()
-  # AshPhoenix.Form.submit(form, params: params)
-
-  # claims = %{"act" => "confirm_new_user"}
-  # {:ok, strategy} = AshAuthentication.Info.strategy(Monorepo.Accounts.User, :confirm_new_user)
-  # {:ok, token, _claims} = AshAuthentication.Jwt.token_for_user(current_user, claims, token_lifetime: strategy.token_lifetime)
-
-  # {:ok, token, _claims} = AshAuthentication.Jwt.token_for_user(current_user, %{"purpose" => "confirm_user_email"})
-  # Monorepo.Accounts.User.Senders.SendNewUserConfirmationEmail.send(current_user, token, nil)
-
-  # Ash.update(current_user, %{updated_at:  DateTime.utc_now()}, action: :resend_confirmation, context: %{private: %{ash_authentication?: true}})
-  # IO.puts(:ok)
-
-  # token =
-  #   Monorepo.Accounts.Token
-  #   |> Ash.Query.filter(subject == ^"user?id=#{user.id}" and purpose == "confirm_new_user" and expires_at > now())
-  #   |> Ash.Query.limit(1)
-  #   |> Ash.read_one(context: %{private: %{ash_authentication?: true}})
-  #   |> case do
-  #     {:ok, nil} ->
-  #       claims = %{"act" => "confirm_new_user"}
-  #       {:ok, strategy} = AshAuthentication.Info.strategy(Monorepo.Accounts.User, :confirm_new_user)
-  #       {:ok, token, _} = AshAuthentication.Jwt.token_for_user(user, claims, token_lifetime: strategy.token_lifetime)
-  #       Ash.create(Monorepo.Accounts.Token, %{extra_data: %{email: user.email}, purpose: "confirm_new_user", token: token}, action: :store_token, context: %{private: %{ash_authentication?: true}})
-  #       token
-  #     {:ok, user_token} ->
-  #       claims = %{"act" => user_token.purpose, "jti" => user_token.jti, "sub" => user_token.subject}
-  #       {:ok, strategy} = AshAuthentication.Info.strategy(Monorepo.Accounts.User, :confirm_new_user)
-  #       {:ok, token, _} = AshAuthentication.Jwt.token_for_user(user, claims, token_lifetime: strategy.token_lifetime)
-  #       token
-  #   end
-
-  # token
-
-  # |> case do
-  #   {:ok, nil} ->
-  #     {:ok, strategy} = AshAuthentication.Info.strategy(Monorepo.Accounts.User, :confirm_new_user)
-  #     {:ok, token, _claims} = AshAuthentication.Jwt.token_for_user(current_user, claims, token_lifetime: strategy.token_lifetime)
-  #   {:ok, token} ->
-  #     AshAuthentication.Jwt.token_for_resource(current_user, claims)
-  # end
-  # Monorepo.Accounts.User
-  # |> Ash.read(action: :resend_confirmation)
-
-  # Ash.update(user, %{updated_at: DateTime.utc_now()},
-  #   action: :resend_confirmation,
-  #   context: %{private: %{ash_authentication?: true}}
-  # )
-
-  # {:ok, user} =
-  # Monorepo.Accounts.User
-  # |> Ash.ActionInput.for_action(:resend_confirmation, %{email: user.email}, context: %{private: %{ash_authentication?: true}})
-  # |> Ash.run_action()
-  # end
 end

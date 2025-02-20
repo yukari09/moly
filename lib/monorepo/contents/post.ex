@@ -132,7 +132,7 @@ defmodule Monorepo.Contents.Post do
       argument :categories, {:array, :uuid}
       argument :tags, {:array, :map}
 
-      change manage_relationship(:post_meta, :post_meta, type: :direct_control)
+      change manage_relationship(:post_meta, :post_meta, on_no_match: :create, on_match: :update, on_lookup: :relate, on_missing: :destroy)
       change relate_actor(:author)
 
       change after_action(&create_or_update_term_relationships/3)
