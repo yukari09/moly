@@ -55,5 +55,5 @@
                              phx_new,inflex,owl]},
               {description,"A code generation and project patching framework\n"},
               {registered,[]},
-              {vsn,"0.5.21"},
+              {vsn,"0.5.25"},
               {plt_add_apps,[mix]}]}.

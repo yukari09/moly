@@ -7,4 +7,4 @@
               {applications,[kernel,stdlib,elixir,logger]},
               {description,"Error resilient parser for Elixir"},
               {registered,[]},
-              {vsn,"0.1.4"}]}.
+              {vsn,"0.1.5"}]}.

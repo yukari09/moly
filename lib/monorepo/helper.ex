@@ -229,6 +229,14 @@ defmodule Monorepo.Helper do
     end
   end
 
+  def string2slug(str) do
+    str
+    |> String.trim()
+    |> String.downcase()
+    |> String.replace(~r/\s+/, "-")
+    |> String.replace(~r/[^\w-]/, "")
+  end
+
   def extract_filename_without_extension(filename) do
     filename
     |> Path.basename()

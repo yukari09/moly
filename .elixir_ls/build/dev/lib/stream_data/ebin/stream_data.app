@@ -12,7 +12,7 @@
               {applications,[kernel,stdlib,elixir]},
               {description,"Data generation and property-based testing for Elixir"},
               {registered,[]},
-              {vsn,"1.1.2"},
+              {vsn,"1.1.3"},
               {env,[{initial_size,1},
                     {max_runs,100},
                     {max_run_time,infinity},

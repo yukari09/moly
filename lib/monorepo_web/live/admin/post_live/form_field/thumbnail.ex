@@ -1,7 +1,7 @@
 defmodule MonorepoWeb.AdminPostLive.FormField.Thumbnail do
   use MonorepoWeb.Admin, :live_component
 
-  import Monorepo.Contents.Helpers, only: [fetch_image_file_from_attachment_metadata: 2]
+  import Monorepo.Utilities.Post, only: [fetch_image_file_from_attachment_metadata: 2]
 
   @impl true
   def update(%{current_user: current_user, form: form}, socket) do

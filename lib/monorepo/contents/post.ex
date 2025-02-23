@@ -1,4 +1,5 @@
 defmodule Monorepo.Contents.Post do
+  require Ash.Resource.Change.Builtins
   use Ash.Resource,
     otp_app: :monorepo,
     domain: Monorepo.Contents,
@@ -48,6 +49,7 @@ defmodule Monorepo.Contents.Post do
         :create_media,
         :destroy_media,
         :update_media,
+        :update_post_status,
         :create_post,
         :update_post,
         :destroy_post
@@ -73,6 +75,7 @@ defmodule Monorepo.Contents.Post do
         :destroy_media,
         :update_media,
         :create_post,
+        :update_post_status,
         :update_post,
         :destroy_post
       ])
@@ -111,7 +114,9 @@ defmodule Monorepo.Contents.Post do
       change manage_relationship(:post_meta, :post_meta, type: :create)
       change relate_actor(:author)
 
-      change after_action(&create_or_update_term_relationships/3)
+      change after_action(&Monorepo.Contents.Changes.PostCreateOrUpdate.create_or_update_term_relationships/3)
+
+      # change after_action(&create_or_update_term_relationships/3)
     end
 
     update :update_post do
@@ -135,7 +140,9 @@ defmodule Monorepo.Contents.Post do
       change manage_relationship(:post_meta, :post_meta, on_no_match: :create, on_match: :update, on_lookup: :relate, on_missing: :destroy)
       change relate_actor(:author)
 
-      change after_action(&create_or_update_term_relationships/3)
+      change after_action(&Monorepo.Contents.Changes.PostCreateOrUpdate.create_or_update_term_relationships/3)
+
+      # change after_action(&create_or_update_term_relationships/3)
     end
 
     update :update_media do
@@ -147,6 +154,11 @@ defmodule Monorepo.Contents.Post do
       end
 
       change after_action(&update_media_meta/3)
+    end
+
+    update :update_post_status do
+      require_atomic? false
+      accept [:post_status]
     end
 
     create :create_media do
@@ -302,6 +314,10 @@ defmodule Monorepo.Contents.Post do
       manual Monorepo.Contents.Relations.PostCategories
     end
 
+    has_many :affiliate_categories, Monorepo.Terms.Term do
+      manual Monorepo.Contents.Relations.PostAffiliateCategories
+    end
+
     has_many :post_tags, Monorepo.Terms.Term do
       manual Monorepo.Contents.Relations.PostTags
     end
@@ -310,6 +326,13 @@ defmodule Monorepo.Contents.Post do
   identities do
     identity :unique_post_name, [:post_name]
   end
+
+  # aggregates do
+  #   first :affiliate_media_feature, :post_meta, :meta_value do
+  #     filter expr(meta_key == :attachment_affiliate_media_feature)
+  #     join_filter :children, children.post_id == meta_value
+  #   end
+  # end
 
   defp add_meta(%{arguments: %{metas: metas}} = _changeset, post, context) do
     metas = Enum.map(metas, &Map.put(&1, :post, post.id))
@@ -350,81 +373,81 @@ defmodule Monorepo.Contents.Post do
     {:ok, post}
   end
 
-  defp create_or_update_term_relationships(%{arguments: arguments}, post, context) do
-    # [%{term_taxonomy_id: some_term_taxonomy_id}]
-    categories = Map.get(arguments, :categories, [])
-    tags = Map.get(arguments, :tags, [])
+  # defp create_or_update_term_relationships(%{arguments: arguments}, post, context) do
+  #   # [%{term_taxonomy_id: some_term_taxonomy_id}]
+  #   categories = Map.get(arguments, :categories, [])
+  #   tags = Map.get(arguments, :tags, [])
 
-    term_names = Enum.map(tags, & &1["name"])
+  #   term_names = Enum.map(tags, & &1["name"])
 
-    old_term_relationships =
-      Monorepo.Terms.TermRelationships
-      |> Ash.Query.filter(post_id == ^post.id)
-      |> Ash.read!(actor: context.actor)
+  #   old_term_relationships =
+  #     Monorepo.Terms.TermRelationships
+  #     |> Ash.Query.filter(post_id == ^post.id)
+  #     |> Ash.read!(actor: context.actor)
 
-    Ash.bulk_destroy!(old_term_relationships, :destroy, %{}, actor: context.actor)
+  #   Ash.bulk_destroy!(old_term_relationships, :destroy, %{}, actor: context.actor)
 
-    term_taxonomy_ids = Enum.map(old_term_relationships, & &1.term_taxonomy_id)
+  #   term_taxonomy_ids = Enum.map(old_term_relationships, & &1.term_taxonomy_id)
 
-    {:ok, term_taxonomy} =
-      Monorepo.Terms.TermTaxonomy
-      |> Ash.Query.filter(id in ^term_taxonomy_ids)
-      |> Ash.Query.data_layer_query()
+  #   {:ok, term_taxonomy} =
+  #     Monorepo.Terms.TermTaxonomy
+  #     |> Ash.Query.filter(id in ^term_taxonomy_ids)
+  #     |> Ash.Query.data_layer_query()
 
-    Monorepo.Repo.update_all(term_taxonomy, inc: [count: -1])
+  #   Monorepo.Repo.update_all(term_taxonomy, inc: [count: -1])
 
-    categories_term_relation_ships =
-      Enum.map(categories, &%{term_taxonomy_id: &1, post_id: post.id})
+  #   categories_term_relation_ships =
+  #     Enum.map(categories, &%{term_taxonomy_id: &1, post_id: post.id})
 
-    existed_tags =
-      Monorepo.Terms.TermTaxonomy
-      |> Ash.Query.filter(term.name in ^term_names and taxonomy == "post_tag")
-      |> Ash.read!(actor: context.actor)
-      |> Ash.load!([:term], actor: context.actor)
+  #   existed_tags =
+  #     Monorepo.Terms.TermTaxonomy
+  #     |> Ash.Query.filter(term.name in ^term_names and taxonomy == "post_tag")
+  #     |> Ash.read!(actor: context.actor)
+  #     |> Ash.load!([:term], actor: context.actor)
 
-    existed_tag_names = Enum.map(existed_tags, & &1.term.name)
-    rest_not_exist_tags = Enum.filter(tags, &(&1["name"] not in existed_tag_names))
+  #   existed_tag_names = Enum.map(existed_tags, & &1.term.name)
+  #   rest_not_exist_tags = Enum.filter(tags, &(&1["name"] not in existed_tag_names))
 
-    rest_tags_term_relation_ships =
-      if rest_not_exist_tags == [] do
-        []
-      else
-        %Ash.BulkResult{status: :success, records: records} =
-          Ash.bulk_create!(rest_not_exist_tags, Monorepo.Terms.Term, :create,
-            actor: context.actor,
-            return_records?: true
-          )
+  #   rest_tags_term_relation_ships =
+  #     if rest_not_exist_tags == [] do
+  #       []
+  #     else
+  #       %Ash.BulkResult{status: :success, records: records} =
+  #         Ash.bulk_create!(rest_not_exist_tags, Monorepo.Terms.Term, :create,
+  #           actor: context.actor,
+  #           return_records?: true
+  #         )
 
-        Enum.map(records, fn record ->
-          term_taxonomy = record.term_taxonomy |> List.first()
-          %{term_taxonomy_id: term_taxonomy.id, post_id: post.id}
-        end)
-      end
+  #       Enum.map(records, fn record ->
+  #         term_taxonomy = record.term_taxonomy |> List.first()
+  #         %{term_taxonomy_id: term_taxonomy.id, post_id: post.id}
+  #       end)
+  #     end
 
-    tags_term_relation_ships =
-      Enum.map(existed_tags, &%{term_taxonomy_id: &1.id, post_id: post.id})
+  #   tags_term_relation_ships =
+  #     Enum.map(existed_tags, &%{term_taxonomy_id: &1.id, post_id: post.id})
 
-    term_relation_ships =
-      categories_term_relation_ships ++ tags_term_relation_ships ++ rest_tags_term_relation_ships
+  #   term_relation_ships =
+  #     categories_term_relation_ships ++ tags_term_relation_ships ++ rest_tags_term_relation_ships
 
-    %Ash.BulkResult{status: :success} =
-      Ash.bulk_create!(
-        term_relation_ships,
-        Monorepo.Terms.TermRelationships,
-        :create_term_relationships_by_relation_id,
-        actor: context.actor,
-        return_records?: true
-      )
+  #   %Ash.BulkResult{status: :success} =
+  #     Ash.bulk_create!(
+  #       term_relation_ships,
+  #       Monorepo.Terms.TermRelationships,
+  #       :create_term_relationships_by_relation_id,
+  #       actor: context.actor,
+  #       return_records?: true
+  #     )
 
-    term_taxonomy_ids = Enum.map(term_relation_ships, & &1.term_taxonomy_id)
+  #   term_taxonomy_ids = Enum.map(term_relation_ships, & &1.term_taxonomy_id)
 
-    {:ok, term_taxonomy} =
-      Monorepo.Terms.TermTaxonomy
-      |> Ash.Query.filter(id in ^term_taxonomy_ids)
-      |> Ash.Query.data_layer_query()
+  #   {:ok, term_taxonomy} =
+  #     Monorepo.Terms.TermTaxonomy
+  #     |> Ash.Query.filter(id in ^term_taxonomy_ids)
+  #     |> Ash.Query.data_layer_query()
 
-    Monorepo.Repo.update_all(term_taxonomy, inc: [count: 1])
+  #   Monorepo.Repo.update_all(term_taxonomy, inc: [count: 1])
 
-    {:ok, post}
-  end
+  #   {:ok, post}
+  # end
 end

@@ -72,7 +72,7 @@ defmodule MonorepoWeb.AdminPostLive.Index do
     status_count =
       Enum.reduce(calc_status, %{}, fn post_status, acc ->
         count =
-          Ash.Query.filter(@model, post_status == ^post_status)
+          Ash.Query.filter(@model, post_status == ^post_status and post_type == :post)
           |> Ash.count!(actor: current_user)
 
         Map.put(acc, post_status, count)

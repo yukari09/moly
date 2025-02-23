@@ -49,4 +49,9 @@ defmodule Monorepo.Terms.TermRelationships do
     belongs_to :term_taxonomy, Monorepo.Terms.TermTaxonomy
     belongs_to :post, Monorepo.Contents.Post
   end
+
+  identities do
+    identity :post_id_term_taxonomy_id, [:term_taxonomy_id, :post_id]
+  end
+
 end

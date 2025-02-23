@@ -5,7 +5,7 @@ defmodule MonorepoWeb.AdminPostLive.NavBar do
     ~H"""
     <div id={@id} class="flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
       <.link patch={~p"/admin/posts"} class="flex flex-shrink-0 items-center">
-        <img class="h-8 w-auto" src="/images/logo.png" alt="Your Company">
+        <img class="h-8 w-auto" src="/images/logo.svg" alt="Your Company">
       </.link>
 
       <!-- Separator -->

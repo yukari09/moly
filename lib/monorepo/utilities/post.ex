@@ -1,4 +1,4 @@
-defmodule Monorepo.Contents.Helpers do
+defmodule Monorepo.Utilities.Post do
   def struct_meta(nil), do: %{}
 
   def struct_meta(metas) when is_list(metas) do

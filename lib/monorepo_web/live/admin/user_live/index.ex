@@ -1,7 +1,7 @@
 defmodule MonorepoWeb.AdminUserLive.Index do
   use MonorepoWeb.Admin, :live_view
 
-  import Monorepo.Accounts.Helper
+  import Monorepo.Utilities.Account
 
   @per_page "10"
   @model Monorepo.Accounts.User

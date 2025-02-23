@@ -20,9 +20,7 @@ industries = %{
       %{name: "Retirement Planning", slug: "retirement-planning"},
       %{name: "Wealth Management Tools", slug: "wealth-management-tools"},
       %{name: "Financial Advisors", slug: "financial-advisors"},
-      %{name: "Asset Protection", slug: "asset-protection"},
-      %{name: "Tax Planning", slug: "tax-planning"},
-      %{name: "Corporate Tax Services", slug: "corporate-tax-services"}
+      %{name: "Asset Protection", slug: "asset-protection"}
     ]},
 
     %{name: "Insurance", slug: "insurance", subcategories: [
@@ -149,8 +147,7 @@ industries = %{
       %{name: "Speech Recognition", slug: "speech-recognition"},
       %{name: "Chatbots & Conversational AI", slug: "chatbots-conversational-ai"},
       %{name: "Predictive Analytics", slug: "predictive-analytics"},
-      %{name: "Data Analytics & Big Data", slug: "data-analytics-big-data"},
-      %{name: "Automation & Robotic Process Automation", slug: "automation-rpa"}
+      %{name: "Automation & Robotic Process Automation", slug: "automation-robotic-process-automation"}
     ]},
 
     %{name: "Tax", slug: "tax", subcategories: [
@@ -180,7 +177,6 @@ countries = [%{
     %{name: "France", slug: "france"},
     %{name: "Italy", slug: "italy"},
     %{name: "Canada", slug: "canada"},
-    %{name: "South Korea", slug: "south-korea"},
     %{name: "Brazil", slug: "brazil"},
     %{name: "Australia", slug: "australia"},
     %{name: "Russia", slug: "russia"},
@@ -267,8 +263,7 @@ countries = [%{
     %{name: "Monaco", slug: "monaco"},
     %{name: "San Marino", slug: "san-marino"},
     %{name: "Liechtenstein", slug: "liechtenstein"},
-    %{name: "Andorra", slug: "andorra"},
-    %{name: "Luxembourg", slug: "luxembourg"}
+    %{name: "Andorra", slug: "andorra"}
   ]
 }]
 
@@ -285,9 +280,9 @@ defmodule Monorepo.Seed do
   def term_upsert(%{name: name, slug: slug} = input, parent_id) when is_map(input) do
     term_taxonomy =
       case parent_id do
-        nil -> [%{taxonomy: "category"}]
+        nil -> [%{taxonomy: "affiliate_category"}]
         parent_id ->
-          [%{taxonomy: "category", parent_id: parent_id}]
+          [%{taxonomy: "affiliate_category", parent_id: parent_id}]
       end
 
     insert_data =

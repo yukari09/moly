@@ -11,16 +11,95 @@ defmodule Monorepo do
 
   def t() do
 
-    actor = Ash.get!(Monorepo.Accounts.User, "c111ac40-5b95-424d-92ff-16286f209acb", context: %{private: %{ash_authentication?: true}})
+    actor = Ash.get!(Monorepo.Accounts.User, "d5f63c95-61d4-459b-9a47-de568f236160", context: %{private: %{ash_authentication?: true}})
 
-    post =
-      Ash.get!(Monorepo.Contents.Post, "a668e623-c7c4-4826-9c6e-077e6c27de77", actor: %{roles: [:admin]})
-      |> Ash.load!([:post_meta, :post_categories, :post_tags],
-        actor: %{roles: [:admin]}
-      )
+    params = %{
+      "categories" => %{
+        "0" => "8d21c7e7-74e9-435f-82eb-54cbebcd546e",
+        "1" => "0474a5b1-fef5-43c3-a658-b7a809369a36"
+      },
+      "post_content" => "<p>Join the affiliate program and start earning passive income with ease! Promote products through your affiliate link and earn a <strong>15% recurring commission</strong> on every purchase made through your referral. No investment is required, and there is no cap on how much you can earn. Share your affiliate link, and when it leads to a purchase, you get rewarded. Plus, you can withdraw your commission to your bank account or account balance anytime. Get started today and turn your referrals into a steady income stream. The affiliate commission is effective after the order cycle ends in U.S. time.</p>",
+      "post_date" => "2025-02-22T23:58:23.526785Z",
+      "post_meta" => %{
+        "1" => %{"meta_key" => "commission_min", "meta_value" => "10"},
+        "10" => %{
+          "meta_key" => "attachment_affiliate_media",
+          "meta_value" => "5fc958c9-b70c-4558-9a4c-c6dacb598e44"
+        },
+        "11" => %{
+          "meta_key" => "attachment_affiliate_media_feature",
+          "meta_value" => "5fc958c9-b70c-4558-9a4c-c6dacb598e44"
+        },
+        "2" => %{"meta_key" => "commission_max", "meta_value" => "30"},
+        "3" => %{"meta_key" => "commission_unit", "meta_value" => "%"},
+        "4" => %{"meta_key" => "commission_model", "meta_value" => "CPC"},
+        "5" => %{
+          "meta_key" => "affiliate_link",
+          "meta_value" => "https://www.raksmart.com/reseller/affiliates.html"
+        },
+        "6" => %{"meta_key" => "cookie_duration", "meta_value" => "30"}
+      },
+      "post_name" => "cXpEmwTvrWiS",
+      "post_status" => "pending",
 
-    params =  %{"categories" => ["fbc0244e-6d61-43d9-8902-12c717475a44", "dcf63611-0920-4b63-b842-323772cc8413", "346f9639-5ea7-4153-9e32-33434b40948a"], "guid" => "http://localhost:4000/p/Ivo-BhUbJsHP", "post_content" => "{\"time\":1739671394204,\"blocks\":[{\"id\":\"kZ8TBNjOWZ\",\"type\":\"paragraph\",\"data\":{\"text\":\"Step into the picturesque paradise of Kamakura, Japan, where pristine beaches meet immaculate residential streets. \"}},{\"id\":\"i_LVngN4Qs\",\"type\":\"paragraph\",\"data\":{\"text\":\"Join us on a captivating walking tour as we explore the stunning scenery and charming neighbourhoods that define this coastal town of Kanagawa. \"}},{\"id\":\"MDKx-mj-iw\",\"type\":\"paragraph\",\"data\":{\"text\":\"From the crystal-clear waters of the beach to the perfectly manicured houses lined with cherry blossoms, Kamakura is a visual delight at every turn. \"}},{\"id\":\"UeoL7Bxmgq\",\"type\":\"paragraph\",\"data\":{\"text\":\"Discover the beauty of Japan's coastal gem and immerse yourself in its serene landscapes as the Enoden Train rushes through the alleyways and cuts through the village streets. \"}}],\"version\":\"2.30.7\"}", "post_date" => "2025-02-18T02:02:00Z", "post_excerpt" => "Step into the picturesque paradise of Kamakura, Japan, where pristine beaches meet immaculate residential streets.", "post_meta" => %{"0" => %{"meta_key" => "thumbnail_id", "meta_value" => "df747756-a356-4e58-b52c-5428b6b9b56a"}, "1" => %{"meta_key" => "comments_open", "meta_value" => "1"}}, "post_name" => "Ivo-BhUbJsHP", "post_status" => "publish", "post_title" => "4K Japan Seaside Village Walk - Kamakura Enoden Train Line Kanagawa Suburbs Walking Tour | HDR 60fps", "tags" => %{"0" => %{"name" => "方舟子", "term_taxonomy" => [%{"taxonomy" => "eeebf9db-a4ba-42fe-928b-c444151f4b89"}]}}}
+      "post_title" => "Become an Affiliate: Earn 30% Recurring Commission on Purchases – No Investment, No Cap!",
+      "post_type" => "affiliate",
+      "tags" => %{
+        "0" => %{
+          "name" => "affiliate program",
+          "slug" => "affiliate-program",
+          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
+        },
+        "1" => %{
+          "name" => "earn money",
+          "slug" => "earn-money",
+          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
+        },
+        "2" => %{
+          "name" => "recurring commission",
+          "slug" => "recurring-commission",
+          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
+        },
+        "3" => %{
+          "name" => "no investment required",
+          "slug" => "no-investment-required",
+          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
+        },
+        "4" => %{
+          "name" => "free to join",
+          "slug" => "free-to-join",
+          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
+        },
+        "5" => %{
+          "name" => "passive income",
+          "slug" => "passive-income",
+          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
+        },
+        "6" => %{
+          "name" => "affiliate marketing",
+          "slug" => "affiliate-marketing",
+          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
+        },
+        "7" => %{
+          "name" => "earn online",
+          "slug" => "earn-online",
+          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
+        },
+        "8" => %{
+          "name" => "affiliate link",
+          "slug" => "affiliate-link",
+          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
+        },
+        "9" => %{
+          "name" => "referral program",
+          "slug" => "referral-program",
+          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
+        }
+      }
+    }
 
-    Ash.update(post, params, action: :update_post, actor: actor)
+    actor = Map.put(actor, :roles, [:user, :admin])
+
+    Ash.create(Monorepo.Contents.Post, params, actor: actor, action: :create_post)
   end
 end

@@ -19,10 +19,13 @@ defmodule Monorepo.Utilities.MetaValue do
     |> format_meta_value()
   end
 
+  def format_meta_value(Monorepo.Contents.Post, _), do: nil
+
   def filter_meta_by_key(%{post_meta: post_meta}, meta_key)
       when is_list(post_meta) and is_atom(meta_key) do
     Enum.filter(post_meta, &(&1.meta_key == meta_key))
   end
+  def filter_meta_by_key(_, _), do: []
 
   def filter_meta_by_key_first(post, meta_key) when is_atom(meta_key) do
     filter_meta_by_key(post, meta_key)

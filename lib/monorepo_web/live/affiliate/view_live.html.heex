@@ -13,11 +13,11 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <.link :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@post.author, :avatar)} patch={~p"/user/page/@#{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@post.author, :username)}"}>
-            <img  class="inline-block size-10 rounded-full" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@post.author, :avatar)["64"]} alt="">
+            <.link :if={Monorepo.Utilities.Account.load_meta_value_by_meta_key(@post.author, :avatar)} patch={~p"/user/page/@#{Monorepo.Utilities.Account.load_meta_value_by_meta_key(@post.author, :username)}"}>
+            <img  class="inline-block size-10 rounded-full" src={Monorepo.Utilities.Account.load_meta_value_by_meta_key(@post.author, :avatar)["64"]} alt="">
             </.link>
-            <.link patch={~p"/user/page/@#{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@post.author, :username)}"} class="font-medium text-sm text-gray-500">
-              {Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@post.author, :name)}
+            <.link patch={~p"/user/page/@#{Monorepo.Utilities.Account.load_meta_value_by_meta_key(@post.author, :username)}"} class="font-medium text-sm text-gray-500">
+              {Monorepo.Utilities.Account.load_meta_value_by_meta_key(@post.author, :name)}
             </.link>
           </div>
         </div>
@@ -139,8 +139,8 @@
       <div class="lg:col-span-2">
         <div class="mt-10"> 
           <h3 class="text-sm font-medium text-gray-900">Tags</h3>
-          <div class="flex gap-2 mt-4">
-            <.link :for={term <- Monorepo.Utilities.Term.get_taxonomy(@post.post_tags, "post_tag")} navigate={~p"/t/#{term.name}"} type="button" class="bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">{term.name}</.link>
+          <div class="flex gap-2 mt-4 flex-wrap">
+            <.link :for={tag_term <- Monorepo.Utilities.Affiliate.affiliate_tags(@post)} navigate={Monorepo.Utilities.Affiliate.link_term(tag_term)} type="button" class="bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">{tag_term.name}</.link>
           </div>
         </div>
         <div class="mt-10 border-t border-gray-200 pt-10">

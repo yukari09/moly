@@ -126,12 +126,14 @@
           <.icon name="hero-magnifying-glass" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
         </div>
 
-        <MonorepoWeb.TailwindUI.button id="submit-production" navigate={~p"/products/submit"} class="bg-green-600 text-white hover:bg-green-600/90 focus-visible:outline-green-600/90" size="sm">Submit</MonorepoWeb.TailwindUI.button>
+        <MonorepoWeb.TailwindUI.button id="submit-production" navigate={~p"/affiliate/submit"} class="bg-green-600 text-white hover:bg-green-600/90 focus-visible:outline-green-600/90" size="sm">Submit</MonorepoWeb.TailwindUI.button>
         <.link :if={!@current_user} navigate={~p"/sign-in"} class="text-sm/6 font-semibold text-gray-900">Log in <span aria-hidden="true">&rarr;</span></.link>
         <MonorepoWeb.TailwindUI.dropdown id="nav-user-menu" :if={@current_user}>
-          <:button_slot>
-            <span class="sr-only">Open user menu</span>
-            <img class="size-8 rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+          <:button_slot class="!m-0 !p-0 size-8">
+            <img :if={ Monorepo.Utilities.Account.user_avatar(@current_user, "32") } class="inline-block w-full h-full rounded-full" src={Monorepo.Utilities.Account.user_avatar(@current_user, "32")} alt="">
+            <span :if={!Monorepo.Utilities.Account.user_avatar(@current_user, "32")} class="inline-flex w-full h-full items-center justify-center rounded-full bg-primary border-2 border-white">
+              <span class="font-medium text-white uppercase text-sm">{Monorepo.Utilities.Account.load_meta_value_by_meta_key(@current_user, :name) |> String.slice(0, 1)}</span>
+            </span>
           </:button_slot>
 
           <:menu_slot
@@ -139,12 +141,12 @@
           >
             <div class="py-1" role="none">
               <!-- Active: "bg-gray-50 outline-none", Not Active: "" -->
-              <.link navigate={~p"/user/page/@#{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :username)}"} class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-0">
-                <.icon name="hero-user-circle" class="mr-3 size-5 text-gray-700" />
+              <.link navigate={~p"/user/page/@#{Monorepo.Utilities.Account.load_meta_value_by_meta_key(@current_user, :username)}"} class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-0">
+                <Lucideicons.circle_user class="mr-3 size-4 text-gray-700" />
                 Profile
               </.link>
-              <.link navigate={~p"/user/page/@#{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(@current_user, :username)}"} class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-1">
-                <.icon name="hero-arrow-up-tray" class="mr-3 size-5 text-gray-700" />
+              <.link navigate="/sign-out" class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-1">
+                <Lucideicons.log_out name="hero-arrow-up-tray" class="mr-3 size-4 text-gray-700" />
                 Sign out
               </.link>
             </div>
@@ -186,9 +188,9 @@
     </div>
   </header>
   
-  <main class="mt-20 min-h-[calc(100vh_-_69px)]">
+  <main class="mt-[69px] min-h-[calc(100vh_-_69px)]">
     <MonorepoWeb.TailwindUI.flash_group flash={@flash} id="app-flash" />
-    <.live_component module={MonorepoWeb.Affiliate.PageIndexAlert} id="user_email_alert" :if={Monorepo.Accounts.Helper.is_active_user(@current_user) == false} current_user={@current_user} />
+    <.live_component module={MonorepoWeb.Affiliate.PageIndexAlert} id="user_email_alert" :if={Monorepo.Utilities.Account.is_active_user(@current_user) == false} current_user={@current_user} />
     { @inner_content }  
   </main>
 <footer class="bg-gray-900">

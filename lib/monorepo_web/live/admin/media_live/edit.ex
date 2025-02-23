@@ -1,7 +1,7 @@
 defmodule MonorepoWeb.AdminMediaLive.Edit do
   use MonorepoWeb.Admin, :live_view
 
-  import Monorepo.Contents.Helpers
+  import Monorepo.Utilities.Post
 
   def mount(%{"id" => id}, _session, socket) do
     media =

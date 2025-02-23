@@ -1,4 +1,4 @@
-defmodule Monorepo.Accounts.Helper do
+defmodule Monorepo.Utilities.Account do
   @bucket_prefix "user_meta"
 
   def generate_avatar_from_url(url) do
@@ -63,16 +63,31 @@ defmodule Monorepo.Accounts.Helper do
     |> JSON.encode!()
   end
 
-  def load_meta_value_by_meta_key(%Monorepo.Accounts.User{user_meta: user_meta}, meta_key)
-      when is_atom(meta_key) do
-    Enum.find(user_meta, &(&1.meta_key == meta_key))
-    |> format_meta_value()
-  end
+
+  def user_banner(user, size), do: load_meta_value_by_meta_key(user, :banner, &(Map.get(&1, size)))
+  def user_avatar(user, size), do: load_meta_value_by_meta_key(user, :avatar, &(Map.get(&1, size)))
+  def user_name(user, string_length \\ 0), do: load_meta_value_by_meta_key(user, :name, &(string_length == 0 && &1 || String.slice(&1, 0, string_length)))
+  def user_username(user, string_length \\ 0), do: load_meta_value_by_meta_key(user, :username, &(string_length == 0 && &1 || String.slice(&1, 0, string_length)))
+
+
+
 
   def is_active_user(%Monorepo.Accounts.User{confirmed_at: nil}), do: false
   def is_active_user(%Monorepo.Accounts.User{status: :inactive}), do: false
   def is_active_user(%Monorepo.Accounts.User{status: :active, confirmed_at: _}), do: true
   def is_active_user(nil), do: nil
+
+  def load_meta_value_by_meta_key(%Monorepo.Accounts.User{user_meta: user_meta}, meta_key, after_callback \\ nil)
+      when is_atom(meta_key) do
+    meta_value =
+      Enum.find(user_meta, &(&1.meta_key == meta_key))
+      |> format_meta_value()
+    case meta_value do
+      nil -> nil
+      meta_value_result ->
+        after_callback && after_callback.(meta_value_result) || meta_value_result
+    end
+  end
 
   defp format_meta_value(nil), do: nil
   defp format_meta_value(%{meta_value: nil}), do: nil

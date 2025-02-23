@@ -21,9 +21,11 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
-import Hooks from "./hooks-client"
+import Hooks from "./hooks"
 import Uploaders from "./uploaders"
 import { Validators, countWords } from "./form-validate"
+import Tagify from '@yaireo/tagify'
+
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
@@ -54,46 +56,7 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
-
-// function countWords(text) {
-//   /**
-//    * 計算文本中不同語言的字數，支持多語言混合。
-//    *
-//    * @param {string} text - 輸入的文本。
-//    * @returns {object} 各類字符的字數統計。
-//    */
-
-//   // 定義正則表達式匹配不同類型的字符
-//   const patterns = {
-//       chinese: /[\u4e00-\u9fff]/g, // 中文字符
-//       japanese: /[\u3040-\u30ff\u31f0-\u31ff\uff66-\uff9f]/g, // 日文假名
-//       korean: /[\uac00-\ud7af\u1100-\u11ff\u3130-\u318f]/g, // 韓文字母
-//       english: /\b[a-zA-Z]+\b/g, // 英文字母（單詞）
-//       russian: /\b[\u0400-\u04FF]+\b/g, // 俄文字母（單詞）
-//       digits: /\b[0-9]+\b/g, // 數字（整體匹配）
-//       symbols: /[!@#$%^&*(),.?\":{}|<>\[\]\\/;']/g, // 符號
-//       others: /[^\s\w\u4e00-\u9fff\u3040-\u30ff\u31f0-\u31ff\uff66-\uff9f\uac00-\ud7af\u1100-\u11ff\u3130-\u318f\u0400-\u04FF]/g // 其他字符
-//   };
-
-//   // 初始化統計結果
-//   const counts = Object.fromEntries(Object.keys(patterns).map(key => [key, 0]));
-
-//   // 計算每一類字符的數量
-//   for (const [key, pattern] of Object.entries(patterns)) {
-//       const matches = text.match(pattern);
-//       if (matches) {
-//           counts[key] = matches.length; // 確保所有類型按匹配次數計算
-//       }
-//   }
-
-//   // 計算總字數（不包括符號和其他非語言字符）
-//   counts.total = Object.entries(counts)
-//       .filter(([key]) => key !== "symbols" && key !== "others") // 排除符號和其他非語言字符
-//       .reduce((sum, [_, count]) => sum + count, 0);
-
-//   return counts.total;
-// }
-
+ 
 
 window.addEventListener("phx:show-modal", async (event) => {  
   let el = document.querySelector(event.detail.el)
@@ -234,96 +197,241 @@ window.addEventListener("app:validate-and-exec", async(event) => {
     }else{
       submit_btn.setAttribute("disabled", "disabled")
     }
+  }
+})
 
+window.addEventListener("phx:TagsTagify", async(event) => {
+  let el = event.detail.id === undefined 
+  ? event.target 
+  : document.querySelector(`${event.detail.id}`) || event.target;
+
+  if (el.tagify !== undefined) {
+    el.tagify.destroy();
   }
 
+  let config = el.config === undefined 
+    ? { whitelist: [], dropdown: { enabled: 0 } } 
+    : JSON.parse(el.dataset.config);
+
+  el.tagify = new Tagify(el, config);
 
 })
 
 
-// const validators = {
-//   required(value, msg = "This field is required.") {
-//     if (value !== null && value !== undefined && value.toString().trim() !== "") {
-//       return true;
-//     }
-//     return msg;
-//   },
 
-//   length(value, min, max, msg) {
-//     const len = value? countWords(value) : 0
-//     if (len >= min && len <= max) {
-//       return true;
-//     }
-//     return msg || `The length must be between ${min} and ${max} words.`;
-//   },
+//Admin
 
-//   range(value, min, max, msg) {
-//     const num = parseFloat(value);
-//     if (!isNaN(num) && num >= min && num <= max) {
-//       return true;
-//     }
-//     return msg || `The value must be between ${min} and ${max}.`;
-//   },
+window.addEventListener("app:disabledFormElement", (event) => {
+  //disabled this form elements like input, select, checkbox, etc
+  const form = event.target
+  if (form) {
+    const elements = form.querySelectorAll('input, select, textarea, button')
+    elements.forEach(element => {
+      element.disabled = true
+    })
+    setTimeout(() => {
+      elements.forEach(element => {
+        element.disabled = false
+      })
+    }, 2000)
+  }
+})
 
-//   isNumber(value, msg = "This field must be a valid number.") {
-//     return !isNaN(parseFloat(value)) && isFinite(value) ? true : msg;
-//   },
+window.addEventListener("app:historyback", (event) => {event.target.tagName === "IFRAME"? event.target.contentWindow.history.back() : history.back()})
 
-//   isEmail(value, msg = "This field must be a valid email address.") {
-//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//     return emailRegex.test(value) ? true : msg;
-//   },
+window.addEventListener("app:saveLocalStorage", ({detail}) => {
+  localStorage.setItem(detail.key, btoa(detail.value))
+})
 
-//   isURL(value, msg = "This field must be a valid URL.") {
-//     try {
-//       new URL(value);
-//       return true;
-//     } catch {
-//       return msg;
-//     }
-//   },
+window.addEventListener("app:recoverConnection", (event) => {
+  const value = localStorage.getItem(event.detail.key)
+  if (value) {
+    localStorage.removeItem(event.detail.key)
+    liveSocket.execJS(event.target, `[["exec",{"attr":"${atob(value)}"}]]`)
+  }
+})
 
-//   matches(value, regex, msg = "The value does not match the required format.") {
-//     return regex.test(value) ? true : msg;
-//   },
+window.addEventListener("app:addOverlayOnDragOver", (event) => {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:1000;pointer-events:none;';
+  let isOverlayAdded = false;
 
-//   isDate(value, msg = "This field must be a valid date (YYYY-MM-DD).") {
-//     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-//     return dateRegex.test(value) && !isNaN(new Date(value).getTime()) ? true : msg;
-//   },
+  event.target.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    if (!isOverlayAdded) {
+      event.target.style.position = 'relative';
+      event.target.appendChild(overlay);
+      isOverlayAdded = true;
+    }
+  });
 
-//   isBoolean(value, msg = "This field must be true or false.") {
-//     return typeof value === "boolean" ? true : msg;
-//   },
+  event.target.addEventListener('dragleave', (e) => {
+    if (!e.relatedTarget || !event.target.contains(e.relatedTarget)) {
+      if (isOverlayAdded) {
+        event.target.removeChild(overlay);
+        event.target.style.position = '';
+        isOverlayAdded = false;
+      }
+    }
+  });
 
-//   isInteger(value, msg = "This field must be an integer.") {
-//     return Number.isInteger(Number(value)) ? true : msg;
-//   },
+  event.target.addEventListener('drop', (e) => {
+    e.preventDefault();
+    if (isOverlayAdded) {
+      event.target.removeChild(overlay);
+      event.target.style.position = '';
+      isOverlayAdded = false;
+    }
+    liveSocket.execJS(event.target, `[["exec",{"attr":"phx-drop-target"}]]`);
+  });
+});
 
-//   isUpperCase(value, msg = "This field must be in uppercase.") {
-//     return value === value.toUpperCase() ? true : msg;
-//   },
+//add a listener to the window to submit the form
+window.addEventListener("app:click-el", (event) => {
+  if (event.target) {
+    event.target.click();
+  }
+});
+ 
 
-//   isLowerCase(value, msg = "This field must be in lowercase.") {
-//     return value === value.toLowerCase() ? true : msg;
-//   },
+//----Start Admin Media Page Script----//
+const mediaDataArrtribute = "data-media-id"
+const mediaDataSelector = `[${mediaDataArrtribute}]`
+const dataSelectedCounterSelector = "[data-selected-counter]"
 
-//   inList(value, list, msg = "This field must be one of the allowed values.") {
-//     return list.includes(value) ? true : msg;
-//   },
+const mediaActionsdisabledClass = ["opacity-50", "pointer-events-none"]
+const mediaWrapRingClass = ["ring-2", "ring-gray-900", "ring-offset-2", "ring-offset-gray-100"]
 
-//   isPhoneNumber(value, msg = "This field must be a valid phone number.") {
-//     const phoneRegex = /^\+?[1-9]\d{1,14}$/; // E.164 標準
-//     return phoneRegex.test(value) ? true : msg;
-//   },
+const selectAllLinkSelector = "[data-action-link='select-all']"
+const deselectAllLinkSelector = "[data-action-link='deselect-all']"
+const deleteSelectedLinkSelector = "[data-action-link='delete-selected']"
 
-//   isJSON(value, msg = "This field must be a valid JSON string.") {
-//     try {
-//       JSON.parse(value);
-//       return true;
-//     } catch {
-//       return msg;
-//     }
-//   }
-// }
+window.addEventListener("media:actions:deleteSelected", (event) => {
+    const el = document.querySelectorAll(`.${mediaWrapRingClass.join(".")}`)
+    let elValues = []
+    el.forEach(sigleEl => {
+      elValues.push(sigleEl.getAttribute(mediaDataArrtribute))
+    })
 
+    const encodedJS = `[["push",{"value":{"data-id":"${elValues.join(",")}"},"event":"media:delete:selected"}]]`;
+    liveSocket.execJS(event.target, encodedJS)
+})
+
+window.addEventListener("media:actions:count", (event) => {
+    let currentSelectedMediaCount = selectedMediaCount()
+    event.target.innerHTML = currentSelectedMediaCount
+    updateStatus()
+})
+
+window.addEventListener("media:click", (event) => {
+    mediaWrapRingClass.forEach(className => {
+        event.target.classList.toggle(className)
+    })
+    setSelectedStyle(event.target, "toggle")
+    updateStatus()
+})
+
+window.addEventListener("media:clickSingle", (event) => {
+  document.querySelectorAll(event.detail.items).forEach(el => {
+    mediaWrapRingClass.forEach(className => {
+      el.classList.remove(className)
+    })
+  })
+  mediaWrapRingClass.forEach(className => {
+    event.target.classList.add(className)
+  })
+  const encodedJS = `[["push",{"value":{"id":"${event.target.dataset.mediaId}"},"event":"media:broadcast:selected"}]]`;
+  liveSocket.execJS(event.target, encodedJS)
+  setSelectedStyle(event.target, "toggle")
+  updateStatus()
+})
+
+
+window.addEventListener("actions:selectAll:click", (event) => {
+    document.querySelectorAll(mediaDataSelector).forEach(el => {
+      el.classList.add(...mediaWrapRingClass)
+      setSelectedStyle(el, "add")
+    })
+    updateStatus()
+})
+
+window.addEventListener("actions:deselectAll:click", (event) => {
+    document.querySelectorAll(mediaDataSelector).forEach(el => {
+      el.classList.remove(...mediaWrapRingClass)
+      setSelectedStyle(el, "remove")
+    })
+    updateStatus()
+})
+
+window.addEventListener("phx:actions:updateStatus", (event) => {
+  updateStatus()
+})
+
+const updateStatus = () => {
+  let currentSelectedMediaCount = selectedMediaCount()
+
+  let selectAllLink = document.querySelector(selectAllLinkSelector)
+  let deselectAllLink = document.querySelector(deselectAllLinkSelector)
+  let deleteSelectedLink = document.querySelector(deleteSelectedLinkSelector)
+
+  if(selectAllLink && deselectAllLink && deleteSelectedLink){
+    if (currentSelectedMediaCount > 0) {
+      [deselectAllLink, deleteSelectedLink].forEach(link => {enableActions(link)})
+    }else{
+      [deleteSelectedLink, deselectAllLink].forEach(link => {disableActions(link)})
+    }
+    
+    if(document.querySelectorAll(mediaDataSelector).length === currentSelectedMediaCount){
+      disableActions(selectAllLink)
+    }else{
+      enableActions(selectAllLink)
+    }
+  
+    document.querySelector(dataSelectedCounterSelector).innerHTML = currentSelectedMediaCount
+  }
+
+}
+
+const setSelectedStyle = (el, classListFunName = "add") => {
+    const leId = el.getAttribute("id")
+    const overlayElement = document.querySelector(`#${leId}-overlay`)
+    const checkElement = document.querySelector(`#${leId}-check`)
+
+    if (overlayElement) {
+        if(classListFunName === "add"){
+            overlayElement.classList.add("!block")
+        }else if(classListFunName === "remove"){
+            overlayElement.classList.remove("!block")
+        }else if(classListFunName === "toggle"){
+            overlayElement.classList.toggle("!block")
+        }
+    }
+    if (checkElement) {
+      if(classListFunName === "add"){
+        checkElement.classList.remove("opacity-0")
+        checkElement.classList.add("opacity-75")
+      }else if(classListFunName === "remove"){
+        checkElement.classList.remove("opacity-75")
+        checkElement.classList.add("opacity-0")
+      }else if(classListFunName === "toggle"){
+        checkElement.classList.toggle("opacity-75")
+        checkElement.classList.toggle("opacity-0")
+      }
+    }
+}
+
+const disableActions = (el) => {
+  el.setAttribute("disabled", "disabled")
+  el.classList.add(...mediaActionsdisabledClass)
+}
+
+const enableActions = (el) => {
+  el.removeAttribute("disabled")
+  el.classList.remove(...mediaActionsdisabledClass)
+}
+
+const selectedMediaCount = () => {
+    const selectedMediaSelector = `.${mediaWrapRingClass.join(".")}`
+    return document.querySelectorAll(selectedMediaSelector).length
+}
+//----End Admin Media Page Script----//

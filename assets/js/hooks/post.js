@@ -285,20 +285,18 @@ export const InputValueUpdater = {
 }
 
 export const TagsTagify = {
-  mounted() {
-    let input = this.el;
-    const targetContainer = document.querySelector(this.el.dataset.targetContainer)
+  tagify(el){
+    const targetContainer = document.querySelector(el.dataset.targetContainer)
 
-    this.tagify = new Tagify(input, {
+    let tagify = new Tagify(el, {
       whitelist: [],  
       dropdown: {
         enabled: 0  
       }
     });
 
-    this.tagify.on('add', (e) => {
-      console.log('Tag added:', e.detail.data)
-      const namePrefix = this.el.dataset.targetName
+    tagify.on('add', (e) => {
+      const namePrefix = el.dataset.targetName
       if(e.detail.data.__tagId){
         const index = targetContainer.childElementCount / 2
 
@@ -317,7 +315,7 @@ export const TagsTagify = {
       }
     });
 
-    this.tagify.on('remove', (e) => {
+    tagify.on('remove', (e) => {
       // const namePrefix = this.el.dataset.targetName
       const inputs = targetContainer.querySelectorAll(`[data-value="${e.detail.data.value}"]`)
       inputs.forEach(input => {
@@ -327,10 +325,13 @@ export const TagsTagify = {
       })
       window.dispatchEvent(new CustomEvent('re_set_btn'))
     });
+    return tagify
   },
-
-  destroyed() {
-    this.tagify.destroy();
+  mounted() {
+    this.tagify(this.el)
+  },
+  updated() {
+    this.tagify(this.el)
   }
 };
 

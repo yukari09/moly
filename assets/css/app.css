@@ -48,4 +48,164 @@ button[disabled]{
   }
 
  
+.while-submitting { display: none; }
+.inputs { display: block; }
+
+.phx-submit-loading .while-submitting { display: block; }
+.phx-submit-loading .inputs { display: none; }
+
+/* Editor.js Base Variables */
+:root {
+  --editor-font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --editor-text-color: rgb(17, 24, 39); /* gray-900 */
+  --editor-gray-500: rgb(107, 114, 128);
+  --editor-gray-700: rgb(55, 65, 81);
+  --editor-gray-100: rgb(243, 244, 246);
+}
+
+/* Editor.js Base Styles */
+.ce-block {
+  margin: 0.75rem 0;
+}
+
+/* Editor.js Typography */
+.ce-paragraph {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--editor-text-color);
+  font-family: var(--editor-font-family);
+}
+
+/* Headers Base Styles */
+.ce-header {
+  padding: 0 !important;
+  margin: 0;
+  font-family: var(--editor-font-family);
+  color: var(--editor-text-color);
+}
+
+/* Header Variants */
+h1.ce-header {
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.2;
+  
+}
+
+h2.ce-header {
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.3;
+   
+}
+
+h3.ce-header {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+   
+}
+
+h4.ce-header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.5;
+   
+}
+
+h5.ce-header {
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.5;
+   
+}
+
+/* List Styles */
+.ce-block--list {
+  margin: 0.75rem 0;
+}
+
+.cdx-list {
+  margin: 0;
+  padding-left: 40px;
+  outline: none;
+}
+
+.cdx-list__item {
+  padding: 5.5px 0 5.5px 3px;
+  line-height: 1.6em;
+  color: var(--editor-text-color);
+  font-size: 1.125rem;
+}
+
+/* Quote Styles */
+.cdx-quote {
+  margin: 1.5rem 0;
+  padding: 1rem 0 1rem 1.5rem;
+  border-left: 4px solid rgb(209, 213, 219); /* gray-300 */
+}
+
+.cdx-quote__text {
+  font-size: 1.25rem;
+  line-height: 1.75;
+  color: var(--editor-text-color);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.cdx-quote__caption {
+  font-size: 1rem;
+  color: rgb(75, 85, 99); /* gray-600 */
+}
+
+/* Toolbar Styles */
+.ce-toolbar__plus,
+.ce-toolbar__settings-btn {
+  color: var(--editor-gray-500);
+}
+
+.ce-toolbar__plus:hover,
+.ce-toolbar__settings-btn:hover {
+  color: var(--editor-gray-700);
+  background-color: var(--editor-gray-100);
+  transition: background-color 0.15s ease !important;
+}
+
+/* Block Selection */
+.ce-block--selected {
+  background-color: rgba(243, 244, 246, 0.5); /* gray-100 with opacity */
+}
+
+/* Action Buttons */
+.editor-action-btn {
+  @apply flex items-center justify-center;
+  @apply w-8 h-8 rounded-md;
+  @apply text-gray-500 hover:text-gray-700;
+  @apply bg-white hover:bg-gray-50;
+  @apply transition-all duration-150;
+  @apply border border-transparent hover:border-gray-200;
+}
+
+.editor-action-btn[disabled] {
+  @apply opacity-50 pointer-events-none;
+  @apply hover:text-gray-500 hover:bg-white hover:border-transparent;
+}
+
+button[disabled] {
+  @apply opacity-50 pointer-events-none;
+}
+
+/* Disable Default Transitions */
+.codex-editor__redactor,
+.ce-block,
+.ce-block__content,
+.ce-toolbar__actions,
+.ce-toolbar__settings-btn,
+.ce-toolbar__plus,
+.ce-toolbar,
+.ce-toolbar__content,
+.ce-paragraph,
+.cdx-block {
+  transition: none !important;
+}
  

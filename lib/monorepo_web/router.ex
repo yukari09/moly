@@ -20,9 +20,9 @@ defmodule MonorepoWeb.Router do
     plug(:load_from_bearer)
   end
 
-  pipeline :root_admin_layout do
-    plug(:put_root_layout, html: {MonorepoWeb.Layouts, :root_admin})
-  end
+  # pipeline :root_admin_layout do
+  #   plug(:put_root_layout, html: {MonorepoWeb.Layouts, :root_admin})
+  # end
 
   scope "/", MonorepoWeb do
     pipe_through(:browser)
@@ -79,20 +79,17 @@ defmodule MonorepoWeb.Router do
       ]
     )
 
+    ash_authentication_live_session :authenticated_routes,
+      on_mount: {MonorepoWeb.LiveUserAuth, :live_user_required} do
+      live("/affiliate/submit", Affiliate.SubmitLive)
+    end
+
     ash_authentication_live_session :authenticated_maybe_routes,
       on_mount: {MonorepoWeb.LiveUserAuth, :live_user_optional} do
       live("/", Affiliate.PageIndexLive)
-      live("/browse", Affiliate.ProductBrowseLive)
+      live("/browse", Affiliate.BrowseLive)
       live("/user/page/:username", Affiliate.UserPageLive)
-      live("/c/:category_name", Affiliate.IndexPageLive)
-      live("/t/:tag_name", Affiliate.IndexPageLive)
-      live("/search", Affiliate.IndexPageLive)
-      live("/product/:post_name", Affiliate.ProductViewLive)
-    end
-
-    ash_authentication_live_session :authenticated_routes,
-      on_mount: {MonorepoWeb.LiveUserAuth, :live_user_required} do
-      live("/products/submit", Affiliate.ProductSubmitLive)
+      live("/affiliate/:post_name", Affiliate.ViewLive)
     end
   end
 
@@ -104,7 +101,7 @@ defmodule MonorepoWeb.Router do
   # end
 
   scope "/admin", MonorepoWeb do
-    pipe_through([:browser, :root_admin_layout])
+    pipe_through([:browser])
 
     ash_authentication_live_session :live_admin,
       on_mount: {MonorepoWeb.LiveUserAuth, :live_admin_required},
@@ -119,6 +116,9 @@ defmodule MonorepoWeb.Router do
       live("/categories", AdminCategoryLive.Index, :index)
       live("/tags", AdminTagLive.Index, :index)
       live("/comments", AdminCommentLive.Index, :index)
+      live("/affiliates", AdminAffiliateLive.Index, :index)
+      live("/affiliate/categories", AdminAffiliateLive.Categories.Index, :index)
+      live("/affiliate/tags", AdminAffiliateLive.Tags.Index, :index)
     end
   end
 

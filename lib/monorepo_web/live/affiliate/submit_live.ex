@@ -1,32 +1,12 @@
-defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
+defmodule MonorepoWeb.Affiliate.SubmitLive do
   use MonorepoWeb, :live_view
 
   require Ash.Query
 
   alias Phoenix.HTML.FormField
 
-  def mount(_params, _session, socket) do
-    current_user = socket.assigns.current_user
-    is_active_user = Monorepo.Accounts.Helper.is_active_user(current_user)
-
-    if is_active_user do
-      form = resource_form(current_user)
-
-      socket =
-        assign(socket, form: form)
-        |> allow_upload(:media, accept: ~w(.jpg .jpeg .png .gif), max_entries: 6)
-        |> assign(:is_active_user, is_active_user)
-
-      countries = get_term_taxonomy("countries", current_user)
-      industries = get_term_taxonomy("industries", current_user)
-
-      {:ok, socket, temporary_assigns: [countries: countries, industries: industries]}
-    else
-      socket =
-        push_navigate(socket, to: ~p"/")
-
-      {:ok, socket}
-    end
+  def mount(params, _session, socket) do
+    {:ok, resource_socket(socket, params)}
   end
 
   def handle_event("upload-media", _, socket) do
@@ -43,7 +23,9 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
         end
       end)
 
-    socket = push_event(socket, "validate-and-exec", %{form_name: "form"})
+    socket =
+      push_event(socket, "validate-and-exec", %{form_name: "form"})
+      |> push_event("TagsTagify", %{id: "#form_post_tags"})
     {:noreply, socket}
   end
 
@@ -51,12 +33,12 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
     socket =
       cancel_upload(socket, :media, ref)
       |> push_event("validate-and-exec", %{form_name: "form"})
+      |> push_event("TagsTagify", %{id: "#form_post_tags"})
 
     {:noreply, socket}
   end
 
   def handle_event("save", %{"form" => params}, socket) do
-    # IO.inspect(socket.assigns.form)
     uploaded_files =
       consume_uploaded_entries(socket, :media, fn %{path: path}, entry ->
         media_info = Monorepo.Helper.upload_entry_information(entry, path)
@@ -110,12 +92,29 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
     params = Map.put(params, "post_status", "pending")
     params = Map.put(params, "post_name", Monorepo.Helper.generate_random_str())
 
+    post_tags =
+      Map.get(params, "post_tags")
+      |> case do
+        nil -> %{}
+        tags ->
+          JSON.decode!(tags)
+          |> Enum.with_index()
+          |> Enum.reduce(%{}, fn {tag, i}, acc ->
+            name = get_in(tag, ["value"]) |> String.trim()
+            slug = Monorepo.Helper.string2slug(name)
+            Map.put(acc, "#{i}", %{"name" => name, "slug" => slug, "term_taxonomy" => [%{"taxonomy" => "affiliate_tag"}]})
+          end)
+      end
+
+
+    params = Map.put(params, "tags", post_tags)
+
     socket =
       case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
         {:ok, post} ->
           socket
           |> put_flash(:info, "Saved post for #{post.post_title}!")
-          |> push_navigate(to: ~p"/product/#{post.post_name}")
+          |> push_navigate(to: Monorepo.Utilities.Affiliate.link_view(post))
 
         {:error, form} ->
           socket
@@ -126,35 +125,37 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
     {:noreply, socket}
   end
 
-  defp resource_form(id \\ nil, current_user) do
-    current_user = set_current_user_as_owner(current_user)
+  defp resource_socket(socket, params) do
+    post_name = Map.get(params, "post_name")
+    is_active_user = Monorepo.Utilities.Account.is_active_user(socket.assigns.current_user)
 
-    data =
-      if is_nil(id) do
-        AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post,
-          forms: [
-            auto?: true
-          ],
-          actor: current_user
-        )
-      else
-        post =
-          Ash.Query.filter(
-            Monorepo.Contents.Post,
-            id == ^id and auth(author_id == current_user.id)
-          )
-          |> Ash.read_first!(actor: current_user)
+    post = if is_nil(post_name) do
+      %Monorepo.Contents.Post{}
+    else
+      Ash.Query.filter(
+        Monorepo.Contents.Post,
+        post_name == ^post_name and author_id == ^socket.assigns.current_user.id
+      )
+      |> Ash.Query.load([:affiliate_categories, :post_tags, post_meta: :children])
+      |> Ash.read_first!(actor: socket.assigns.current_user)
+    end
 
-        AshPhoenix.Form.for_update(post, :update_post,
-          forms: [
-            auto?: true
-          ],
-          data: post,
-          actor: current_user
-        )
-      end
-
-    to_form(data)
+    if is_active_user && post do
+      form =
+        if post_name do
+          AshPhoenix.Form.for_update(post, :update_post, forms: [auto?: true], actor: set_current_user_as_owner(socket.assigns.current_user))
+        else
+          AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post, forms: [auto?: true], actor: set_current_user_as_owner(socket.assigns.current_user))
+        end
+        |> to_form()
+        countries = get_term_taxonomy("countries", socket.assigns.current_user)
+        industries = get_term_taxonomy("industries", socket.assigns.current_user)
+        assign(socket, [countries: countries, industries: industries, form: form, post: post])
+        |> allow_upload(:media, accept: ~w(.jpg .jpeg .png .gif), max_entries: 6)
+        |> assign(:is_active_user, is_active_user)
+    else
+      push_navigate(socket, to: ~p"/")
+    end
   end
 
   # terms  slug
@@ -164,9 +165,22 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
     |> Ash.read!(actor: current_user)
   end
 
+  defp find_value(affiliate_categories, post_affiliate_categories) when is_list(post_affiliate_categories) do
+    Enum.find(affiliate_categories, fn ac ->
+      slugs = post_affiliate_categories |> Enum.map(& &1.slug)
+      ac.term.slug in slugs
+    end)
+    |> case do
+      nil -> nil
+      t -> t.id
+    end
+  end
+
+  defp find_value(_, _), do: nil
+
   def render(assigns) do
     ~H"""
-    <div class="xl:w-[1280px] mx-auto my-40">
+    <div class="xl:w-[1280px] mx-auto mt-32 mb-40">
       <div>
         <div class="px-6 py-4  text-4xl">Submit Competitive Products</div>
         <.form  :let={f} for={@form} class="px-6 my-6 space-y-4" phx-submit="save" phx-change={JS.dispatch("app:validate-and-exec")}>
@@ -179,30 +193,37 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
             </.input>
             <!--End title-->
             <!--Start Link-->
-            <.input  field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_5_meta_value", name: "#{f[:post_meta].name}[5][meta_value]", value: "", errors: [], form: f}}  input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "isURL", params: []}}]])}>
+            <.input  field={%FormField{
+              field: :post_meta,
+              id: "#{f[:post_meta].id}_5_meta_value",
+              name: "#{f[:post_meta].name}[5][meta_value]",
+              value: Monorepo.Utilities.MetaValue.format_meta_value(@post, :affiliate_link),
+              errors: [],
+              form: f
+            }}  input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "isURL", params: []}}]])}>
               <:label>What is the link to your service(product)? <span class="text-red-500">*</span></:label>
               <:input_helper>The link of your service(product).</:input_helper>
               <:foot_other><input name={"#{f[:post_meta].name}[5][meta_key]"} type="hidden" value={:affiliate_link}/></:foot_other>
             </.input>
             <!--End Link-->
             <!--Start Tags-->
-            <div class="text-xs text-gray-500 h-0" id="tagify-input-target" phx-update="ignore">
-              <input :for={{tag, i} <- Enum.with_index(f.data && @form.data.post_tags || [])} name={"#{f[:tags].name}[#{i}][name]"} value={tag.name} data-value={tag.name}  type="hidden"/>
-              <input :for={{tag, i} <- Enum.with_index(f.data && @form.data.post_tags || [])} name={"#{f[:tags].name}[#{i}][term_taxonomy][][taxonomy]"} data-value={tag.name}  value={hd(tag.term_taxonomy) |> Map.get(:id)} type="hidden"/>
-            </div>
-            <.input  field={f[:post_tags]} type="text" phx-update="ignore" phx-hook="TagsTagify" data-target-container="#tagify-input-target" data-target-name={"#{f[:tags].name}"}>
+            <%!-- <div class="text-xs text-gray-500 hidden" id="tagify-input-target" phx-update="ignore">
+              <input :for={{tag, i} <- Enum.with_index(f.data && @form.data.post_tags || [])} name={"#{f[:tags].name}[#{i}][name]"} value={tag.name} data-value={tag.name} />
+              <input :for={{tag, i} <- Enum.with_index(f.data && @form.data.post_tags || [])} name={"#{f[:tags].name}[#{i}][term_taxonomy][][taxonomy]"} data-value={tag.name}  value={hd(tag.term_taxonomy) |> Map.get(:id)} />
+            </div> --%>
+            <.input field={%FormField{id: f[:post_tags].id, name: f[:post_tags].name, value: (f[:post_tags].value || []) |> Enum.map(& &1.name) |> Enum.join(","), errors: nil, form: f, field: :post_tags}} type="text" phx-mounted={JS.dispatch("phx:TagsTagify")}>
               <:label>Tags <span class="text-red-500">*</span></:label>
             </.input>
             <!--End Tags-->
             <!--Start Description-->
             <div>
               <div
-                id="editor"
-                phx-hook="Editor"
+                id="post-editor"
+                phx-hook="DescriptionEditor"
                 data-target={"##{f[:post_content].id}"}
                 data-config={JSON.encode!(%{
                   theme: "snow",
-                  placeholder: "Affiliate description...",
+                  placeholder: "Affiliate description(min 20 words)...",
                   modules: %{
                     toolbar: [
                       [%{ header: 2 }, %{ header: 4 }, %{ header: 5 }],
@@ -211,9 +232,8 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
                     ]
                   }
                 })}
-                phx-update="ignore"
-              ></div>
-              <input class="hidden" phx-update="ignore" id={f[:post_content].id} name={f[:post_content].name} value={f[:post_content].value} input_dispatch={JSON.encode!([["app:count_word"],["app:fill_text_with_attribute", %{detail: %{to_el: "#count_word_text", from_attr: "data-count-word"}}],["app:input-validate", %{detail: %{validator: "length", params: [20, 3000]}}]])}/>
+              >{raw @post.post_content}</div>
+              <input class="hidden" phx-update="ignore" id={f[:post_content].id} name={f[:post_content].name} value={f[:post_content].value} data-input-dispatch={JSON.encode!([["app:input-validate", %{detail: %{validator: "length", params: [20, 3000]}}]])}/>
             </div>
             <%!-- <.input  field={f[:post_content]} type="textarea"  input_dispatch={JSON.encode!([["app:count_word"],["app:fill_text_with_attribute", %{detail: %{to_el: "#count_word_text", from_attr: "data-count-word"}}],["app:input-validate", %{detail: %{validator: "length", params: [20, 3000]}}]])}>
               <:label>Description <span class="text-red-500">*</span></:label>
@@ -226,12 +246,12 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
           <div class="rounded-lg p-6 border space-y-4">
             <h3 class="font-semibold text-xl">Location and Category</h3>
             <!--Start Location-->
-            <.input type="select"  field={%FormField{field: :countries, id: "categories_0_term_taxonomy", name: "#{f[:countries].name}[]", value: "", errors: [], form: f}}  input_dispatch = "" options={Map.new(@countries, &({&1.id, &1.term.name}))} option_selectd="">
+            <.input type="select"  field={%FormField{field: :countries, id: "categories_0_term_taxonomy", name: "#{f[:categories].name}[0]", value: find_value(@countries, @post.affiliate_categories), errors: [], form: f}}  input_dispatch = "" options={Map.new(@countries, &({&1.id, &1.term.name}))}>
               <:label>Select a country where your service(product) from?</:label>
             </.input>
             <!--End Location-->
             <!--Start Industry-->
-            <.input type="select"  field={%FormField{field: :industries, id: "categories_1_term_taxonomy_id", name: "#{f[:industries].name}[]", value: "", errors: [], form: f}}  input_dispatch = "" options={Map.new(@industries, &({&1.id, &1.term.name}))} option_selectd="">
+            <.input type="select"  field={%FormField{field: :industries, id: "categories_1_term_taxonomy_id", name: "#{f[:categories].name}[1]", value: find_value(@industries, @post.affiliate_categories), errors: [], form: f}}  input_dispatch = "" options={Map.new(@industries, &({&1.id, &1.term.name}))}>
               <:label>What industry is your service(product) in?</:label>
             </.input>
             <!--End Industry-->
@@ -247,7 +267,7 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
                     <div class="font-medium text-gray-700">Minimum Commission</div>
                     <div class="text-gray-500 text-sm">Enter the minimum commission amount you are willing to accept, e.g., 10.</div>
                   </div>
-                  <.input type="text" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_1_meta_value", name: "#{f[:post_meta].name}[1][meta_value]", value: "", errors: [], form: f}} input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]])} >
+                  <.input type="text" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_1_meta_value", name: "#{f[:post_meta].name}[1][meta_value]", value: Monorepo.Utilities.MetaValue.format_meta_value(@post, :commission_min), errors: [], form: f}} input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]])} >
                   </.input>
                   <input type="text" name={"#{f[:post_meta].name}[1][meta_key]"} value={:commission_min} class="hidden"/>
                 </div>
@@ -258,7 +278,7 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
                     <div class="font-medium text-gray-700">Maximum Commission</div>
                     <div class="text-gray-500 text-sm">Enter the maximum commission amount you are willing to accept, e.g., 20.</div>
                   </div>
-                  <.input type="text" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_2_meta_value", name: "#{f[:post_meta].name}[2][meta_value]", value: "", errors: [], form: f}} input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]])} >
+                  <.input type="text" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_2_meta_value", name: "#{f[:post_meta].name}[2][meta_value]", value: Monorepo.Utilities.MetaValue.format_meta_value(@post, :commission_max), errors: [], form: f}} input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]])} >
                   </.input>
                   <input type="text" name={"#{f[:post_meta].name}[2][meta_key]"} value={:commission_max} class="hidden"/>
                 </div>
@@ -269,7 +289,7 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
                     <div class="font-medium text-gray-700">Commission Unit</div>
                     <div class="text-gray-500 text-sm">Commission Unit</div>
                   </div>
-                  <.input type="text" type="select" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_3_meta_value", name: "#{f[:post_meta].name}[3][meta_value]", value: "", errors: [], form: f}} options={get_unit()} option_selectd="" input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "inList", params: [Enum.map(get_unit(), &(elem(&1,0)))]}}]])} >
+                  <.input type="text" type="select" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_3_meta_value", name: "#{f[:post_meta].name}[3][meta_value]", value: Monorepo.Utilities.MetaValue.format_meta_value(@post, :commission_unit), errors: [], form: f}} options={get_unit()} option_selectd="" input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "inList", params: [Enum.map(get_unit(), &(elem(&1,0)))]}}]])} >
                   </.input>
                   <input type="text" name={"#{f[:post_meta].name}[3][meta_key]"} value={:commission_unit} class="hidden"/>
                 </div>
@@ -280,7 +300,7 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
                     <div class="font-medium text-gray-700">Commission Model</div>
                     <div class="text-gray-500 text-sm">Commission Unit</div>
                   </div>
-                  <.input type="text" type="select" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_4_meta_value", name: "#{f[:post_meta].name}[4][meta_value]", value: "", errors: [], form: f}} options={Map.new(commission_model(), &({&1, &1}))} option_selectd="" input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "inList", params: [commission_model()]}}]])} >
+                  <.input type="text" type="select" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_4_meta_value", name: "#{f[:post_meta].name}[4][meta_value]", value: Monorepo.Utilities.MetaValue.format_meta_value(@post, :commission_model), errors: [], form: f}} options={Map.new(commission_model(), &({&1, &1}))} option_selectd="" input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "inList", params: [commission_model()]}}]])} >
                   </.input>
                   <input type="text" name={"#{f[:post_meta].name}[4][meta_key]"} value={:commission_model} class="hidden"/>
                 </div>
@@ -291,7 +311,7 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
                     <div class="font-medium text-gray-700">Cookie Duration</div>
                     <div class="text-gray-500 text-sm">Cookie Duration (Days)</div>
                   </div>
-                  <.input type="text" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_6_meta_value", name: "#{f[:post_meta].name}[6][meta_value]", value: "", errors: [], form: f}} input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]])} />
+                  <.input type="text" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_6_meta_value", name: "#{f[:post_meta].name}[6][meta_value]", value: Monorepo.Utilities.MetaValue.format_meta_value(@post, :cookie_duration), errors: [], form: f}} input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]])} />
                   <input type="text" name={"#{f[:post_meta].name}[6][meta_key]"} value={:cookie_duration} class="hidden"/>
                 </div>
                 <!--End Cookie Duration-->
@@ -300,7 +320,7 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
           </div>
 
           <div class="rounded-lg p-6 border space-y-4">
-            <.form_media uploads={@uploads} />
+            <.form_media uploads={@uploads} post={@post} />
           </div>
 
           <div class="flex py-4 px-2 !mt-6">
@@ -332,6 +352,16 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
             <p class="text-xs/5 text-gray-600">PNG, JPG, GIF up to 8MB</p>
           </div>
         </label>
+
+        <%!-- <div :for={image_src <- Monorepo.Utilities.MetaValue.post_images(@post, :attachment_affiliate_media, ["xlarge", "large", "medium"])} class="bg-gray-50">
+          <div class="relative">
+            <img src={image_src} class="w-full object-cover aspect-video rounded-md"  />
+            <div class="absolute right-0 top-0 mr-2 mt-2">
+              <button type="button"  class="bg-white rounded-full text-gray-500 p-1"><Lucideicons.x class="size-4"/></button>
+            </div>
+          </div>
+        </div> --%>
+
         <div :for={entry <- @uploads.media.entries} class="bg-gray-50">
           <div class="relative">
             <.live_img_preview class="w-full object-cover aspect-video rounded-md" entry={entry} />
@@ -383,7 +413,6 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
   slot(:foot_other, required: false)
   attr(:input_dispatch, :string, required: false, default: nil)
   attr(:options, :list, required: false)
-  attr(:option_selectd, :string, required: false)
   attr(:rest, :global)
 
   defp input(%{type: "text"} = assigns) do
@@ -453,7 +482,7 @@ defmodule MonorepoWeb.Affiliate.ProductSubmitLive do
           class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6"
           {@rest}
         >
-          <option :for={{value, key} <- @options} value={value} selected={value == @option_selectd}>{key}</option>
+          <option :for={{value, key} <- @options} value={value} selected={value == @field.value}>{key}</option>
         </select>
         <.icon name="hero-chevron-down" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"/>
       </div>

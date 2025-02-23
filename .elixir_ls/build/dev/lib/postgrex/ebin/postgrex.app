@@ -82,7 +82,7 @@
                              table,decimal,db_connection]},
               {description,"PostgreSQL driver for Elixir"},
               {registered,[]},
-              {vsn,"0.19.3"},
+              {vsn,"0.20.0"},
               {mod,{'Elixir.Postgrex.App',[]}},
               {env,[{type_server_reap_after,180000},
                     {json_library,'Elixir.Jason'}]}]}.

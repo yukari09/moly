@@ -1,4 +1,4 @@
-defmodule MonorepoWeb.Affiliate.ProductViewLive do
+defmodule MonorepoWeb.Affiliate.ViewLive do
   use MonorepoWeb, :live_view
   require Ash.Query
 

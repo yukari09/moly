@@ -1,6 +1,5 @@
 <div class="bg-white">
   <div class="mx-auto px-4 py-12 sm:px-6 lg:max-w-7xl lg:px-8">
- 
 
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-4">
@@ -54,16 +53,16 @@
       <article :for={post <- @post} class="flex flex-col items-start justify-between">
         <div class="relative w-full">
           <img src={Monorepo.Utilities.MetaValue.post_feature_image(post, :attachment_affiliate_media_feature, "medium")} alt="" class="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
-          <.link class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" navigate={~p"/product/#{post.post_name}"}>&nbsp;</.link>
+          <.link class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" navigate={Monorepo.Utilities.Affiliate.link_view(post)}>&nbsp;</.link>
         </div>
         <div class="max-w-xl">
           <div class="mt-4 flex items-top gap-x-2 text-xs">
-            <.link class="size-10"  :if={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(post.author, :avatar)} patch={~p"/user/page/@#{Monorepo.Accounts.Helper.load_meta_value_by_meta_key(post.author, :username)}"}>
-              <img class="rounded-full w-full h-full" src={Monorepo.Accounts.Helper.load_meta_value_by_meta_key(post.author, :avatar)["64"]} alt="">
+            <.link class="size-10"  :if={Monorepo.Utilities.Account.load_meta_value_by_meta_key(post.author, :avatar)} patch={~p"/user/page/@#{Monorepo.Utilities.Account.load_meta_value_by_meta_key(post.author, :username)}"}>
+              <img class="rounded-full w-full h-full" src={Monorepo.Utilities.Account.load_meta_value_by_meta_key(post.author, :avatar)["64"]} alt="">
             </.link>
             <div class="flex-1 space-y-2">
               <h3 class="text-base/6 font-semibold text-gray-900 group-hover:text-gray-600 line-clamp-2">
-                <.link navigate={~p"/product/#{post.post_name}"}>
+                <.link navigate={Monorepo.Utilities.Affiliate.link_view(post)}>
                   {post.post_title}
                 </.link>
               </h3>

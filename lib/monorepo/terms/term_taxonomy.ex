@@ -51,7 +51,8 @@ defmodule Monorepo.Terms.TermTaxonomy do
 
     create :create do
       primary? true
-
+      upsert? true
+      upsert_identity :taxonomy_term_id
       argument :parent_id, :uuid do
         allow_nil? true
       end
@@ -104,4 +105,9 @@ defmodule Monorepo.Terms.TermTaxonomy do
 
     many_to_many :posts, Monorepo.Contents.Post, through: Monorepo.Terms.TermRelationships
   end
+
+  identities do
+    identity :taxonomy_term_id, [:term_id, :taxonomy]
+  end
+
 end

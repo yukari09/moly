@@ -19,4 +19,4 @@
               {applications,[kernel,stdlib,elixir,logger,ssl,telemetry]},
               {description,"A simple & modern pure Elixir socket server"},
               {registered,[]},
-              {vsn,"1.3.9"}]}.
+              {vsn,"1.3.10"}]}.
