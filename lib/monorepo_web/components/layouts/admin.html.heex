@@ -1,113 +1,6 @@
-<%
-  items = [
-    %{
-        title: "Dashboard",
-        icon: "hero-home",
-        url: ~p"/admin/dashboard",
-        view: [MonorepoWeb.AdminDashboardLive]
-    },
-    %{
-        title: "Accounts",
-        icon: "hero-users",
-        url: ~p"/admin/users",
-        view: [MonorepoWeb.AdminUserLive.Index]
-    },
-    %{
-        title: "Contents",
-        icon: "hero-newspaper",
-        items: [
-            %{
-                title: "All posts",
-                url: ~p"/admin/posts",
-                view: [MonorepoWeb.AdminPostLive.Index],
-                show: true
-            },
-            %{
-                title: "Create new post",
-                url: ~p"/admin/post/create",
-                view: [MonorepoWeb.AdminPostLive.Create],
-                show: true
-            },
-            %{
-                title: "Categories",
-                url: ~p"/admin/categories",
-                view: [MonorepoWeb.AdminCategoryLive.Index],
-                show: true
-            },
-            %{
-                title: "Tags",
-                url: ~p"/admin/tags",
-                view: [MonorepoWeb.AdminTagLive.Index],
-                show: true
-            }
-        ]
-    },
-    %{
-        title: "Media",
-        icon: "hero-photo",
-        url: ~p"/admin/media",
-        view: [MonorepoWeb.AdminMediaLive.Index, MonorepoWeb.AdminMediaLive.Edit]
-    },
-    %{
-        title: "Comments",
-        icon: "hero-chat-bubble-left-right",
-        url: ~p"/admin/comments",
-        view: [MonorepoWeb.AdminCommentLive.Index]
-    },
-    %{
-        title: "Affiliate",
-        icon: "hero-briefcase",
-        items: [
-            %{
-                title: "All affiliates",
-                url: ~p"/admin/affiliates",
-                view: [MonorepoWeb.AdminAffiliateLive.Index],
-                show: true
-            },
-            %{
-                title: "Create new affiliate",
-                url: ~p"/affiliate/submit",
-                view: [MonorepoWeb.AdminAffiliateLive.Create],
-                show: true
-            },
-            %{
-                title: "Categories",
-                url: ~p"/admin/affiliate/categories",
-                view: [MonorepoWeb.AdminAffiliateLive.Categories.Index],
-                show: true
-            },
-            %{
-                title: "Tags",
-                url: ~p"/admin/affiliate/tags",
-                view: [MonorepoWeb.AdminAffiliateLive.Tags.Index],
-                show: true
-            }
-        ]
-    },
-  ]
-
-  is_active = fn(item) ->
-    item_views = 
-      if Map.has_key?(item, :view) do
-        item.view
-      else
-        []
-    end
-    item_views = 
-      if Map.has_key?(item, :items) do
-        Enum.reduce(item.items, item_views, fn(item, acc) ->
-            if Map.has_key?(item, :view) do
-                [item.view | acc]
-            else
-                acc
-            end
-        end)
-    else
-        item_views
-    end
-    item_views = List.flatten(item_views)
-    @socket.view in item_views
-  end
+<%!-- <%
+  
+ 
 
   open_off_canvas_menu = fn() ->
     JS.transition({"transition-opacity ease-linear duration-300", "opacity-0", "opacity-100"}, to: "#off-canvas-menu-backdrop", time: 300)
@@ -124,17 +17,17 @@
     |> JS.transition({"ease-in-out duration-300", "opacity-100", "opacity-0"}, to: "#off-canvas-menu-close-button", time: 300)
     |> JS.add_class("hidden", to: "#off-canvas-menu", time: 300, transition: {"duration-300","",""})
   end
-%>
+%> --%>
 
 <div>
   <div id="off-canvas-menu" class="relative z-50 lg:hidden hidden" role="dialog" aria-modal="true">
     <div id="off-canvas-menu-backdrop" class="fixed inset-0 bg-gray-900/80 lg:hidden hidden" aria-hidden="true"></div>
     <div id="off-canvas-menu-content" class="fixed inset-0 flex">
-      <div id="off-canvas-menu-content-inner" class="relative mr-16 flex w-full max-w-xs flex-1 lg:hidden hidden" phx-click-away={close_off_canvas_menu.()}>
+      <div id="off-canvas-menu-content-inner" class="relative mr-16 flex w-full max-w-xs flex-1 lg:hidden hidden" phx-click-away={MonorepoWeb.TailwindUI.close_off_canvas_menu("off-canvas-menu")}>
         <div 
             id="off-canvas-menu-close-button" 
             class="absolute left-full top-0 flex w-16 justify-center pt-5"
-            phx-click={close_off_canvas_menu.()}
+            phx-click={MonorepoWeb.TailwindUI.close_off_canvas_menu("off-canvas-menu")}
         >
           <button type="button" class="-m-2.5 p-2.5">
             <span class="sr-only">Close sidebar</span>
@@ -152,13 +45,13 @@
             <ul role="list" class="flex flex-1 flex-col gap-y-7">
                 <li>
                     <ul role="list" class="-mx-2 space-y-1">
-                        <li :for={item <- items}>
+                        <li :for={item <- admin_items()}>
                             <.link 
                                 :if={Map.has_key?(item, :url)} 
                                 patch={item.url} 
                                 class={[
                                     "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
-                                    is_active.(item) && "bg-gray-50 text-gray-900" || "hover:bg-gray-50 text-gray-500"
+                                    admin_is_active_item(@socket, item) && "bg-gray-50 text-gray-900" || "hover:bg-gray-50 text-gray-500"
                                 ]}
                             >
                                 <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
@@ -170,7 +63,7 @@
                                     type="button" 
                                     class={[
                                       "flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold  hover:bg-gray-50",
-                                      is_active.(item) && "text-gray-900" || "text-gray-500" 
+                                      admin_is_active_item(@socket, item) && "text-gray-900" || "text-gray-500" 
                                     ]}
                                     aria-controls={ "sub-menu-#{item.icon}-g" }
                                     aria-expanded="false"
@@ -182,14 +75,14 @@
                                 >
                                     <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
                                     { item.title }
-                                    <Lucideicons.chevron_right id={ "sub-menu-#{item.icon}-icon-g" } class={["ml-auto size-5 shrink-0 duration-100", is_active.(item) && " rotate-90 text-gray-500" || " text-gray-400"]} />
+                                    <Lucideicons.chevron_right id={ "sub-menu-#{item.icon}-icon-g" } class={["ml-auto size-5 shrink-0 duration-100", admin_is_active_item(@socket, item) && " rotate-90 text-gray-500" || " text-gray-400"]} />
                                 </button>
-                                <ul id={ "sub-menu-#{item.icon}-g" } class={["mt-1 px-2", is_active.(item) && "block" || "hidden"]}>
+                                <ul id={ "sub-menu-#{item.icon}-g" } class={["mt-1 px-2", admin_is_active_item(@socket, item) && "block" || "hidden"]}>
                                     <li :for={sub_item <- item.items}>
                                         <.link patch={sub_item.url} 
                                           class={[
                                             "block rounded-md py-2 pr-2 pl-9 text-sm/6  hover:bg-gray-50",
-                                            is_active.(sub_item) && "bg-gray-50 text-gray-900" || "text-gray-500"
+                                            admin_is_active_item(@socket, sub_item) && "bg-gray-50 text-gray-900" || "text-gray-500"
                                           ]}
                                         >
                                           { sub_item.title }
@@ -222,13 +115,13 @@
             <ul role="list" class="flex flex-1 flex-col gap-y-7">
                 <li>
                     <ul role="list" class="-mx-2 space-y-1">
-                        <li :for={item <- items}>
+                        <li :for={item <- admin_items()}>
                             <.link 
                                 :if={Map.has_key?(item, :url)} 
                                 patch={item.url} 
                                 class={[
                                     "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
-                                    is_active.(item) && "bg-gray-50 text-gray-900" || "hover:bg-gray-50 text-gray-500"
+                                    admin_is_active_item(@socket, item) && "bg-gray-50 text-gray-900" || "hover:bg-gray-50 text-gray-500"
                                 ]}
                             >
                                 <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
@@ -240,7 +133,7 @@
                                     type="button" 
                                     class={[
                                       "flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold  hover:bg-gray-50",
-                                      is_active.(item) && "text-gray-900" || "text-gray-500" 
+                                      admin_is_active_item(@socket, item) && "text-gray-900" || "text-gray-500" 
                                     ]}
                                     aria-controls={ "sub-menu-#{item.icon}" }
                                     aria-expanded="false"
@@ -252,15 +145,15 @@
                                 >
                                     <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
                                     { item.title }
-                                    <Lucideicons.chevron_right id={ "sub-menu-#{item.icon}-icon" } class={["ml-auto size-5 shrink-0 duration-100", is_active.(item) && " rotate-90 text-gray-500" || " text-gray-400"]} />
+                                    <Lucideicons.chevron_right id={ "sub-menu-#{item.icon}-icon" } class={["ml-auto size-5 shrink-0 duration-100", admin_is_active_item(@socket, item) && " rotate-90 text-gray-500" || " text-gray-400"]} />
                                 </button>
-                                <ul id={ "sub-menu-#{item.icon}" } class={["mt-1 px-2", is_active.(item) && "block" || "hidden"]}>
+                                <ul id={ "sub-menu-#{item.icon}" } class={["mt-1 px-2", admin_is_active_item(@socket, item) && "block" || "hidden"]}>
                                     <li :for={sub_item <- item.items}>
                                         <.link 
                                           patch={sub_item.url} 
                                           class={[
                                             "block rounded-md py-2 pr-2 pl-9 text-sm/6 hover:bg-gray-50",
-                                            is_active.(sub_item) && "bg-gray-50 text-gray-900" || "text-gray-500"
+                                            admin_is_active_item(@socket, sub_item) && "bg-gray-50 text-gray-900" || "text-gray-500"
                                           ]}
                                         >
                                             { sub_item.title }
@@ -288,7 +181,7 @@
         id="off-canvas-menu-button"
         type="button" 
         class="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-        phx-click={open_off_canvas_menu.()}
+        phx-click={MonorepoWeb.TailwindUI.open_off_canvas_menu("off-canvas-menu")}
     >
         <span class="sr-only">Open sidebar</span>
         <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">

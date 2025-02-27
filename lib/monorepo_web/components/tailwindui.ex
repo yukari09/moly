@@ -8,6 +8,24 @@ defmodule MonorepoWeb.TailwindUI do
   import MonorepoWeb.CoreComponents, only: [translate_error: 1]
 
   ## JS Commands
+  #off_canvas_menu_id  #{off_canvas_menu_id}
+  def open_off_canvas_menu(js \\ %JS{}, off_canvas_menu_id)  do
+    js
+    |> JS.transition({"transition-opacity ease-linear duration-300", "opacity-0", "opacity-100"}, to: "##{off_canvas_menu_id}-backdrop", time: 300)
+    |> JS.transition({"transition ease-in-out duration-300 transform", "-translate-x-full", "translate-x-0"}, to: "##{off_canvas_menu_id}-content-inner", time: 300)
+    |> JS.transition({"ease-in-out duration-300", "opacity-0", "opacity-100"}, to: "##{off_canvas_menu_id}-close-button", time: 300)
+    |> JS.remove_class("hidden", to: "##{off_canvas_menu_id}-backdrop")
+    |> JS.remove_class("hidden", to: "##{off_canvas_menu_id}-content-inner")
+    |> JS.remove_class("hidden", to: "##{off_canvas_menu_id}")
+  end
+
+  def close_off_canvas_menu(js \\ %JS{}, off_canvas_menu_id)  do
+    js
+    |> JS.add_class("hidden", to: "##{off_canvas_menu_id}-backdrop", time: 300, transition: {"transition-opacity ease-linear duration-300", "opacity-100", "opacity-0"})
+    |> JS.add_class("hidden", to: "##{off_canvas_menu_id}-content-inner", time: 300, transition: {"transition ease-in-out duration-300 transform", "translate-x-0", "-translate-x-full"})
+    |> JS.transition({"ease-in-out duration-300", "opacity-100", "opacity-0"}, to: "##{off_canvas_menu_id}-close-button", time: 300)
+    |> JS.add_class("hidden", to: "##{off_canvas_menu_id}", time: 300, transition: {"duration-300","",""})
+  end
 
   def hide_dropdown(menu_dom_id) do
     JS.hide(
@@ -703,8 +721,6 @@ defmodule MonorepoWeb.TailwindUI do
               "relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6",
               @inner_class
             ]}
-            phx-window-keydown={!@block_click_away && JS.exec("data-cancel", to: "##{@id}")}
-            phx-key="escape"
             phx-click-away={!@block_click_away && JS.exec("data-cancel", to: "##{@id}")}
           >
             <%= render_slot(@inner_block) %>
@@ -791,6 +807,7 @@ defmodule MonorepoWeb.TailwindUI do
   attr(:field, Phoenix.HTML.FormField, default: nil)
   attr(:value, :string, default: nil)
   attr(:label, :string, required: false, default: nil)
+  attr(:label_class, :string, required: false, default: nil)
   attr(:description, :string, default: nil)
   attr(:checked, :boolean, default: false)
   attr(:class, :string, default: nil)
@@ -825,7 +842,7 @@ defmodule MonorepoWeb.TailwindUI do
         </div>
       </div>
       <label class="text-sm/6 cursor-pointer flex-1" for={@id || @field.id}>
-        <span :if={@label} for={@id || @field.id} class="font-medium text-gray-900"><%= @label %></span>
+        <span :if={@label} for={@id || @field.id} class={["font-medium text-gray-900", @label_class]}><%= @label %></span>
         <span :if={@description} id={"#{@id || @field.id}-description"} class="text-gray-500"><span class="sr-only"><%= @label %> </span><%= @description %></span>
       </label>
     </div>

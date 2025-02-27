@@ -22,7 +22,7 @@ defmodule Monorepo.Utilities.Affiliate do
   def commission_max(%Post{id: id} = post) when is_binary(id), do: load_meta_value_by_meta_key(post, :commission_max)
   def commission_min(%Post{id: id} = post) when is_binary(id), do: load_meta_value_by_meta_key(post, :commission_min)
 
-  def affiliate_tags(%Post{id: _id} = post), do: load_post_tags(post) |> Map.get(:post_tags)
+  def affiliate_tags(%Post{id: _id} = post), do: (load_post_tags(post) |> Map.get(:post_tags))
 
   def affiliate_industry(%Post{id: _id} = post) do
     get_affiliate_categories_by_parent_slug(post, "industries")

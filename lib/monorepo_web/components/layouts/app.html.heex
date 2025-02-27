@@ -130,23 +130,33 @@
         <.link :if={!@current_user} navigate={~p"/sign-in"} class="text-sm/6 font-semibold text-gray-900">Log in <span aria-hidden="true">&rarr;</span></.link>
         <MonorepoWeb.TailwindUI.dropdown id="nav-user-menu" :if={@current_user}>
           <:button_slot class="!m-0 !p-0 size-8">
-            <img :if={ Monorepo.Utilities.Account.user_avatar(@current_user, "32") } class="inline-block w-full h-full rounded-full" src={Monorepo.Utilities.Account.user_avatar(@current_user, "32")} alt="">
-            <span :if={!Monorepo.Utilities.Account.user_avatar(@current_user, "32")} class="inline-flex w-full h-full items-center justify-center rounded-full bg-primary border-2 border-white">
-              <span class="font-medium text-white uppercase text-sm">{Monorepo.Utilities.Account.load_meta_value_by_meta_key(@current_user, :name) |> String.slice(0, 1)}</span>
-            </span>
+            <Monorepo.Utilities.Account.avatar2 user={@current_user} size={32}/>
           </:button_slot>
 
           <:menu_slot
-            class="mt-4 w-36"
+            class="mt-4 min-w-52"
           >
+            <div class="px-4 py-3 flex items-center gap-2" role="none">
+              <.link navigate={Monorepo.Utilities.Account.link_profile(@current_user)} class="block size-8" role="none">
+                <Monorepo.Utilities.Account.avatar2 user={@current_user} size={32}/>
+              </.link>
+              <.link navigate={Monorepo.Utilities.Account.link_profile(@current_user)} class="block" role="none">
+                <p class="text-sm font-semibold">{Monorepo.Utilities.Account.user_name(@current_user)}</p>
+                <p class="text-sm text-gray-500">{@current_user.email}</p>
+              </.link>
+            </div>
             <div class="py-1" role="none">
               <!-- Active: "bg-gray-50 outline-none", Not Active: "" -->
-              <.link navigate={~p"/user/page/@#{Monorepo.Utilities.Account.load_meta_value_by_meta_key(@current_user, :username)}"} class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-0">
-                <Lucideicons.circle_user class="mr-3 size-4 text-gray-700" />
+              <.link :if={:admin in @current_user.roles} navigate={~p"/admin/dashboard"} class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-0">
+                <Lucideicons.sticker class="mr-3 size-4 text-gray-700  group-hover:text-gray-900" />
+                Admin
+              </.link>
+              <.link navigate={Monorepo.Utilities.Account.link_profile(@current_user)} class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-0">
+                <Lucideicons.user class="mr-3 size-4 text-gray-700 group-hover:text-gray-900" />
                 Profile
               </.link>
               <.link navigate="/sign-out" class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-1">
-                <Lucideicons.log_out name="hero-arrow-up-tray" class="mr-3 size-4 text-gray-700" />
+                <Lucideicons.log_out name="hero-arrow-up-tray" class="mr-3 size-4 text-gray-700  group-hover:text-gray-900" />
                 Sign out
               </.link>
             </div>

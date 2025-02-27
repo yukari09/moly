@@ -151,7 +151,7 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
         countries = get_term_taxonomy("countries", socket.assigns.current_user)
         industries = get_term_taxonomy("industries", socket.assigns.current_user)
         assign(socket, [countries: countries, industries: industries, form: form, post: post])
-        |> allow_upload(:media, accept: ~w(.jpg .jpeg .png .gif), max_entries: 6)
+        |> allow_upload(:media, accept: ~w(.jpg .jpeg .png .gif), max_entries: 6, max_file_size: 2_000_000)
         |> assign(:is_active_user, is_active_user)
     else
       push_navigate(socket, to: ~p"/")

@@ -30,7 +30,8 @@ defmodule MonorepoWeb.Admin do
       post: "channel:admin:post",
       media: "channel:admin:media",
       user: "channel:admin:user",
-      comment: "channel:admin:comment"
+      comment: "channel:admin:comment",
+      page: "channel:admin:page"
     ]
 
     Keyword.fetch!(topics, topic_name)

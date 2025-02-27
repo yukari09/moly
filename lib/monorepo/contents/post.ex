@@ -1,5 +1,4 @@
 defmodule Monorepo.Contents.Post do
-  require Ash.Resource.Change.Builtins
   use Ash.Resource,
     otp_app: :monorepo,
     domain: Monorepo.Contents,

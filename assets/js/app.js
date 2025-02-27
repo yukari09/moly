@@ -56,8 +56,6 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
- 
-
 window.addEventListener("phx:show-modal", async (event) => {  
   let el = document.querySelector(event.detail.el)
   el.showModal()
@@ -217,7 +215,10 @@ window.addEventListener("phx:TagsTagify", async(event) => {
 
 })
 
-
+window.addEventListener("phx:blank_link", event => {
+  console.log(event)
+  if (event.detail.url != undefined) window.open(event.detail.url, "_blank")
+})
 
 //Admin
 

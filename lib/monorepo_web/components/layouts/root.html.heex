@@ -8,13 +8,13 @@
       { assigns[:page_title] || "Monorepo" }
     </.live_title>
     <%= if assigns[:meta_tags] do %> 
-      <.dynamic_tag :for={tag_attrs <- assigns[:meta_tags]} :if={is_map(tag_attrs)} name="meta" {tag_attrs} /> 
+      <.dynamic_tag :if={is_map(tag_attrs)} :for={tag_attrs <- assigns[:meta_tags]} name="meta" {tag_attrs} /> 
     <% end %>
     <link rel="icon" href={assigns[:favicon] || "/favicon.ico"} type="image/x-icon">
     <link rel="preconnect" href="https://rsms.me/">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-    <link phx-track-static rel="stylesheet" href={"/assets/app.css"} />
-    <script defer phx-track-static type="text/javascript" src={"/assets/app.js"}></script> 
+    <link :if={!assigns[:noappcss]} phx-track-static rel="stylesheet" href={"/assets/app.css"} />
+    <script :if={!assigns[:noappscript]} defer phx-track-static type="text/javascript" src={"/assets/app.js"}></script>
   </head>
   <body class="bg-white">
     { @inner_content }

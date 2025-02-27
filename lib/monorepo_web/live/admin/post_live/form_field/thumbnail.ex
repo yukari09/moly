@@ -1,7 +1,7 @@
 defmodule MonorepoWeb.AdminPostLive.FormField.Thumbnail do
   use MonorepoWeb.Admin, :live_component
 
-  import Monorepo.Utilities.Post, only: [fetch_image_file_from_attachment_metadata: 2]
+  import Monorepo.Utilities.Post, only: [attachment_metadata_image: 3]
 
   @impl true
   def update(%{current_user: current_user, form: form}, socket) do
@@ -39,7 +39,7 @@ defmodule MonorepoWeb.AdminPostLive.FormField.Thumbnail do
     <div>
       <div id="container" data-id="container" >
         <div class={["relative aspect-[10/7]", !@cur_feature_image && "hidden"]}  data-id="image-container" >
-          <img id="post-feature-image" data-id="image" src={@cur_feature_image && fetch_image_file_from_attachment_metadata(@cur_feature_image.meta_value, ["medium","thumbnail"])} alt="Featured image" class="w-full h-full object-cover rounded-md" phx-update="ignore" />
+          <img id="post-feature-image" data-id="image" src={@cur_feature_image && attachment_metadata_image(%Monorepo.Contents.Post{id:  @cur_feature_image, post_meta: [@cur_feature_image]}, ["medium","thumbnail"], true)} alt="Featured image" class="w-full h-full object-cover rounded-md" phx-update="ignore" />
           <.button
             class="absolute top-2 right-2 !p-1 !size-6 bg-white !rounded-full shadow-md hover:bg-gray-100"
             variant="gray"

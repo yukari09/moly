@@ -1,4 +1,6 @@
 defmodule Monorepo.Utilities.Account do
+  use MonorepoWeb, :html
+
   @bucket_prefix "user_meta"
 
   def generate_avatar_from_url(url) do
@@ -63,14 +65,12 @@ defmodule Monorepo.Utilities.Account do
     |> JSON.encode!()
   end
 
+  def link_profile(user), do: ~p"/user/page/@#{user_username(user)}"
 
   def user_banner(user, size), do: load_meta_value_by_meta_key(user, :banner, &(Map.get(&1, size)))
   def user_avatar(user, size), do: load_meta_value_by_meta_key(user, :avatar, &(Map.get(&1, size)))
   def user_name(user, string_length \\ 0), do: load_meta_value_by_meta_key(user, :name, &(string_length == 0 && &1 || String.slice(&1, 0, string_length)))
   def user_username(user, string_length \\ 0), do: load_meta_value_by_meta_key(user, :username, &(string_length == 0 && &1 || String.slice(&1, 0, string_length)))
-
-
-
 
   def is_active_user(%Monorepo.Accounts.User{confirmed_at: nil}), do: false
   def is_active_user(%Monorepo.Accounts.User{status: :inactive}), do: false
@@ -87,6 +87,17 @@ defmodule Monorepo.Utilities.Account do
       meta_value_result ->
         after_callback && after_callback.(meta_value_result) || meta_value_result
     end
+  end
+
+  attr :user, Monorepo.Accounts.User, required: true
+  attr :size, :integer, required: true
+  def avatar2(assigns) do
+    ~H"""
+    <img :if={user_avatar(@user, "#{@size}") } class="inline-block w-full h-full rounded-full" src={user_avatar(@user, "#{@size}")} alt={user_username(@user)}>
+    <span :if={!user_avatar(@user, "#{@size}")} class="inline-flex w-full h-full items-center justify-center rounded-full bg-primary border-2 border-white">
+      <span class="font-medium text-white uppercase text-sm">{user_name(@user, 1)}</span>
+    </span>
+    """
   end
 
   defp format_meta_value(nil), do: nil

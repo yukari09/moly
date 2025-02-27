@@ -54,7 +54,8 @@ defmodule MonorepoWeb.Router do
   scope "/", MonorepoWeb do
     pipe_through(:browser)
 
-    # get("/", PageController, :home)
+    get("/page/:post_name", PageController, :page)
+
     auth_routes(AuthController, Monorepo.Accounts.User, path: "/auth")
     sign_out_route(AuthController)
 
@@ -119,6 +120,10 @@ defmodule MonorepoWeb.Router do
       live("/affiliates", AdminAffiliateLive.Index, :index)
       live("/affiliate/categories", AdminAffiliateLive.Categories.Index, :index)
       live("/affiliate/tags", AdminAffiliateLive.Tags.Index, :index)
+
+      live("/pages", AdminPageLive.Index, :index)
+      live("/page/create", AdminPageLive.Create, :create)
+      live("/page/preview", AdminPageLive.Create, :preview)
     end
   end
 

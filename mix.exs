@@ -99,10 +99,11 @@ defmodule Monorepo.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ash.setup --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind monorepo", "tailwind admin", "esbuild monorepo"],
+      # "assets.build": ["tailwind monorepo", "tailwind admin", "esbuild monorepo"],
+      "assets.build": ["tailwind monorepo", "esbuild monorepo"],
       "assets.deploy": [
         "tailwind monorepo --minify",
-        "tailwind admin --minify",
+        # "tailwind admin --minify",
         "esbuild monorepo --minify",
         "phx.digest"
       ]

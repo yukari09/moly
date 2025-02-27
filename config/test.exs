@@ -1,6 +1,7 @@
 import Config
 config :monorepo, token_signing_secret: "rMReAXZnWynPngElyZK8DM1RugQ9UufE"
 config :ash, disable_async?: true
+config :ash, :missed_notifications, :ignore
 
 # Configure your database
 #
@@ -8,8 +9,8 @@ config :ash, disable_async?: true
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :monorepo, Monorepo.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "yukari",
+  password: "83233167",
   hostname: "localhost",
   database: "monorepo_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,

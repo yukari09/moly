@@ -137,7 +137,7 @@
         <p class="pointer-events-none block text-sm font-medium text-gray-500">{bits_to_readable(media.client_size)}</p>
       </li>
       <li class="relative" :for={{id, media} <- @streams.medias} :if={Map.has_key?(media, :post_meta)} id={id}>
-        <% metas = struct_meta( media.post_meta) %>
+        <% metas = attachment_metadata(media) %>
         <div 
             id={"#{id}-media"}
             class="group overflow-hidden rounded-lg bg-gray-100"
@@ -149,7 +149,7 @@
             <div class="aspect-[10/7]">
                 <img
                     :if={is_image_mime_type(media.post_mime_type)}
-                    src={fetch_image_file_from_attachment_metadata(metas.attachment_metadata, ["medium", "thumbnail"])}
+                    src={attachment_metadata_image(media, ["medium", "thumbnail"], true)}
                     class={["pointer-events-none w-full h-full object-cover group-hover:opacity-75"]}
                 />
                 <video class="w-full h-full  object-cover" controls :if={is_video_mime_type(media.post_mime_type)}>
@@ -179,7 +179,7 @@
             </button>
         </div>
         <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900">{media.post_title}</p>
-        <p class="pointer-events-none block text-sm font-medium text-gray-500">{bits_to_readable(metas.attachment_filesize)}</p>
+        <p class="pointer-events-none block text-sm font-medium text-gray-500">{attachment_filesize(media) |> bits_to_readable()}</p>
       </li>
     </ul>
   </div>
@@ -188,6 +188,7 @@
 <.modal 
   id={"media-edit-modal"}
   inner_class="sm:!max-w-[90vw] sm:!max-h-[90vh] overflow-scroll !p-0 !m-0 h-[90vh] h-[90vh]"
+  on_cancel={JS.remove_attribute("src", to: "#media-edit-iframe")}
 >
   <iframe id="media-edit-iframe" class="w-full h-full"></iframe>
 </.modal>
@@ -277,17 +278,17 @@
         <p class="pointer-events-none block text-sm font-medium text-gray-500">{bits_to_readable(media.client_size)}</p>
       </li>
       <li class="relative" :for={{id, media} <- @streams.medias} :if={Map.has_key?(media, :post_meta)} id={id}>
-        <% metas = struct_meta( media.post_meta) %>
+        <% metas = attachment_metadata( media) %>
         <div 
             id={"#{id}-media"}
             class="group overflow-hidden rounded-lg bg-gray-100 media-list-item"
             data-media-id={media.id}
-            data-media-url={fetch_image_file_from_attachment_metadata(metas.attachment_metadata, ["medium", "thumbnail"])}
+            data-media-url={attachment_metadata_image(%Monorepo.Contents.Post{id: media.post_id, post_meta: [media]}, ["medium", "thumbnail"], true)}
         >
             <div class="aspect-[10/7]">
                 <img
                     :if={is_image_mime_type(media.post_mime_type)}
-                    src={fetch_image_file_from_attachment_metadata(metas.attachment_metadata, ["medium", "thumbnail"])}
+                    src={attachment_metadata_image(%Monorepo.Contents.Post{id: media.post_id, post_meta: [media]}, ["medium", "thumbnail"], true)}
                     class={["pointer-events-none w-full h-full object-cover group-hover:opacity-75"]}
                 />
                 <video class="w-full h-full  object-cover" controls :if={is_video_mime_type(media.post_mime_type)}>
