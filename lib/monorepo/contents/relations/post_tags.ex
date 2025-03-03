@@ -9,10 +9,9 @@ defmodule Monorepo.Contents.Relations.PostTags do
 
     result =
       query
-      |> Ash.Query.filter(term_taxonomy.taxonomy == "post_tag")
       |> Ash.Query.filter(term_taxonomy.posts.id in ^post_ids)
+      |> Ash.Query.load([:term_taxonomy], opts)
       |> Ash.read!(Ash.Context.to_opts(context))
-      |> Ash.load!([:term_taxonomy], opts)
 
     return_result =
       Monorepo.Terms.TermRelationships

@@ -4,9 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title suffix={assigns[:page_suffix] || " · Phoenix Framework"}>
-      { assigns[:page_title] || "Monorepo" }
-    </.live_title>
+    <.live_title suffix={assigns[:page_suffix] || " · Affinew"}>{ assigns[:page_title] || "Explore High Ticket affiliate programs" }</.live_title>
     <%= if assigns[:meta_tags] do %> 
       <.dynamic_tag :if={is_map(tag_attrs)} :for={tag_attrs <- assigns[:meta_tags]} name="meta" {tag_attrs} /> 
     <% end %>

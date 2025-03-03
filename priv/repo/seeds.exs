@@ -14,157 +14,248 @@ industries = %{
   name: "Industries",
   slug: "industries",
   subcategories: [
-    %{name: "Finance", slug: "finance", subcategories: [
+    %{name: "E-commerce", slug: "e-commerce", subcategories: [
+      %{name: "Online Marketplaces", slug: "online-marketplaces"},
+      %{name: "Fashion & Apparel", slug: "fashion-apparel"},
+      %{name: "Home & Garden", slug: "home-garden"},
+      %{name: "Electronics & Tech", slug: "electronics-tech"},
+      %{name: "Wholesale & B2B", slug: "wholesale-b2b"},
+      %{name: "Digital Products", slug: "digital-products"}
+    ], term_meta: [%{term_key: "icon", term_value: "shopping-cart"}]},
+
+    %{name: "Financial & Insurance", slug: "financial-insurance", subcategories: [
       %{name: "Investment Platforms", slug: "investment-platforms"},
       %{name: "Financial Products", slug: "financial-products"},
       %{name: "Retirement Planning", slug: "retirement-planning"},
       %{name: "Wealth Management Tools", slug: "wealth-management-tools"},
       %{name: "Financial Advisors", slug: "financial-advisors"},
-      %{name: "Asset Protection", slug: "asset-protection"}
-    ]},
-
-    %{name: "Insurance", slug: "insurance", subcategories: [
+      %{name: "Asset Protection", slug: "asset-protection"},
       %{name: "Health Insurance", slug: "health-insurance"},
       %{name: "Life Insurance", slug: "life-insurance"},
       %{name: "Property Insurance", slug: "property-insurance"},
       %{name: "Business Insurance", slug: "business-insurance"},
       %{name: "Insurance Planning", slug: "insurance-planning"}
-    ]},
+    ], term_meta: [%{term_key: "icon", term_value: "credit-card"}]},
 
-    %{name: "Stock", slug: "stock", subcategories: [
+    %{name: "Wellness && Mental health", slug: "wellness-mental-health", subcategories: [
+      %{name: "Telemedicine", slug: "telemedicine"},
+      %{name: "Digital Health Records", slug: "digital-health-records"},
+      %{name: "Medical Devices", slug: "medical-devices"},
+      %{name: "Healthcare Software", slug: "healthcare-software"},
+      %{name: "Mental Health Services", slug: "mental-health-services"},
+      %{name: "Preventive Care", slug: "preventive-care"},
+      %{name: "Personalized Medicine", slug: "personalized-medicine"},
+      %{name: "Remote Patient Monitoring", slug: "remote-patient-monitoring"}
+    ], term_meta: [%{term_key: "icon", term_value: "heart"}]},
+
+    %{name: "Education & Learning", slug: "education-learning", subcategories: [
+      %{name: "Online Courses", slug: "online-courses-education"},
+      %{name: "Professional Certification", slug: "professional-certification-education"},
+      %{name: "Language Learning", slug: "language-learning"},
+      %{name: "Skills Development", slug: "skills-development"},
+      %{name: "Corporate Training", slug: "corporate-training-education"},
+      %{name: "Educational Technology", slug: "educational-technology"},
+      %{name: "Test Preparation", slug: "test-preparation"},
+      %{name: "Career Development", slug: "career-development-education"}
+    ], term_meta: [%{term_key: "icon", term_value: "academic-cap"}]},
+
+    %{name: "Digital Content & Services", slug: "digital-content-services", subcategories: [
+      %{name: "Digital Art & NFTs", slug: "digital-art-nfts"},
+      %{name: "Virtual Goods", slug: "virtual-goods"},
+      %{name: "Digital Services", slug: "digital-services"},
+      %{name: "Content Creation", slug: "content-creation"},
+      %{name: "Digital Entertainment", slug: "digital-entertainment"},
+      %{name: "Virtual Events", slug: "virtual-events"}
+    ], term_meta: [%{term_key: "icon", term_value: "video-camera"}]},
+
+    %{name: "AI & Technology", slug: "ai-technology", subcategories: [
+      %{name: "AI Assistants", slug: "ai-assistants"},
+      %{name: "Business AI Solutions", slug: "business-ai-solutions"},
+      %{name: "AI Content Generation", slug: "ai-content-generation"},
+      %{name: "AI Analytics", slug: "ai-analytics"},
+      %{name: "AI Development Tools", slug: "ai-development-tools"},
+      %{name: "AI Research Services", slug: "ai-research-services"},
+      %{name: "AI Consulting", slug: "ai-consulting"},
+      %{name: "Machine Learning Solutions", slug: "machine-learning-solutions"}
+    ], term_meta: [%{term_key: "icon", term_value: "cpu-chip"}]},
+
+    %{name: "Stock Trading & Wealth Management", slug: "stock-trading-wealth-management", subcategories: [
       %{name: "Stock Trading Platforms", slug: "stock-trading-platforms"},
       %{name: "Stock Analysis Tools", slug: "stock-analysis-tools"},
       %{name: "Stock Insights", slug: "stock-insights"},
       %{name: "Market Data", slug: "market-data"},
-      %{name: "Investment Analysis", slug: "investment-analysis"}
-    ]},
-
-    %{name: "Wealth Management", slug: "wealth-management", subcategories: [
+      %{name: "Investment Analysis", slug: "investment-analysis"},
       %{name: "Personal Finance Tools", slug: "personal-finance-tools"},
       %{name: "Asset Allocation Tools", slug: "asset-allocation-tools"},
-      %{name: "High-Net-Worth Wealth Management", slug: "high-net-worth-wealth-management"}
-    ]},
+      %{name: "High-Net-Worth Wealth Management", slug: "high-net-worth-wealth-management"},
+      %{name: "Estate Planning", slug: "estate-planning"},
+      %{name: "Tax Planning", slug: "tax-planning"},
+      %{name: "Cryptocurrency Trading", slug: "cryptocurrency-trading-finance"},
+      %{name: "Forex Trading", slug: "forex-trading"}
+    ], term_meta: [%{term_key: "icon", term_value: "chart-bar"}]},
 
-    %{name: "Learning", slug: "learning", subcategories: [
-      %{name: "Online Courses", slug: "online-courses"},
-      %{name: "Career Training", slug: "career-training"},
-      %{name: "Language Learning Platforms", slug: "language-learning-platforms"},
-      %{name: "Professional Certifications", slug: "professional-certifications"},
-      %{name: "English Learning", slug: "english-learning"}
-    ]},
+    %{name: "Business Services", slug: "business-services", subcategories: [
+      %{name: "Business Consulting", slug: "business-consulting"},
+      %{name: "Legal Services", slug: "legal-services"},
+      %{name: "Accounting Services", slug: "accounting-services"},
+      %{name: "Marketing Services", slug: "marketing-services"},
+      %{name: "Business Intelligence", slug: "business-intelligence"},
+      %{name: "Risk Management", slug: "risk-management"}
+    ], term_meta: [%{term_key: "icon", term_value: "briefcase"}]},
 
-    %{name: "Recruitment", slug: "recruitment", subcategories: [
-      %{name: "Online Recruitment Platforms", slug: "online-recruitment-platforms"},
-      %{name: "Talent Search", slug: "talent-search"},
-      %{name: "Talent Management Services", slug: "talent-management-services"},
-      %{name: "Job Search", slug: "job-search"},
-      %{name: "Recruitment Consultants", slug: "recruitment-consultants"}
-    ]},
+    %{name: "Real Estate", slug: "real-estate", subcategories: [
+      %{name: "Property Investment", slug: "property-investment"},
+      %{name: "Real Estate Development", slug: "real-estate-development"},
+      %{name: "Property Management", slug: "property-management"},
+      %{name: "Real Estate Technology", slug: "real-estate-technology"},
+      %{name: "Commercial Real Estate", slug: "commercial-real-estate"}
+    ], term_meta: [%{term_key: "icon", term_value: "home"}]},
 
-    %{name: "Travel", slug: "travel", subcategories: [
-      %{name: "Luxury Travel Services", slug: "luxury-travel-services"},
-      %{name: "Booking Platforms", slug: "booking-platforms"},
-      %{name: "Luxury Vacation Packages", slug: "luxury-vacation-packages"},
-      %{name: "Adventure Travel", slug: "adventure-travel"}
-    ]},
-
-    %{name: "Vacation", slug: "vacation", subcategories: [
-      %{name: "Resorts & Luxury Vacation Packages", slug: "resorts-luxury-vacation-packages"},
-      %{name: "Cruises", slug: "cruises"},
-      %{name: "All-Inclusive Vacation Packages", slug: "all-inclusive-vacation-packages"}
-    ]},
-
-    %{name: "Luxury", slug: "luxury", subcategories: [
-      %{name: "Luxury Bags & Jewelry", slug: "luxury-bags-jewelry"},
-      %{name: "High-End Art & Collectibles", slug: "high-end-art-collectibles"},
-      %{name: "Luxury Watches", slug: "luxury-watches"},
-      %{name: "Designer Clothing", slug: "designer-clothing"}
-    ]},
-
-    %{name: "Personalization", slug: "personalization", subcategories: [
-      %{name: "Customized Gifts", slug: "customized-gifts"},
-      %{name: "Personalized Jewelry", slug: "personalized-jewelry"},
-      %{name: "Customized Home Decor", slug: "customized-home-decor"},
-      %{name: "Custom Clothing & Accessories", slug: "custom-clothing-accessories"}
-    ]},
-
-    %{name: "Custom Products", slug: "custom-products", subcategories: [
-      %{name: "Custom Shoes", slug: "custom-shoes"},
-      %{name: "Custom Bags", slug: "custom-bags"},
-      %{name: "Custom Apparel", slug: "custom-apparel"},
-      %{name: "Custom Electronics", slug: "custom-electronics"}
-    ]},
-
-    %{name: "Digital Products", slug: "digital-products", subcategories: [
-      %{name: "E-books", slug: "ebooks"},
-      %{name: "Digital Media", slug: "digital-media"},
-      %{name: "Software Templates", slug: "software-templates"},
-      %{name: "Design Resources", slug: "design-resources"},
-      %{name: "Online Tools", slug: "online-tools"}
-    ]},
+    %{name: "Digital Electronics Products", slug: "digital-electronics-products", subcategories: [
+      %{name: "Consumer Electronics", slug: "consumer-electronics"},
+      %{name: "Smart Devices", slug: "smart-devices"},
+      %{name: "Computer Hardware", slug: "computer-hardware"},
+      %{name: "Mobile Devices", slug: "mobile-devices"},
+      %{name: "Gaming Hardware", slug: "gaming-hardware-electronics"},
+      %{name: "Digital Accessories", slug: "digital-accessories"},
+      %{name: "IoT Devices", slug: "iot-devices"}
+    ], term_meta: [%{term_key: "icon", term_value: "camera"}]},
 
     %{name: "Marketing Products", slug: "marketing-products", subcategories: [
-      %{name: "SEO Tools", slug: "seo-tools"},
-      %{name: "Online Marketing Tools", slug: "online-marketing-tools"},
-      %{name: "Social Media Management", slug: "social-media-management"},
-      %{name: "Marketing Automation", slug: "marketing-automation"},
-      %{name: "Content Marketing Tools", slug: "content-marketing-tools"}
-    ]},
+      %{name: "Digital Marketing Tools", slug: "digital-marketing-tools"},
+      %{name: "Marketing Automation", slug: "marketing-automation-products"},
+      %{name: "Social Media Marketing", slug: "social-media-marketing-products"},
+      %{name: "Content Marketing", slug: "content-marketing-products"},
+      %{name: "Email Marketing", slug: "email-marketing-products"},
+      %{name: "SEO Tools", slug: "seo-tools-products"},
+      %{name: "Analytics & Reporting", slug: "analytics-reporting-products"},
+      %{name: "Marketing Research", slug: "marketing-research-products"}
+    ], term_meta: [%{term_key: "icon", term_value: "megaphone"}]},
 
-    %{name: "IT Solution", slug: "it-solution", subcategories: [
-      %{name: "IT Outsourcing", slug: "it-outsourcing"},
-      %{name: "Enterprise IT Solutions", slug: "enterprise-it-solutions"},
-      %{name: "Cloud Services", slug: "cloud-services"},
-      %{name: "Cybersecurity Solutions", slug: "cybersecurity-solutions"},
-      %{name: "Data Analytics & Big Data", slug: "data-analytics-big-data"},
-      %{name: "Automation & RPA", slug: "automation-rpa"}
-    ]},
+    %{name: "IT Solutions", slug: "it-solutions", subcategories: [
+      %{name: "Cloud Services", slug: "cloud-services-it"},
+      %{name: "Software Development", slug: "software-development"},
+      %{name: "Cybersecurity", slug: "cybersecurity"},
+      %{name: "Network Solutions", slug: "network-solutions"},
+      %{name: "IT Infrastructure", slug: "it-infrastructure"},
+      %{name: "System Integration", slug: "system-integration"},
+      %{name: "IT Consulting", slug: "it-consulting"},
+      %{name: "Data Management", slug: "data-management"},
+      %{name: "Enterprise Software", slug: "enterprise-software"}
+    ], term_meta: [%{term_key: "icon", term_value: "server"}]},
 
-    %{name: "Digital Electronics", slug: "digital-electronics", subcategories: [
-      %{name: "Smart Home Products", slug: "smart-home-products"},
-      %{name: "Wearables", slug: "wearables"},
-      %{name: "Electronics Accessories", slug: "electronics-accessories"},
-      %{name: "Headphones", slug: "headphones"},
-      %{name: "Chargers", slug: "chargers"},
-      %{name: "IoT Devices", slug: "iot-devices"}
-    ]},
+    %{name: "Learning & Recruitment", slug: "learning-recruitment", subcategories: [
+      %{name: "Online Courses", slug: "online-courses-recruitment"},
+      %{name: "Professional Certification", slug: "professional-certification-recruitment"},
+      %{name: "Career Development", slug: "career-development-recruitment"},
+      %{name: "Job Platforms", slug: "job-platforms"},
+      %{name: "Recruitment Solutions", slug: "recruitment-solutions"},
+      %{name: "Skills Assessment", slug: "skills-assessment"},
+      %{name: "Corporate Training", slug: "corporate-training-recruitment"},
+      %{name: "HR Management Systems", slug: "hr-management-systems"},
+      %{name: "Talent Acquisition", slug: "talent-acquisition"}
+    ], term_meta: [%{term_key: "icon", term_value: "academic-cap"}]},
 
-    %{name: "SaaS", slug: "saas", subcategories: [
-      %{name: "CRM Tools", slug: "crm-tools"},
-      %{name: "ERP Tools", slug: "erp-tools"},
-      %{name: "Financial Management Tools", slug: "financial-management-tools"},
-      %{name: "Team Collaboration Tools", slug: "team-collaboration-tools"},
-      %{name: "Cloud Software", slug: "cloud-software"},
-      %{name: "Project Management Tools", slug: "project-management-tools"}
-    ]},
+    %{name: "Metaverse & Virtual Worlds", slug: "metaverse-virtual-worlds", subcategories: [
+      %{name: "Virtual Real Estate", slug: "virtual-real-estate"},
+      %{name: "Digital Assets", slug: "digital-assets-metaverse"},
+      %{name: "Virtual Experiences", slug: "virtual-experiences"},
+      %{name: "Avatar Services", slug: "avatar-services"},
+      %{name: "Metaverse Infrastructure", slug: "metaverse-infrastructure"},
+      %{name: "Virtual Commerce", slug: "virtual-commerce"}
+    ], term_meta: [%{term_key: "icon", term_value: "globe"}]},
 
-    %{name: "AI Agency", slug: "ai-agency", subcategories: [
-      %{name: "AI Solutions", slug: "ai-solutions"},
-      %{name: "Machine Learning Services", slug: "machine-learning-services"},
-      %{name: "Text Generation (NLP)", slug: "text-generation-nlp"},
-      %{name: "Natural Language Processing", slug: "natural-language-processing"},
-      %{name: "Image Recognition", slug: "image-recognition"},
-      %{name: "Speech Recognition", slug: "speech-recognition"},
-      %{name: "Chatbots & Conversational AI", slug: "chatbots-conversational-ai"},
-      %{name: "Predictive Analytics", slug: "predictive-analytics"},
-      %{name: "Automation & Robotic Process Automation", slug: "automation-robotic-process-automation"}
-    ]},
+    %{name: "SaaS Solutions", slug: "saas-solutions", subcategories: [
+      %{name: "Project Management", slug: "project-management-saas"},
+      %{name: "CRM Software", slug: "crm-software"},
+      %{name: "HR Management", slug: "hr-management-saas"},
+      %{name: "Accounting Software", slug: "accounting-software"},
+      %{name: "Communication Tools", slug: "communication-tools"},
+      %{name: "Marketing Automation", slug: "marketing-automation-saas"},
+      %{name: "Analytics Platforms", slug: "analytics-platforms"},
+      %{name: "Design Software", slug: "design-software"},
+      %{name: "Customer Support Software", slug: "customer-support-software"},
+      %{name: "Document Management", slug: "document-management"}
+    ], term_meta: [%{term_key: "icon", term_value: "cloud"}]},
 
-    %{name: "Tax", slug: "tax", subcategories: [
-      %{name: "Tax Planning", slug: "tax-planning"},
-      %{name: "Corporate Tax Services", slug: "corporate-tax-services"}
-    ]},
+    %{name: "Travel & Tourism", slug: "travel-tourism", subcategories: [
+      %{name: "Hotels & Accommodations", slug: "hotels-accommodations"},
+      %{name: "Travel Booking Platforms", slug: "travel-booking-platforms"},
+      %{name: "Tour Packages", slug: "tour-packages"},
+      %{name: "Adventure Tourism", slug: "adventure-tourism"},
+      %{name: "Business Travel", slug: "business-travel"},
+      %{name: "Travel Insurance", slug: "travel-insurance"},
+      %{name: "Transportation Services", slug: "transportation-services"},
+      %{name: "Travel Gear & Accessories", slug: "travel-gear-accessories"},
+      %{name: "Travel Planning Tools", slug: "travel-planning-tools"}
+    ], term_meta: [%{term_key: "icon", term_value: "airplane"}]},
 
-    %{name: "Collectibles", slug: "collectibles", subcategories: [
-      %{name: "Art", slug: "art"},
-      %{name: "Antiques", slug: "antiques"},
-      %{name: "Limited-Edition Collectibles", slug: "limited-edition-collectibles"},
-      %{name: "Sports Memorabilia", slug: "sports-memorabilia"}
-    ]}
+    %{name: "Fashion & Lifestyle", slug: "fashion-lifestyle", subcategories: [
+      %{name: "Luxury Fashion", slug: "luxury-fashion"},
+      %{name: "Streetwear", slug: "streetwear"},
+      %{name: "Accessories", slug: "accessories-fashion"},
+      %{name: "Sustainable Fashion", slug: "sustainable-fashion"},
+      %{name: "Beauty & Cosmetics", slug: "beauty-cosmetics"},
+      %{name: "Fashion Technology", slug: "fashion-technology"},
+      %{name: "Personal Styling", slug: "personal-styling"},
+      %{name: "Fashion Marketplaces", slug: "fashion-marketplaces"}
+    ], term_meta: [%{term_key: "icon", term_value: "shopping-bag"}]},
+
+    %{name: "Pet Care & Services", slug: "pet-care-services", subcategories: [
+      %{name: "Pet Food & Nutrition", slug: "pet-food-nutrition"},
+      %{name: "Pet Healthcare", slug: "pet-healthcare"},
+      %{name: "Pet Supplies", slug: "pet-supplies"},
+      %{name: "Pet Training", slug: "pet-training"},
+      %{name: "Pet Grooming", slug: "pet-grooming"},
+      %{name: "Pet Insurance", slug: "pet-insurance"},
+      %{name: "Pet Technology", slug: "pet-technology"},
+      %{name: "Pet Boarding & Daycare", slug: "pet-boarding-daycare"}
+    ], term_meta: [%{term_key: "icon", term_value: "wallet"}]},
+
+    %{name: "Gaming & Entertainment", slug: "gaming-entertainment", subcategories: [
+      %{name: "Video Games", slug: "video-games"},
+      %{name: "Mobile Gaming", slug: "mobile-gaming"},
+      %{name: "Gaming Hardware", slug: "gaming-hardware-entertainment"},
+      %{name: "Esports", slug: "esports"},
+      %{name: "Game Development", slug: "game-development"},
+      %{name: "Gaming Communities", slug: "gaming-communities"},
+      %{name: "Gaming Accessories", slug: "gaming-accessories"},
+      %{name: "Game Streaming", slug: "game-streaming"},
+      %{name: "Virtual Reality Gaming", slug: "vr-gaming"}
+    ], term_meta: [%{term_key: "icon", term_value: "musical-note"}]},
+
+    %{name: "Adult & Dating", slug: "adult-dating", subcategories: [
+      %{name: "Dating Platforms", slug: "dating-platforms"},
+      %{name: "Adult Content", slug: "adult-content"},
+      %{name: "Relationship Coaching", slug: "relationship-coaching"},
+      %{name: "Dating Services", slug: "dating-services"},
+      %{name: "Adult Products", slug: "adult-products"}
+    ], term_meta: [%{term_key: "icon", term_value: "heart"}]},
+
+    %{name: "Crypto & Blockchain", slug: "crypto-blockchain", subcategories: [
+      %{name: "Cryptocurrency Exchanges", slug: "cryptocurrency-exchanges"},
+      %{name: "NFT Marketplaces", slug: "nft-marketplaces"},
+      %{name: "DeFi Platforms", slug: "defi-platforms"},
+      %{name: "Crypto Wallets", slug: "crypto-wallets"},
+      %{name: "Blockchain Development", slug: "blockchain-development"},
+      %{name: "Mining Equipment", slug: "mining-equipment"},
+      %{name: "Crypto Trading Tools", slug: "crypto-trading-tools"}
+    ], term_meta: [%{term_key: "icon", term_value: "currency-bangladeshi"}]},
+
+    %{name: "Weight Loss & Fitness", slug: "weight-loss-fitness", subcategories: [
+      %{name: "Diet Programs", slug: "diet-programs"},
+      %{name: "Fitness Equipment", slug: "fitness-equipment"},
+      %{name: "Supplements", slug: "supplements"},
+      %{name: "Personal Training", slug: "personal-training"},
+      %{name: "Workout Programs", slug: "workout-programs"},
+      %{name: "Nutrition Planning", slug: "nutrition-planning"},
+      %{name: "Fitness Apps", slug: "fitness-apps"}
+    ], term_meta: [%{term_key: "icon", term_value: "calendar"}]}
   ]
 }
 
-countries = [%{
+
+countries = %{
   name: "Countries",
   slug: "countries",
   subcategories: [
@@ -195,77 +286,32 @@ countries = [%{
     %{name: "Singapore", slug: "singapore"},
     %{name: "Argentina", slug: "argentina"},
     %{name: "United Arab Emirates", slug: "united-arab-emirates"},
-    %{name: "Nigeria", slug: "nigeria"},
     %{name: "Norway", slug: "norway"},
     %{name: "Malaysia", slug: "malaysia"},
     %{name: "Israel", slug: "israel"},
     %{name: "Austria", slug: "austria"},
-    %{name: "Egypt", slug: "egypt"},
     %{name: "Chile", slug: "chile"},
-    %{name: "Colombia", slug: "colombia"},
-    %{name: "Pakistan", slug: "pakistan"},
     %{name: "Philippines", slug: "philippines"},
     %{name: "Vietnam", slug: "vietnam"},
     %{name: "Finland", slug: "finland"},
     %{name: "Denmark", slug: "denmark"},
     %{name: "Romania", slug: "romania"},
-    %{name: "Ukraine", slug: "ukraine"},
-    %{name: "Peru", slug: "peru"},
-    %{name: "Bangladesh", slug: "bangladesh"},
-    %{name: "Kazakhstan", slug: "kazakhstan"},
-    %{name: "Kenya", slug: "kenya"},
-    %{name: "Morocco", slug: "morocco"},
-    %{name: "Sri Lanka", slug: "sri-lanka"},
     %{name: "Czech Republic", slug: "czech-republic"},
-    %{name: "Slovakia", slug: "slovakia"},
     %{name: "Portugal", slug: "portugal"},
     %{name: "Greece", slug: "greece"},
     %{name: "Ireland", slug: "ireland"},
-    %{name: "Bulgaria", slug: "bulgaria"},
-    %{name: "Ecuador", slug: "ecuador"},
-    %{name: "Jordan", slug: "jordan"},
-    %{name: "Belarus", slug: "belarus"},
     %{name: "New Zealand", slug: "new-zealand"},
     %{name: "Qatar", slug: "qatar"},
-    %{name: "Oman", slug: "oman"},
     %{name: "Luxembourg", slug: "luxembourg"},
     %{name: "Kuwait", slug: "kuwait"},
-    %{name: "Trinidad and Tobago", slug: "trinidad-and-tobago"},
-    %{name: "Cuba", slug: "cuba"},
-    %{name: "Mongolia", slug: "mongolia"},
-    %{name: "Iraq", slug: "iraq"},
-    %{name: "Tanzania", slug: "tanzania"},
-    %{name: "Uganda", slug: "uganda"},
-    %{name: "Algeria", slug: "algeria"},
-    %{name: "Angola", slug: "angola"},
-    %{name: "Myanmar", slug: "myanmar"},
-    %{name: "Cambodia", slug: "cambodia"},
-    %{name: "Ethiopia", slug: "ethiopia"},
-    %{name: "Armenia", slug: "armenia"},
-    %{name: "Uzbekistan", slug: "uzbekistan"},
-    %{name: "Macedonia", slug: "macedonia"},
-    %{name: "Croatia", slug: "croatia"},
-    %{name: "Latvia", slug: "latvia"},
-    %{name: "Estonia", slug: "estonia"},
-    %{name: "Lithuania", slug: "lithuania"},
-    %{name: "Costa Rica", slug: "costa-rica"},
-    %{name: "Honduras", slug: "honduras"},
-    %{name: "Panama", slug: "panama"},
-    %{name: "Bolivia", slug: "bolivia"},
-    %{name: "Paraguay", slug: "paraguay"},
-    %{name: "Guatemala", slug: "guatemala"},
-    %{name: "El Salvador", slug: "el-salvador"},
-    %{name: "Haiti", slug: "haiti"},
-    %{name: "Hong Kong", slug: "hong-kong"},
+    %{name: "Hong Kong SAR", slug: "hong-kong-sar"},
     %{name: "Taiwan", slug: "taiwan"},
     %{name: "South Korea", slug: "south-korea"},
-    %{name: "Macau", slug: "macau"},
+    %{name: "Macau SAR", slug: "macau-sar"},
     %{name: "Monaco", slug: "monaco"},
-    %{name: "San Marino", slug: "san-marino"},
-    %{name: "Liechtenstein", slug: "liechtenstein"},
-    %{name: "Andorra", slug: "andorra"}
+    %{name: "Liechtenstein", slug: "liechtenstein"}
   ]
-}]
+}
 
 
 
@@ -278,6 +324,7 @@ defmodule Monorepo.Seed do
   end
 
   def term_upsert(%{name: name, slug: slug} = input, parent_id) when is_map(input) do
+    IO.puts("Insert name:#{name}, slug:#{slug} to table...")
     term_taxonomy =
       case parent_id do
         nil -> [%{taxonomy: "affiliate_category"}]
@@ -285,8 +332,8 @@ defmodule Monorepo.Seed do
           [%{taxonomy: "affiliate_category", parent_id: parent_id}]
       end
 
-    insert_data =
-      %Monorepo.Terms.Term{name: name, slug: slug, term_taxonomy: term_taxonomy}
+    insert_data = %Monorepo.Terms.Term{name: name, slug: slug, term_taxonomy: term_taxonomy}
+    insert_data = if Map.get(input, :term_meta), do: Map.put(insert_data, :term_meta, Map.get(input, :term_meta)), else: insert_data
 
     parent = Ash.Seed.upsert!(insert_data, actor: %{roles: [:admin]}, action: :create, identity: :unique_slug)
 

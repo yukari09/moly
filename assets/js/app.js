@@ -66,6 +66,7 @@ window.addEventListener("app:count_word", async (event) => {
   event.target.setAttribute("data-count-word", countWords(text))
 })
 
+
 //fill attr value to other el textContent
 //<input 
 // id="input1" 

@@ -91,9 +91,9 @@ defmodule Monorepo.Utilities.Account do
 
   attr :user, Monorepo.Accounts.User, required: true
   attr :size, :integer, required: true
-  def avatar2(assigns) do
+  def avatar_html(assigns) do
     ~H"""
-    <img :if={user_avatar(@user, "#{@size}") } class="inline-block w-full h-full rounded-full" src={user_avatar(@user, "#{@size}")} alt={user_username(@user)}>
+    <img :if={user_avatar(@user, "#{@size}")} class="inline-block w-full h-full rounded-full" src={user_avatar(@user, "#{@size}")} alt={user_username(@user)}>
     <span :if={!user_avatar(@user, "#{@size}")} class="inline-flex w-full h-full items-center justify-center rounded-full bg-primary border-2 border-white">
       <span class="font-medium text-white uppercase text-sm">{user_name(@user, 1)}</span>
     </span>

@@ -17,47 +17,47 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "post_title",
+      "source": "comment_content",
       "type": "text"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "post_content",
+      "source": "comment_author_email",
       "type": "text"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "post_excerpt",
+      "source": "comment_author_url",
       "type": "text"
     },
     {
       "allow_nil?": false,
-      "default": "\"draft\"",
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "post_status",
+      "source": "comment_author_ip",
       "type": "text"
     },
     {
       "allow_nil?": false,
-      "default": "\"post\"",
+      "default": "\"comment\"",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "post_type",
+      "source": "comment_type",
       "type": "text"
     },
     {
@@ -67,114 +67,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "comment_status",
+      "source": "comment_approved",
       "type": "boolean"
-    },
-    {
-      "allow_nil?": false,
-      "default": "false",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "ping_status",
-      "type": "boolean"
-    },
-    {
-      "allow_nil?": false,
-      "default": "[]",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "to_ping",
-      "type": [
-        "array",
-        "text"
-      ]
-    },
-    {
-      "allow_nil?": false,
-      "default": "[]",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "pinged",
-      "type": [
-        "array",
-        "text"
-      ]
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "guid",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "0",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "menu_order",
-      "type": "bigint"
-    },
-    {
-      "allow_nil?": false,
-      "default": "\"post\"",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "post_mime_type",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "0",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "comment_count",
-      "type": "bigint"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "post_password",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "\"\"",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "post_name",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "\"\"",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "post_content_filtered",
-      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -197,7 +91,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -214,7 +108,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "posts_author_id_fkey",
+        "name": "comments_comment_author_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
@@ -222,7 +116,7 @@
         "table": "users"
       },
       "size": null,
-      "source": "author_id",
+      "source": "comment_author_id",
       "type": "uuid"
     },
     {
@@ -243,7 +137,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "posts_post_parent_fkey",
+        "name": "comments_comment_post_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
@@ -251,7 +145,36 @@
         "table": "posts"
       },
       "size": null,
-      "source": "post_parent",
+      "source": "comment_post_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "comments_comment_parent_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "comments"
+      },
+      "size": null,
+      "source": "comment_parent_id",
       "type": "uuid"
     }
   ],
@@ -259,24 +182,9 @@
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": true,
-  "hash": "6E96A520E8C3D0A50F2E80E557E352D8A4B10DC7929017B67EE18CF1087CA411",
-  "identities": [
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "posts_unique_post_name_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "post_name"
-        }
-      ],
-      "name": "unique_post_name",
-      "nils_distinct?": true,
-      "where": null
-    }
-  ],
+  "has_create_action": false,
+  "hash": "1DC8E57EF09403BF201FC7A64D85D48933D6C8F6FF2A34AE5FE57B4765A4E7E5",
+  "identities": [],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -284,5 +192,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "posts"
+  "table": "comments"
 }

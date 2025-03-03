@@ -22,7 +22,14 @@ defmodule Monorepo.Utilities.Affiliate do
   def commission_max(%Post{id: id} = post) when is_binary(id), do: load_meta_value_by_meta_key(post, :commission_max)
   def commission_min(%Post{id: id} = post) when is_binary(id), do: load_meta_value_by_meta_key(post, :commission_min)
 
-  def affiliate_tags(%Post{id: _id} = post), do: (load_post_tags(post) |> Map.get(:post_tags))
+  def affiliate_tags(%Post{id: _id} = post), do: (load_affiliate_tags(post) |> Map.get(:affiliate_tags))
+
+  def affiliate_industries() do
+    Ash.Query.new(Monorepo.Terms.Term)
+    |> Ash.Query.filter(term_taxonomy.taxonomy == "affiliate_category" and term_taxonomy.parent.slug == "industries")
+    |> Ash.Query.load([:term_meta])
+    |> Ash.read!(actor: %{roles: [:user]})
+  end
 
   def affiliate_industry(%Post{id: _id} = post) do
     get_affiliate_categories_by_parent_slug(post, "industries")
@@ -86,7 +93,10 @@ defmodule Monorepo.Utilities.Affiliate do
         filter_by_meta_key(%{post_meta: children}, :attachment_metadata)
         |> case do
           post_meta when is_list(post_meta) ->
-            acc = (acc ++ Enum.map(post_meta, &(get_post_image_by_sizes(&1, sizes, return_all_sizes))))
+            new_slice = Enum.map(post_meta, fn i ->
+              get_post_image_by_sizes(i, sizes, return_all_sizes)
+            end)
+            acc = acc ++ new_slice
             List.flatten(acc)
           _ -> []
         end
@@ -102,22 +112,97 @@ defmodule Monorepo.Utilities.Affiliate do
           image_media && [image_media | acc] || acc
         end)
       else
-        Enum.reduce_while(sizes, nil, fn size, _ ->
-          image_media = Monorepo.Helper.get_in_from_keys(meta_value_decoded, ["sizes", size])
-          if image_media, do: {:halt, image_media}, else: [:cont, nil]
+        Enum.reduce_while(sizes, meta_value_decoded, fn size, acc ->
+          image_media = Monorepo.Helper.get_in_from_keys(acc, ["sizes", size])
+          if image_media, do: {:halt, image_media}, else: {:cont, acc}
         end)
       end
     result
+  end
+
+  attr :post, Monorepo.Contents.Post, required: true
+  def article_html(assigns) do
+    ~H"""
+    <article class="flex flex-col items-start justify-between">
+      <div class="relative w-full">
+        <img src={affiliate_media_feature_src_with_specific_sizes(@post, ["medium", "thumbnail"])} alt={@post.post_title} class="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
+        <.link class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" navigate={link_view(@post)}>&nbsp;</.link>
+      </div>
+      <div class="max-w-xl">
+        <div class="mt-4 flex items-top gap-x-2 text-xs">
+          <.link class="size-8" patch={~p"/user/page/@#{Monorepo.Utilities.Account.user_username(@post.author)}"}>
+            <Monorepo.Utilities.Account.avatar_html user={@post.author} size={32} />
+          </.link>
+          <div class="flex-1">
+            <h3 class="text-base/6 font-semibold text-gray-900 group-hover:text-gray-600 line-clamp-2">
+              <.link navigate={link_view(@post)}>
+                {@post.post_title}
+              </.link>
+            </h3>
+            <div><.commission_label  post={@post}/></div>
+            <div class="space-x-1 mt-2">
+              <time datetime={@post.inserted_at |> Timex.format!("{YYYY}-{D}-{0M}")} class="text-gray-500">{@post.inserted_at |> Timex.format!("{Mshort} {D}, {YYYY}")}</time>
+              <.link
+                navigate={link_industry(@post)}
+                class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
+              >{affiliate_industry_name(@post)}</.link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+    """
+  end
+
+  attr :post, Monorepo.Contents.Post, required: true
+  def commission_label(assigns) do
+    ~H"""
+    <div :if={commission_unit(@post) == "%"}>
+      <span class="text-green-500 font-ligh">From</span>
+      <span class="font-bold text-green-500 text-lg">
+        {commission_min(@post)}
+      </span>
+      <span class="text-green-500 font-light">
+        {commission_unit(@post)}
+      </span>
+      <span class="text-green-500 font-ligh">to</span>
+      <span class="font-bold text-green-500 text-lg">
+        {commission_max(@post)}
+      </span>
+
+      <span class="text-green-500 font-light">
+        {commission_unit(@post)}
+      </span>
+    </div>
+
+    <div :if={commission_unit(@post) !== "%"}>
+      <span class="text-green-500 font-ligh">From</span>
+      <span class="font-bold text-green-500 text-lg">
+        {commission_unit(@post)}
+      </span>
+      <span class="font-bold text-green-500 text-lg">
+        {commission_min(@post)}
+      </span>
+      <span class="text-green-500 font-ligh">to</span>
+      <span class="font-bold text-green-500 text-lg">
+        {commission_max(@post)}
+      </span>
+    </div>
+    """
   end
 
   defp load_meta_value_by_meta_key(post, meta_key) do
     post = load_post_meta(post)
     filter_by_meta_key(post, meta_key)
     |> List.first()
+    |> case do
+      nil -> nil
+      %{meta_value: meta_value} -> meta_value
+    end
   end
 
   defp load_post_meta(%Post{id: _id} = post), do: load_relation(post, :post_meta)
-  defp load_post_tags(%Post{id: _id} = post), do: load_relation(post, :post_tags)
+  defp load_affiliate_tags(%Post{id: _id} = post), do: load_relation(post, :affiliate_tags)
   defp load_post_affiliate_categories(%Post{id: _id} = post), do: load_relation(post, :affiliate_categories)
 
   defp load_relation(%Post{id: _id} = post, relation_name) when is_atom(relation_name) do

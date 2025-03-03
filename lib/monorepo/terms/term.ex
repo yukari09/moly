@@ -52,29 +52,33 @@ defmodule Monorepo.Terms.Term do
 
     create :create do
       primary? true
+      upsert? true
+      upsert_identity :unique_slug
       argument :term_taxonomy, {:array, :map}
+      argument :term_meta, {:array, :map}
       change manage_relationship(:term_taxonomy, :term_taxonomy, type: :create)
+      change manage_relationship(:term_meta, :term_meta, type: :create)
     end
 
     update :update do
       primary? true
       require_atomic? false
       argument :term_taxonomy, {:array, :map}
-      change manage_relationship(:term_taxonomy, :term_taxonomy, type: :direct_control)
+      change manage_relationship(:term_taxonomy, :term_taxonomy, type: :create)
     end
 
     destroy :destroy do
       primary? true
 
       change before_action(fn changeset, context ->
-               Ash.Query.filter(
-                 Monorepo.Terms.TermTaxonomy,
-                 term_id == ^Ash.Changeset.get_attribute(changeset, :id)
-               )
-               |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
+        Ash.Query.filter(
+          Monorepo.Terms.TermTaxonomy,
+          term_id == ^Ash.Changeset.get_attribute(changeset, :id)
+        )
+        |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
 
-               changeset
-             end)
+        changeset
+      end)
     end
   end
 

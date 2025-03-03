@@ -11,11 +11,30 @@ defmodule Monorepo.Terms.TermMeta do
     repo(Monorepo.Repo)
   end
 
+  rbac do
+    role :user do
+      actions([:read])
+    end
+
+    role :admin do
+      actions([:create, :read, :update, :destroy])
+    end
+  end
+
+  actions do
+    create :create do
+      primary? true
+    end
+
+    read :read do
+      primary? true
+    end
+  end
+
   attributes do
     uuid_primary_key :id
 
-    attribute :term_key, :string do
-      length(min: 1, max: 255)
+    attribute :term_key, :atom do
       allow_nil? false
     end
 

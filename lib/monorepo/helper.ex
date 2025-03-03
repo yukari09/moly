@@ -325,8 +325,7 @@ defmodule Monorepo.Helper do
           is_list(acc) && is_integer(key) -> Enum.at(acc, key)
           true -> nil
         end
-
-      (is_nil(value) && {:halt, nil}) || {:cont, value}
+      if is_nil(value), do: {:halt, nil}, else: {:cont, value}
     end)
   end
 

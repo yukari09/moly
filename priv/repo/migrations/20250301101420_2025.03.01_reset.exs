@@ -1,4 +1,4 @@
-defmodule Monorepo.Repo.Migrations.Initial do
+defmodule :"Elixir.Monorepo.Repo.Migrations.2025.03.01Reset" do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
@@ -15,9 +15,6 @@ defmodule Monorepo.Repo.Migrations.Initial do
       add(:hashed_password, :text)
       add(:roles, {:array, :text}, null: false)
       add(:status, :text, null: false, default: "inactive")
-      add(:nickname, :text)
-      add(:display_name, :text)
-      add(:avatar, :text)
 
       add(:inserted_at, :utc_datetime_usec,
         null: false,
@@ -30,14 +27,45 @@ defmodule Monorepo.Repo.Migrations.Initial do
       )
     end
 
-    create unique_index(:users, [:display_name], name: "users_unique_display_name_index")
-
     create unique_index(:users, [:email], name: "users_unique_email_index")
+
+    create table(:user_post_actions, primary_key: false) do
+      add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
+      add(:action, :text, null: false)
+
+      add(:created_at, :utc_datetime,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+      )
+
+      add(:inserted_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+      )
+
+      add(:updated_at, :utc_datetime_usec,
+        null: false,
+        default: fragment("(now() AT TIME ZONE 'utc')")
+      )
+
+      add(
+        :user_id,
+        references(:users,
+          column: :id,
+          name: "user_post_actions_user_id_fkey",
+          type: :uuid,
+          prefix: "public"
+        ),
+        null: false
+      )
+
+      add(:post_id, :uuid, null: false)
+    end
 
     create table(:user_meta, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
       add(:meta_key, :text, null: false)
-      add(:meta_value, :text, null: false)
+      add(:meta_value, :text)
 
       add(:inserted_at, :utc_datetime_usec,
         null: false,
@@ -59,6 +87,10 @@ defmodule Monorepo.Repo.Migrations.Initial do
         )
       )
     end
+
+    create unique_index(:user_meta, [:meta_key, :user_id],
+             name: "user_meta_meta_key_with_user_id_index"
+           )
 
     create table(:tokens, primary_key: false) do
       add(:created_at, :utc_datetime_usec,
@@ -87,7 +119,7 @@ defmodule Monorepo.Repo.Migrations.Initial do
     create table(:terms, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
       add(:name, :text, null: false)
-      add(:slug, :text, null: false)
+      add(:slug, :text)
       add(:term_group, :bigint, null: false, default: 0)
 
       add(:inserted_at, :utc_datetime_usec,
@@ -103,10 +135,10 @@ defmodule Monorepo.Repo.Migrations.Initial do
 
     create unique_index(:terms, [:slug], name: "terms_unique_slug_index")
 
-    create table(:term_taxonomy, primary_key: false) do
+    create table(:term_taxonomies, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
       add(:taxonomy, :text, null: false)
-      add(:description, :text, null: false)
+      add(:description, :text, default: "")
       add(:count, :bigint, null: false, default: 0)
 
       add(:inserted_at, :utc_datetime_usec,
@@ -123,7 +155,7 @@ defmodule Monorepo.Repo.Migrations.Initial do
         :term_id,
         references(:terms,
           column: :id,
-          name: "term_taxonomy_term_id_fkey",
+          name: "term_taxonomies_term_id_fkey",
           type: :uuid,
           prefix: "public"
         )
@@ -131,18 +163,22 @@ defmodule Monorepo.Repo.Migrations.Initial do
 
       add(
         :parent_id,
-        references(:term_taxonomy,
+        references(:terms,
           column: :id,
-          name: "term_taxonomy_parent_id_fkey",
+          name: "term_taxonomies_parent_id_fkey",
           type: :uuid,
           prefix: "public"
         )
       )
     end
 
+    create unique_index(:term_taxonomies, [:term_id, :taxonomy],
+             name: "term_taxonomies_taxonomy_term_id_index"
+           )
+
     create table(:term_relationships, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
-      add(:term_order, :bigint, null: false, default: 0)
+      add(:term_order, :bigint, default: 0)
 
       add(:inserted_at, :utc_datetime_usec,
         null: false,
@@ -156,7 +192,7 @@ defmodule Monorepo.Repo.Migrations.Initial do
 
       add(
         :term_taxonomy_id,
-        references(:term_taxonomy,
+        references(:term_taxonomies,
           column: :id,
           name: "term_relationships_term_taxonomy_id_fkey",
           type: :uuid,
@@ -193,8 +229,24 @@ defmodule Monorepo.Repo.Migrations.Initial do
       )
     end
 
+    create unique_index(:term_meta, [:term_id, :term_key],
+             name: "term_meta_term_meta_key_with_term_id_index"
+           )
+
     create table(:posts, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
+    end
+
+    alter table(:user_post_actions) do
+      modify(
+        :post_id,
+        references(:posts,
+          column: :id,
+          name: "user_post_actions_post_id_fkey",
+          type: :uuid,
+          prefix: "public"
+        )
+      )
     end
 
     alter table(:term_relationships) do
@@ -209,6 +261,10 @@ defmodule Monorepo.Repo.Migrations.Initial do
       )
     end
 
+    create unique_index(:term_relationships, [:term_taxonomy_id, :post_id],
+             name: "term_relationships_post_id_term_taxonomy_id_index"
+           )
+
     alter table(:posts) do
       add(:post_title, :text, null: false)
       add(:post_content, :text)
@@ -222,9 +278,10 @@ defmodule Monorepo.Repo.Migrations.Initial do
       add(:guid, :text)
       add(:menu_order, :bigint, null: false, default: 0)
       add(:post_mime_type, :text, null: false, default: "post")
+      add(:post_date, :utc_datetime, null: false)
       add(:comment_count, :bigint, null: false, default: 0)
       add(:post_password, :text)
-      add(:post_name, :text, null: false, default: "")
+      add(:post_name, :text)
       add(:post_content_filtered, :text, default: "")
 
       add(:inserted_at, :utc_datetime_usec,
@@ -287,6 +344,10 @@ defmodule Monorepo.Repo.Migrations.Initial do
         null: false
       )
     end
+
+    create unique_index(:post_meta, [:meta_key, :post_id],
+             name: "post_meta_meta_key_with_post_id_index"
+           )
 
     create table(:options, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
@@ -380,9 +441,19 @@ defmodule Monorepo.Repo.Migrations.Initial do
         )
       )
     end
+
+    create unique_index(:comment_meta, [:meta_key, :comment_id],
+             name: "comment_meta_meta_key_with_comment_id_index"
+           )
   end
 
   def down do
+    drop_if_exists(
+      unique_index(:comment_meta, [:meta_key, :comment_id],
+        name: "comment_meta_meta_key_with_comment_id_index"
+      )
+    )
+
     drop(constraint(:comment_meta, "comment_meta_comment_id_fkey"))
 
     drop(table(:comment_meta))
@@ -396,6 +467,12 @@ defmodule Monorepo.Repo.Migrations.Initial do
     drop(table(:comments))
 
     drop(table(:options))
+
+    drop_if_exists(
+      unique_index(:post_meta, [:meta_key, :post_id],
+        name: "post_meta_meta_key_with_post_id_index"
+      )
+    )
 
     drop(constraint(:post_meta, "post_meta_post_id_fkey"))
 
@@ -416,6 +493,7 @@ defmodule Monorepo.Repo.Migrations.Initial do
       remove(:post_name)
       remove(:post_password)
       remove(:comment_count)
+      remove(:post_date)
       remove(:post_mime_type)
       remove(:menu_order)
       remove(:guid)
@@ -430,13 +508,31 @@ defmodule Monorepo.Repo.Migrations.Initial do
       remove(:post_title)
     end
 
+    drop_if_exists(
+      unique_index(:term_relationships, [:term_taxonomy_id, :post_id],
+        name: "term_relationships_post_id_term_taxonomy_id_index"
+      )
+    )
+
     drop(constraint(:term_relationships, "term_relationships_post_id_fkey"))
 
     alter table(:term_relationships) do
       modify(:post_id, :uuid)
     end
 
+    drop(constraint(:user_post_actions, "user_post_actions_post_id_fkey"))
+
+    alter table(:user_post_actions) do
+      modify(:post_id, :uuid)
+    end
+
     drop(table(:posts))
+
+    drop_if_exists(
+      unique_index(:term_meta, [:term_id, :term_key],
+        name: "term_meta_term_meta_key_with_term_id_index"
+      )
+    )
 
     drop(constraint(:term_meta, "term_meta_term_id_fkey"))
 
@@ -446,11 +542,17 @@ defmodule Monorepo.Repo.Migrations.Initial do
 
     drop(table(:term_relationships))
 
-    drop(constraint(:term_taxonomy, "term_taxonomy_term_id_fkey"))
+    drop_if_exists(
+      unique_index(:term_taxonomies, [:term_id, :taxonomy],
+        name: "term_taxonomies_taxonomy_term_id_index"
+      )
+    )
 
-    drop(constraint(:term_taxonomy, "term_taxonomy_parent_id_fkey"))
+    drop(constraint(:term_taxonomies, "term_taxonomies_term_id_fkey"))
 
-    drop(table(:term_taxonomy))
+    drop(constraint(:term_taxonomies, "term_taxonomies_parent_id_fkey"))
+
+    drop(table(:term_taxonomies))
 
     drop_if_exists(unique_index(:terms, [:slug], name: "terms_unique_slug_index"))
 
@@ -458,13 +560,21 @@ defmodule Monorepo.Repo.Migrations.Initial do
 
     drop(table(:tokens))
 
+    drop_if_exists(
+      unique_index(:user_meta, [:meta_key, :user_id],
+        name: "user_meta_meta_key_with_user_id_index"
+      )
+    )
+
     drop(constraint(:user_meta, "user_meta_user_id_fkey"))
 
     drop(table(:user_meta))
 
-    drop_if_exists(unique_index(:users, [:email], name: "users_unique_email_index"))
+    drop(constraint(:user_post_actions, "user_post_actions_user_id_fkey"))
 
-    drop_if_exists(unique_index(:users, [:display_name], name: "users_unique_display_name_index"))
+    drop(table(:user_post_actions))
+
+    drop_if_exists(unique_index(:users, [:email], name: "users_unique_email_index"))
 
     drop(table(:users))
   end

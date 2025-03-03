@@ -1,95 +1,111 @@
 <div class="bg-white">
-  <div class="mx-auto px-4 py-12 sm:px-6 lg:max-w-7xl lg:px-8">
+  <div class="container mx-auto sm:px-6 lg:px-8">
+    <nav class="flex py-8" aria-label="Breadcrumb">
+      <ol role="list" class="flex items-center space-x-4">
+        <li>
+          <div>
+            <a href="#" class="text-gray-400 hover:text-gray-500">
+              <svg class="size-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                <path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd" />
+              </svg>
+              <span class="sr-only">Home</span>
+            </a>
+          </div>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg class="size-5 shrink-0 text-gray-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+            </svg>
+            <a href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">Brose</a>
+          </div>
+        </li>
+        <%!-- <li>
+          <div class="flex items-center">
+            <svg class="size-5 shrink-0 text-gray-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+            </svg>
+            <a href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700" aria-current="page">Project Nero</a>
+          </div>
+        </li> --%>
+      </ol>
+    </nav>
+    <div class="mb-8">
+      <h1 class="text-4xl text-gray-900 font-medium">Browse Affiliate marketing programs</h1>
+      <p class="text-gray-500 mt-3 font-light">
+        Find website software high ticket best paying affiliate marketing programs for beginners experts.
+      </p>
+    </div>
+    
 
-    <div class="flex items-center justify-between">
-      <div class="flex items-center space-x-4">
-        <span class="text-gray-700 text-sm">Filter By</span>
-        <MonorepoWeb.TailwindUI.dropdown id="categories">
-          <:button_slot>
-            <Lucideicons.chevron_down class="size-4 text-gray-700" /><span class="text-sm text-gray-700">All Countries</span>
-          </:button_slot>
 
-          <:menu_slot class="w-32 left-0">
-            <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-0">Your profile</a>
-            <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-1">Sign out</a>
-          </:menu_slot>
-        </MonorepoWeb.TailwindUI.dropdown>
-
-        <MonorepoWeb.TailwindUI.dropdown id="industries">
-          <:button_slot>
-            <Lucideicons.chevron_down class="size-4 text-gray-700" /><span class="text-sm text-gray-700">All Industries</span>
-          </:button_slot>
-
-          <:menu_slot class="w-32 left-0">
-            <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-10">Your profile</a>
-            <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-11">Sign out</a>
-          </:menu_slot>
-        </MonorepoWeb.TailwindUI.dropdown>
-
-        <MonorepoWeb.TailwindUI.dropdown id="commision-rate">
-          <:button_slot>
-            <Lucideicons.chevron_down class="size-4 text-gray-700" /><span class="text-sm text-gray-700">All Commision Rate</span>
-          </:button_slot>
-
-          <:menu_slot class="w-32 left-0">
-            <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-3">Your profile</a>
-            <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-4">Sign out</a>
-          </:menu_slot>
-        </MonorepoWeb.TailwindUI.dropdown>
+    <div
+      id="scroll-pagination"
+      class="flex items-center relative overflow-hidden w-full py-2 border-b pb-8"
+      phx-hook="ScrollPagination"
+    >
+      <div
+        class="prev absolute left-0 z-30 h-8 md:h-12 w-14 md:w-20 flex justify-start"
+        style="background:linear-gradient( 90deg, hsl(0, 0%, 100%) 0%, hsl(0, 0%, 100%) 60%, hsl(0, 0%, 100%, 0) 100% );"
+      >
+        <button type="button" class="rounded-full h-8 md:h-12 px-2 md:px-3.5 hover:bg-gray-50">
+          <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
+        </button>
       </div>
-      <MonorepoWeb.TailwindUI.dropdown id="commision-model">
-        <:button_slot>
-          <Lucideicons.chevron_down class="size-4 text-gray-700" /><span class="text-sm text-gray-700">Latest</span>
-        </:button_slot>
 
-        <:menu_slot class="w-32">
-          <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-5">Your profile</a>
-          <a href="#" class="block px-3 py-1 text-sm/6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-6">Sign out</a>
-        </:menu_slot>
-      </MonorepoWeb.TailwindUI.dropdown>
+      <ul class="item-list flex gap-2 list-none m-0 p-0 ">
+        <li>
+          <.link
+            patch={live_url(%{page: 1})}
+            class={["border py-2.5 px-3.5 flex items-center gap-2 rounded-md whitespace-nowrap", @params.slug == nil && "bg-gray-900 text-gray-50"]}
+          >
+            All
+          </.link>
+        </li>
+        <li :for={c <- Monorepo.Utilities.Affiliate.affiliate_industries()}>
+          <.link
+            patch={live_url(%{slug: c.slug})}
+            class={["border py-2.5 px-3.5 flex items-center gap-2 rounded-md whitespace-nowrap", c.slug == @params.slug && "border-gray-900 text-gray-900"]}
+          >
+            <%!-- <.icon name={"hero-#{Monorepo.Utilities.Term.icon(c)}"} class="size-5" /> --%>
+            <span class="text-medium">{ c.name }</span>
+          </.link>
+        </li>
+      </ul>
+
+      <div
+        class="next absolute right-0 h-8 md:h-12 w-14 md:w-20 flex justify-end"
+        style="background: linear-gradient(270deg, hsl(0, 0%, 100%) 0%, hsl(0, 0%, 100%) 60%, hsla(0, 0%, 100%, 0) 100%);"
+      >
+        <button type="button" class="rounded-full h-8 md:h-12 px-2 md:px-3.5 hover:bg-gray-50">
+          <Lucideicons.arrow_right class="w-4 h-4 md:w-5 md:h-5" />
+        </button>
+      </div>
     </div>
 
-    <div class="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-x-4 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-      <article :for={post <- @post} class="flex flex-col items-start justify-between">
-        <div class="relative w-full">
-          <img src={Monorepo.Utilities.MetaValue.post_feature_image(post, :attachment_affiliate_media_feature, "medium")} alt="" class="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
-          <.link class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" navigate={Monorepo.Utilities.Affiliate.link_view(post)}>&nbsp;</.link>
-        </div>
-        <div class="max-w-xl">
-          <div class="mt-4 flex items-top gap-x-2 text-xs">
-            <.link class="size-10"  :if={Monorepo.Utilities.Account.load_meta_value_by_meta_key(post.author, :avatar)} patch={~p"/user/page/@#{Monorepo.Utilities.Account.load_meta_value_by_meta_key(post.author, :username)}"}>
-              <img class="rounded-full w-full h-full" src={Monorepo.Utilities.Account.load_meta_value_by_meta_key(post.author, :avatar)["64"]} alt="">
-            </.link>
-            <div class="flex-1 space-y-2">
-              <h3 class="text-base/6 font-semibold text-gray-900 group-hover:text-gray-600 line-clamp-2">
-                <.link navigate={Monorepo.Utilities.Affiliate.link_view(post)}>
-                  {post.post_title}
-                </.link>
-              </h3>
-              <div class="space-x-1">
-                <.link navigate={"/c/#{Monorepo.Utilities.Term.get_first_and_return_by_keys(post.post_categories, "category", [:slug], @industry_category.id)}"}  >
-                  <span class="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">{Monorepo.Utilities.Term.get_first_and_return_by_keys(post.post_categories, "category", [:name], @industry_category.id)}</span>
-                </.link>
-                <span class="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">
-                  {Monorepo.Utilities.MetaValue.format_meta_value(post, :commission_model)}
-                </span>
+    <div class="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-x-4 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-4">
+      <Monorepo.Utilities.Affiliate.article_html :for={post <- @post} post={post}/>
+    </div>
 
-                <div class="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">
-                  <span class="font-bold text-green-500">
-                    {Monorepo.Utilities.MetaValue.format_meta_value(post, :commission_min)}
-                    {Monorepo.Utilities.MetaValue.format_meta_value(post, :commission_unit)}
-                  </span>
-                  <span class="text-green-300">-</span>
-                  <span class="font-bold text-green-500">
-                    {Monorepo.Utilities.MetaValue.format_meta_value(post, :commission_max)}
-                    {Monorepo.Utilities.MetaValue.format_meta_value(post, :commission_unit)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
+    <div :if={@page_meta.total_pages > 1} class="mx-auto my-16">
+      <nav class="flex items-center justify-center space-x-2 mt-4">
+        <!-- Previous Button -->
+        <.link :if={@page_meta.prev} patch={live_url(%{@params | page: @page_meta.prev})}   class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100">
+          <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
+        </.link>
+
+        <!-- Page Numbers -->
+        <.link 
+          :for={page <- @page_meta.page_range} 
+          patch={live_url(%{@params | page: page})} 
+          class={["px-3 py-2 text-gray-500 border-b-2 border-white hover:border-gray-900 hover:text-gray-900", page == @params.page && "border-gray-900 text-gray-900"]}
+        >{page}</.link>
+
+        <.link :if={@page_meta.next} patch={live_url(%{@params | page: @page_meta.next})}   class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100">
+          <Lucideicons.arrow_right class="w-4 h-4 md:w-5 md:h-5" />
+        </.link>
+      </nav>
     </div>
   </div>
 </div>
+ 

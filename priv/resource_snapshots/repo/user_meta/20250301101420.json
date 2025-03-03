@@ -17,17 +17,17 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "term_key",
+      "source": "meta_key",
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "term_value",
+      "source": "meta_value",
       "type": "text"
     },
     {
@@ -68,15 +68,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "term_meta_term_id_fkey",
+        "name": "user_meta_user_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "terms"
+        "table": "users"
       },
       "size": null,
-      "source": "term_id",
+      "source": "user_id",
       "type": "uuid"
     }
   ],
@@ -84,9 +84,28 @@
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": false,
-  "hash": "FAE5387CE29741E0050566F5B66EE27942EC854CA908FD87E646AF7BCE2620F4",
-  "identities": [],
+  "has_create_action": true,
+  "hash": "DFCE9BE9B85984B0D6EEDDF3E1E080713F6A43D96DCA9477B6D51F9D6CED7D1E",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "user_meta_meta_key_with_user_id_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "meta_key"
+        },
+        {
+          "type": "atom",
+          "value": "user_id"
+        }
+      ],
+      "name": "meta_key_with_user_id",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -94,5 +113,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "term_meta"
+  "table": "user_meta"
 }

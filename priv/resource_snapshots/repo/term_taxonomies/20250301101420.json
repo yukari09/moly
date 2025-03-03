@@ -17,58 +17,28 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "comment_content",
+      "source": "taxonomy",
       "type": "text"
     },
     {
-      "allow_nil?": false,
-      "default": "nil",
+      "allow_nil?": true,
+      "default": "\"\"",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "comment_author_email",
+      "source": "description",
       "type": "text"
     },
     {
       "allow_nil?": false,
-      "default": "nil",
+      "default": "0",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "comment_author_url",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "comment_author_ip",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "\"comment\"",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "comment_type",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "false",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "comment_approved",
-      "type": "boolean"
+      "source": "count",
+      "type": "bigint"
     },
     {
       "allow_nil?": false,
@@ -108,15 +78,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "comments_comment_author_id_fkey",
+        "name": "term_taxonomies_term_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "terms"
       },
       "size": null,
-      "source": "comment_author_id",
+      "source": "term_id",
       "type": "uuid"
     },
     {
@@ -137,44 +107,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "comments_comment_post_id_fkey",
+        "name": "term_taxonomies_parent_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "posts"
+        "table": "terms"
       },
       "size": null,
-      "source": "comment_post_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "comments_comment_parent_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "comments"
-      },
-      "size": null,
-      "source": "comment_parent_id",
+      "source": "parent_id",
       "type": "uuid"
     }
   ],
@@ -182,9 +123,28 @@
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": false,
-  "hash": "03DBFC6C8E7782CDD6D1A1D14396FD5B687C9324B9B5E4188DDA6389BBA4231C",
-  "identities": [],
+  "has_create_action": true,
+  "hash": "464FBAFC2AE24CC9438FFC5ECADB311398B834F270C0777A81F5F30249E57419",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "term_taxonomies_taxonomy_term_id_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "term_id"
+        },
+        {
+          "type": "atom",
+          "value": "taxonomy"
+        }
+      ],
+      "name": "taxonomy_term_id",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -192,5 +152,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "comments"
+  "table": "term_taxonomies"
 }

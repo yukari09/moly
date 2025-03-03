@@ -17,28 +17,18 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "taxonomy",
+      "source": "action",
       "type": "text"
     },
     {
       "allow_nil?": false,
-      "default": "nil",
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "description",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "0",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "count",
-      "type": "bigint"
+      "source": "created_at",
+      "type": "utc_datetime"
     },
     {
       "allow_nil?": false,
@@ -61,7 +51,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -78,19 +68,19 @@
           "global": null,
           "strategy": null
         },
-        "name": "term_taxonomy_term_id_fkey",
+        "name": "user_post_actions_user_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "terms"
+        "table": "users"
       },
       "size": null,
-      "source": "term_id",
+      "source": "user_id",
       "type": "uuid"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -107,15 +97,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "term_taxonomy_parent_id_fkey",
+        "name": "user_post_actions_post_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "term_taxonomy"
+        "table": "posts"
       },
       "size": null,
-      "source": "parent_id",
+      "source": "post_id",
       "type": "uuid"
     }
   ],
@@ -123,8 +113,8 @@
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": false,
-  "hash": "9DE1B285C3852C61D7489A61F585AC49B5574B03976B8F156EA82F4911DBD481",
+  "has_create_action": true,
+  "hash": "924F71E13C01149678EC6D9E342FA97A5435CA264EB1877564B802C122674AD7",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -133,5 +123,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "term_taxonomy"
+  "table": "user_post_actions"
 }

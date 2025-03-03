@@ -3,12 +3,12 @@ defmodule MonorepoWeb.Affiliate.PageIndexLive do
 
   def render(assigns) do
     ~H"""
-    <div class="w-full mx-auto px-4 py-24">
+    <div class="w-full mx-auto px-4 py-32 ">
       <!-- Hero Section -->
-      <div class="max-w-2xl mx-auto text-center">
+      <div class="max-w-2xl mx-auto text-center ">
 
         <h1 class="text-5xl leading-snug font-medium mb-2">
-          <span class="text-primary">Explore High-Reward</span><br/><span class="text-secondary">Unique Products</span>
+          <span class="text-primary">Explore High Ticket</span><br/><span class="text-secondary">affiliate programs</span>
         </h1>
 
         <h2 class="text-2xl mb-12">
@@ -29,7 +29,120 @@ defmodule MonorepoWeb.Affiliate.PageIndexLive do
           </div>
         </div>
       </div>
+    </div>
 
+    <div class="container mx-auto sm:px-6 lg:px-8 space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-semibold text-lg">Top paying Affiliate programs</h2>
+          <div class="text-gray-500 text-sm mt-1">Find top paying,high ticket,best paying affiliate programs for beginners or experts.</div>
+        </div>
+        <.link class="text-sm text-green-600">Brose all top paying affiliate programs<.icon name="hero-chevron-right-mini" class="size-4.5 text-green-600 stroke-1 font-bold"/></.link>
+      </div>
+      <div class="grid max-w-2xl grid-cols-1 gap-x-4 gap-y-10 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      <article :for={_ <- 0..5} class="flex flex-col items-start justify-between">
+        <div class="relative w-full">
+          <img src="http://192.168.6.8:8008/LdPNZ0nIuCuJI57laHqm6_9wFqA5LKVPtOlfZQ34jHo/rs:fill:360:242:false/czM6Ly9sb2NhbC9pbWFnZS9wbmcvY2I5NjkyNzAtZjlhMS00OTI4LWFlODMtNjM2ZTMwYjk4Nzk5LnBuZw.webp" alt="" class="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
+          <!-- @caller lib/monorepo_web/live/affiliate/browse_live.html.heex:56 (monorepo) --><!-- <Phoenix.Component.link> lib/phoenix_component.ex:2993 (phoenix_live_view) --><a href="/affiliate/-xOiiUTuSQWd" data-phx-link="redirect" data-phx-link-state="push" class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10">&nbsp;</a><!-- </Phoenix.Component.link> -->
+        </div>
+        <div class="max-w-xl">
+          <div class="mt-4 flex items-top gap-x-2 text-xs">
+            <!-- @caller lib/monorepo_web/live/affiliate/browse_live.html.heex:60 (monorepo) --><!-- <Phoenix.Component.link> lib/phoenix_component.ex:3005 (phoenix_live_view) --><a href="/user/page/@KariYu" data-phx-link="patch" data-phx-link-state="push" class="size-8">
+              <img class="rounded-full w-full h-full" src="http://192.168.6.8:8008/1zg1HGB_6-LHz6oH-mdcGb_TLmKlTy-g2x7nK-Ig8nA/rs:fill:64:64:false/czM6Ly9sb2NhbC91c2VyX21ldGEvYzFmZjAyZTEtOGJhYS00ZWE5LWFkYTEtMDMyYTU2YmU3YTU3.webp" alt="">
+            </a><!-- </Phoenix.Component.link> -->
+            <div class="flex-1 space-y-2">
+              <h3 class="text-base/6 font-semibold text-gray-900 group-hover:text-gray-600 line-clamp-2">
+                <!-- @caller lib/monorepo_web/live/affiliate/browse_live.html.heex:65 (monorepo) --><!-- <Phoenix.Component.link> lib/phoenix_component.ex:2993 (phoenix_live_view) --><a href="/affiliate/-xOiiUTuSQWd" data-phx-link="redirect" data-phx-link-state="push">
+                  Join ReliableSite's Affiliate Program – Earn 5% Recurring Commission with No Fees
+                </a><!-- </Phoenix.Component.link> -->
+              </h3>
+              <div class="space-x-1">
+                <time datetime="2025-23-02" class="text-gray-500">Feb 23, 2025</time>
+                <!-- @caller lib/monorepo_web/live/affiliate/browse_live.html.heex:71 (monorepo) --><!-- <Phoenix.Component.link> lib/phoenix_component.ex:2993 (phoenix_live_view) --><a href="/affiliates/saas" data-phx-link="redirect" data-phx-link-state="push" class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100">SaaS</a><!-- </Phoenix.Component.link> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+      </div>
+    </div>
+
+
+
+    <div class="container mx-auto sm:px-6 lg:px-8 space-y-6 mt-32">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-semibold  text-lg">Best affiliate programs</h2>
+          <div class="text-gray-500 text-sm mt-1">Find high ticket and best paying affiliate programs for your niche.</div>
+        </div>
+        <.link class="text-sm text-green-600">Brose all best affiliate programs<.icon name="hero-chevron-right-mini" class="size-4.5 text-green-600 stroke-1 font-bold"/></.link>
+      </div>
+      <div class="grid max-w-2xl grid-cols-1 gap-x-4 gap-y-10 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      <article :for={_ <- 0..5} class="flex flex-col items-start justify-between">
+        <div class="relative w-full">
+          <img src="http://192.168.6.8:8008/LdPNZ0nIuCuJI57laHqm6_9wFqA5LKVPtOlfZQ34jHo/rs:fill:360:242:false/czM6Ly9sb2NhbC9pbWFnZS9wbmcvY2I5NjkyNzAtZjlhMS00OTI4LWFlODMtNjM2ZTMwYjk4Nzk5LnBuZw.webp" alt="" class="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
+          <!-- @caller lib/monorepo_web/live/affiliate/browse_live.html.heex:56 (monorepo) --><!-- <Phoenix.Component.link> lib/phoenix_component.ex:2993 (phoenix_live_view) --><a href="/affiliate/-xOiiUTuSQWd" data-phx-link="redirect" data-phx-link-state="push" class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10">&nbsp;</a><!-- </Phoenix.Component.link> -->
+        </div>
+        <div class="max-w-xl">
+          <div class="mt-4 flex items-top gap-x-2 text-xs">
+            <!-- @caller lib/monorepo_web/live/affiliate/browse_live.html.heex:60 (monorepo) --><!-- <Phoenix.Component.link> lib/phoenix_component.ex:3005 (phoenix_live_view) --><a href="/user/page/@KariYu" data-phx-link="patch" data-phx-link-state="push" class="size-8">
+              <img class="rounded-full w-full h-full" src="http://192.168.6.8:8008/1zg1HGB_6-LHz6oH-mdcGb_TLmKlTy-g2x7nK-Ig8nA/rs:fill:64:64:false/czM6Ly9sb2NhbC91c2VyX21ldGEvYzFmZjAyZTEtOGJhYS00ZWE5LWFkYTEtMDMyYTU2YmU3YTU3.webp" alt="">
+            </a><!-- </Phoenix.Component.link> -->
+            <div class="flex-1 space-y-2">
+              <h3 class="text-base/6 font-semibold text-gray-900 group-hover:text-gray-600 line-clamp-2">
+                <!-- @caller lib/monorepo_web/live/affiliate/browse_live.html.heex:65 (monorepo) --><!-- <Phoenix.Component.link> lib/phoenix_component.ex:2993 (phoenix_live_view) --><a href="/affiliate/-xOiiUTuSQWd" data-phx-link="redirect" data-phx-link-state="push">
+                  Join ReliableSite's Affiliate Program – Earn 5% Recurring Commission with No Fees
+                </a><!-- </Phoenix.Component.link> -->
+              </h3>
+              <div class="space-x-1">
+                <time datetime="2025-23-02" class="text-gray-500">Feb 23, 2025</time>
+                <!-- @caller lib/monorepo_web/live/affiliate/browse_live.html.heex:71 (monorepo) --><!-- <Phoenix.Component.link> lib/phoenix_component.ex:2993 (phoenix_live_view) --><a href="/affiliates/saas" data-phx-link="redirect" data-phx-link-state="push" class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100">SaaS</a><!-- </Phoenix.Component.link> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+      </div>
+    </div>
+
+
+    <div class="container mx-auto sm:px-6 lg:px-8 space-y-6 my-28">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-semibold  text-lg">Affiliate program industries</h2>
+          <div class="text-gray-500 text-sm mt-1">Affiliate programs in various industries.</div>
+        </div>
+        <%!-- <.link class="text-sm text-green-600">Brose all affiliate program industries<.icon name="hero-chevron-right-mini" class="size-4.5 text-green-600 stroke-1 font-bold"/></.link> --%>
+      </div>
+      <div class="mt-6">
+        <div :for={c <- ["Financial & Insurance", "Stock Trading & Wealth Management", "Digital Electronics Products", "Marketing Products", "IT Solution", "Learning & Recruitment"]}>
+          <div class="flex items-center justify-between py-4 border-b">
+            <div class="flex items-center gap-x-3">
+              <div class="flex items-center justify-center size-10 rounded-lg bg-gray-50">
+                <%= case c do %>
+                  <% "Financial & Insurance" -> %>
+                    <.icon name="hero-banknotes" class="size-5 text-gray-600"/>
+                  <% "Stock Trading & Wealth Management" -> %>
+                    <.icon name="hero-chart-bar" class="size-5 text-gray-600"/>
+                  <% "Digital Electronics Products" -> %>
+                    <.icon name="hero-device-phone-mobile" class="size-5 text-gray-600"/>
+                  <% "Marketing Products" -> %>
+                    <.icon name="hero-megaphone" class="size-5 text-gray-600"/>
+                  <% "IT Solution" -> %>
+                    <.icon name="hero-computer-desktop" class="size-5 text-gray-600"/>
+                  <% "Learning & Recruitment" -> %>
+                    <.icon name="hero-academic-cap" class="size-5 text-gray-600"/>
+                <% end %>
+              </div>
+              <div>
+                <div class="font-medium">{c}</div>
+                <div class="text-sm text-gray-500">124 affiliate programs</div>
+              </div>
+            </div>
+            <.link class="text-sm font-medium text-green-600 hover:text-green-700">View all<.icon name="hero-chevron-right" class="size-3.5 font-bold" /></.link>
+          </div>
+        </div>
+      </div>
     </div>
     """
   end

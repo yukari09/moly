@@ -7,7 +7,7 @@ defmodule Monorepo.Terms.TermTaxonomy do
     data_layer: AshPostgres.DataLayer
 
   postgres do
-    table "term_taxonomy"
+    table "term_taxonomies"
     repo(Monorepo.Repo)
   end
 

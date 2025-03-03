@@ -63,7 +63,7 @@
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "term_taxonomy"
+        "table": "term_taxonomies"
       },
       "size": null,
       "source": "term_taxonomy_id",
@@ -104,7 +104,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "70D735955693BAFCD8500572F199BF3A067C23951C8D5BDA4C9C1E7B0C0907FC",
+  "hash": "7CD9F1448016F0F62DEB572F5AEA825E4E058102FE998113C3D9DA3E5ACFC395",
   "identities": [
     {
       "all_tenants?": false,

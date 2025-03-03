@@ -12,13 +12,23 @@
     },
     {
       "allow_nil?": false,
-      "default": "0",
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "term_order",
-      "type": "bigint"
+      "source": "term_key",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "term_value",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -58,44 +68,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "term_relationships_term_taxonomy_id_fkey",
+        "name": "term_meta_term_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "term_taxonomy"
+        "table": "terms"
       },
       "size": null,
-      "source": "term_taxonomy_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "term_relationships_post_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "posts"
-      },
-      "size": null,
-      "source": "post_id",
+      "source": "term_id",
       "type": "uuid"
     }
   ],
@@ -104,8 +85,27 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "65E72BDA151B09336D574DFE8A406E14BD66B5EC04D0E1E70B6262885AA365FC",
-  "identities": [],
+  "hash": "C878DEBEDC36197BF387B2A3146D5C9FF40D606185158A633FD69BECE63D88C8",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "term_meta_term_meta_key_with_term_id_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "term_id"
+        },
+        {
+          "type": "atom",
+          "value": "term_key"
+        }
+      ],
+      "name": "term_meta_key_with_term_id",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -113,5 +113,5 @@
   },
   "repo": "Elixir.Monorepo.Repo",
   "schema": null,
-  "table": "term_relationships"
+  "table": "term_meta"
 }

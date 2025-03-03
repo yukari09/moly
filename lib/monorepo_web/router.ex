@@ -89,6 +89,7 @@ defmodule MonorepoWeb.Router do
       on_mount: {MonorepoWeb.LiveUserAuth, :live_user_optional} do
       live("/", Affiliate.PageIndexLive)
       live("/browse", Affiliate.BrowseLive)
+      live("/browse/:slug", Affiliate.BrowseLive)
       live("/user/page/:username", Affiliate.UserPageLive)
       live("/affiliate/:post_name", Affiliate.ViewLive)
     end

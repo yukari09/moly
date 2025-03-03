@@ -3,15 +3,13 @@
     <nav class="flex items-center justify-between px-6 py-4 lg:px-8 border-b" aria-label="Global">
       <div class="flex lg:flex-1 items-center gap-12">
         <.link navigate={"/"} class="-m-1.5 p-1.5">
-          <span class="sr-only">Affinew</span>
+          <span class="sr-only">Your Company</span>
           <img class="h-8 w-auto" src={~p"/images/logo.svg"} alt="">
         </.link>
 
         <div class="hidden lg:flex lg:gap-x-8">
           <.link navigate={"/browse"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Browse</.link>
           <.link href="#" class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">AI Agency</.link>
-          <.link href="#" class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Travel</.link>
-          <.link href="#" class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Wellness</.link>
 
           <MonorepoWeb.TailwindUI.dropdown id="categories">
             <:button_slot class="inline-flex items-center gap-x-1 text-sm/6 font-semibold text-gray-500  hover:text-gray-900">
@@ -121,7 +119,7 @@
           </svg>
         </button>
       </div>
-      <div class="hidden lg:flex items-center gap-4  lg:justify-end">
+      <div class="hidden lg:flex items-center gap-4 lg:flex-1 lg:justify-end">
         
         <div class="grid grid-cols-1">
           <input type="email" name="email" id="email" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:pl-9 sm:text-sm/6" placeholder="Search...">
