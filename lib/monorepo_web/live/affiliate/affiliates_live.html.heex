@@ -20,67 +20,24 @@
             <.link navigate={~p"/browse"} class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">Affiliate Marketing Programs</.link>
           </div>
         </li>
-        <%!-- <li>
+        <li>
           <div class="flex items-center">
             <svg class="size-5 shrink-0 text-gray-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
               <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
             </svg>
-            <a href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700" aria-current="page">Project Nero</a>
+            <a href="#" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700" aria-current="page">{@term.name}</a>
           </div>
-        </li> --%>
+        </li>
       </ol>
     </nav>
-    <div class="mb-8">
-      <h1 class="text-4xl text-gray-900 font-medium">Affiliate Marketing Programs</h1>
+    
+    <div class="mb-8 border-b pb-8">
+      <h1 class="text-4xl text-gray-900 font-medium">{@term.name}</h1>
       <p class="text-gray-500 mt-3 font-light">
-        Find website software high ticket best paying affiliate marketing programs for beginners experts.
+        {@page_title}
       </p>
     </div>
     
-
-    <div
-      id="scroll-pagination"
-      class="flex items-center relative overflow-hidden w-full py-2 border-b pb-8"
-      phx-hook="ScrollPagination"
-    >
-      <div
-        class="prev absolute left-0 z-30 h-8 md:h-12 w-14 md:w-20 flex justify-start"
-        style="background:linear-gradient( 90deg, hsl(0, 0%, 100%) 0%, hsl(0, 0%, 100%) 60%, hsl(0, 0%, 100%, 0) 100% );"
-      >
-        <button type="button" class="rounded-full h-8 md:h-12 px-2 md:px-3.5 hover:bg-gray-50">
-          <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
-        </button>
-      </div>
-
-      <ul class="item-list flex gap-2 list-none m-0 p-0 ">
-        <li>
-          <.link
-            patch={live_url(%{page: 1})}
-            class={["border py-2.5 px-3.5 flex items-center gap-2 rounded-md whitespace-nowrap", @params.slug == nil && "bg-gray-900 text-gray-50"]}
-          >
-            All
-          </.link>
-        </li>
-        <li :for={c <- Monorepo.Utilities.Affiliate.affiliate_industries()}>
-          <.link
-            patch={live_url(%{slug: c.slug})}
-            class={["border py-2.5 px-3.5 flex items-center gap-2 rounded-md whitespace-nowrap", c.slug == @params.slug && "border-gray-900 text-gray-900"]}
-          >
-            <%!-- <.icon name={"hero-#{Monorepo.Utilities.Term.icon(c)}"} class="size-5" /> --%>
-            <span class="text-medium">{ c.name }</span>
-          </.link>
-        </li>
-      </ul>
-
-      <div
-        class="next absolute right-0 h-8 md:h-12 w-14 md:w-20 flex justify-end"
-        style="background: linear-gradient(270deg, hsl(0, 0%, 100%) 0%, hsl(0, 0%, 100%) 60%, hsla(0, 0%, 100%, 0) 100%);"
-      >
-        <button type="button" class="rounded-full h-8 md:h-12 px-2 md:px-3.5 hover:bg-gray-50">
-          <Lucideicons.arrow_right class="w-4 h-4 md:w-5 md:h-5" />
-        </button>
-      </div>
-    </div>
 
     <div class="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-x-4 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-4">
       <Monorepo.Utilities.Affiliate.article_html :for={post <- @post} post={post}/>

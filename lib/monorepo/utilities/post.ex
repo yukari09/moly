@@ -4,15 +4,13 @@ defmodule Monorepo.Utilities.Post do
   See table post_meta meta_value
   """
 
-  # def test() do
+  def test() do
   #   post =
   #     Ash.get!(Monorepo.Contents.Post, "3e1e65f0-efb5-4613-9bb1-12eb49ef58b6", actor: %{roles: [:user]})
   #     |> Ash.load!([:affiliate_categories], actor: %{roles: [:user]})
 
-  #   IO.inspect(post.affiliate_tags)
-
   #   # Monorepo.Utilities.Affiliate.affiliate_tags(post)
-  # end
+  end
 
   def attachment_filesize(%Post{id: _id, post_meta: _} = post) do
     post_meta_value(post, :attachment_filesize)

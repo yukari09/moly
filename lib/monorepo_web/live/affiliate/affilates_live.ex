@@ -1,19 +1,20 @@
-defmodule MonorepoWeb.Affiliate.BrowseLive do
+defmodule MonorepoWeb.Affiliate.AffiliatesLive do
   use MonorepoWeb, :live_view
 
   require Ash.Query
 
   @per_page 20
 
-  def mount(_params, _session, socket) do
-    industry_category =
-      Monorepo.Terms.read_by_term_slug!("industries", actor: %{roles: [:user]}) |> List.first()
-
-    {:ok, socket, temporary_assigns: [industry_category: industry_category, page_title: "Find website software high ticket best paying affiliate marketing programs for beginners experts."]}
-  end
-
   def handle_params(params, _uri, socket) do
-    {:noreply, get_posts(socket, params)}
+    term =
+      Monorepo.Terms.read_by_term_slug!(params["slug"], actor: %{roles: [:user]})
+      |> List.first()
+
+    page_title = "Best highest paying #{term.name} affiliate marketing programs in #{Timex.now() |> Timex.format!("{YYYY}")}"
+    socket =
+      assign(socket, term: term, page_title: page_title)
+      |> get_posts(params)
+    {:noreply, socket}
   end
 
   defp get_posts(socket, params) do
@@ -56,17 +57,6 @@ defmodule MonorepoWeb.Affiliate.BrowseLive do
 
 
   defp live_url(params) do
-    url = ~p"/browse"
-    url = if params[:slug] do
-      "#{url}/#{params[:slug]}"
-    else
-      url
-    end
-    url = if params[:page] do
-      "#{url}?page=#{params[:page]}"
-    else
-      url
-    end
-    url
+    ~p"/affiliates?#{params}"
   end
 end

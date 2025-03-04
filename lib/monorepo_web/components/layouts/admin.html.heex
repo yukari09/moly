@@ -1,24 +1,3 @@
-<%!-- <%
-  
- 
-
-  open_off_canvas_menu = fn() ->
-    JS.transition({"transition-opacity ease-linear duration-300", "opacity-0", "opacity-100"}, to: "#off-canvas-menu-backdrop", time: 300)
-    |> JS.transition({"transition ease-in-out duration-300 transform", "-translate-x-full", "translate-x-0"}, to: "#off-canvas-menu-content-inner", time: 300)
-    |> JS.transition({"ease-in-out duration-300", "opacity-0", "opacity-100"}, to: "#off-canvas-menu-close-button", time: 300)
-    |> JS.remove_class("hidden", to: "#off-canvas-menu-backdrop")
-    |> JS.remove_class("hidden", to: "#off-canvas-menu-content-inner")
-    |> JS.remove_class("hidden", to: "#off-canvas-menu")
-  end
-
-  close_off_canvas_menu = fn() ->
-    JS.add_class("hidden", to: "#off-canvas-menu-backdrop", time: 300, transition: {"transition-opacity ease-linear duration-300", "opacity-100", "opacity-0"})
-    |> JS.add_class("hidden", to: "#off-canvas-menu-content-inner", time: 300, transition: {"transition ease-in-out duration-300 transform", "translate-x-0", "-translate-x-full"})
-    |> JS.transition({"ease-in-out duration-300", "opacity-100", "opacity-0"}, to: "#off-canvas-menu-close-button", time: 300)
-    |> JS.add_class("hidden", to: "#off-canvas-menu", time: 300, transition: {"duration-300","",""})
-  end
-%> --%>
-
 <div>
   <div id="off-canvas-menu" class="relative z-50 lg:hidden hidden" role="dialog" aria-modal="true">
     <div id="off-canvas-menu-backdrop" class="fixed inset-0 bg-gray-900/80 lg:hidden hidden" aria-hidden="true"></div>
@@ -109,7 +88,7 @@
   <div class="hidden lg:fixed lg:inset-y-0 lg:z-auto lg:flex lg:w-72 lg:flex-col">
     <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
       <div class="flex h-16 shrink-0 items-center">
-        <img class="h-8 w-auto" src="/images/logo.svg" alt="Monorepo">
+        <.link patch={~p"/"}><img class="h-8 w-auto" src="/images/logo.svg" alt="Monorepo"></.link>
       </div>
         <nav class="flex flex-1 flex-col">
             <ul role="list" class="flex flex-1 flex-col gap-y-7">

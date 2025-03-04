@@ -5,7 +5,7 @@
 
 @import "../node_modules/quill/dist/quill.snow.css";
 @import "../node_modules/flatpickr/dist/flatpickr.min.css";
-
+@import "../node_modules/@splidejs/splide/dist/css/splide.min.css";
 
 button[disabled]{
     @apply opacity-50;

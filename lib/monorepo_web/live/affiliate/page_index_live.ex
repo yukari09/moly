@@ -69,7 +69,7 @@ defmodule MonorepoWeb.Affiliate.PageIndexLive do
 
 
 
-    <div class="container mx-auto sm:px-6 lg:px-8 space-y-6 mt-32">
+    <div class="container mx-auto sm:px-6 lg:px-8 space-y-6 my-32">
       <div class="flex items-center justify-between">
         <div>
           <h2 class="font-semibold  text-lg">Best affiliate programs</h2>
@@ -105,45 +105,6 @@ defmodule MonorepoWeb.Affiliate.PageIndexLive do
       </div>
     </div>
 
-
-    <div class="container mx-auto sm:px-6 lg:px-8 space-y-6 my-28">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="font-semibold  text-lg">Affiliate program industries</h2>
-          <div class="text-gray-500 text-sm mt-1">Affiliate programs in various industries.</div>
-        </div>
-        <%!-- <.link class="text-sm text-green-600">Brose all affiliate program industries<.icon name="hero-chevron-right-mini" class="size-4.5 text-green-600 stroke-1 font-bold"/></.link> --%>
-      </div>
-      <div class="mt-6">
-        <div :for={c <- ["Financial & Insurance", "Stock Trading & Wealth Management", "Digital Electronics Products", "Marketing Products", "IT Solution", "Learning & Recruitment"]}>
-          <div class="flex items-center justify-between py-4 border-b">
-            <div class="flex items-center gap-x-3">
-              <div class="flex items-center justify-center size-10 rounded-lg bg-gray-50">
-                <%= case c do %>
-                  <% "Financial & Insurance" -> %>
-                    <.icon name="hero-banknotes" class="size-5 text-gray-600"/>
-                  <% "Stock Trading & Wealth Management" -> %>
-                    <.icon name="hero-chart-bar" class="size-5 text-gray-600"/>
-                  <% "Digital Electronics Products" -> %>
-                    <.icon name="hero-device-phone-mobile" class="size-5 text-gray-600"/>
-                  <% "Marketing Products" -> %>
-                    <.icon name="hero-megaphone" class="size-5 text-gray-600"/>
-                  <% "IT Solution" -> %>
-                    <.icon name="hero-computer-desktop" class="size-5 text-gray-600"/>
-                  <% "Learning & Recruitment" -> %>
-                    <.icon name="hero-academic-cap" class="size-5 text-gray-600"/>
-                <% end %>
-              </div>
-              <div>
-                <div class="font-medium">{c}</div>
-                <div class="text-sm text-gray-500">124 affiliate programs</div>
-              </div>
-            </div>
-            <.link class="text-sm font-medium text-green-600 hover:text-green-700">View all<.icon name="hero-chevron-right" class="size-3.5 font-bold" /></.link>
-          </div>
-        </div>
-      </div>
-    </div>
     """
   end
 end

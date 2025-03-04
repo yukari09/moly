@@ -156,36 +156,87 @@ defmodule Monorepo.Utilities.Affiliate do
 
   attr :post, Monorepo.Contents.Post, required: true
   def commission_label(assigns) do
+    min = commission_min(assigns.post)
+    max = commission_max(assigns.post)
+    unit = commission_unit(assigns.post)
+    assigns = assigns |> Map.put(:min, min)
+    assigns = assigns |> Map.put(:max, max)
+    assigns = assigns |> Map.put(:unit, unit)
     ~H"""
     <div :if={commission_unit(@post) == "%"}>
-      <span class="text-green-500 font-ligh">From</span>
+      <span class="text-green-500 font-ligh">{@min == @max && "Up to" || "From"}</span>
       <span class="font-bold text-green-500 text-lg">
-        {commission_min(@post)}
+        {@min}
       </span>
       <span class="text-green-500 font-light">
-        {commission_unit(@post)}
+        {@unit}
       </span>
+      <%= if @min != @max do %>
       <span class="text-green-500 font-ligh">to</span>
       <span class="font-bold text-green-500 text-lg">
-        {commission_max(@post)}
+        {@max}
       </span>
-
       <span class="text-green-500 font-light">
-        {commission_unit(@post)}
+        {@unit}
       </span>
+      <% end %>
     </div>
 
     <div :if={commission_unit(@post) !== "%"}>
       <span class="text-green-500 font-ligh">From</span>
       <span class="font-bold text-green-500 text-lg">
-        {commission_unit(@post)}
+        {@unit}
       </span>
       <span class="font-bold text-green-500 text-lg">
-        {commission_min(@post)}
+        {@min}
       </span>
       <span class="text-green-500 font-ligh">to</span>
       <span class="font-bold text-green-500 text-lg">
-        {commission_max(@post)}
+        {@max}
+      </span>
+    </div>
+    """
+  end
+
+  attr :post, Monorepo.Contents.Post, required: true
+  def commission_label2(assigns) do
+    min = commission_min(assigns.post)
+    max = commission_max(assigns.post)
+    unit = commission_unit(assigns.post)
+    assigns = assigns |> Map.put(:min, min)
+    assigns = assigns |> Map.put(:max, max)
+    assigns = assigns |> Map.put(:unit, unit)
+    ~H"""
+    <div :if={commission_unit(@post) == "%"}>
+      <span class="text-green-500 font-ligh">{@min == @max && "Up to" || "From"}</span>
+      <span class="font-bold text-green-500 text-lg">
+        {@min}
+      </span>
+      <span class="text-green-500 font-light">
+        {@unit}
+      </span>
+      <%= if @min != @max do %>
+      <span class="text-green-500 font-ligh">to</span>
+      <span class="font-bold text-green-500 text-lg">
+        {@max}
+      </span>
+      <span class="text-green-500 font-light">
+        {@unit}
+      </span>
+      <% end %>
+    </div>
+
+    <div :if={commission_unit(@post) !== "%"}>
+      <span class="text-green-500 font-ligh">From</span>
+      <span class="font-bold text-green-500 text-lg">
+        {@unit}
+      </span>
+      <span class="font-bold text-green-500 text-lg">
+        {@min}
+      </span>
+      <span class="text-green-500 font-ligh">to</span>
+      <span class="font-bold text-green-500 text-lg">
+        {@max}
       </span>
     </div>
     """

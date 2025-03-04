@@ -90,6 +90,7 @@ defmodule MonorepoWeb.Router do
       live("/", Affiliate.PageIndexLive)
       live("/browse", Affiliate.BrowseLive)
       live("/browse/:slug", Affiliate.BrowseLive)
+      live("/affiliates/:slug", Affiliate.AffiliatesLive)
       live("/user/page/:username", Affiliate.UserPageLive)
       live("/affiliate/:post_name", Affiliate.ViewLive)
     end

@@ -12,6 +12,7 @@
     "@milkdown/kit": "^7.6.3",
     "@milkdown/theme-nord": "^7.6.3",
     "@mux/upchunk": "^3.4.0",
+    "@splidejs/splide": "^4.1.4",
     "@yaireo/tagify": "^4.33.0",
     "alfaaz": "^1.1.0",
     "alpinejs": "^3.14.8",

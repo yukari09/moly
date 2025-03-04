@@ -48,11 +48,18 @@
 
           <div class="flex items-center gap-2">
             <.link :if={Monorepo.Utilities.Account.load_meta_value_by_meta_key(@post.author, :avatar)} patch={~p"/user/page/@#{Monorepo.Utilities.Account.load_meta_value_by_meta_key(@post.author, :username)}"}>
-            <img  class="inline-block size-10 rounded-full" src={Monorepo.Utilities.Account.load_meta_value_by_meta_key(@post.author, :avatar)["64"]} alt="">
+              <img  class="inline-block size-10 rounded-full" src={Monorepo.Utilities.Account.load_meta_value_by_meta_key(@post.author, :avatar)["64"]} alt="">
             </.link>
+            <div>
+            <div>
             <.link patch={~p"/user/page/@#{Monorepo.Utilities.Account.load_meta_value_by_meta_key(@post.author, :username)}"} class="font-medium text-sm text-gray-500">
               {Monorepo.Utilities.Account.load_meta_value_by_meta_key(@post.author, :name)}
             </.link>
+            </div>
+            <div class="text-sm text-gray-400">
+              Updated <time datetime={Timex.format!(@post.updated_at, "{YYYY}-{D}-{0M}")}>{Timex.format!(@post.updated_at, "{Mfull} {D}, {YYYY}")}</time>
+            </div>
+            </div>
           </div>
         </div>
 
@@ -114,12 +121,12 @@
 
       <!-- Product image -->
       <% images = Monorepo.Utilities.Affiliate.load_affiliate_media_attachment_metadata(@post, :attachment_affiliate_media, ["xlarge", "large", "medium"]) %>
-      <section class="splide lg:col-span-4 lg:row-end-1" aria-label={@post.post_title} id={"affiliate-media-splide-#{@post.id}"} phx-hook={"Splide"}>
+      <section class="splide lg:col-span-4 lg:row-end-1" aria-label={@post.post_title} id={"affiliate-media-splide-#{@post.id}"} phx-hook="Splide">
         <div class="splide__track">
           <ul class="splide__list">
             <li  
               class="splide__slide"
-              :for={%{"file" => file} <- Monorepo.Utilities.Affiliate.load_affiliate_media_attachment_metadata(@post, :attachment_affiliate_media, ["xlarge", "large", "medium"])}
+              :for={%{"file" => file} <- images}
             ><img class="w-full aspect-video object-cover" src={file} alt={@post.post_title} /></li>
           </ul>
         </div>
@@ -141,7 +148,7 @@
           <div id="tab-panel-reviews" class="-mb-10" aria-labelledby="tab-reviews" role="tabpanel" tabindex="0">
             <h3 class="sr-only">Description</h3>
 
-            <div class="text-gray-500 pt-6 mb-32 text-base/relaxed">
+            <div class="text-gray-500 py-5 space-y-6  text-base/relaxed">
               <article class="prose lg:max-w-3xl">{ raw @post.post_content }</article>
             </div>
  

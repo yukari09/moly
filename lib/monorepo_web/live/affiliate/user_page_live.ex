@@ -4,7 +4,7 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
 
   alias Phoenix.HTML.FormField
 
-  @per_page 20
+  @per_page 18
 
   def mount(_params, _session, socket) do
     country_category =
@@ -36,7 +36,6 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
   def handle_params(%{"username" => "@" <> username} = params, _uri, socket) do
     page = Map.get(params, "page", "1") |> String.to_integer()
     post_type = Map.get(params, "type", "published")
-    posts = get_user_posts(username, page, post_type)
 
     user =
       Ash.Query.new(Monorepo.Accounts.User)
@@ -50,15 +49,14 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
     form = generate_form(user, socket.assigns.current_user)
 
     socket =
-      assign(socket,
-        page: page,
-        post_type: post_type,
-        end_of_timeline?: false,
-        username: username
-      )
-      |> stream(:posts, posts)
+      socket
+      |> assign(:page, page)
+      |> assign(:username, username)
+      |> assign(:post_type, post_type)
       |> assign(:user, user)
       |> assign(:form, form)
+      |> get_user_posts()
+      |> assign(:page_title, "#{username}")
 
     {:noreply, socket}
   end
@@ -151,7 +149,7 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
     end
   end
 
-  defp get_user_posts(username, page, "published") do
+  defp get_user_posts(%{assigns: %{page: page, post_type: "published", username: username}} = socket) do
     offset = (page - 1) * @per_page
 
     opts = [
@@ -160,19 +158,22 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
       page: [limit: @per_page, offset: offset, count: true]
     ]
 
-    Ash.Query.filter(
-      Monorepo.Contents.Post,
-      post_type == :affiliate and post_status in [:pending, :publish]
-    )
-    |> Ash.Query.filter(
-      author.user_meta.meta_key == :username and author.user_meta.meta_value == ^username
-    )
-    |> Ash.Query.load([:author, :post_tags, :affiliate_categories, post_meta: :children])
-    |> Ash.read!(opts)
-    |> Map.get(:results)
+    query_result =
+      Ash.Query.filter(
+        Monorepo.Contents.Post,
+        post_type == :affiliate and post_status in [:pending, :publish])
+      |> Ash.Query.filter(
+      author.user_meta.meta_key == :username and author.user_meta.meta_value == ^username)
+      |> Ash.Query.load([:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
+      |> Ash.read!(opts)
+
+    page_meta = Monorepo.Helper.pagination_meta(query_result.count, @per_page, page, 8)
+    socket = assign(socket, posts: query_result.results, page_meta: page_meta)
+
+    socket
   end
 
-  defp get_user_posts(username, page, "saved") do
+  defp get_user_posts(%{assigns: %{page: page, post_type: "saved", user: user}} = socket) do
     offset = (page - 1) * @per_page
 
     opts = [
@@ -181,14 +182,21 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
       page: [limit: @per_page, offset: offset, count: true]
     ]
 
-    Ash.Query.filter(Monorepo.Contents.Post, post_type == :affiliate)
-    |> Ash.Query.filter(
-      author.user_meta.meta_key == :username and author.user_meta.meta_value == ^username
-    )
-    |> Ash.Query.filter(post_actions.action == :saved)
-    |> Ash.read!(opts)
-    |> Map.get(:results)
+    query_result =
+      Ash.Query.filter(
+        Monorepo.Contents.Post,
+        post_type == :affiliate and post_status in [:pending, :publish]
+      )
+      |> Ash.Query.filter(post_actions.action == :bookmark and post_actions.user_id == ^user.id)
+      |> Ash.Query.load([:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
+      |> Ash.read!(opts)
+
+    page_meta = Monorepo.Helper.pagination_meta(query_result.count, @per_page, page, 8)
+    socket = assign(socket, posts: query_result.results, page_meta: page_meta)
+
+    socket
   end
+
 
   defp generate_form(%{id: user_id} = user, %{id: current_user_id})
        when user_id == current_user_id do
@@ -209,7 +217,7 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
     <div>
       <div class="relative lg:h-[250px] bg-primary">
         <div class="w-full h-full overflow-hidden">
-          <img class="w-full h-full object-cover overflow-hidden" src={Monorepo.Utilities.Account.user_banner(@user, "xxl")} />
+          <img :if={Monorepo.Utilities.Account.user_banner(@user, "xxl")} class="w-full h-full object-cover overflow-hidden" src={Monorepo.Utilities.Account.user_banner(@user, "xxl")} />
         </div>
 
         <div class="mx-4 flex justify-between items-end -mt-12">
@@ -314,37 +322,30 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
           </div>
           <div
             id={"#{@post_type}-list"}
-            phx-update="stream"
             class="mx-auto pt-6 pb-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3"
             phx-page-loading
           >
-            <article :for={{id, post} <- @streams.posts} id={id} class="flex flex-col items-start justify-between">
-              <div class="relative w-full">
-                <img src={Monorepo.Utilities.Affiliate.affiliate_media_feature_src_with_specific_sizes(post, ["medium"])} alt="" class="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
-                <.link
-                  class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10"
-                  navigate={Monorepo.Utilities.Affiliate.link_view(post)}
-                ></.link>
-              </div>
-              <div class="max-w-xl">
-                <div class="relative">
-                  <h3 class="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600 line-clamp-2">
-                    <.link navigate={Monorepo.Utilities.Affiliate.link_view(post)}>
-                      <span class="absolute inset-0"></span>
-                      {post.post_title}
-                    </.link>
-                  </h3>
-                </div>
-                <div class="mt-2 flex items-center gap-x-4 text-xs">
-                  <time datetime={post.inserted_at |> Timex.format!("{YYYY}-{D}-{0M}")} class="text-gray-500">{post.inserted_at |> Timex.format!("{Mshort} {D}, {YYYY}")}</time>
-                  <.link
-                    navigate={Monorepo.Utilities.Affiliate.link_industry(post)}
-                    class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
-                  >{Monorepo.Utilities.Affiliate.affiliate_industry_name(post)}</.link>
-                </div>
-              </div>
-            </article>
+            <Monorepo.Utilities.Affiliate.article_html   :for={post <- @posts} post={post}/>
           </div>
+          <div :if={@page_meta.total_pages > 1} class="mx-auto my-16">
+      <nav class="flex items-center justify-center space-x-2 mt-4">
+        <!-- Previous Button -->
+        <.link :if={@page_meta.prev} patch={live_url(%{username: @username, type: @post_type, page: @page_meta.prev})}   class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100">
+          <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
+        </.link>
+
+        <!-- Page Numbers -->
+        <.link
+          :for={page <- @page_meta.page_range}
+          patch={live_url(%{username: @username, type: @post_type, page: page})}
+          class={["px-3 py-2 text-gray-500 border-b-2 border-white hover:border-gray-900 hover:text-gray-900", page == @page && "border-gray-900 text-gray-900"]}
+        >{page}</.link>
+
+        <.link :if={@page_meta.next} patch={live_url(%{username: @username, type: @post_type, page: @page_meta.next})}   class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100">
+          <Lucideicons.arrow_right class="w-4 h-4 md:w-5 md:h-5" />
+        </.link>
+      </nav>
+    </div>
         </div>
         <!--end-->
       </div>
@@ -435,5 +436,9 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
     else
       true
     end
+  end
+
+  defp live_url(params) do
+    ~p"/user/page/@#{params[:username]}?#{params}"
   end
 end

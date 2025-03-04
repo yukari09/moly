@@ -332,12 +332,19 @@ defmodule Monorepo.Contents.Post do
     identity :unique_post_name, [:post_name]
   end
 
-  # aggregates do
-  #   first :affiliate_media_feature, :post_meta, :meta_value do
-  #     filter expr(meta_key == :attachment_affiliate_media_feature)
-  #     join_filter :children, children.post_id == meta_value
-  #   end
-  # end
+  calculations do
+    calculate :commission_min, :integer, expr(
+      first(:post_meta, field: :meta_value, query: [filter: expr(meta_key == :commission_min)])
+    )
+
+    calculate :commission_max, :integer, expr(
+      first(:post_meta, field: :meta_value, query: [filter: expr(meta_key == :commission_max)])
+    )
+
+    calculate :commission_avg, :integer, expr(
+      (commission_min + commission_max) / 2
+    )
+  end
 
   defp add_meta(%{arguments: %{metas: metas}} = _changeset, post, context) do
     metas = Enum.map(metas, &Map.put(&1, :post, post.id))

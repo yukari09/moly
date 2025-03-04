@@ -15,7 +15,9 @@ defmodule Monorepo.Accounts.UserPostAction do
     role :user do
       actions([:read])
     end
-
+    role :owner do
+      actions([:read, :create, :destroy])
+    end
     role :admin do
       actions([:read, :create, :destroy])
     end
@@ -24,13 +26,17 @@ defmodule Monorepo.Accounts.UserPostAction do
   actions do
     # Define create action
     create :create do
-      argument :user, :uuid, allow_nil?: false
-      argument :post, :uuid, allow_nil?: false
-      argument :action, :string, allow_nil?: false
+      accept [
+        :action
+      ]
 
-      change manage_relationship(:user, :user, type: :append, on_no_match: :error)
-      change manage_relationship(:post, :post, type: :append, on_no_match: :error)
-      change set_attribute(:action, :action)
+      upsert? true
+      upsert_identity :unique_user_id_post_id_action
+
+      argument :post, :uuid, allow_nil?: false
+
+      change manage_relationship(:post, :post, on_lookup: :relate)
+      change relate_actor(:user)
     end
 
     # Define read action
@@ -50,6 +56,10 @@ defmodule Monorepo.Accounts.UserPostAction do
     destroy :destroy do
       argument :id, :uuid
     end
+  end
+
+  identities do
+    identity :unique_user_id_post_id_action, [:user_id, :post_id, :action]
   end
 
   attributes do

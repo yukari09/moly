@@ -17,6 +17,10 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
           :not_accepted ->
             cancel_upload(socket, :media, ref)
 
+          :too_large ->
+            cancel_upload(socket, :media, ref)
+            |> put_flash(:error, "The file size is too large.")
+
           :too_many_files ->
             socket
             |> put_flash(:error, "Up to 6 pictures can be uploaded.")
@@ -92,6 +96,9 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
     params = Map.put(params, "post_status", "pending")
     params = Map.put(params, "post_name", Monorepo.Helper.generate_random_str())
 
+    post_excerpt = Floki.parse_document!(params["post_content"]) |> Floki.text() |> String.slice(0..255)
+    params = Map.put(params, "post_excerpt", post_excerpt)
+
     post_tags =
       Map.get(params, "post_tags")
       |> case do
@@ -151,7 +158,7 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
         countries = get_term_taxonomy("countries", socket.assigns.current_user)
         industries = get_term_taxonomy("industries", socket.assigns.current_user)
         assign(socket, [countries: countries, industries: industries, form: form, post: post])
-        |> allow_upload(:media, accept: ~w(.jpg .jpeg .png .gif), max_entries: 6, max_file_size: 2_000_000)
+        |> allow_upload(:media, accept: ~w(.jpg .jpeg .png .gif), max_entries: 6, max_file_size: 4_000_000)
         |> assign(:is_active_user, is_active_user)
     else
       push_navigate(socket, to: ~p"/")
@@ -349,7 +356,7 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
               </div>
               <p class="pl-1">or drag and drop</p>
             </div>
-            <p class="text-xs/5 text-gray-600">PNG, JPG, GIF up to 8MB</p>
+            <p class="text-xs/5 text-gray-600">PNG, JPG, GIF up to 4MB</p>
           </div>
         </label>
 

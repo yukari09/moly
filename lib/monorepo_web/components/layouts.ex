@@ -116,6 +116,12 @@ defmodule MonorepoWeb.Layouts do
               }
           ]
       },
+      %{
+        title: "WebSite",
+        icon: "hero-globe-alt",
+        url: ~p"/admin/website",
+        view: [MonorepoWeb.AdminAffiliateLive.Website.Index]
+      }
     ]
   end
 
