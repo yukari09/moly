@@ -8,109 +8,16 @@
         </.link>
 
         <div class="hidden lg:flex lg:gap-x-8">
-          <.link navigate={"/browse"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Browse</.link>
-          <.link href="#" class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">AI Agency</.link>
-          <.link href="#" class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Travel</.link>
-          <.link href="#" class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Wellness</.link>
+          <.link navigate={~p"/browse"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Browse</.link>
+          <.link navigate={~p"/affiliates/ai-technology"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">AI Agency</.link>
+          <.link navigate={~p"/affiliates/travel-tourism"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Travel</.link>
+          <.link navigate={~p"/affiliates/financial-insurance"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Financial</.link>
+          <.link navigate={~p"/affiliates/education-learning"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Education</.link>
+          <.link navigate={~p"/affiliates/digital-content-services"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Digital Content</.link>
+          <.link navigate={~p"/affiliates/saas-solutions"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Saas</.link>
 
-          <MonorepoWeb.TailwindUI.dropdown id="categories">
-            <:button_slot class="inline-flex items-center gap-x-1 text-sm/6 font-semibold text-gray-500  hover:text-gray-900">
-              <span>Affiliate Categories</span>
-              <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-              </svg>
-            </:button_slot>
 
-            <:menu_slot 
-              class="absolute left-0 z-10 !mt-5 flex w-screen max-w-max -translate-x-0 !ring-0 -ml-8  border-0 shadow-none !bg-inherit"
-            >
-              <div class="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm/6 shadow-lg ring-1 ring-gray-900/5 lg:max-w-3xl">
-                <div class="grid grid-cols-1 gap-x-6 gap-y-1 p-4 lg:grid-cols-2">
-                  <div class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
-                    <div class="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                      <Lucideicons.circle_dollar_sign  class="size-6 text-gray-600 group-hover:text-gray-600"/>
-                    </div>
-                    <div>
-                      <.link navigate={"/c/financial-insurance"} class="font-semibold text-gray-900">
-                        Financial & Insurance
-                        <span class="absolute inset-0"></span>
-                      </.link>
-                      <p class="mt-1 text-gray-600">High-reward financial products and insurance in a low-competition market</p>
-                    </div>
-                  </div>
-                  <div class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
-                    <div class="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                      <Lucideicons.activity  class="size-6 text-gray-600 group-hover:text-gray-600"/>
-                    </div>
-                    <div>
-                      <.link navigate={"/c/stock-trading-wealth-management"} class="font-semibold text-gray-900">
-                        Stock Trading & Wealth Management
-                        <span class="absolute inset-0"></span>
-                      </.link>
-                      <p class="mt-1 text-gray-600">Stock trading investments and financial strategies in an exclusive market</p>
-                    </div>
-                  </div>
-                  <div class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
-                    <div class="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                      <Lucideicons.chart_no_axes_column  class="size-6 text-gray-600 group-hover:text-gray-600"/>
-                    </div>
-                    <div>
-                      <.link navigate={"/c/digital-electronics-products"} class="font-semibold text-gray-900">
-                        Digital Electronics Products
-                        <span class="absolute inset-0"></span>
-                      </.link>
-                      <p class="mt-1 text-gray-600">Digital electronics smart devices wearables IoT and accessories</p>
-                    </div>
-                  </div>
-                  <div class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
-                    <div class="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                      <Lucideicons.store  class="size-6 text-gray-600 group-hover:text-gray-600"/>
-                    </div>
-                    <div>
-                      <.link navigate={"/c/marketing-products"} class="font-semibold text-gray-900">
-                        Marketing Products
-                        <span class="absolute inset-0"></span>
-                      </.link>
-                      <p class="mt-1 text-gray-600">SEO social media website analytics and digital marketing tools</p>
-                    </div>
-                  </div>
-                  <div class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
-                    <div class="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                      <Lucideicons.computer  class="size-6 text-gray-600 group-hover:text-gray-600"/>
-                    </div>
-                    <div>
-                      <.link navigate={"/c/it-solution"} class="font-semibold text-gray-900">
-                        IT Solution
-                        <span class="absolute inset-0"></span>
-                      </.link>
-                      <p class="mt-1 text-gray-600">IT support cloud services cybersecurity and digital transformation</p>
-                    </div>
-                  </div>
-                  <div class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
-                    <div class="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                      <Lucideicons.library_big  class="size-6 text-gray-600 group-hover:text-gray-600"/>
-                    </div>
-                    <div>
-                      <.link navigate={"/c/learning-recruitment"} class="font-semibold text-gray-900">
-                        Learning & Recruitment
-                        <span class="absolute inset-0"></span>
-                      </.link>
-                      <p class="mt-1 text-gray-600">Online learning certifications career training and recruitment services</p>
-                    </div>
-                  </div>
-                </div>
-                <%!-- <div class="bg-gray-50 px-8 py-6">
-                  <div class="flex items-center gap-x-3">
-                    <h3 class="text-sm/6 font-semibold text-gray-900">Enterprise</h3>
-                    <p class="rounded-full bg-indigo-600/10 px-2.5 py-1.5 text-xs font-semibold text-indigo-600">New</p>
-                  </div>
-                  <p class="mt-2 text-sm/6 text-gray-600">Empower your entire team with even more advanced tools.</p>
-                </div> --%>
-              </div>
-            </:menu_slot>
-          </MonorepoWeb.TailwindUI.dropdown>
-
-          <a href="#" class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Blog</a>
+          <.link navigate={~p"/posts"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Blog</.link>
         </div>
       </div>
       <div class="flex lg:hidden">

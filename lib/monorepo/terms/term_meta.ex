@@ -23,11 +23,30 @@ defmodule Monorepo.Terms.TermMeta do
 
   actions do
     create :create do
+      accept [:term_key, :term_value]
+      primary? true
+      upsert? true
+      upsert_identity :term_meta_key_with_term_id
+    end
+
+    update :update do
+      primary? true
+    end
+
+    destroy :destroy do
       primary? true
     end
 
     read :read do
       primary? true
+      prepare build(sort: [inserted_at: :desc])
+
+      pagination do
+        required? false
+        offset? true
+        keyset? true
+        countable true
+      end
     end
   end
 

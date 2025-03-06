@@ -472,8 +472,14 @@ defmodule MonorepoWeb.TailwindUI do
 
   def input(%{field: field} = assigns) do
     error_messages = error_messages(field.errors)
+    # error_messages =
+    #   field.form.source.touched_forms
+    #   |> MapSet.member?(field.field)
+    #   |> case do
+    #     true -> error_messages
+    #     false -> []
+    #   end
     assigns = assign(assigns, :errors, error_messages)
-
     ~H"""
     <div class={@container_class}>
       <input
@@ -492,7 +498,7 @@ defmodule MonorepoWeb.TailwindUI do
         {@rest}
       />
       <label :if={!@aria_label} for={@field.id} class="block text-sm/6 font-medium text-gray-900"><%= @label %></label>
-      <div  :if={!@aria_label} class={["mt-2", @errors != [] && "grid grid-cols-1"]}>
+      <div  :if={!@aria_label} class={[@label && "mt-2", @errors != [] && "grid grid-cols-1"]}>
         <input
           type={@type}
           name={@field.name}

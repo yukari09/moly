@@ -126,6 +126,8 @@ defmodule MonorepoWeb.Router do
       live("/pages", AdminPageLive.Index, :index)
       live("/page/create", AdminPageLive.Create, :create)
       live("/page/preview", AdminPageLive.Create, :preview)
+
+      live("/website", AdminWebsiteLive.Index, :index)
     end
   end
 

@@ -31,11 +31,8 @@ defmodule Monorepo.Terms.Term do
     read :read do
       primary? true
       prepare build(sort: [inserted_at: :desc])
-
       argument :parent, :uuid, do: allow_nil?(true)
-
       argument :slug, :string, do: allow_nil?(true)
-
       argument :taxonomy_name, :string, do: allow_nil?(true)
 
       pagination do
@@ -64,7 +61,9 @@ defmodule Monorepo.Terms.Term do
       primary? true
       require_atomic? false
       argument :term_taxonomy, {:array, :map}
+      argument :term_meta, {:array, :map}
       change manage_relationship(:term_taxonomy, :term_taxonomy, type: :create)
+      change manage_relationship(:term_meta, :term_meta, on_lookup: :relate, on_match: :ignore, on_no_match: :create, on_missing: :destroy)
     end
 
     destroy :destroy do
@@ -90,7 +89,7 @@ defmodule Monorepo.Terms.Term do
     end
 
     attribute :slug, :string do
-      allow_nil? true
+      allow_nil? false
     end
 
     attribute :term_group, :integer do
