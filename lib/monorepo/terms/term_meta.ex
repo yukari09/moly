@@ -53,7 +53,7 @@ defmodule Monorepo.Terms.TermMeta do
   attributes do
     uuid_primary_key :id
 
-    attribute :term_key, :atom do
+    attribute :term_key, :string do
       allow_nil? false
     end
 

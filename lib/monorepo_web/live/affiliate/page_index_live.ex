@@ -1,7 +1,22 @@
 defmodule MonorepoWeb.Affiliate.PageIndexLive do
   use MonorepoWeb, :live_view
 
+  require Ash.Query
+
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    opts = [
+      action: :read,
+      actor: %{roles: [:user]},
+      page: [limit: 12, offset: 0, count: true]
+    ]
+
+    %{results: posts} =
+      Ash.Query.new(Monorepo.Contents.Post)
+      |> Ash.Query.filter(post_type == :affiliate and post_status in [:publish])
+      |> Ash.Query.load([:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
+      |> Ash.Query.sort(commission_avg: :desc, inserted_at: :desc)
+      |> Ash.read!(opts)
+
+    {:ok, socket, temporary_assigns: [posts: posts]}
   end
 end

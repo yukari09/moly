@@ -1,6 +1,9 @@
 defmodule Monorepo.Utilities.Term do
 
+  require Ash.Query
+
   alias Monorepo.Terms.Term
+
 
   def icon(%Term{} = term), do: term_meta_by_term_key_first_term_value(term, :icon)
 

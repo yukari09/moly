@@ -76,6 +76,11 @@ defmodule Monorepo.Terms.Term do
         )
         |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
 
+        Ash.Query.filter(
+          Monorepo.Terms.TermMeta,
+          term_id == ^Ash.Changeset.get_attribute(changeset, :id)
+        )
+        |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
         changeset
       end)
     end

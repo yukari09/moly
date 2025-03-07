@@ -24,17 +24,6 @@ defmodule MonorepoWeb.AdminWebsiteLive.Form do
   end
 
   def handle_event("change", %{"form" => params}, socket) do
-    params =
-      case params["term_meta"] do
-        nil -> params
-        term_meta ->
-          new_term_meta =
-            Enum.reduce(term_meta, %{}, fn {k, %{"term_key" => term_key, "term_value" => term_value}}, acc ->
-              term_key = String.to_atom(term_key)
-              Map.put(acc, k, %{"term_key" => term_key, "term_value" => term_value})
-            end)
-          Map.put(params, "term_meta", new_term_meta)
-      end
     form = AshPhoenix.Form.validate(socket.assigns.form, params)
     {:noreply, assign(socket, :form, form)}
   end

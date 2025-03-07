@@ -11,6 +11,12 @@ defmodule Monorepo.Contents.Post do
   postgres do
     table "posts"
     repo(Monorepo.Repo)
+    custom_statements do
+      statement :pgweb_idx do
+        up "CREATE INDEX pgweb_idx ON posts USING GIN (to_tsvector('english', post_title || ' ' || post_content));"
+        down "DROP INDEX pgweb_idx;"
+      end
+    end
   end
 
   rbac do
@@ -27,7 +33,7 @@ defmodule Monorepo.Contents.Post do
         :updated_at
       ])
 
-      actions([:read])
+      actions([:read, :complex_search])
     end
 
     role :admin do
@@ -51,7 +57,8 @@ defmodule Monorepo.Contents.Post do
         :update_post_status,
         :create_post,
         :update_post,
-        :destroy_post
+        :destroy_post,
+        :complex_search
       ])
     end
 
@@ -181,6 +188,19 @@ defmodule Monorepo.Contents.Post do
       require_atomic? false
       change before_action(&delete_meta/2)
     end
+
+
+    read :complex_search do
+      argument :search_text, :string
+      modify_query {Monorepo.Contents.Post.SearchMod, :modify, []}
+      pagination do
+        required? false
+        offset? true
+        keyset? true
+        countable true
+      end
+    end
+
   end
 
   attributes do
@@ -383,5 +403,21 @@ defmodule Monorepo.Contents.Post do
     end)
 
     {:ok, post}
+  end
+end
+
+
+
+
+
+defmodule Monorepo.Contents.Post.SearchMod do
+  require Ecto.Query
+
+  def modify(ash_query, data_layer_query) do
+    {:ok,
+      Ecto.Query.where(data_layer_query, [p],
+       fragment("? @@ plainto_tsquery('english', ?)",
+         fragment("to_tsvector('english', ? || ' ' || ?)", p.post_title, p.post_content),
+         ^ash_query.arguments.search_text))}
   end
 end

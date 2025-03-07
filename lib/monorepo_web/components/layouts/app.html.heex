@@ -30,10 +30,10 @@
       </div>
       <div class="hidden lg:flex items-center gap-4  lg:justify-end">
         
-        <div class="grid grid-cols-1">
-          <input type="email" name="email" id="email" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:pl-9 sm:text-sm/6" placeholder="Search...">
+        <form class="grid grid-cols-1" action={~p"/search"} method="get">
+          <input type="text" name="q"  autocomplete="off" value={assigns[:q] && assigns[:q] || nil}  class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:pl-9 sm:text-sm/6" placeholder="Search...">
           <.icon name="hero-magnifying-glass" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
-        </div>
+        </form>
 
         <MonorepoWeb.TailwindUI.button id="submit-production" navigate={~p"/affiliate/submit"} class="bg-green-600 text-white hover:bg-green-600/90 focus-visible:outline-green-600/90" size="sm">Submit</MonorepoWeb.TailwindUI.button>
         <.link :if={!@current_user} navigate={~p"/sign-in"} class="text-sm/6 font-semibold text-gray-900">Log in <span aria-hidden="true">&rarr;</span></.link>

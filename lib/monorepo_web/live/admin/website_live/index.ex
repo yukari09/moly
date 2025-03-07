@@ -47,6 +47,13 @@ defmodule MonorepoWeb.AdminWebsiteLive.Index do
     {:noreply, socket}
   end
 
+  def handle_event("delete", %{"id" => id}, socket) do
+    Ash.get!(Monorepo.Terms.Term, id, actor: %{roles: [:admin]})
+    |> Ash.destroy(action: :destroy, actor: %{roles: [:admin]})
+    socket = push_navigate(socket, to: live_url(socket.assigns.params))
+    {:noreply, socket}
+  end
+
   def get_website_term(socket) do
     page = socket.assigns.page
     q = socket.assigns.q

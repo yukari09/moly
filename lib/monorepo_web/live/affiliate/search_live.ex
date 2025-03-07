@@ -1,18 +1,16 @@
 defmodule MonorepoWeb.Affiliate.SearchLive do
   use MonorepoWeb, :live_view
 
+  import Ash.Expr
+
   require Ash.Query
 
   @per_page 20
 
-  def handle_params(params, _uri, socket) do
-    term =
-      Monorepo.Terms.read_by_term_slug!(params["slug"], actor: %{roles: [:user]})
-      |> List.first()
-
-    page_title = "Best highest paying #{term.name} affiliate marketing programs in #{Timex.now() |> Timex.format!("{YYYY}")}"
+  def handle_params(%{"q" => q} = params, _uri, socket) when is_binary(q) and q not in [nil, "", false] do
+    page_title = "Search #{q} affiliate marketing program results"
     socket =
-      assign(socket, term: term, page_title: page_title)
+      assign(socket, page_title: page_title)
       |> get_posts(params)
     {:noreply, socket}
   end
@@ -22,41 +20,31 @@ defmodule MonorepoWeb.Affiliate.SearchLive do
     page = String.to_integer(page)
     offset = (page - 1) * @per_page
 
-    slug = params["slug"]
+    q = params["q"]
 
     opts = [
-      action: :read,
+      action: :complex_search,
       actor: %{roles: [:user]},
       page: [limit: @per_page, offset: offset, count: true]
     ]
 
-    query =
+    query_result =
       Ash.Query.filter(
         Monorepo.Contents.Post,
         post_type == :affiliate and post_status in [:publish]
       )
-      |> Ash.Query.sort(commission_avg: :desc, inserted_at: :desc)
-
-    query =
-      if slug do
-        Ash.Query.filter(query, term_taxonomy.term.slug == ^slug)
-      else
-        query
-      end
-
-    query_result =
-      Ash.Query.load(query, [:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
+      |> Ash.Query.set_argument(:search_text, q)
+      |> Ash.Query.load([:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
       |> Ash.read!(opts)
 
-
     page_meta = Monorepo.Helper.pagination_meta(query_result.count, @per_page, page, 8)
-    socket = assign(socket, post: query_result.results, page_meta: page_meta, params: %{page: page, slug: slug})
+    socket = assign(socket, q: q, post: query_result.results, page_meta: page_meta, params: %{page: page, q: q})
 
     socket
   end
 
 
   defp live_url(params) do
-    ~p"/affiliates?#{params}"
+    ~p"/search?#{params}"
   end
 end
