@@ -27,7 +27,7 @@ defmodule Monorepo.Utilities.Affiliate do
   def affiliate_industries() do
     Ash.Query.new(Monorepo.Terms.Term)
     |> Ash.Query.filter(term_taxonomy.taxonomy == "affiliate_category" and term_taxonomy.parent.slug == "industries")
-    |> Ash.Query.load([:term_meta])
+    |> Ash.Query.load([:term_meta, :term_taxonomy])
     |> Ash.read!(actor: %{roles: [:user]})
   end
 
@@ -121,16 +121,26 @@ defmodule Monorepo.Utilities.Affiliate do
   end
 
   attr :post, Monorepo.Contents.Post, required: true
-  def article_html(assigns) do
+  def article_html(%{post: post} = assigns) do
+    article_cache_function = fn ->
+      %{
+        feature_image_src: affiliate_media_feature_src_with_specific_sizes(post, ["medium", "thumbnail"]),
+        username: Monorepo.Utilities.Account.user_username(post.author),
+        affiliate_industry_name: affiliate_industry_name(post),
+        link_industry: link_industry(post)
+      }
+    end
+    cached_data = Monorepo.Utilities.cache_get_or_put("affiliate.#{post.post_name}", article_cache_function, :timer.hours(12))
+    assigns = assign(assigns, :cache, cached_data)
     ~H"""
     <article class="flex flex-col items-start justify-between">
       <div class="relative w-full">
-        <img src={affiliate_media_feature_src_with_specific_sizes(@post, ["medium", "thumbnail"])} alt={@post.post_title} class="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
+        <img src={@cache.feature_image_src} alt={@post.post_title} class="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
         <.link class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" navigate={link_view(@post)}>&nbsp;</.link>
       </div>
       <div class="max-w-xl">
         <div class="mt-4 flex items-top gap-x-2 text-xs">
-          <.link class="size-8" patch={~p"/user/page/@#{Monorepo.Utilities.Account.user_username(@post.author)}"}>
+          <.link class="size-8" patch={~p"/user/page/@#{@cache.username}"}>
             <Monorepo.Utilities.Account.avatar_html user={@post.author} size={32} />
           </.link>
           <div class="flex-1">
@@ -143,9 +153,9 @@ defmodule Monorepo.Utilities.Affiliate do
             <div class="space-x-1 mt-2">
               <time datetime={@post.inserted_at |> Timex.format!("{YYYY}-{D}-{0M}")} class="text-gray-500">{@post.inserted_at |> Timex.format!("{Mshort} {D}, {YYYY}")}</time>
               <.link
-                navigate={link_industry(@post)}
+                navigate={@cache.link_industry}
                 class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
-              >{affiliate_industry_name(@post)}</.link>
+              >{@cache.affiliate_industry_name}</.link>
             </div>
           </div>
         </div>

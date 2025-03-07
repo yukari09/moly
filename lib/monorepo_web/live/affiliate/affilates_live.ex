@@ -30,26 +30,32 @@ defmodule MonorepoWeb.Affiliate.AffiliatesLive do
       page: [limit: @per_page, offset: offset, count: true]
     ]
 
-    query =
-      Ash.Query.filter(
-        Monorepo.Contents.Post,
-        post_type == :affiliate and post_status in [:publish]
-      )
-      |> Ash.Query.sort(commission_avg: :desc, inserted_at: :desc)
+    cache_function = fn ->
+      query =
+        Ash.Query.filter(
+          Monorepo.Contents.Post,
+          post_type == :affiliate and post_status in [:publish]
+        )
+        |> Ash.Query.sort(commission_avg: :desc, inserted_at: :desc)
 
-    query =
-      if slug do
-        Ash.Query.filter(query, term_taxonomy.term.slug == ^slug)
-      else
-        query
-      end
+      query =
+        if slug do
+          Ash.Query.filter(query, term_taxonomy.term.slug == ^slug)
+        else
+          query
+        end
 
-    query_result =
-      Ash.Query.load(query, [:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
-      |> Ash.read!(opts)
+      query_result =
+        Ash.Query.load(query, [:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
+        |> Ash.read!(opts)
 
+      page_meta = Monorepo.Helper.pagination_meta(query_result.count, @per_page, page, 8)
 
-    page_meta = Monorepo.Helper.pagination_meta(query_result.count, @per_page, page, 8)
+      {query_result, page_meta}
+    end
+
+    {query_result, page_meta} = Monorepo.Utilities.cache_get_or_put("affiliate.category.#{slug}.#{page}", cache_function, :timer.hours(1))
+
     socket = assign(socket, post: query_result.results, page_meta: page_meta, params: %{page: page, slug: slug})
 
     socket

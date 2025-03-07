@@ -61,10 +61,10 @@
             All
           </.link>
         </li>
-        <li :for={c <- Monorepo.Utilities.Affiliate.affiliate_industries()}>
+        <li :for={c <- @affiliate_industries}>
           <.link
             patch={live_url(%{slug: c.slug})}
-            class={["border py-2.5 px-3.5 flex items-center gap-2 rounded-md whitespace-nowrap", c.slug == @params.slug && "border-gray-900 text-gray-900"]}
+            class={["border py-2.5 px-3.5 flex items-center gap-2 rounded-md whitespace-nowrap", c.slug == @params.slug && "bg-gray-900 text-gray-50"]}
           >
             <%!-- <.icon name={"hero-#{Monorepo.Utilities.Term.icon(c)}"} class="size-5" /> --%>
             <span class="text-medium">{ c.name }</span>
