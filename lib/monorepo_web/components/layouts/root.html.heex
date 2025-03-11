@@ -9,6 +9,7 @@
       <meta :for={tag_attrs <- assigns[:meta_tags]} name={tag_attrs[:name]} property={tag_attrs[:property]}  content={tag_attrs[:content]} />
     <% end %>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://rsms.me/">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <link :if={!assigns[:noappcss]} phx-track-static rel="stylesheet" href={"/assets/app.css"} />
     <script :if={!assigns[:noappscript]} defer phx-track-static type="text/javascript" src={"/assets/app.js"}></script>

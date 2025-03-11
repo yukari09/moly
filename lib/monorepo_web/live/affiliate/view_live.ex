@@ -4,10 +4,14 @@ defmodule MonorepoWeb.Affiliate.ViewLive do
 
   def mount(_params, _session, socket) do
     country_category =
-      Monorepo.Terms.read_by_term_slug!("countries", actor: %{roles: [:user]}) |> List.first()
+      Monorepo.Utilities.cache_get_or_put(:viewliview_countries, fn ->
+        Monorepo.Terms.read_by_term_slug!("countries", actor: %{roles: [:user]}) |> List.first()
+      end, :timer.hours(2))
 
     industry_category =
-      Monorepo.Terms.read_by_term_slug!("industries", actor: %{roles: [:user]}) |> List.first()
+      Monorepo.Utilities.cache_get_or_put(:viewliview_industries, fn ->
+        Monorepo.Terms.read_by_term_slug!("industries", actor: %{roles: [:user]}) |> List.first()
+      end, :timer.hours(2))
 
     socket =
       socket
@@ -22,25 +26,30 @@ defmodule MonorepoWeb.Affiliate.ViewLive do
       context: %{private: %{ash_authentication?: true}}
     ]
 
+
     post =
-      Ash.Query.for_read(Monorepo.Contents.Post, :read)
-      |> Ash.Query.filter(post_name == ^post_name)
-      |> Ash.Query.load([:post_categories, :post_tags, author: :user_meta, post_meta: :children])
-      |> Ash.read!(opts)
-      |> List.first()
+      Monorepo.Utilities.cache_get_or_put(":liveview_post", fn ->
+        Ash.Query.for_read(Monorepo.Contents.Post, :read)
+        |> Ash.Query.filter(post_name == ^post_name)
+        |> Ash.Query.load([:affiliate_categories, :affiliate_tags, :post_categories, :post_tags, author: :user_meta, post_meta: :children])
+        |> Ash.read!(opts)
+        |> List.first()
+      end, :timer.hours(2))
 
     current_user_bookmark =
-      if socket.assigns.current_user do
-        Ash.Query.for_read(Monorepo.Accounts.UserPostAction, :read)
-        |> Ash.Query.filter(user_id == ^socket.assigns.current_user.id and post_id == ^post.id and action == :bookmark)
-        |> Ash.read_first(opts)
-        |> case do
-          {:error, _} -> nil
-          {:ok, result} -> result
+
+        if socket.assigns.current_user do
+          Ash.Query.for_read(Monorepo.Accounts.UserPostAction, :read)
+          |> Ash.Query.filter(user_id == ^socket.assigns.current_user.id and post_id == ^post.id and action == :bookmark)
+          |> Ash.read_first(opts)
+          |> case do
+            {:error, _} -> nil
+            {:ok, result} -> result
+          end
+        else
+          nil
         end
-      else
-        nil
-      end
+
 
     socket = assign(
       socket,

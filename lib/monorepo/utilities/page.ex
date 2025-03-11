@@ -3,11 +3,19 @@ defmodule Monorepo.Utilities.Page do
 
   require Ash.Query
 
-  alias Monorepo.Contents.Post
+  # alias Monorepo.Contents.Post
+  # alias Monorepo.Terms.Term
 
 
-  def page_layout(%Post{id: id, post_meta: post_meta} = post) when is_binary(id) and is_list(post_meta) do
-
+  def website_terms() do
+    Monorepo.Utilities.cache_get_or_put(:page_website_terms, fn ->
+      Ash.Query.filter(Monorepo.Terms.Term, term_taxonomy.taxonomy == "website")
+      |> Ash.Query.load([:term_meta])
+      |> Ash.read!(actor: %{roles: [:user]})
+      |> Enum.reduce(%{}, fn %{term_meta: term_meta, slug: slug}, acc ->
+        Map.put(acc, slug, term_meta)
+      end)
+    end, :timer.sleep(2))
   end
 
 
