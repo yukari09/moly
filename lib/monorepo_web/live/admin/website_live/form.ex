@@ -39,9 +39,11 @@ defmodule MonorepoWeb.AdminWebsiteLive.Form do
           socket
           |> push_event("js-exec", %{to: "##{socket.assigns.id}", attr: "phx-remove"})
           |> push_patch(to: socket.assigns.patch_url)
+
         {:error, form} ->
           assign(socket, :form, form)
       end
+
     {:noreply, socket}
   end
 
@@ -72,7 +74,12 @@ defmodule MonorepoWeb.AdminWebsiteLive.Form do
   end
 
   defp resource_form(%{assigns: %{item: nil}} = socket) do
-    form = AshPhoenix.Form.for_create(Monorepo.Terms.Term, :create, [forms: [auto?: true], actor: socket.assigns.current_user])
+    form =
+      AshPhoenix.Form.for_create(Monorepo.Terms.Term, :create,
+        forms: [auto?: true],
+        actor: socket.assigns.current_user
+      )
+
     assign(socket, :form, form)
   end
 
@@ -93,8 +100,10 @@ defmodule MonorepoWeb.AdminWebsiteLive.Form do
         data: item.term_meta
       ]
     ]
-    form = AshPhoenix.Form.for_update(item, :update, [forms: forms, actor: socket.assigns.current_user])
+
+    form =
+      AshPhoenix.Form.for_update(item, :update, forms: forms, actor: socket.assigns.current_user)
+
     assign(socket, :form, form)
   end
-
 end

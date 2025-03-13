@@ -26,7 +26,8 @@ config :monorepo, MonorepoWeb.Endpoint,
   secret_key_base: "TZLcv1+vrTqQP328e/JPkafOivjqfZYGd1sXlvJS/aoGxs3RhId/BtaYJc2nyhMt",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:monorepo, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:monorepo, ~w(--watch)]}
+    tailwind: {Tailwind, :install_and_run, [:monorepo, ~w(--watch)]},
+    storybook_tailwind: {Tailwind, :install_and_run, [:storybook, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -58,7 +59,8 @@ config :monorepo, MonorepoWeb.Endpoint,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/monorepo_web/(controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/monorepo_web/(controllers|live|components)/.*(ex|heex)$",
+      ~r"storybook/.*(exs)$"
     ]
   ]
 

@@ -25,6 +25,7 @@ defmodule Monorepo.Utilities.MetaValue do
       when is_list(post_meta) and is_atom(meta_key) do
     Enum.filter(post_meta, &(&1.meta_key == meta_key))
   end
+
   def filter_meta_by_key(_, _), do: []
 
   def filter_meta_by_key_first(post, meta_key) when is_atom(meta_key) do

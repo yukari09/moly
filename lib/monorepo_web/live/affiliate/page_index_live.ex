@@ -10,16 +10,21 @@ defmodule MonorepoWeb.Affiliate.PageIndexLive do
       page: [limit: 12, offset: 0, count: true]
     ]
 
-
     cache_function = fn ->
       Ash.Query.new(Monorepo.Contents.Post)
       |> Ash.Query.filter(post_type == :affiliate and post_status in [:publish])
-      |> Ash.Query.load([:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
+      |> Ash.Query.load([
+        :affiliate_tags,
+        :affiliate_categories,
+        author: :user_meta,
+        post_meta: :children
+      ])
       |> Ash.Query.sort(commission_avg: :desc, inserted_at: :desc)
       |> Ash.read!(opts)
     end
 
-    %{results: posts} = Monorepo.Utilities.cache_get_or_put("page.index.cache", cache_function, :timer.hours(2))
+    %{results: posts} =
+      Monorepo.Utilities.cache_get_or_put("page.index.cache", cache_function, :timer.hours(2))
 
     {:ok, socket, temporary_assigns: [posts: posts]}
   end

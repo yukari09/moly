@@ -9,24 +9,40 @@ defmodule Monorepo.Utilities.Affiliate do
   @default_image_size ["xxlarge", "xlarge", "large", "medium", "thumbnail"]
 
   def link_view(post), do: ~p"/affiliate/#{post.post_name}"
+
   def link_industry(post) do
     slug = affiliate_industry_slug(post) || ""
     ~p"/affiliates/#{slug}"
   end
+
   def link_term(%Term{name: _name, slug: slug}), do: ~p"/affiliates/#{slug}"
 
-  def cookie_duration(%Post{id: id} = post) when is_binary(id), do: load_meta_value_by_meta_key(post, :cookie_duration)
-  def affiliate_link(%Post{id: id} = post) when is_binary(id), do: load_meta_value_by_meta_key(post, :affiliate_link)
-  def commission_model(%Post{id: id} = post) when is_binary(id), do: load_meta_value_by_meta_key(post, :commission_model)
-  def commission_unit(%Post{id: id} = post) when is_binary(id), do: load_meta_value_by_meta_key(post, :commission_unit)
-  def commission_max(%Post{id: id} = post) when is_binary(id), do: load_meta_value_by_meta_key(post, :commission_max)
-  def commission_min(%Post{id: id} = post) when is_binary(id), do: load_meta_value_by_meta_key(post, :commission_min)
+  def cookie_duration(%Post{id: id} = post) when is_binary(id),
+    do: load_meta_value_by_meta_key(post, :cookie_duration)
 
-  def affiliate_tags(%Post{id: _id} = post), do: (load_affiliate_tags(post) |> Map.get(:affiliate_tags))
+  def affiliate_link(%Post{id: id} = post) when is_binary(id),
+    do: load_meta_value_by_meta_key(post, :affiliate_link)
+
+  def commission_model(%Post{id: id} = post) when is_binary(id),
+    do: load_meta_value_by_meta_key(post, :commission_model)
+
+  def commission_unit(%Post{id: id} = post) when is_binary(id),
+    do: load_meta_value_by_meta_key(post, :commission_unit)
+
+  def commission_max(%Post{id: id} = post) when is_binary(id),
+    do: load_meta_value_by_meta_key(post, :commission_max)
+
+  def commission_min(%Post{id: id} = post) when is_binary(id),
+    do: load_meta_value_by_meta_key(post, :commission_min)
+
+  def affiliate_tags(%Post{id: _id} = post),
+    do: load_affiliate_tags(post) |> Map.get(:affiliate_tags)
 
   def affiliate_industries() do
     Ash.Query.new(Monorepo.Terms.Term)
-    |> Ash.Query.filter(term_taxonomy.taxonomy == "affiliate_category" and term_taxonomy.parent.slug == "industries")
+    |> Ash.Query.filter(
+      term_taxonomy.taxonomy == "affiliate_category" and term_taxonomy.parent.slug == "industries"
+    )
     |> Ash.Query.load([:term_meta, :term_taxonomy])
     |> Ash.read!(actor: %{roles: [:user]})
   end
@@ -57,22 +73,29 @@ defmodule Monorepo.Utilities.Affiliate do
 
   def get_affiliate_categories_by_parent_slug(%Post{id: _id} = post, slug) do
     post = load_post_affiliate_categories(post)
+
     get_term_taxonomy(slug)
     |> Map.get(:term_id)
     |> case do
-      nil -> nil
+      nil ->
+        nil
+
       parent_id ->
         Enum.find(post.affiliate_categories, fn term ->
           List.first(term.term_taxonomy)
           |> case do
-            %{parent_id: term_taxonomy_parent_id} when term_taxonomy_parent_id ==  parent_id -> true
-            _ -> false
+            %{parent_id: term_taxonomy_parent_id} when term_taxonomy_parent_id == parent_id ->
+              true
+
+            _ ->
+              false
           end
         end)
     end
   end
 
-  def affiliate_media_feature_src_with_specific_sizes(%Post{id: id} = post, sizes \\ []) when is_binary(id) do
+  def affiliate_media_feature_src_with_specific_sizes(%Post{id: id} = post, sizes \\ [])
+      when is_binary(id) do
     affiliate_media_feature_with_specific_sizes(post, sizes)
     |> case do
       %{"file" => file} -> file
@@ -80,36 +103,58 @@ defmodule Monorepo.Utilities.Affiliate do
     end
   end
 
-  def affiliate_media_feature_with_specific_sizes(%Post{id: id} = post, sizes \\ [])  when is_binary(id) do
-    load_affiliate_media_attachment_metadata(post, :attachment_affiliate_media_feature, sizes, false)
+  def affiliate_media_feature_with_specific_sizes(%Post{id: id} = post, sizes \\ [])
+      when is_binary(id) do
+    load_affiliate_media_attachment_metadata(
+      post,
+      :attachment_affiliate_media_feature,
+      sizes,
+      false
+    )
     |> List.first()
   end
 
-  def load_affiliate_media_attachment_metadata(%Post{id: id} = post, meta_key, sizes \\ [], return_all_sizes \\ false) when is_binary(id) and is_atom(meta_key) do
+  def load_affiliate_media_attachment_metadata(
+        %Post{id: id} = post,
+        meta_key,
+        sizes \\ [],
+        return_all_sizes \\ false
+      )
+      when is_binary(id) and is_atom(meta_key) do
     post = load_post_meta_with_post_meta_children(post)
+
     filter_by_meta_key(post, meta_key)
     |> Enum.reduce([], fn
       %{children: children}, acc ->
         filter_by_meta_key(%{post_meta: children}, :attachment_metadata)
         |> case do
           post_meta when is_list(post_meta) ->
-            new_slice = Enum.map(post_meta, fn i ->
-              get_post_image_by_sizes(i, sizes, return_all_sizes)
-            end)
+            new_slice =
+              Enum.map(post_meta, fn i ->
+                get_post_image_by_sizes(i, sizes, return_all_sizes)
+              end)
+
             acc = acc ++ new_slice
             List.flatten(acc)
-          _ -> []
+
+          _ ->
+            []
         end
     end)
   end
 
-  def get_post_image_by_sizes(%{meta_key: :attachment_metadata, meta_value: meta_value}, sizes, return_all_sizes \\ false) do
-    meta_value_decoded =  JSON.decode!(meta_value)
+  def get_post_image_by_sizes(
+        %{meta_key: :attachment_metadata, meta_value: meta_value},
+        sizes,
+        return_all_sizes \\ false
+      ) do
+    meta_value_decoded = JSON.decode!(meta_value)
+
     result =
       if return_all_sizes do
         Enum.reduce(sizes, [], fn size, acc ->
           image_media = Monorepo.Helper.get_in_from_keys(meta_value_decoded, ["sizes", size])
-          image_media && [image_media | acc] || acc
+          (image_media && [image_media | acc]) || acc
         end)
       else
         Enum.reduce_while(sizes, meta_value_decoded, fn size, acc ->
@@ -117,21 +162,32 @@ defmodule Monorepo.Utilities.Affiliate do
           if image_media, do: {:halt, image_media}, else: {:cont, acc}
         end)
       end
+
     result
   end
 
-  attr :post, Monorepo.Contents.Post, required: true
+  attr(:post, Monorepo.Contents.Post, required: true)
+
   def article_html(%{post: post} = assigns) do
     article_cache_function = fn ->
       %{
-        feature_image_src: affiliate_media_feature_src_with_specific_sizes(post, ["medium", "thumbnail"]),
+        feature_image_src:
+          affiliate_media_feature_src_with_specific_sizes(post, ["medium", "thumbnail"]),
         username: Monorepo.Utilities.Account.user_username(post.author),
         affiliate_industry_name: affiliate_industry_name(post),
         link_industry: link_industry(post)
       }
     end
-    cached_data = Monorepo.Utilities.cache_get_or_put("affiliate.#{post.post_name}", article_cache_function, :timer.hours(12))
+
+    cached_data =
+      Monorepo.Utilities.cache_get_or_put(
+        "affiliate.#{post.post_name}",
+        article_cache_function,
+        :timer.hours(12)
+      )
+
     assigns = assign(assigns, :cache, cached_data)
+
     ~H"""
     <article class="flex flex-col items-start justify-between">
       <div class="relative w-full">
@@ -154,7 +210,7 @@ defmodule Monorepo.Utilities.Affiliate do
               <time datetime={@post.inserted_at |> Timex.format!("{YYYY}-{D}-{0M}")} class="text-gray-500">{@post.inserted_at |> Timex.format!("{Mshort} {D}, {YYYY}")}</time>
               <.link
                 navigate={@cache.link_industry}
-                class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
+                class="relative rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
               >{@cache.affiliate_industry_name}</.link>
             </div>
           </div>
@@ -164,7 +220,8 @@ defmodule Monorepo.Utilities.Affiliate do
     """
   end
 
-  attr :post, Monorepo.Contents.Post, required: true
+  attr(:post, Monorepo.Contents.Post, required: true)
+
   def commission_label(assigns) do
     min = commission_min(assigns.post)
     max = commission_max(assigns.post)
@@ -172,6 +229,7 @@ defmodule Monorepo.Utilities.Affiliate do
     assigns = assigns |> Map.put(:min, min)
     assigns = assigns |> Map.put(:max, max)
     assigns = assigns |> Map.put(:unit, unit)
+
     ~H"""
     <div :if={commission_unit(@post) == "%"}>
       <span class="text-green-500 font-ligh">{@min == @max && "Up to" || "From"}</span>
@@ -208,7 +266,8 @@ defmodule Monorepo.Utilities.Affiliate do
     """
   end
 
-  attr :post, Monorepo.Contents.Post, required: true
+  attr(:post, Monorepo.Contents.Post, required: true)
+
   def commission_label2(assigns) do
     min = commission_min(assigns.post)
     max = commission_max(assigns.post)
@@ -216,6 +275,7 @@ defmodule Monorepo.Utilities.Affiliate do
     assigns = assigns |> Map.put(:min, min)
     assigns = assigns |> Map.put(:max, max)
     assigns = assigns |> Map.put(:unit, unit)
+
     ~H"""
     <div :if={commission_unit(@post) == "%"}>
       <span class="text-green-500 font-ligh">{@min == @max && "Up to" || "From"}</span>
@@ -254,6 +314,7 @@ defmodule Monorepo.Utilities.Affiliate do
 
   defp load_meta_value_by_meta_key(post, meta_key) do
     post = load_post_meta(post)
+
     filter_by_meta_key(post, meta_key)
     |> List.first()
     |> case do
@@ -264,10 +325,13 @@ defmodule Monorepo.Utilities.Affiliate do
 
   defp load_post_meta(%Post{id: _id} = post), do: load_relation(post, :post_meta)
   defp load_affiliate_tags(%Post{id: _id} = post), do: load_relation(post, :affiliate_tags)
-  defp load_post_affiliate_categories(%Post{id: _id} = post), do: load_relation(post, :affiliate_categories)
+
+  defp load_post_affiliate_categories(%Post{id: _id} = post),
+    do: load_relation(post, :affiliate_categories)
 
   defp load_relation(%Post{id: _id} = post, relation_name) when is_atom(relation_name) do
     relation_result = Map.get(post, relation_name)
+
     if is_list(relation_result) and Enum.count(relation_result) > 0 do
       post
     else
@@ -278,6 +342,7 @@ defmodule Monorepo.Utilities.Affiliate do
   defp load_post_meta_with_post_meta_children(%Post{id: _id} = post) do
     if is_list(post.post_meta) && Enum.count(post.post_meta) > 0 do
       post_meta_first = post.post_meta |> List.first()
+
       if is_list(post_meta_first.children) && Enum.count(post_meta_first.children) > 0 do
         post
       else
@@ -289,13 +354,18 @@ defmodule Monorepo.Utilities.Affiliate do
   end
 
   defp get_term_taxonomy(slug) do
-    Ash.Query.filter(Monorepo.Terms.TermTaxonomy, term.slug == ^slug and taxonomy == "affiliate_category")
+    Ash.Query.filter(
+      Monorepo.Terms.TermTaxonomy,
+      term.slug == ^slug and taxonomy == "affiliate_category"
+    )
     |> Ash.Query.load([:term])
     |> Ash.read_first!(actor: %{roles: [:user]})
   end
 
-  defp filter_by_meta_key(%{post_meta: post_meta}, meta_key) when is_list(post_meta) and is_atom(meta_key) do
+  defp filter_by_meta_key(%{post_meta: post_meta}, meta_key)
+       when is_list(post_meta) and is_atom(meta_key) do
     Enum.filter(post_meta, &(&1.meta_key == meta_key))
   end
+
   defp filter_by_meta_key(_, _), do: []
 end

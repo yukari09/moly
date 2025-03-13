@@ -20,7 +20,10 @@ defmodule MonorepoWeb.AdminAffiliateLive.Index do
 
   def handle_event("publish", %{"id" => id}, socket) do
     Ash.get!(Monorepo.Contents.Post, id, actor: socket.assigns.current_user)
-    |> Ash.update!(%{post_status: :publish}, action: :update_post_status, actor: socket.assigns.current_user)
+    |> Ash.update!(%{post_status: :publish},
+      action: :update_post_status,
+      actor: socket.assigns.current_user
+    )
 
     socket = push_patch(socket, to: ~p"/admin/affiliates?#{socket.assigns.params}")
     {:noreply, socket}

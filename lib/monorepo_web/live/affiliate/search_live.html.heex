@@ -1,29 +1,18 @@
-<div class="bg-white">
-  <div class="container mx-auto sm:px-6 lg:px-8">
-     
-    
-    <div class="mb-8 border-b py-8">
-      <h1 class="text-4xl text-gray-900 font-medium">{@q}</h1>
-      <p class="text-gray-500 mt-3 font-light">
-        {@page_title}
-      </p>
-    </div>
-    
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-    <div :if={Enum.count(@post) > 0} class="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-x-4 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-4">
+    <MonorepoWeb.Affiliate.Components.header 
+      id="affiliates-header" 
+      headline={@q}
+      class="py-8"
+      subtitle={@page_title}
+    />
+
+    <div class="mx-auto lg:mt-8 grid max-w-2xl grid-cols-1 gap-x-4 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-4">
       <Monorepo.Utilities.Affiliate.article_html :for={post <- @post} post={post}/>
     </div>
 
-    <div :if={Enum.count(@post) == 0} class="flex flex-col items-center mt-16 h-full">
-        <div class="mb-4">
-          <.icon name="hero-arrow-left-circle" class="mx-auto size-12 text-gray-400" />
-        </div>
-        <h2 class="text-xl font-semibold text-gray-700">No Results Found</h2>
-        <p class="text-gray-500 mt-2 text-center">Try using different keywords, check your input for errors, <br/>or <.link class="text-green-600 font-medium" navigate={~p"/browse"}>browse other</.link>.</p>
-    </div>
-
-    <div :if={@page_meta.total_pages > 1} class="mx-auto my-16">
-      <nav class="flex items-center justify-center space-x-2 mt-4">
+    <div  class="mx-auto my-8 lg:my-16">
+      <nav :if={@page_meta.total_pages > 1} class="flex items-center justify-center space-x-2 mt-4">
         <!-- Previous Button -->
         <.link :if={@page_meta.prev} patch={live_url(%{@params | page: @page_meta.prev})}   class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100">
           <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
@@ -42,5 +31,5 @@
       </nav>
     </div>
   </div>
-</div>
- 
+
+  

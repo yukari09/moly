@@ -7,18 +7,19 @@ defmodule Monorepo do
   if it comes from the database, an external API or others.
   """
 
-
-
   def t() do
-
-    actor = Ash.get!(Monorepo.Accounts.User, "d5f63c95-61d4-459b-9a47-de568f236160", context: %{private: %{ash_authentication?: true}})
+    actor =
+      Ash.get!(Monorepo.Accounts.User, "d5f63c95-61d4-459b-9a47-de568f236160",
+        context: %{private: %{ash_authentication?: true}}
+      )
 
     params = %{
       "categories" => %{
         "0" => "8d21c7e7-74e9-435f-82eb-54cbebcd546e",
         "1" => "0474a5b1-fef5-43c3-a658-b7a809369a36"
       },
-      "post_content" => "<p>Join the affiliate program and start earning passive income with ease! Promote products through your affiliate link and earn a <strong>15% recurring commission</strong> on every purchase made through your referral. No investment is required, and there is no cap on how much you can earn. Share your affiliate link, and when it leads to a purchase, you get rewarded. Plus, you can withdraw your commission to your bank account or account balance anytime. Get started today and turn your referrals into a steady income stream. The affiliate commission is effective after the order cycle ends in U.S. time.</p>",
+      "post_content" =>
+        "<p>Join the affiliate program and start earning passive income with ease! Promote products through your affiliate link and earn a <strong>15% recurring commission</strong> on every purchase made through your referral. No investment is required, and there is no cap on how much you can earn. Share your affiliate link, and when it leads to a purchase, you get rewarded. Plus, you can withdraw your commission to your bank account or account balance anytime. Get started today and turn your referrals into a steady income stream. The affiliate commission is effective after the order cycle ends in U.S. time.</p>",
       "post_date" => "2025-02-22T23:58:23.526785Z",
       "post_meta" => %{
         "1" => %{"meta_key" => "commission_min", "meta_value" => "10"},
@@ -41,8 +42,8 @@ defmodule Monorepo do
       },
       "post_name" => "cXpEmwTvrWiS",
       "post_status" => "pending",
-
-      "post_title" => "Become an Affiliate: Earn 30% Recurring Commission on Purchases – No Investment, No Cap!",
+      "post_title" =>
+        "Become an Affiliate: Earn 30% Recurring Commission on Purchases – No Investment, No Cap!",
       "post_type" => "affiliate",
       "tags" => %{
         "0" => %{

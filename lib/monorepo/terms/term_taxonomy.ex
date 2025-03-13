@@ -53,6 +53,7 @@ defmodule Monorepo.Terms.TermTaxonomy do
       primary? true
       upsert? true
       upsert_identity :taxonomy_term_id
+
       argument :parent_id, :uuid do
         allow_nil? true
       end
@@ -109,5 +110,4 @@ defmodule Monorepo.Terms.TermTaxonomy do
   identities do
     identity :taxonomy_term_id, [:term_id, :taxonomy]
   end
-
 end

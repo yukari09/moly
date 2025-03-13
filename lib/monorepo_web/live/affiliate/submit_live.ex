@@ -30,6 +30,7 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
     socket =
       push_event(socket, "validate-and-exec", %{form_name: "form"})
       |> push_event("TagsTagify", %{id: "#form_post_tags"})
+
     {:noreply, socket}
   end
 
@@ -96,23 +97,31 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
     params = Map.put(params, "post_status", "pending")
     params = Map.put(params, "post_name", Monorepo.Helper.generate_random_str())
 
-    post_excerpt = Floki.parse_document!(params["post_content"]) |> Floki.text() |> String.slice(0..255)
+    post_excerpt =
+      Floki.parse_document!(params["post_content"]) |> Floki.text() |> String.slice(0..255)
+
     params = Map.put(params, "post_excerpt", post_excerpt)
 
     post_tags =
       Map.get(params, "post_tags")
       |> case do
-        nil -> %{}
+        nil ->
+          %{}
+
         tags ->
           JSON.decode!(tags)
           |> Enum.with_index()
           |> Enum.reduce(%{}, fn {tag, i}, acc ->
             name = get_in(tag, ["value"]) |> String.trim()
             slug = Monorepo.Helper.string2slug(name)
-            Map.put(acc, "#{i}", %{"name" => name, "slug" => slug, "term_taxonomy" => [%{"taxonomy" => "affiliate_tag"}]})
+
+            Map.put(acc, "#{i}", %{
+              "name" => name,
+              "slug" => slug,
+              "term_taxonomy" => [%{"taxonomy" => "affiliate_tag"}]
+            })
           end)
       end
-
 
     params = Map.put(params, "tags", post_tags)
 
@@ -136,30 +145,43 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
     post_name = Map.get(params, "post_name")
     is_active_user = Monorepo.Utilities.Account.is_active_user(socket.assigns.current_user)
 
-    post = if is_nil(post_name) do
-      %Monorepo.Contents.Post{}
-    else
-      Ash.Query.filter(
-        Monorepo.Contents.Post,
-        post_name == ^post_name and author_id == ^socket.assigns.current_user.id
-      )
-      |> Ash.Query.load([:affiliate_categories, :post_tags, post_meta: :children])
-      |> Ash.read_first!(actor: socket.assigns.current_user)
-    end
+    post =
+      if is_nil(post_name) do
+        %Monorepo.Contents.Post{}
+      else
+        Ash.Query.filter(
+          Monorepo.Contents.Post,
+          post_name == ^post_name and author_id == ^socket.assigns.current_user.id
+        )
+        |> Ash.Query.load([:affiliate_categories, :post_tags, post_meta: :children])
+        |> Ash.read_first!(actor: socket.assigns.current_user)
+      end
 
     if is_active_user && post do
       form =
         if post_name do
-          AshPhoenix.Form.for_update(post, :update_post, forms: [auto?: true], actor: set_current_user_as_owner(socket.assigns.current_user))
+          AshPhoenix.Form.for_update(post, :update_post,
+            forms: [auto?: true],
+            actor: set_current_user_as_owner(socket.assigns.current_user)
+          )
         else
-          AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post, forms: [auto?: true], actor: set_current_user_as_owner(socket.assigns.current_user))
+          AshPhoenix.Form.for_create(Monorepo.Contents.Post, :create_post,
+            forms: [auto?: true],
+            actor: set_current_user_as_owner(socket.assigns.current_user)
+          )
         end
         |> to_form()
-        countries = get_term_taxonomy("countries", socket.assigns.current_user)
-        industries = get_term_taxonomy("industries", socket.assigns.current_user)
-        assign(socket, [countries: countries, industries: industries, form: form, post: post])
-        |> allow_upload(:media, accept: ~w(.jpg .jpeg .png .gif), max_entries: 6, max_file_size: 4_000_000)
-        |> assign(:is_active_user, is_active_user)
+
+      countries = get_term_taxonomy("countries", socket.assigns.current_user)
+      industries = get_term_taxonomy("industries", socket.assigns.current_user)
+
+      assign(socket, countries: countries, industries: industries, form: form, post: post)
+      |> allow_upload(:media,
+        accept: ~w(.jpg .jpeg .png .gif),
+        max_entries: 6,
+        max_file_size: 4_000_000
+      )
+      |> assign(:is_active_user, is_active_user)
     else
       push_navigate(socket, to: ~p"/")
     end
@@ -172,7 +194,8 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
     |> Ash.read!(actor: current_user)
   end
 
-  defp find_value(affiliate_categories, post_affiliate_categories) when is_list(post_affiliate_categories) do
+  defp find_value(affiliate_categories, post_affiliate_categories)
+       when is_list(post_affiliate_categories) do
     Enum.find(affiliate_categories, fn ac ->
       slugs = post_affiliate_categories |> Enum.map(& &1.slug)
       ac.term.slug in slugs
@@ -187,12 +210,12 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
 
   def render(assigns) do
     ~H"""
-    <div class="xl:w-[1280px] mx-auto mt-32 mb-40">
-      <div>
-        <div class="px-6 py-4  text-4xl">Submit Competitive Products</div>
-        <.form  :let={f} for={@form} class="px-6 my-6 space-y-4" phx-submit="save" phx-change={JS.dispatch("app:validate-and-exec")}>
-          <div class="rounded-lg p-6 border space-y-4">
-            <h3 class="font-semibold text-xl">Detail</h3>
+    <div class="xl:w-[1280px] mx-auto lg:mt-24 lg:mb-24">
+      <div class="pt-8">
+        <div class="lg:px-6 lg:py-4  lg:text-4xl text-2xl px-4 border-b pb-4 lg:border-none font-medium lg:font-normal">Submit Competitive Products</div>
+        <.form  :let={f} for={@form} class="px-4 lg:px-6 my-6 space-y-4" phx-submit="save" phx-change={JS.dispatch("app:validate-and-exec")}>
+          <div class="rounded-lg lg:p-6 lg:border space-y-4">
+            <h3 class="font-semibold  lg:text-xl">Detail</h3>
             <!--Start title-->
             <.input field={f[:post_title]}  input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "length", params: [8, 255]}}]])}>
               <:label>Product or Service Title <span class="text-red-500">*</span></:label>
@@ -250,8 +273,8 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
             <!--End Description-->
           </div>
 
-          <div class="rounded-lg p-6 border space-y-4">
-            <h3 class="font-semibold text-xl">Location and Category</h3>
+          <div class="rounded-lg lg:p-6 lg:border space-y-4">
+            <h3 class="font-semibold  lg:text-xl">Location and Category</h3>
             <!--Start Location-->
             <.input type="select"  field={%FormField{field: :countries, id: "categories_0_term_taxonomy", name: "#{f[:categories].name}[0]", value: find_value(@countries, @post.affiliate_categories), errors: [], form: f}}  input_dispatch = "" options={Map.new(@countries, &({&1.id, &1.term.name}))}>
               <:label>Select a country where your service(product) from?</:label>
@@ -264,10 +287,10 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
             <!--End Industry-->
           </div>
 
-          <div class="rounded-lg p-6 border space-y-4">
-            <h3 class="font-semibold text-xl">Commission</h3>
+          <div class="rounded-lg lg:p-6 lg:border space-y-4">
+            <h3 class="font-semibold  lg:text-xl">Commission</h3>
             <div class="grid grid-cols-4">
-              <div class="col-span-3 divide-y space-y-4">
+              <div class="lg:col-span-3 col-span-4 divide-y space-y-4">
                 <!--Start Minimum Commission-->
                 <div class="flex justify-between">
                   <div>
@@ -326,7 +349,7 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
             </div>
           </div>
 
-          <div class="rounded-lg p-6 border space-y-4">
+          <div class="rounded-lg lg:p-6 lg:border space-y-4">
             <.form_media uploads={@uploads} post={@post} />
           </div>
 
@@ -346,7 +369,7 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
     <!--Start media-->
     <div>
       <div class="font-medium text-sm mb-2">Upload media <span class="text-red-500 font-normal">*</span></div>
-      <div class="grid grid-cols-3 gap-2 border border-dashed border-gray-900/25 p-2 rounded-md">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 border border-dashed border-gray-900/25 p-2 rounded-md">
         <label :if={Enum.count(@uploads.media.entries) < 6} for={@uploads.media.ref} phx-drop-target={@uploads.media.ref} class="flex flex-col cursor-pointer justify-center bg-gray-50 aspect-video rounded-md hover:opacity-80">
           <div class="text-center w-full">
             <.icon name="hero-photo" class="mx-auto size-10 text-gray-300" />
@@ -359,16 +382,6 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
             <p class="text-xs/5 text-gray-600">PNG, JPG, GIF up to 4MB</p>
           </div>
         </label>
-
-        <%!-- <div :for={image_src <- Monorepo.Utilities.MetaValue.post_images(@post, :attachment_affiliate_media, ["xlarge", "large", "medium"])} class="bg-gray-50">
-          <div class="relative">
-            <img src={image_src} class="w-full object-cover aspect-video rounded-md"  />
-            <div class="absolute right-0 top-0 mr-2 mt-2">
-              <button type="button"  class="bg-white rounded-full text-gray-500 p-1"><Lucideicons.x class="size-4"/></button>
-            </div>
-          </div>
-        </div> --%>
-
         <div :for={entry <- @uploads.media.entries} class="bg-gray-50">
           <div class="relative">
             <.live_img_preview class="w-full object-cover aspect-video rounded-md" entry={entry} />
@@ -379,7 +392,6 @@ defmodule MonorepoWeb.Affiliate.SubmitLive do
         </div>
       </div>
       <.live_file_input class="hidden" phx-change="upload-media" upload={@uploads.media} data-input-dispatch="[]"  data-form-name="form" data-validate={Enum.count(@uploads.media.entries) > 0 && Enum.count(@uploads.media.entries) < 7 && "1" || "0"}/>
-      <%!-- <input id="upload-file-meida-id" type="file" class="hidden"/> --%>
     </div>
     <!--End media-->
     """

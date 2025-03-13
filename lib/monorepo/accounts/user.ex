@@ -186,25 +186,25 @@ defmodule Monorepo.Accounts.User do
       change set_attribute(:confirmed_at, &DateTime.utc_now/0)
 
       change after_action(fn changeset, user, context ->
-        case user.confirmed_at do
-          nil ->
-            {:error, "Unconfirmed user exists already"}
+               case user.confirmed_at do
+                 nil ->
+                   {:error, "Unconfirmed user exists already"}
 
-          _ ->
-            if DateTime.diff(DateTime.utc_now(), user.inserted_at) < 2 do
-              user_info = Ash.Changeset.get_argument(changeset, :user_info)
-              user_meta = register_relation_user_meta(user_info)
+                 _ ->
+                   if DateTime.diff(DateTime.utc_now(), user.inserted_at) < 2 do
+                     user_info = Ash.Changeset.get_argument(changeset, :user_info)
+                     user_meta = register_relation_user_meta(user_info)
 
-              Ash.update(user, %{user_meta: user_meta},
-                action: :update_user_meta,
-                return_errors?: true,
-                context: %{private: %{ash_authentication?: true}}
-              )
-            end
+                     Ash.update(user, %{user_meta: user_meta},
+                       action: :update_user_meta,
+                       return_errors?: true,
+                       context: %{private: %{ash_authentication?: true}}
+                     )
+                   end
 
-            {:ok, user}
-        end
-      end)
+                   {:ok, user}
+               end
+             end)
     end
 
     create :create_manually do
@@ -308,57 +308,57 @@ defmodule Monorepo.Accounts.User do
       end
 
       change after_action(fn changeset, user, context ->
-        claims = %{"act" => "confirm"}
+               claims = %{"act" => "confirm"}
 
-        token =
-          Monorepo.Accounts.Token
-          |> Ash.Query.filter(
-            subject == ^"user?id=#{user.id}" and purpose == "confirm_new_user" and
-              expires_at > now()
-          )
-          |> Ash.Query.limit(1)
-          |> Ash.read_one(context: %{private: %{ash_authentication?: true}})
-          |> case do
-            {:ok, nil} ->
-              {:ok, strategy} =
-                AshAuthentication.Info.strategy(Monorepo.Accounts.User, :confirm_new_user)
+               token =
+                 Monorepo.Accounts.Token
+                 |> Ash.Query.filter(
+                   subject == ^"user?id=#{user.id}" and purpose == "confirm_new_user" and
+                     expires_at > now()
+                 )
+                 |> Ash.Query.limit(1)
+                 |> Ash.read_one(context: %{private: %{ash_authentication?: true}})
+                 |> case do
+                   {:ok, nil} ->
+                     {:ok, strategy} =
+                       AshAuthentication.Info.strategy(Monorepo.Accounts.User, :confirm_new_user)
 
-              {:ok, token, _} =
-                AshAuthentication.Jwt.token_for_user(user, claims,
-                  token_lifetime: strategy.token_lifetime
-                )
+                     {:ok, token, _} =
+                       AshAuthentication.Jwt.token_for_user(user, claims,
+                         token_lifetime: strategy.token_lifetime
+                       )
 
-              Ash.create(
-                Monorepo.Accounts.Token,
-                %{
-                  extra_data: %{email: user.email},
-                  purpose: "confirm_new_user",
-                  token: token
-                },
-                action: :store_token,
-                context: %{private: %{ash_authentication?: true}}
-              )
+                     Ash.create(
+                       Monorepo.Accounts.Token,
+                       %{
+                         extra_data: %{email: user.email},
+                         purpose: "confirm_new_user",
+                         token: token
+                       },
+                       action: :store_token,
+                       context: %{private: %{ash_authentication?: true}}
+                     )
 
-              token
+                     token
 
-            {:ok, user_token} ->
-              claims =
-                Map.merge(claims, %{"jti" => user_token.jti, "sub" => user_token.subject})
+                   {:ok, user_token} ->
+                     claims =
+                       Map.merge(claims, %{"jti" => user_token.jti, "sub" => user_token.subject})
 
-              {:ok, strategy} =
-                AshAuthentication.Info.strategy(Monorepo.Accounts.User, :confirm_new_user)
+                     {:ok, strategy} =
+                       AshAuthentication.Info.strategy(Monorepo.Accounts.User, :confirm_new_user)
 
-              {:ok, token, _} =
-                AshAuthentication.Jwt.token_for_user(user, claims,
-                  token_lifetime: strategy.token_lifetime
-                )
+                     {:ok, token, _} =
+                       AshAuthentication.Jwt.token_for_user(user, claims,
+                         token_lifetime: strategy.token_lifetime
+                       )
 
-              token
-          end
+                     token
+                 end
 
-        Monorepo.Accounts.User.Senders.SendNewUserConfirmationEmail.send(user, token, nil)
-        {:ok, user}
-      end)
+               Monorepo.Accounts.User.Senders.SendNewUserConfirmationEmail.send(user, token, nil)
+               {:ok, user}
+             end)
     end
 
     update :update_user_status do

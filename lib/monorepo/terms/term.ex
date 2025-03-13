@@ -63,26 +63,33 @@ defmodule Monorepo.Terms.Term do
       argument :term_taxonomy, {:array, :map}
       argument :term_meta, {:array, :map}
       change manage_relationship(:term_taxonomy, :term_taxonomy, type: :create)
-      change manage_relationship(:term_meta, :term_meta, on_lookup: :relate, on_match: :ignore, on_no_match: :create, on_missing: :destroy)
+
+      change manage_relationship(:term_meta, :term_meta,
+               on_lookup: :relate,
+               on_match: :ignore,
+               on_no_match: :create,
+               on_missing: :destroy
+             )
     end
 
     destroy :destroy do
       primary? true
 
       change before_action(fn changeset, context ->
-        Ash.Query.filter(
-          Monorepo.Terms.TermTaxonomy,
-          term_id == ^Ash.Changeset.get_attribute(changeset, :id)
-        )
-        |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
+               Ash.Query.filter(
+                 Monorepo.Terms.TermTaxonomy,
+                 term_id == ^Ash.Changeset.get_attribute(changeset, :id)
+               )
+               |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
 
-        Ash.Query.filter(
-          Monorepo.Terms.TermMeta,
-          term_id == ^Ash.Changeset.get_attribute(changeset, :id)
-        )
-        |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
-        changeset
-      end)
+               Ash.Query.filter(
+                 Monorepo.Terms.TermMeta,
+                 term_id == ^Ash.Changeset.get_attribute(changeset, :id)
+               )
+               |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
+
+               changeset
+             end)
     end
   end
 

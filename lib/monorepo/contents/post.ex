@@ -11,10 +11,14 @@ defmodule Monorepo.Contents.Post do
   postgres do
     table "posts"
     repo(Monorepo.Repo)
+
     custom_statements do
       statement :pgweb_idx do
-        up "CREATE INDEX pgweb_idx ON posts USING GIN (to_tsvector('english', post_title || ' ' || post_content));"
-        down "DROP INDEX pgweb_idx;"
+        up(
+          "CREATE INDEX pgweb_idx ON posts USING GIN (to_tsvector('english', post_title || ' ' || post_content));"
+        )
+
+        down("DROP INDEX pgweb_idx;")
       end
     end
   end
@@ -141,7 +145,13 @@ defmodule Monorepo.Contents.Post do
       argument :categories, {:array, :uuid}
       argument :tags, {:array, :map}
 
-      change manage_relationship(:post_meta, :post_meta, on_no_match: :create, on_match: :update, on_lookup: :relate, on_missing: :destroy)
+      change manage_relationship(:post_meta, :post_meta,
+               on_no_match: :create,
+               on_match: :update,
+               on_lookup: :relate,
+               on_missing: :destroy
+             )
+
       change relate_actor(:author)
 
       change after_action(&Monorepo.Contents.Changes.Post.update_term_relationships/3)
@@ -189,10 +199,10 @@ defmodule Monorepo.Contents.Post do
       change before_action(&delete_meta/2)
     end
 
-
     read :complex_search do
       argument :search_text, :string
       modify_query {Monorepo.Contents.Post.SearchMod, :modify, []}
+
       pagination do
         required? false
         offset? true
@@ -200,7 +210,6 @@ defmodule Monorepo.Contents.Post do
         countable true
       end
     end
-
   end
 
   attributes do
@@ -335,7 +344,7 @@ defmodule Monorepo.Contents.Post do
       filter expr(term_taxonomy.taxonomy == "post_tag")
     end
 
-    #only for affiliate
+    # only for affiliate
     has_many :affiliate_categories, Monorepo.Terms.Term do
       manual Monorepo.Contents.Relations.PostCategories
       filter expr(term_taxonomy.taxonomy == "affiliate_category")
@@ -345,25 +354,32 @@ defmodule Monorepo.Contents.Post do
       manual Monorepo.Contents.Relations.PostTags
       filter expr(term_taxonomy.taxonomy == "affiliate_tag")
     end
+  end
 
+  calculations do
+    calculate :commission_min,
+              :integer,
+              expr(
+                first(:post_meta,
+                  field: :meta_value,
+                  query: [filter: expr(meta_key == :commission_min)]
+                )
+              )
+
+    calculate :commission_max,
+              :integer,
+              expr(
+                first(:post_meta,
+                  field: :meta_value,
+                  query: [filter: expr(meta_key == :commission_max)]
+                )
+              )
+
+    calculate :commission_avg, :integer, expr((commission_min + commission_max) / 2)
   end
 
   identities do
     identity :unique_post_name, [:post_name]
-  end
-
-  calculations do
-    calculate :commission_min, :integer, expr(
-      first(:post_meta, field: :meta_value, query: [filter: expr(meta_key == :commission_min)])
-    )
-
-    calculate :commission_max, :integer, expr(
-      first(:post_meta, field: :meta_value, query: [filter: expr(meta_key == :commission_max)])
-    )
-
-    calculate :commission_avg, :integer, expr(
-      (commission_min + commission_max) / 2
-    )
   end
 
   defp add_meta(%{arguments: %{metas: metas}} = _changeset, post, context) do
@@ -406,18 +422,19 @@ defmodule Monorepo.Contents.Post do
   end
 end
 
-
-
-
-
 defmodule Monorepo.Contents.Post.SearchMod do
   require Ecto.Query
 
   def modify(ash_query, data_layer_query) do
     {:ok,
-      Ecto.Query.where(data_layer_query, [p],
-       fragment("? @@ plainto_tsquery('english', ?)",
+     Ecto.Query.where(
+       data_layer_query,
+       [p],
+       fragment(
+         "? @@ plainto_tsquery('english', ?)",
          fragment("to_tsvector('english', ? || ' ' || ?)", p.post_title, p.post_content),
-         ^ash_query.arguments.search_text))}
+         ^ash_query.arguments.search_text
+       )
+     )}
   end
 end

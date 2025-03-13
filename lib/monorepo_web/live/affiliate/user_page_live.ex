@@ -149,7 +149,9 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
     end
   end
 
-  defp get_user_posts(%{assigns: %{page: page, post_type: "published", username: username}} = socket) do
+  defp get_user_posts(
+         %{assigns: %{page: page, post_type: "published", username: username}} = socket
+       ) do
     offset = (page - 1) * @per_page
 
     opts = [
@@ -161,10 +163,17 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
     query_result =
       Ash.Query.filter(
         Monorepo.Contents.Post,
-        post_type == :affiliate and post_status in [:pending, :publish])
+        post_type == :affiliate and post_status in [:pending, :publish]
+      )
       |> Ash.Query.filter(
-      author.user_meta.meta_key == :username and author.user_meta.meta_value == ^username)
-      |> Ash.Query.load([:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
+        author.user_meta.meta_key == :username and author.user_meta.meta_value == ^username
+      )
+      |> Ash.Query.load([
+        :affiliate_tags,
+        :affiliate_categories,
+        author: :user_meta,
+        post_meta: :children
+      ])
       |> Ash.read!(opts)
 
     page_meta = Monorepo.Helper.pagination_meta(query_result.count, @per_page, page, 8)
@@ -188,7 +197,12 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
         post_type == :affiliate and post_status in [:pending, :publish]
       )
       |> Ash.Query.filter(post_actions.action == :bookmark and post_actions.user_id == ^user.id)
-      |> Ash.Query.load([:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
+      |> Ash.Query.load([
+        :affiliate_tags,
+        :affiliate_categories,
+        author: :user_meta,
+        post_meta: :children
+      ])
       |> Ash.read!(opts)
 
     page_meta = Monorepo.Helper.pagination_meta(query_result.count, @per_page, page, 8)
@@ -196,7 +210,6 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
 
     socket
   end
-
 
   defp generate_form(%{id: user_id} = user, %{id: current_user_id})
        when user_id == current_user_id do
@@ -215,26 +228,36 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="relative lg:h-[250px] bg-primary">
+      <div class="relative h-[135px] lg:h-[250px] bg-primary mb-20 lg:mb-0">
         <div class="w-full h-full overflow-hidden">
           <img :if={Monorepo.Utilities.Account.user_banner(@user, "xxl")} class="w-full h-full object-cover overflow-hidden" src={Monorepo.Utilities.Account.user_banner(@user, "xxl")} />
         </div>
 
-        <div class="mx-4 flex justify-between items-end -mt-12">
-          <div>
-            <img :if={Monorepo.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)} class="inline-block size-24 rounded-full" src={Monorepo.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)["128"]} alt="">
-            <span :if={!Monorepo.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)} class="inline-flex size-24 items-center justify-center rounded-full bg-primary border-2 border-white">
-              <span class="font-medium text-white uppercase text-4xl">{Monorepo.Utilities.Account.user_name(@user, 1)}</span>
-            </span>
+        <div class="absolute w-full lg:static">
+          <div class="px-2 lg:px-4 flex justify-between items-end -mt-10 lg:-mt-12">
+            <div>
+              <img :if={Monorepo.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)} class="inline-block size-20 lg:size-24 rounded-full" src={Monorepo.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)["128"]} alt="">
+              <span :if={!Monorepo.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)} class="inline-flex size-20 lg:size-24 items-center justify-center rounded-full bg-primary border-2 border-white">
+                <span class="font-medium text-white uppercase text-4xl">{Monorepo.Utilities.Account.user_name(@user, 1)}</span>
+              </span>
+            </div>
+            <div class="lg:mt-0 lg:mb-2 space-y-2" :if={@current_user && @current_user.id == @user.id} phx-click={MonorepoWeb.TailwindUI.show_modal(@modal_id)}>
+              <div class="lg:hidden flex items-center"></div>
+              <button type="button" class="rounded-full bg-white px-2.5 py-2 text-sm font-semibold text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Edit Profile</button>
+            </div>
           </div>
-          <div :if={@current_user && @current_user.id == @user.id} phx-click={MonorepoWeb.TailwindUI.show_modal(@modal_id)}>
-            <button type="button" class="rounded-full bg-white px-2.5 py-1 text-sm font-semibold text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Edit Profile</button>
+          <div class="lg:hidden py-2">
+            <div class="px-4">
+              <p class="text-gray-900">{Monorepo.Utilities.Account.user_name(@user)}</p>
+              <p class="text-xs/6 text-gray-500">@{Monorepo.Utilities.Account.load_meta_value_by_meta_key(@user, :username)}</p>
+              <p>{Monorepo.Utilities.Account.load_meta_value_by_meta_key(@user, :description)}</p>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="flex items-start gap-8">
-        <div class="w-80 py-4 px-2 mt-16">
+        <div class="w-80 py-4 px-2 mt-16 hidden lg:block">
           <div class="text-2xl px-4 text-gray-900">
             <p>{Monorepo.Utilities.Account.user_name(@user)}</p>
             <p class="text-xs/6">@{Monorepo.Utilities.Account.load_meta_value_by_meta_key(@user, :username)}</p>
@@ -282,37 +305,17 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
           </div>
         </div>
         <!--start tab-->
-        <div class="grow container mx-auto sm:px-6 lg:px-8">
-          <div class="relative border-b border-gray-200 pb-5 sm:pb-0">
-            <%!-- <div class="md:flex md:items-center md:justify-between">
-              <div class="mt-3 flex md:absolute md:top-3 md:right-0 md:mt-0">
-                <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50">Share</button>
-                <button type="button" class="ml-3 inline-flex items-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">Create</button>
-              </div>
-            </div> --%>
+        <div class="grow container mx-auto px-2 sm:px-6 lg:px-8">
+          <div class="relative border-b border-gray-200 -mx-2 sm:mx-0 px-2 sm:pb-0">
             <div class="mt-10">
-              <div class="grid grid-cols-1 sm:hidden">
-                <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
-                <select aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600">
-                  <option>Applied</option>
-                  <option>Phone Screening</option>
-                  <option selected>Interview</option>
-                  <option>Offer</option>
-                  <option>Hired</option>
-                </select>
-                <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
-                  <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                </svg>
-              </div>
               <!-- Tabs at small breakpoint and up -->
-              <div class="hidden sm:block">
+              <div>
                 <nav class="-mb-px flex space-x-8">
-                  <!-- Current: "border-gray-500 text-gray-600", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
                   <.link
                     :for={{value, label} <- [published: :Published, saved: :Saved]}
                     patch={~p"/user/page/@#{@username}?#{%{type: value}}"}
                     class={[
-                      "border-b-2 px-1 pb-4 text-sm font-medium whitespace-nowrap",
+                      "border-b-2 px-1 pb-2 sm:pb-4 text-sm font-medium whitespace-nowrap",
                       @post_type == to_string(value) && "border-green-500 text-green-600" || "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                     ]}
                   >{label}</.link>
@@ -322,30 +325,30 @@ defmodule MonorepoWeb.Affiliate.UserPageLive do
           </div>
           <div
             id={"#{@post_type}-list"}
-            class="mx-auto pt-6 pb-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3"
+            class="mx-auto pt-4 lg:pb-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3"
             phx-page-loading
           >
             <Monorepo.Utilities.Affiliate.article_html   :for={post <- @posts} post={post}/>
           </div>
-          <div :if={@page_meta.total_pages > 1} class="mx-auto my-16">
-      <nav class="flex items-center justify-center space-x-2 mt-4">
-        <!-- Previous Button -->
-        <.link :if={@page_meta.prev} patch={live_url(%{username: @username, type: @post_type, page: @page_meta.prev})}   class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100">
-          <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
-        </.link>
+          <div class="mx-auto my-8 lg:my-16">
+            <nav :if={@page_meta.total_pages > 1} class="flex items-center justify-center space-x-2">
+              <!-- Previous Button -->
+              <.link :if={@page_meta.prev} patch={live_url(%{username: @username, type: @post_type, page: @page_meta.prev})}   class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100">
+                <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
+              </.link>
 
-        <!-- Page Numbers -->
-        <.link
-          :for={page <- @page_meta.page_range}
-          patch={live_url(%{username: @username, type: @post_type, page: page})}
-          class={["px-3 py-2 text-gray-500 border-b-2 border-white hover:border-gray-900 hover:text-gray-900", page == @page && "border-gray-900 text-gray-900"]}
-        >{page}</.link>
+              <!-- Page Numbers -->
+              <.link
+                :for={page <- @page_meta.page_range}
+                patch={live_url(%{username: @username, type: @post_type, page: page})}
+                class={["px-3 py-2 text-gray-500 border-b-2 border-white hover:border-gray-900 hover:text-gray-900", page == @page && "border-gray-900 text-gray-900"]}
+              >{page}</.link>
 
-        <.link :if={@page_meta.next} patch={live_url(%{username: @username, type: @post_type, page: @page_meta.next})}   class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100">
-          <Lucideicons.arrow_right class="w-4 h-4 md:w-5 md:h-5" />
-        </.link>
-      </nav>
-    </div>
+              <.link :if={@page_meta.next} patch={live_url(%{username: @username, type: @post_type, page: @page_meta.next})}   class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100">
+                <Lucideicons.arrow_right class="w-4 h-4 md:w-5 md:h-5" />
+              </.link>
+            </nav>
+          </div>
         </div>
         <!--end-->
       </div>

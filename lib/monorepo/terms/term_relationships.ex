@@ -53,5 +53,4 @@ defmodule Monorepo.Terms.TermRelationships do
   identities do
     identity :post_id_term_taxonomy_id, [:term_taxonomy_id, :post_id]
   end
-
 end

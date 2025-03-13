@@ -72,7 +72,6 @@ defmodule Monorepo.Contents.PostMeta do
     identity :meta_key_with_post_id, [:meta_key, :post_id]
   end
 
-
   defp remove_attachment(_changeset, postmeta, _context) do
     meta_key = postmeta.meta_key
 

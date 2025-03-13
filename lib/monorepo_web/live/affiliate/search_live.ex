@@ -7,11 +7,14 @@ defmodule MonorepoWeb.Affiliate.SearchLive do
 
   @per_page 20
 
-  def handle_params(%{"q" => q} = params, _uri, socket) when is_binary(q) and q not in [nil, "", false] do
+  def handle_params(%{"q" => q} = params, _uri, socket)
+      when is_binary(q) and q not in [nil, "", false] do
     page_title = "Search #{q} affiliate marketing program results"
+
     socket =
       assign(socket, page_title: page_title)
       |> get_posts(params)
+
     {:noreply, socket}
   end
 
@@ -34,15 +37,26 @@ defmodule MonorepoWeb.Affiliate.SearchLive do
         post_type == :affiliate and post_status in [:publish]
       )
       |> Ash.Query.set_argument(:search_text, q)
-      |> Ash.Query.load([:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
+      |> Ash.Query.load([
+        :affiliate_tags,
+        :affiliate_categories,
+        author: :user_meta,
+        post_meta: :children
+      ])
       |> Ash.read!(opts)
 
     page_meta = Monorepo.Helper.pagination_meta(query_result.count, @per_page, page, 8)
-    socket = assign(socket, q: q, post: query_result.results, page_meta: page_meta, params: %{page: page, q: q})
+
+    socket =
+      assign(socket,
+        q: q,
+        post: query_result.results,
+        page_meta: page_meta,
+        params: %{page: page, q: q}
+      )
 
     socket
   end
-
 
   defp live_url(params) do
     ~p"/search?#{params}"

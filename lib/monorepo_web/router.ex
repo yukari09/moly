@@ -2,6 +2,7 @@ defmodule MonorepoWeb.Router do
   use MonorepoWeb, :router
 
   use AshAuthentication.Phoenix.Router
+  import PhoenixStorybook.Router
 
   # import AshAdmin.Router
 
@@ -24,8 +25,12 @@ defmodule MonorepoWeb.Router do
   #   plug(:put_root_layout, html: {MonorepoWeb.Layouts, :root_admin})
   # end
 
-  scope "/", MonorepoWeb do
-    pipe_through(:browser)
+  scope "/" do
+    storybook_assets()
+  end
+
+  # scope "/", MonorepoWeb do
+    # pipe_through(:browser)
 
     # ash_authentication_live_session :authenticated_routes do
     #   # in each liveview, add one of the following at the top of the module:
@@ -49,7 +54,7 @@ defmodule MonorepoWeb.Router do
     #   on_mount: {MonorepoWeb.LiveUserAuth, :live_user_required} do
     #   live("/products/submit", Affiliate.ProductSubmitLive)
     # end
-  end
+  # end
 
   scope "/", MonorepoWeb do
     pipe_through(:browser)
@@ -95,6 +100,8 @@ defmodule MonorepoWeb.Router do
       live("/user/page/:username", Affiliate.UserPageLive)
       live("/affiliate/:post_name", Affiliate.ViewLive)
     end
+
+    live_storybook "/storybook", backend_module: MonorepoWeb.Storybook
   end
 
   # scope "/" do

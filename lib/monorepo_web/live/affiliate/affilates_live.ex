@@ -10,10 +10,13 @@ defmodule MonorepoWeb.Affiliate.AffiliatesLive do
       Monorepo.Terms.read_by_term_slug!(params["slug"], actor: %{roles: [:user]})
       |> List.first()
 
-    page_title = "Best highest paying #{term.name} affiliate marketing programs in #{Timex.now() |> Timex.format!("{YYYY}")}"
+    page_title =
+      "Best highest paying #{term.name} affiliate marketing programs in #{Timex.now() |> Timex.format!("{YYYY}")}"
+
     socket =
       assign(socket, term: term, page_title: page_title)
       |> get_posts(params)
+
     {:noreply, socket}
   end
 
@@ -46,7 +49,12 @@ defmodule MonorepoWeb.Affiliate.AffiliatesLive do
         end
 
       query_result =
-        Ash.Query.load(query, [:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
+        Ash.Query.load(query, [
+          :affiliate_tags,
+          :affiliate_categories,
+          author: :user_meta,
+          post_meta: :children
+        ])
         |> Ash.read!(opts)
 
       page_meta = Monorepo.Helper.pagination_meta(query_result.count, @per_page, page, 8)
@@ -54,13 +62,22 @@ defmodule MonorepoWeb.Affiliate.AffiliatesLive do
       {query_result, page_meta}
     end
 
-    {query_result, page_meta} = Monorepo.Utilities.cache_get_or_put("affiliate.category.#{slug}.#{page}", cache_function, :timer.hours(1))
+    {query_result, page_meta} =
+      Monorepo.Utilities.cache_get_or_put(
+        "affiliate.category.#{slug}.#{page}",
+        cache_function,
+        :timer.hours(1)
+      )
 
-    socket = assign(socket, post: query_result.results, page_meta: page_meta, params: %{page: page, slug: slug})
+    socket =
+      assign(socket,
+        post: query_result.results,
+        page_meta: page_meta,
+        params: %{page: page, slug: slug}
+      )
 
     socket
   end
-
 
   defp live_url(params) do
     ~p"/affiliates?#{params}"

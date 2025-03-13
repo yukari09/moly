@@ -5,7 +5,10 @@ defmodule MonorepoWeb.PageController do
 
   def page(conn, %{"post_name" => post_name}) do
     post =
-      Ash.Query.filter(Monorepo.Contents.Post, post_name == ^ post_name and post_status == :publish and post_type == :page)
+      Ash.Query.filter(
+        Monorepo.Contents.Post,
+        post_name == ^post_name and post_status == :publish and post_type == :page
+      )
       |> Ash.Query.load([:post_meta])
       |> Ash.read_first!(actor: %{roles: [:user]})
 

@@ -15,9 +15,11 @@ defmodule Monorepo.Accounts.UserPostAction do
     role :user do
       actions([:read])
     end
+
     role :owner do
       actions([:read, :create, :destroy])
     end
+
     role :admin do
       actions([:read, :create, :destroy])
     end
@@ -58,10 +60,6 @@ defmodule Monorepo.Accounts.UserPostAction do
     end
   end
 
-  identities do
-    identity :unique_user_id_post_id_action, [:user_id, :post_id, :action]
-  end
-
   attributes do
     # Primary key for the UserPostAction resource, using UUID for uniqueness
     uuid_primary_key :id
@@ -78,5 +76,9 @@ defmodule Monorepo.Accounts.UserPostAction do
     belongs_to :user, Monorepo.Accounts.User, allow_nil?: false
     # Relationship to the Post resource, indicating the post that was acted upon
     belongs_to :post, Monorepo.Contents.Post, allow_nil?: false
+  end
+
+  identities do
+    identity :unique_user_id_post_id_action, [:user_id, :post_id, :action]
   end
 end

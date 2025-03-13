@@ -1,6 +1,11 @@
 {
-"tailwindCSS.includeLanguages": { 
+  "editor.fontFamily": "'Zed Mono Extended'",
+  "editor.fontSize": 16,
+  "editor.fontLigatures": true, 
+  "editor.fontWeight": 500,
+  "tailwindCSS.includeLanguages": { 
     "phoenix-heex": "html", 
     "elixir": "html",
   }
 }
+ 

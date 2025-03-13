@@ -9,7 +9,7 @@ defmodule MonorepoWeb.AdminWebsiteLive.Index do
   end
 
   def handle_params(params, _uri, socket) do
-    page = params["page"] && String.to_integer(params["page"]) || 1
+    page = (params["page"] && String.to_integer(params["page"])) || 1
     q = params["q"]
 
     socket =
@@ -24,10 +24,12 @@ defmodule MonorepoWeb.AdminWebsiteLive.Index do
     item =
       Ash.get!(Monorepo.Terms.Term, id, actor: %{roles: [:admin]})
       |> Ash.load!([:term_meta, :term_taxonomy], actor: %{roles: [:admin]})
+
     socket =
       socket
       |> assign(:live_action, :edit)
       |> assign(:item, item)
+
     {:noreply, socket}
   end
 
@@ -44,12 +46,14 @@ defmodule MonorepoWeb.AdminWebsiteLive.Index do
       socket
       |> assign(:q, q)
       |> get_website_term()
+
     {:noreply, socket}
   end
 
   def handle_event("delete", %{"id" => id}, socket) do
     Ash.get!(Monorepo.Terms.Term, id, actor: %{roles: [:admin]})
     |> Ash.destroy(action: :destroy, actor: %{roles: [:admin]})
+
     socket = push_navigate(socket, to: live_url(socket.assigns.params))
     {:noreply, socket}
   end
@@ -61,7 +65,7 @@ defmodule MonorepoWeb.AdminWebsiteLive.Index do
 
     opts = [
       actor: socket.assigns.current_user,
-      page: [limit:  @per_page, offset: offset, count: true]
+      page: [limit: @per_page, offset: offset, count: true]
     ]
 
     query =
@@ -69,7 +73,10 @@ defmodule MonorepoWeb.AdminWebsiteLive.Index do
       |> Ash.Query.filter(term_taxonomy.taxonomy == "website")
       |> Ash.Query.load([:term_taxonomy, :term_meta])
 
-    query = if q not in [nil, "", false], do: Ash.Query.filter(query, expr(contains(name, ^q))), else: query
+    query =
+      if q not in [nil, "", false],
+        do: Ash.Query.filter(query, expr(contains(name, ^q))),
+        else: query
 
     result =
       query
@@ -84,5 +91,4 @@ defmodule MonorepoWeb.AdminWebsiteLive.Index do
   defp live_url(params) do
     ~p"/admin/website?#{params}"
   end
-
 end

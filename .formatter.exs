@@ -238,7 +238,8 @@ spark_locals_without_parens = [
   import_deps: [:ash, :spark, :reactor],
   inputs: [
     "{mix,.formatter}.exs",
-    "{config,lib,test,benchmarks,flames}/**/*.{ex,exs}"
+    "{config,lib,test,benchmarks,flames}/**/*.{ex,exs}",
+    "storybook/**/*.exs"
   ],
   plugins: [Spark.Formatter],
   locals_without_parens: spark_locals_without_parens,

@@ -8,20 +8,31 @@ defmodule MonorepoWeb.Affiliate.BrowseLive do
 
   def mount(_params, _session, socket) do
     affiliate_industries_key = "aviable_affiliate_industries"
+
     affiliate_industries =
-      Monorepo.Utilities.cache_get_or_put(affiliate_industries_key, fn ->
-        Monorepo.Utilities.Affiliate.affiliate_industries()
-        |> Enum.filter(fn term ->
-          if !is_list(term.term_taxonomy) do
-            false
-          else
-            Enum.reduce_while(term.term_taxonomy, false, fn %{count: count}, _ ->
-              if count > 0, do: {:halt, true}, else: {:cont, false}
-            end)
-          end
-        end)
-      end, :timer.hours(1))
-    {:ok, socket, temporary_assigns: [affiliate_industries: affiliate_industries, page_title: "Find website software high ticket best paying affiliate marketing programs for beginners experts."]}
+      Monorepo.Utilities.cache_get_or_put(
+        affiliate_industries_key,
+        fn ->
+          Monorepo.Utilities.Affiliate.affiliate_industries()
+          |> Enum.filter(fn term ->
+            if !is_list(term.term_taxonomy) do
+              false
+            else
+              Enum.reduce_while(term.term_taxonomy, false, fn %{count: count}, _ ->
+                if count > 0, do: {:halt, true}, else: {:cont, false}
+              end)
+            end
+          end)
+        end,
+        :timer.hours(1)
+      )
+
+    {:ok, socket,
+     temporary_assigns: [
+       affiliate_industries: affiliate_industries,
+       page_title:
+         "Find website software high ticket best paying affiliate marketing programs for beginners experts."
+     ]}
   end
 
   def handle_params(params, _uri, socket) do
@@ -56,36 +67,53 @@ defmodule MonorepoWeb.Affiliate.BrowseLive do
         end
 
       query_result =
-        Ash.Query.load(query, [:affiliate_tags, :affiliate_categories, author: :user_meta, post_meta: :children])
+        Ash.Query.load(query, [
+          :affiliate_tags,
+          :affiliate_categories,
+          author: :user_meta,
+          post_meta: :children
+        ])
         |> Ash.read!(opts)
 
       page_meta = Monorepo.Helper.pagination_meta(query_result.count, @per_page, page, 8)
 
-
       {query_result, page_meta}
     end
 
-    {query_result, page_meta} = Monorepo.Utilities.cache_get_or_put("affiliate.browse.#{slug}.#{page}", fetch_cache_function, :timer.hours(1))
+    {query_result, page_meta} =
+      Monorepo.Utilities.cache_get_or_put(
+        "affiliate.browse.#{slug}.#{page}",
+        fetch_cache_function,
+        :timer.hours(1)
+      )
 
-
-    socket = assign(socket, post: query_result.results, page_meta: page_meta, params: %{page: page, slug: slug})
+    socket =
+      assign(socket,
+        post: query_result.results,
+        page_meta: page_meta,
+        params: %{page: page, slug: slug}
+      )
 
     socket
   end
 
-
   defp live_url(params) do
     url = ~p"/browse"
-    url = if params[:slug] do
-      "#{url}/#{params[:slug]}"
-    else
-      url
-    end
-    url = if params[:page] do
-      "#{url}?page=#{params[:page]}"
-    else
-      url
-    end
+
+    url =
+      if params[:slug] do
+        "#{url}/#{params[:slug]}"
+      else
+        url
+      end
+
+    url =
+      if params[:page] do
+        "#{url}?page=#{params[:page]}"
+      else
+        url
+      end
+
     url
   end
 end

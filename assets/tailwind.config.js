@@ -4,15 +4,17 @@
 const plugin = require("tailwindcss/plugin")
 const fs = require("fs")
 const path = require("path")
-const defaultTheme = require('tailwindcss/defaultTheme')
+// const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
+  important: ".monorepo-web",
   content: [
     "./js/**/*.js",
     // "../lib/monorepo_web.ex",
     "../lib/monorepo_web/**/*.*ex",
     "../lib/monorepo/utilities/*.*ex",
     "../deps/ash_authentication_phoenix/**/*.*ex",
+    "../storybook/**/*.*exs",
   ],
   // daisyui: {
   //   themes: [

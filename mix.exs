@@ -33,6 +33,7 @@ defmodule Monorepo.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:phoenix_storybook, "~> 0.8.1"},
       {:timex, "~> 3.7"},
       {:flame, "~> 0.5"},
       {:ash_rbac, "~> 0.6.1"},
@@ -70,7 +71,7 @@ defmodule Monorepo.MixProject do
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:heroicons,
        github: "tailwindlabs/heroicons",
-       tag: "v2.1.1",
+       tag: "v2.1.5",
        sparse: "optimized",
        app: false,
        compile: false,
@@ -103,7 +104,7 @@ defmodule Monorepo.MixProject do
       "assets.build": ["tailwind monorepo", "esbuild monorepo"],
       "assets.deploy": [
         "tailwind monorepo --minify",
-        # "tailwind admin --minify",
+        "tailwind storybook --minify",
         "esbuild monorepo --minify",
         "phx.digest"
       ]

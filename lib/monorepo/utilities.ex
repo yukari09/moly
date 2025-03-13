@@ -1,5 +1,4 @@
 defmodule Monorepo.Utilities do
-
   def cache_get_or_put(key, get_cache_function \\ nil, expire \\ 0) do
     Cachex.get!(:cache, key)
     |> case do
@@ -11,6 +10,7 @@ defmodule Monorepo.Utilities do
         else
           nil
         end
+
       fetched_value ->
         fetched_value
     end

@@ -24,12 +24,17 @@ defmodule MonorepoWeb.AdminPageLive.Index do
 
   def handle_event("publish", %{"id" => id}, socket) do
     post = Ash.get!(Monorepo.Contents.Post, id, actor: socket.assigns.current_user)
+
     # form = AshPhoenix.Form.for_update(post, :update_post, form: [auto?: true], actor: socket.assigns.current_user)
 
     # socket =
     #   assign(socket, :live_action, :publish)
     #   |> assign(:form, form)
-    Ash.update(post, %{post_status: :publish}, actor: socket.assigns.current_user, action: :update_post)
+    Ash.update(post, %{post_status: :publish},
+      actor: socket.assigns.current_user,
+      action: :update_post
+    )
+
     socket = push_patch(socket, to: ~p"/admin/pages?#{socket.assigns.params}")
     {:noreply, socket}
   end

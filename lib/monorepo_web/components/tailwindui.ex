@@ -8,23 +8,49 @@ defmodule MonorepoWeb.TailwindUI do
   import MonorepoWeb.CoreComponents, only: [translate_error: 1]
 
   ## JS Commands
-  #off_canvas_menu_id  #{off_canvas_menu_id}
-  def open_off_canvas_menu(js \\ %JS{}, off_canvas_menu_id)  do
+  # off_canvas_menu_id  #{off_canvas_menu_id}
+  def open_off_canvas_menu(js \\ %JS{}, off_canvas_menu_id) do
     js
-    |> JS.transition({"transition-opacity ease-linear duration-300", "opacity-0", "opacity-100"}, to: "##{off_canvas_menu_id}-backdrop", time: 300)
-    |> JS.transition({"transition ease-in-out duration-300 transform", "-translate-x-full", "translate-x-0"}, to: "##{off_canvas_menu_id}-content-inner", time: 300)
-    |> JS.transition({"ease-in-out duration-300", "opacity-0", "opacity-100"}, to: "##{off_canvas_menu_id}-close-button", time: 300)
+    |> JS.transition({"transition-opacity ease-linear duration-300", "opacity-0", "opacity-100"},
+      to: "##{off_canvas_menu_id}-backdrop",
+      time: 300
+    )
+    |> JS.transition(
+      {"transition ease-in-out duration-300 transform", "-translate-x-full", "translate-x-0"},
+      to: "##{off_canvas_menu_id}-content-inner",
+      time: 300
+    )
+    |> JS.transition({"ease-in-out duration-300", "opacity-0", "opacity-100"},
+      to: "##{off_canvas_menu_id}-close-button",
+      time: 300
+    )
     |> JS.remove_class("hidden", to: "##{off_canvas_menu_id}-backdrop")
     |> JS.remove_class("hidden", to: "##{off_canvas_menu_id}-content-inner")
     |> JS.remove_class("hidden", to: "##{off_canvas_menu_id}")
   end
 
-  def close_off_canvas_menu(js \\ %JS{}, off_canvas_menu_id)  do
+  def close_off_canvas_menu(js \\ %JS{}, off_canvas_menu_id) do
     js
-    |> JS.add_class("hidden", to: "##{off_canvas_menu_id}-backdrop", time: 300, transition: {"transition-opacity ease-linear duration-300", "opacity-100", "opacity-0"})
-    |> JS.add_class("hidden", to: "##{off_canvas_menu_id}-content-inner", time: 300, transition: {"transition ease-in-out duration-300 transform", "translate-x-0", "-translate-x-full"})
-    |> JS.transition({"ease-in-out duration-300", "opacity-100", "opacity-0"}, to: "##{off_canvas_menu_id}-close-button", time: 300)
-    |> JS.add_class("hidden", to: "##{off_canvas_menu_id}", time: 300, transition: {"duration-300","",""})
+    |> JS.add_class("hidden",
+      to: "##{off_canvas_menu_id}-backdrop",
+      time: 300,
+      transition: {"transition-opacity ease-linear duration-300", "opacity-100", "opacity-0"}
+    )
+    |> JS.add_class("hidden",
+      to: "##{off_canvas_menu_id}-content-inner",
+      time: 300,
+      transition:
+        {"transition ease-in-out duration-300 transform", "translate-x-0", "-translate-x-full"}
+    )
+    |> JS.transition({"ease-in-out duration-300", "opacity-100", "opacity-0"},
+      to: "##{off_canvas_menu_id}-close-button",
+      time: 300
+    )
+    |> JS.add_class("hidden",
+      to: "##{off_canvas_menu_id}",
+      time: 300,
+      transition: {"duration-300", "", ""}
+    )
   end
 
   def hide_dropdown(menu_dom_id) do
@@ -480,6 +506,7 @@ defmodule MonorepoWeb.TailwindUI do
     #     false -> []
     #   end
     assigns = assign(assigns, :errors, error_messages)
+
     ~H"""
     <div class={@container_class}>
       <input
