@@ -1,6 +1,6 @@
 defmodule Storybook.Examples.CoreComponents do
   use PhoenixStorybook.Story, :example
-  import MonorepoWeb.CoreComponents
+  import MolyWeb.CoreComponents
 
   alias Phoenix.LiveView.JS
 

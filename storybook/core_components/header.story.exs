@@ -1,8 +1,8 @@
 defmodule Storybook.Components.CoreComponents.Header do
   use PhoenixStorybook.Story, :component
 
-  def function, do: &MonorepoWeb.CoreComponents.header/1
-  def imports, do: [{MonorepoWeb.CoreComponents, button: 1}]
+  def function, do: &MolyWeb.CoreComponents.header/1
+  def imports, do: [{MolyWeb.CoreComponents, button: 1}]
   def render_source, do: :function
 
   def template do

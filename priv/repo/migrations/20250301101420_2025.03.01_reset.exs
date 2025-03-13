@@ -1,4 +1,4 @@
-defmodule :"Elixir.Monorepo.Repo.Migrations.2025.03.01Reset" do
+defmodule :"Elixir.Moly.Repo.Migrations.2025.03.01Reset" do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 

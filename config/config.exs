@@ -42,26 +42,26 @@ config :spark,
     "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
   ]
 
-config :monorepo,
-  ecto_repos: [Monorepo.Repo],
+config :moly,
+  ecto_repos: [Moly.Repo],
   generators: [timestamp_type: :utc_datetime],
   ash_domains: [
-    Monorepo.Contents,
-    Monorepo.Accounts,
-    Monorepo.Comments,
-    Monorepo.Options,
-    Monorepo.Terms
+    Moly.Contents,
+    Moly.Accounts,
+    Moly.Comments,
+    Moly.Options,
+    Moly.Terms
   ]
 
 # Configures the endpoint
-config :monorepo, MonorepoWeb.Endpoint,
+config :moly, MolyWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [html: MonorepoWeb.ErrorHTML, json: MonorepoWeb.ErrorJSON],
+    formats: [html: MolyWeb.ErrorHTML, json: MolyWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Monorepo.PubSub,
+  pubsub_server: Moly.PubSub,
   live_view: [signing_salt: "IYjR+2Ds"]
 
 # Configures the mailer
@@ -71,12 +71,12 @@ config :monorepo, MonorepoWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :monorepo, Monorepo.Mailer, adapter: Swoosh.Adapters.Local
+config :moly, Moly.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
-  monorepo: [
+  moly: [
     args:
       ~w(js/app.js js/storybook.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
@@ -86,7 +86,7 @@ config :esbuild,
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "3.4.17",
-  monorepo: [
+  moly: [
     args: ~w(
       --config=tailwind.config.js
       --input=css/app.css
@@ -121,7 +121,7 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, JSON
 
-config :monorepo, :env, config_env()
+config :moly, :env, config_env()
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

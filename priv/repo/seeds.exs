@@ -5,7 +5,7 @@
 # Inside the script, you can read and write to any of your
 # repositories directly:
 #
-#     Monorepo.Repo.insert!(%Monorepo.SomeSchema{})
+#     Moly.Repo.insert!(%Moly.SomeSchema{})
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
@@ -315,7 +315,7 @@ countries = %{
 
 
 
-defmodule Monorepo.Seed do
+defmodule Moly.Seed do
   require Ash.Query
   require AshPostgres.DataLayer
 
@@ -332,7 +332,7 @@ defmodule Monorepo.Seed do
           [%{taxonomy: "affiliate_category", parent_id: parent_id}]
       end
 
-    insert_data = %Monorepo.Terms.Term{name: name, slug: slug, term_taxonomy: term_taxonomy}
+    insert_data = %Moly.Terms.Term{name: name, slug: slug, term_taxonomy: term_taxonomy}
     insert_data = if Map.get(input, :term_meta), do: Map.put(insert_data, :term_meta, Map.get(input, :term_meta)), else: insert_data
 
     parent = Ash.Seed.upsert!(insert_data, actor: %{roles: [:admin]}, action: :create, identity: :unique_slug)
@@ -344,5 +344,5 @@ defmodule Monorepo.Seed do
   end
 end
 
-Monorepo.Seed.term_upsert(countries, nil)
-Monorepo.Seed.term_upsert(industries, nil)
+Moly.Seed.term_upsert(countries, nil)
+Moly.Seed.term_upsert(industries, nil)

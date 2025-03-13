@@ -1,8 +1,8 @@
 defmodule Storybook.Components.CoreComponents.Table do
   use PhoenixStorybook.Story, :component
 
-  def function, do: &MonorepoWeb.CoreComponents.table/1
-  def imports, do: [{MonorepoWeb.CoreComponents, button: 1}]
+  def function, do: &MolyWeb.CoreComponents.table/1
+  def imports, do: [{MolyWeb.CoreComponents, button: 1}]
   def render_source, do: :function
   def layout, do: :one_column
 

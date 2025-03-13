@@ -7,12 +7,12 @@ const path = require("path")
 // const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
-  important: ".monorepo-web",
+  important: ".moly-web",
   content: [
     "./js/**/*.js",
-    // "../lib/monorepo_web.ex",
-    "../lib/monorepo_web/**/*.*ex",
-    "../lib/monorepo/utilities/*.*ex",
+    // "../lib/moly_web.ex",
+    "../lib/moly_web/**/*.*ex",
+    "../lib/moly/utilities/*.*ex",
     "../deps/ash_authentication_phoenix/**/*.*ex",
     "../storybook/**/*.*exs",
   ],

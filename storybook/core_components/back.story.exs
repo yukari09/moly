@@ -1,7 +1,7 @@
 defmodule Storybook.Components.CoreComponents.Back do
   use PhoenixStorybook.Story, :component
 
-  def function, do: &MonorepoWeb.CoreComponents.back/1
+  def function, do: &MolyWeb.CoreComponents.back/1
   def render_source, do: :function
 
   def template do

@@ -1,1 +1,0 @@
-sudo cursor-id-modifier

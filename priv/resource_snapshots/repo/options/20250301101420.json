@@ -73,7 +73,7 @@
     "global": null,
     "strategy": null
   },
-  "repo": "Elixir.Monorepo.Repo",
+  "repo": "Elixir.Moly.Repo",
   "schema": null,
   "table": "options"
 }

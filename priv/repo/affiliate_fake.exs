@@ -372,32 +372,32 @@ items = [
 
 
 
-defmodule Monorepo.AffiliateFake do
+defmodule Moly.AffiliateFake do
   require Ash.Query
   require AshPostgres.DataLayer
 
   def random_image() do
     ids =
-      Ash.Query.filter(Monorepo.Contents.Post, post_type == :attachment)
+      Ash.Query.filter(Moly.Contents.Post, post_type == :attachment)
       |> Ash.read!(actor: %{roles: [:user]})
       |> Enum.map(&(&1.id))
     num = Enum.random(1..6)
     Enum.take_random(ids, num)
   end
   def get_actor(id) do
-    Ash.get!(Monorepo.Accounts.User, id, context: %{private: %{ash_authentication?: true}})
+    Ash.get!(Moly.Accounts.User, id, context: %{private: %{ash_authentication?: true}})
     |> Map.put(:roles, [:owner])
   end
   def random_country(), do: get_term_taxonomy("countries") |> Enum.random() |> Map.get(:id)
   def random_industry(), do: get_term_taxonomy("industries") |> Enum.random() |> Map.get(:id)
   defp get_term_taxonomy(slug) do
-    Ash.Query.filter(Monorepo.Terms.TermTaxonomy, parent.slug == ^slug)
+    Ash.Query.filter(Moly.Terms.TermTaxonomy, parent.slug == ^slug)
     |> Ash.Query.load([:term])
     |> Ash.read!(actor: %{roles: [:user]})
   end
 end
 
-actor = Monorepo.AffiliateFake.get_actor("4c9b10d5-2f1d-41a0-b0b4-57f07f3c9bb3")
+actor = Moly.AffiliateFake.get_actor("4c9b10d5-2f1d-41a0-b0b4-57f07f3c9bb3")
 
 for item <- items do
   tags =
@@ -405,12 +405,12 @@ for item <- items do
     |> String.split(",")
     |> Enum.reduce([], fn tag, acc ->
       name = String.trim(tag)
-      slug = Monorepo.Helper.string2slug(name)
+      slug = Moly.Helper.string2slug(name)
       new = %{"name" => name, "slug" => slug, "term_taxonomy" => [%{"taxonomy" => "affiliate_tag"}]}
       [new | acc]
     end)
 
-  meida_ids = Monorepo.AffiliateFake.random_image()
+  meida_ids = Moly.AffiliateFake.random_image()
 
   feture_id = List.first(meida_ids)
   meida_ids = meida_ids |> Enum.join(",")
@@ -420,7 +420,7 @@ for item <- items do
     post_content: item.content,
     post_type: :affiliate,
     post_status: :publish,
-    post_name: Monorepo.Helper.generate_random_str(),
+    post_name: Moly.Helper.generate_random_str(),
     tags: tags,
     post_meta: [
       %{meta_key: :affiliate_link, meta_value: item.link},
@@ -433,9 +433,9 @@ for item <- items do
       %{meta_key: :attachment_affiliate_media_feature, meta_value: feture_id},
     ],
     tags: tags,
-    categories: [Monorepo.AffiliateFake.random_country(), Monorepo.AffiliateFake.random_industry()],
+    categories: [Moly.AffiliateFake.random_country(), Moly.AffiliateFake.random_industry()],
     post_date: DateTime.utc_now()
   }
 
-  {:ok, _} = Ash.create(Monorepo.Contents.Post, insert_data, action: :create_post, actor: actor)
+  {:ok, _} = Ash.create(Moly.Contents.Post, insert_data, action: :create_post, actor: actor)
 end

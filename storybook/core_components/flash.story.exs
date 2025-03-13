@@ -1,8 +1,8 @@
 defmodule Storybook.Components.CoreComponents.Flash do
   use PhoenixStorybook.Story, :component
 
-  def function, do: &MonorepoWeb.CoreComponents.flash/1
-  def imports, do: [{MonorepoWeb.CoreComponents, show: 1, button: 1}]
+  def function, do: &MolyWeb.CoreComponents.flash/1
+  def imports, do: [{MolyWeb.CoreComponents, show: 1, button: 1}]
   def render_source, do: :function
 
   def template do

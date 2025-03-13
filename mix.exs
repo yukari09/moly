@@ -1,9 +1,9 @@
-defmodule Monorepo.MixProject do
+defmodule Moly.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :monorepo,
+      app: :moly,
       version: "0.1.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,7 +19,7 @@ defmodule Monorepo.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Monorepo.Application, []},
+      mod: {Moly.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -100,12 +100,12 @@ defmodule Monorepo.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ash.setup --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      # "assets.build": ["tailwind monorepo", "tailwind admin", "esbuild monorepo"],
-      "assets.build": ["tailwind monorepo", "esbuild monorepo"],
+      # "assets.build": ["tailwind moly", "tailwind admin", "esbuild moly"],
+      "assets.build": ["tailwind moly", "esbuild moly"],
       "assets.deploy": [
-        "tailwind monorepo --minify",
+        "tailwind moly --minify",
         "tailwind storybook --minify",
-        "esbuild monorepo --minify",
+        "esbuild moly --minify",
         "phx.digest"
       ]
     ]

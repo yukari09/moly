@@ -8,8 +8,8 @@ const path = require("path")
 module.exports = {
   content: [
     "./js/**/*.js",
-    "../lib/monorepo_web.ex",
-    "../lib/monorepo_web/**/*.*ex",
+    "../lib/moly_web.ex",
+    "../lib/moly_web/**/*.*ex",
     "../deps/ash_authentication_phoenix/**/*.*ex"
   ],
   theme: {

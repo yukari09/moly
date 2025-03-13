@@ -1,11 +1,11 @@
 import Config
 
 # Configure your database
-config :monorepo, Monorepo.Repo,
+config :moly, Moly.Repo,
   username: "yukari",
   password: "83233167",
   hostname: "localhost",
-  database: "monorepo_dev",
+  database: "moly_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -16,7 +16,7 @@ config :monorepo, Monorepo.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :monorepo, MonorepoWeb.Endpoint,
+config :moly, MolyWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {0, 0, 0, 0}, port: 4000],
@@ -25,8 +25,8 @@ config :monorepo, MonorepoWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "TZLcv1+vrTqQP328e/JPkafOivjqfZYGd1sXlvJS/aoGxs3RhId/BtaYJc2nyhMt",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:monorepo, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:monorepo, ~w(--watch)]},
+    esbuild: {Esbuild, :install_and_run, [:moly, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:moly, ~w(--watch)]},
     storybook_tailwind: {Tailwind, :install_and_run, [:storybook, ~w(--watch)]}
   ]
 
@@ -54,18 +54,18 @@ config :monorepo, MonorepoWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :monorepo, MonorepoWeb.Endpoint,
+config :moly, MolyWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/monorepo_web/(controllers|live|components)/.*(ex|heex)$",
+      ~r"lib/moly_web/(controllers|live|components)/.*(ex|heex)$",
       ~r"storybook/.*(exs)$"
     ]
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :monorepo, dev_routes: true, token_signing_secret: "1xHm1M022NzBxpdFbFwS3u4t2M9uHpmd"
+config :moly, dev_routes: true, token_signing_secret: "1xHm1M022NzBxpdFbFwS3u4t2M9uHpmd"
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
@@ -87,13 +87,13 @@ config :phoenix_live_view,
 config :swoosh, :api_client, false
 
 # Customize env for this app
-config :monorepo,
+config :moly,
   google_oauth2_client_id:
     "486343447885-9jg87vj9h0qafcdvu4k2ugb7dggbsion.apps.googleusercontent.com",
   google_oauth2_redirect_uri: "http://localhost:4000/auth/user/google/callback",
   google_oauth2_client_secret: "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",
-  email_name: "monorepo@monorepo.dev",
-  email_address: "monorepo@monorepo.dev"
+  email_name: "moly@moly.dev",
+  email_address: "moly@moly.dev"
 
 # config :ex_aws,
 #   region: "us-east-1",

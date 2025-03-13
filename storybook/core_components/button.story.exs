@@ -1,7 +1,7 @@
 defmodule Storybook.Components.CoreComponents.Button do
   use PhoenixStorybook.Story, :component
 
-  def function, do: &MonorepoWeb.CoreComponents.button/1
+  def function, do: &MolyWeb.CoreComponents.button/1
   def render_source, do: :function
 
   def variations do

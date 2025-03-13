@@ -1,4 +1,4 @@
-defmodule Monorepo.Repo.Migrations.PostCreateIndex do
+defmodule Moly.Repo.Migrations.PostCreateIndex do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 

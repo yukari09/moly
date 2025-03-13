@@ -1,4 +1,4 @@
-# Monorepo
+# Moly
 
 To start your Phoenix server:
 

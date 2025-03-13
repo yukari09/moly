@@ -1,4 +1,4 @@
-defmodule Monorepo.Repo.Migrations.UserActionUnique do
+defmodule Moly.Repo.Migrations.UserActionUnique do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 

@@ -1,7 +1,7 @@
 defmodule Storybook.Components.CoreComponents.Icon do
   use PhoenixStorybook.Story, :component
 
-  def function, do: &MonorepoWeb.CoreComponents.icon/1
+  def function, do: &MolyWeb.CoreComponents.icon/1
   def render_source, do: :function
 
   def variations do

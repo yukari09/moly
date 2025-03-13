@@ -1,4 +1,4 @@
-defmodule :"Elixir.Monorepo.Repo.Migrations.2025.03.01ResetExtensions1" do
+defmodule :"Elixir.Moly.Repo.Migrations.2025.03.01ResetExtensions1" do
   @moduledoc """
   Installs any extensions that are mentioned in the repo's `installed_extensions/0` callback
 
