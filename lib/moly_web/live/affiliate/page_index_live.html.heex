@@ -34,7 +34,7 @@
     </div>
     <.link navigate={~p"/browse"} class="text-sm text-green-600 flex items-center">Brose all <span class="lg:block hidden">top paying affiliate programs</span><.icon name="hero-chevron-right-mini" class="size-4.5 text-green-600 stroke-1 font-bold"/></.link>
   </div>
-  <div class="grid max-w-2xl grid-cols-1 gap-x-4 gap-y-10 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+  <div class="grid max-w-4xl grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-10 lg:mx-0 lg:max-w-none lg:grid-cols-3">
     <Moly.Utilities.Affiliate.article_html :for={post <- @posts} post={post} />
   </div>
 </div>

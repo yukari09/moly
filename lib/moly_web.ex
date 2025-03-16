@@ -17,7 +17,7 @@ defmodule MolyWeb do
   those modules here.
   """
 
-  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt ads.txt)
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt ads.txt, 674eeabc7c1c48fe7d7cfee4b6cbabbf.txt sitemap.xml)
 
   def router do
     quote do

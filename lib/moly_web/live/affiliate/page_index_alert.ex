@@ -56,11 +56,12 @@ defmodule MolyWeb.Affiliate.PageIndexAlert do
         <div class="flex items-center">
           <.icon name="hero-exclamation-circle-solid" class="size-5  text-red-400" />
           <div class="ml-3 flex-1 md:flex md:justify-between">
-            <p class="text-sm text-red-700">Your email address {@current_user.email} has not been verified.</p>
+            <p class="text-sm text-red-700">Your email address {@current_user.email} has not been verified (Maybe in spam).</p>
             <p class="mt-3 text-sm md:mt-0 md:ml-6">
-              <.link phx-click="resend_email" phx-target={@myself} class="font-medium whitespace-nowrap text-red-700 hover:text-red-600">
+              <%!-- <.link phx-click="resend_email" phx-target={@myself} class="font-medium whitespace-nowrap text-red-700 hover:text-red-600">
                 Resend
-              </.link>
+              </.link> --%>
+              <span class="font-medium whitespace-nowrap text-red-700 hover:text-red-600">&nbsp;</span>
             </p>
           </div>
         </div>

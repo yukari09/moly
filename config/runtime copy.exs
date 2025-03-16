@@ -120,28 +120,27 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
   # Customize env for this app
   config :moly,
-    google_oauth2_client_id: System.get_env("GOOGLE_CLIENT_ID"),
-    google_oauth2_redirect_uri: System.get_env("GOOGLE_REDIRECT_URI"),
-    google_oauth2_client_secret: System.get_env("GOOGLE_CLIENT_SECRET"),
-    email_name: System.get_env("EMAIL_NAME"),
-    email_address: System.get_env("EMAIL_ADDRESS")
+    google_oauth2_client_id: "486343447885-9jg87vj9h0qafcdvu4k2ugb7dggbsion.apps.googleusercontent.com",
+    google_oauth2_redirect_uri: "https://affinew.com/auth/user/google/callback",
+    google_oauth2_client_secret: "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",
+    email_name: "no-reply@affinew.com",
+    email_address: "no-reply@affinew.com"
 
   config :ex_aws,
-    region: System.get_env("AWS_REGION"),
-    access_key_id: System.get_env("AWS_ACCESS_KEY_ID"),
-    secret_access_key: System.get_env("AWS_SECRET_ACCESS_KEY")
+    region: "eu-central-1",
+    access_key_id: "vCfTpm1XR7DMsiUg",
+    secret_access_key: "vV1A9ZA0NfmkVEXJJU95LcnCvj1uaPSU"
 
   config :ex_aws, :s3,
-    scheme: System.get_env("S3_SCHEME"),
-    host: System.get_env("S3_HOST"),
-    port: String.to_integer(System.get_env("S3_PORT", "443")),
-    bucket: System.get_env("S3_BUCKET")
-    #custom args
-    # domain: System.get_env("S3_DOMAIN"),
-    # domain_scheme: System.get_env("S3_DOMAIN_SCHEME")
+    scheme: "https://",
+    host: "minio-node1.karian.one",
+    port: 443,
+    bucket: "affiliate",
+    domain: "minio-node1.karian.one/affiliate",
+    domain_scheme: "https"
 
   config :imgproxy,
-    prefix: System.get_env("IMGPROXY_PREFIX"),
-    key: System.get_env("IMGPROXY_KEY"),
-    salt: System.get_env("IMGPROXY_SALT")
+    prefix: "https://images.affinew.com/",
+    key: "31dde3553997eb7bd3ad1ce2700c2f2e32dc15fffcd19969399e65b7c7d47c82",
+    salt: "38d48531bc85ac8273a0cb9f057223349141a53954937b97785b9cbf15ee34ef"
 end

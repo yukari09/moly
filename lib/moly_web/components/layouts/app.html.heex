@@ -15,7 +15,7 @@
           <.link navigate={~p"/affiliates/education-learning"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Education</.link>
           <.link navigate={~p"/affiliates/digital-content-services"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Digital Content</.link>
           <.link navigate={~p"/affiliates/saas-solutions"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Saas</.link>
-          <.link navigate={~p"/posts"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Blog</.link>
+          <%!-- <.link navigate={~p"/posts"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Blog</.link> --%>
         </div>
       </div>
 
@@ -119,7 +119,7 @@
               <.link navigate={~p"/affiliates/education-learning"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Education</.link>
               <.link navigate={~p"/affiliates/digital-content-services"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Digital Content</.link>
               <.link navigate={~p"/affiliates/saas-solutions"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Saas</.link>
-              <.link navigate={~p"/posts"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Blog</.link>
+              <%!-- <.link navigate={~p"/posts"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Blog</.link> --%>
 
             </div>
             <div class="py-6">
@@ -139,10 +139,10 @@
 
   <footer class="bg-gray-900">
     <div class="mx-auto max-w-7xl overflow-hidden px-6 py-20 sm:py-24 lg:px-8">
-      <nav :if={Moly.Utilities.Page.website_links} class="-mb-6 flex flex-wrap justify-center gap-x-12 gap-y-3 text-sm/6" aria-label="Footer">
+      <nav :if={Moly.Utilities.Page.website_links != []} class="-mb-6 flex flex-wrap justify-center gap-x-12 gap-y-3 text-sm/6" aria-label="Footer">
         <a :for={termmeta <- Moly.Utilities.Page.website_links} href={termmeta.meta_value} class="text-gray-400 hover:text-white">{termmeta.meta_key}</a>
       </nav>
-      <div :if={Moly.Utilities.Page.social_links} class="mt-16 flex justify-center gap-x-10">
+      <div :if={Moly.Utilities.Page.social_links != []} class="mt-16 flex justify-center gap-x-10">
         <a :for={termmeta <- Moly.Utilities.Page.social_links} :if={is_map(termmeta.term_value)} href={termmeta.term_value["url"]} class="text-gray-400 hover:text-gray-300">
           {raw termmeta.term_value["icon"]}
         </a>

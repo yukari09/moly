@@ -1,8 +1,9 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+@import "../node_modules/@yaireo/tagify/dist/tagify.css";
 @import "../node_modules/flatpickr/dist/flatpickr.min.css";
-@import "@yaireo/tagify/dist/tagify.css";
 
 /* This file is for your main application CSS */
 

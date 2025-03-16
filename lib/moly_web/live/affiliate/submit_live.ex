@@ -60,7 +60,7 @@ defmodule MolyWeb.Affiliate.SubmitLive do
               [
                 %{meta_key: :attached_file, meta_value: filename},
                 %{meta_key: :attachment_filesize, meta_value: "#{filesize}"},
-                %{meta_key: :attachment_metadata, meta_value: Jason.encode!(meta_data)},
+                %{meta_key: :attachment_metadata, meta_value: JSON.encode!(meta_data)},
                 %{meta_key: :attachment_image_alt, meta_value: client_name_with_extension},
                 %{meta_key: :attachment_image_caption, meta_value: client_name_with_extension}
               ]

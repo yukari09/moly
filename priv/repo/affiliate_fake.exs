@@ -385,8 +385,8 @@ defmodule Moly.AffiliateFake do
     Enum.take_random(ids, num)
   end
   def get_actor(id) do
-    Ash.get!(Moly.Accounts.User, id, context: %{private: %{ash_authentication?: true}})
-    |> Map.put(:roles, [:owner])
+    Ash.Query.new(Moly.Accounts.User)
+    |> Ash.read_first!(context: %{private: %{ash_authentication?: true}})
   end
   def random_country(), do: get_term_taxonomy("countries") |> Enum.random() |> Map.get(:id)
   def random_industry(), do: get_term_taxonomy("industries") |> Enum.random() |> Map.get(:id)

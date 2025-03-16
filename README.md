@@ -26,4 +26,5 @@ slug industries
 
 term_taxonomy
 
-
+docker login -u yukari
+dckr_pat_XCtN0rMXd2itn6DuQVieeOsvFCU

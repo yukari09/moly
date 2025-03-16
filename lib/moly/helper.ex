@@ -102,10 +102,7 @@ defmodule Moly.Helper do
     to_string(o)
   end
 
-  defp s3_path(filename) do
-    bucket = load_s3_config(:bucket)
-    "#{bucket}/#{filename}"
-  end
+  defp s3_path(filename), do: load_s3_config(:bucket) |> Path.join(filename)
 
   def s3_file_with_domain(filename),
     do: "#{load_s3_config(:domain_scheme)}://#{load_s3_config(:domain)}/#{filename}"
