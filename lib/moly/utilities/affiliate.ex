@@ -62,7 +62,7 @@ defmodule Moly.Utilities.Affiliate do
   def affiliate_industry_slug(%Post{id: _id} = post) do
     affiliate_industry(post)
     |> case do
-      nil -> nil
+      nil -> ""
       %{slug: slug} -> slug
     end
   end
