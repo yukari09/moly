@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "daisyui": "^4.12.23",
+    "daisyui": "^5.0.6",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-font-inter": "^3.1.0"
   },

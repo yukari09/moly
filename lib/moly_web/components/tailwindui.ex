@@ -493,10 +493,12 @@ defmodule MolyWeb.TailwindUI do
   attr(:help_text, :string, default: nil)
   attr(:errors, :list, default: [])
   attr(:show_error, :boolean, default: true)
+  attr(:value, :any, default: nil)
+  attr(:field_subfix, :string, default: nil)
   attr(:rest, :global)
   attr(:aria_label, :string, default: nil)
 
-  def input(%{field: field} = assigns) do
+  def input(%{field: field, value: value, field_subfix: field_subfix} = assigns) do
     error_messages = error_messages(field.errors)
     # error_messages =
     #   field.form.source.touched_forms
@@ -506,6 +508,18 @@ defmodule MolyWeb.TailwindUI do
     #     false -> []
     #   end
     assigns = assign(assigns, :errors, error_messages)
+    assigns = if value do
+      field = %{field | value: value}
+      assign(assigns, :field, field)
+    else
+      assigns
+    end
+    assigns = if field_subfix do
+      field = %{field | name: "#{field.name}#{field_subfix}", id: "#{field.id}#{field_subfix}"}
+      assign(assigns, :field, field)
+    else
+      assigns
+    end
 
     ~H"""
     <div class={@container_class}>
@@ -561,14 +575,27 @@ defmodule MolyWeb.TailwindUI do
   attr(:class, :string, default: nil)
   attr(:help_text, :string, default: nil)
   attr(:errors, :list, default: [])
+  attr(:value, :any, default: nil)
+  attr(:field_subfix, :string, default: nil)
   attr(:rest, :global)
   attr(:rows, :integer, default: 3)
   slot(:inner_block)
 
-  def textarea(%{field: field} = assigns) do
+  def textarea(%{field: field, value: value, field_subfix: field_subfix} = assigns) do
     error_messages = error_messages(field.errors)
     assigns = assign(assigns, :errors, error_messages)
-
+    assigns = if value do
+      field = %{field | value: value}
+      assign(assigns, :field, field)
+    else
+      assigns
+    end
+    assigns = if field_subfix do
+      field = %{field | name: "#{field.name}#{field_subfix}", id: "#{field.id}#{field_subfix}"}
+      assign(assigns, :field, field)
+    else
+      assigns
+    end
     ~H"""
     <div>
       <label for={@field.id} class="block text-sm/6 font-medium text-gray-900"><%= @label %></label>
@@ -797,13 +824,27 @@ defmodule MolyWeb.TailwindUI do
 
   attr(:label, :string, required: true)
   attr(:field, Phoenix.HTML.FormField, required: true)
+  attr(:value, :any, default: nil)
+  attr(:field_subfix, :string, default: nil)
   attr(:options, :list, required: true)
   attr(:class, :string, default: nil)
   attr(:multiple, :boolean, default: false)
   attr(:prompt, :string, default: nil)
   attr(:rest, :global)
 
-  def select(assigns) do
+  def select(%{field: field, value: value, field_subfix: field_subfix} = assigns) do
+    assigns = if value do
+      field = %{field | value: value}
+      assign(assigns, :field, field)
+    else
+      assigns
+    end
+    assigns = if field_subfix do
+      field = %{field | name: "#{field.name}#{field_subfix}", id: "#{field.id}#{field_subfix}"}
+      assign(assigns, :field, field)
+    else
+      assigns
+    end
     ~H"""
     <div>
       <label for={@field.id} class="block text-sm/6 font-medium text-gray-900"><%= @label %></label>

@@ -23,7 +23,7 @@ pipelines:
   branches:
     affiliate:
       - step:
-          name: Build and Test
+          name: Build
           script:
             - IMAGE_NAME=$BITBUCKET_REPO_SLUG
             - docker build . --file Dockerfile --tag ${IMAGE_NAME}
@@ -35,7 +35,7 @@ pipelines:
           artifacts:
             - "*.tar"
       - step:
-          name: Deploy to Production
+          name: Push Image
           deployment: Production
           script:
             - echo ${DOCKERHUB_PASSWORD} | docker login --username "$DOCKERHUB_USERNAME" --password-stdin

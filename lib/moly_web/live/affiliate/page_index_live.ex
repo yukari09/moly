@@ -19,7 +19,7 @@ defmodule MolyWeb.Affiliate.PageIndexLive do
         author: :user_meta,
         post_meta: :children
       ])
-      |> Ash.Query.sort(commission_avg: :desc, inserted_at: :desc)
+      |> Ash.Query.sort(inserted_at: :desc)
       |> Ash.read!(opts)
     end
 

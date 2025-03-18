@@ -57,7 +57,7 @@ defmodule MolyWeb.Affiliate.BrowseLive do
           Moly.Contents.Post,
           post_type == :affiliate and post_status in [:publish]
         )
-        |> Ash.Query.sort(commission_avg: :desc, inserted_at: :desc)
+        |> Ash.Query.sort(inserted_at: :desc)
 
       query =
         if slug do
