@@ -27,7 +27,7 @@ config :moly, MolyWeb.Endpoint,
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:moly, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:moly, ~w(--watch)]},
-    storybook_tailwind: {Tailwind, :install_and_run, [:storybook, ~w(--watch)]}
+    # storybook_tailwind: {Tailwind, :install_and_run, [:storybook, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -60,7 +60,7 @@ config :moly, MolyWeb.Endpoint,
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
       ~r"lib/moly_web/(controllers|live|components)/.*(ex|heex)$",
-      ~r"storybook/.*(exs)$"
+      # ~r"storybook/.*(exs)$"
     ]
   ]
 

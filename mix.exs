@@ -69,7 +69,7 @@ defmodule Moly.MixProject do
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:heroicons,
        github: "tailwindlabs/heroicons",
-       tag: "v2.1.5",
+       tag: "v2.2.0",
        sparse: "optimized",
        app: false,
        compile: false,
@@ -101,7 +101,7 @@ defmodule Moly.MixProject do
       "assets.build": ["tailwind moly", "esbuild moly"],
       "assets.deploy": [
         "tailwind moly --minify",
-        "tailwind storybook --minify",
+        # "tailwind storybook --minify",
         "esbuild moly --minify",
         "phx.digest"
       ]

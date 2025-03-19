@@ -1,26 +1,15 @@
-@variant dark (&:where(.dark, .dark *));
-
-@variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
-@variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
-@variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
-
-@plugin "./heroicons.tailwind.plugin.js";
-
-@import "tailwindcss" source("../..");
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 @import "../node_modules/@yaireo/tagify/dist/tagify.css";
 @import "../node_modules/quill/dist/quill.snow.css";
 @import "../node_modules/flatpickr/dist/flatpickr.min.css";
 @import "../node_modules/@splidejs/splide/dist/css/splide.min.css";
 
-@theme {
-  --font-sans: InterVariable, sans-serif;
-}
-
 button[disabled]{
     @apply opacity-50;
 }
-
 
 .tagify{
     --tags-disabled-bg: rgb(243, 244, 246); /* gray-100 */

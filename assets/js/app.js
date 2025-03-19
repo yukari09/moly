@@ -23,23 +23,13 @@ import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import Hooks from "./hooks"
 import Uploaders from "./uploaders"
-import { Validators, countWords } from "./form-validate"
-import Tagify from '@yaireo/tagify'
-
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 3000,
   params: {_csrf_token: csrfToken},
   hooks: Hooks,
-  uploaders: Uploaders,
-  dom: {
-    onBeforeElUpdated(from, to) {
-      if (from._x_dataStack) {
-        window.Alpine.clone(from, to)
-      }
-    }
-  }
+  uploaders: Uploaders
 })
 
 // Show progress bar on live navigation and form submits
@@ -61,168 +51,8 @@ window.addEventListener("phx:show-modal", async (event) => {
   el.showModal()
 })
 
-window.addEventListener("app:count_word", async (event) => {
-  const text = event.target.value.trim()
-  event.target.setAttribute("data-count-word", countWords(text))
-})
-
-
-//fill attr value to other el textContent
-//<input 
-// id="input1" 
-// attr="value" 
-// phx-change={
-//   JS.dispatch(
-//     "app:fill_text_with_attribute", 
-//      detail: %{to_el: "span2", from_attr: "attr"})
-// }>123</span>
-//<span id="span2"></span>
-window.addEventListener("app:fill_text_with_attribute", async (event) => {
-  const from_el = event.target
-  const to_el = document.querySelector(`${event.detail.to_el}`)
-  const from_attr = event.detail.from_attr
-
-  if(from_el, to_el, from_attr){ to_el.textContent =  from_el.getAttribute(from_attr)}
-})
-
-
-window.addEventListener("app:input-validate", async(event) => {
-  const {validator, params, error_msg} = event.detail
-
-  if (validator != "undefined" && typeof Validators[validator] === "function") {
-    let function_var = [event.target.value]
-    if (params) {
-      function_var = function_var.concat(params)
-    }
-
-    if(error_msg != "undefined"){
-      function_var.push(error_msg)
-    }
-
-    const this_el_id = event.target.getAttribute("id")
-    const validateResult = Validators[validator](...function_var)
-    const elHelper = document.querySelector(`#${this_el_id}-helper`)
-    const elError = document.querySelector(`#${this_el_id}-error`)
-    const elErrorIcon = document.querySelector(`.${this_el_id}-icon`)
-
-    const normalClass = event.target.dataset.normalClass
-    const errorClass = event.target.dataset.errorClass
-
-    if (validateResult !== true) {
-      if (elError) {
-        elError.textContent = validateResult;
-        elError.classList.remove("hidden");
-      }
-      if (elHelper) {
-        elHelper.classList.add("hidden");
-      }
-      event.target.setAttribute("data-validate", "0")
-      if(normalClass && errorClass){
-        let nc = normalClass.split(" ")
-        let ec = errorClass.split(" ")
-        event.target.classList.remove(...nc)
-        event.target.classList.add(...ec)
-      }
-      if(elErrorIcon) elErrorIcon.classList.remove("hidden")
-    } else {
-      if (elError) {
-        elError.textContent = "";
-        elError.classList.add("hidden");
-      }
-      if (elHelper) {
-        elHelper.classList.remove("hidden");
-      }
-      event.target.setAttribute("data-validate", "1")
-      if(normalClass && errorClass){
-        let nc = normalClass.split(" ")
-        let ec = errorClass.split(" ")
-        event.target.classList.remove(...ec)
-        event.target.classList.add(...nc)
-      }
-      if(elErrorIcon) elErrorIcon.classList.add("hidden")
-    }
-  }
-})
-
-window.addEventListener("phx:validate-and-exec", async(event) => {
-  if(event.target == window && event.detail.form_name){
-    const formElements = document.querySelectorAll(`[name^="${event.detail.form_name}"]`)
-    let dataInputDispatch = Array.from(formElements)
-    .filter(el => {
-      return  el.dataset.inputDispatch
-    })
-    dataInputDispatch.forEach(el => {
-      const exec_event = new CustomEvent("app:validate-and-exec", {
-        bubbles: true
-      })
-      el.dispatchEvent(exec_event)
-    })
-  }
-})
-
-window.addEventListener("app:validate-and-exec", async(event) => {
-  if(event.target.dataset != undefined && event.target.dataset.inputDispatch != undefined){
-    JSON.parse(event.target.dataset.inputDispatch).forEach(e => {
-      const event_name = e[0]
-      const data_name = `data-${event_name.replace(":","-")}`
-      let event_detail = {}
-      if(e.length == 2) event_detail = e[1].detail
-      const exec_event = new CustomEvent(event_name, {
-        detail: event_detail,
-        bubbles: true
-      })
-      event.target.dispatchEvent(exec_event)
-      event.target.setAttribute(data_name, 'true')
-    })
-  }
-
-
-  const name = event.target.getAttribute("name")
-  let prefix =  name.match(/^([^\[]+)/)
-  prefix = prefix ? prefix[0].split("_")[0] : event.target.dataset.formName
-
-  if(prefix){
-    const formElements = document.querySelectorAll(`[data-input-dispatch]`)
-
-    let validated = Array.from(formElements)
-    .filter(el => {
-      return el.dataset.validate == "1"
-    })
-
-    const submit_btn = document.querySelector(`#${prefix}_submit`)
-
-    if(formElements.length == validated.length){
-      submit_btn.removeAttribute("disabled")
-    }else{
-      submit_btn.setAttribute("disabled", "disabled")
-    }
-  }
-})
-
-window.addEventListener("phx:TagsTagify", async(event) => {
-  let el = event.detail.id === undefined 
-  ? event.target 
-  : document.querySelector(`${event.detail.id}`) || event.target;
-
-  if (el.tagify !== undefined) {
-    el.tagify.destroy();
-  }
-
-  let config = el.config === undefined 
-    ? { whitelist: [], dropdown: { enabled: 0 } } 
-    : JSON.parse(el.dataset.config);
-
-  el.tagify = new Tagify(el, config);
-
-})
-
-window.addEventListener("phx:blank_link", event => {
-  console.log(event)
-  if (event.detail.url != undefined) window.open(event.detail.url, "_blank")
-})
 
 //Admin
-
 window.addEventListener("app:disabledFormElement", (event) => {
   //disabled this form elements like input, select, checkbox, etc
   const form = event.target

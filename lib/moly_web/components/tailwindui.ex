@@ -515,7 +515,7 @@ defmodule MolyWeb.TailwindUI do
       assigns
     end
     assigns = if field_subfix do
-      field = %{field | name: "#{field.name}#{field_subfix}", id: "#{field.id}#{field_subfix}"}
+      field = %{field | name: "#{field.name}#{field_subfix}", id: "#{field.id}#{String.replace(field_subfix, ~r/\[|\]/, "_")}"}
       assign(assigns, :field, field)
     else
       assigns
@@ -591,7 +591,7 @@ defmodule MolyWeb.TailwindUI do
       assigns
     end
     assigns = if field_subfix do
-      field = %{field | name: "#{field.name}#{field_subfix}", id: "#{field.id}#{field_subfix}"}
+      field = %{field | name: "#{field.name}#{field_subfix}", id: "#{field.id}#{String.replace(field_subfix, ~r/\[|\]/, "_")}"}
       assign(assigns, :field, field)
     else
       assigns
@@ -840,7 +840,7 @@ defmodule MolyWeb.TailwindUI do
       assigns
     end
     assigns = if field_subfix do
-      field = %{field | name: "#{field.name}#{field_subfix}", id: "#{field.id}#{field_subfix}"}
+      field = %{field | name: "#{field.name}#{field_subfix}", id: "#{field.id}#{String.replace(field_subfix, ~r/\[|\]/, "_")}"}
       assign(assigns, :field, field)
     else
       assigns

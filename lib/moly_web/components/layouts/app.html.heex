@@ -1,6 +1,6 @@
 <div class="bg-white">
   <header class="absolute inset-x-0 top-0 z-10">
-    <nav class="flex items-center justify-between px-4 py-4 lg:px-8 border-b" aria-label="Global">
+    <nav class="flex items-center justify-between px-4 py-4 lg:px-8 border-b border-gray-100" aria-label="Global">
       <div class="flex lg:flex-1 items-center gap-12">
         <.link navigate={"/"} class="-m-1.5 p-1.5 hidden lg:block">
           <span class="sr-only">Affinew</span>
@@ -68,11 +68,11 @@
               </.link>
             </div>
             <div class="py-1" role="none">
-              <.link :if={:admin in @current_user.roles} navigate={~p"/admin/dashboard"} class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-0">
+              <.link :if={:admin in @current_user.roles} navigate={~p"/admin/dashboard"} class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-002">
                 <Lucideicons.sticker class="mr-3 size-4 text-gray-700  group-hover:text-gray-900" />
                 Admin
               </.link>
-              <.link navigate={Moly.Utilities.Account.link_profile(@current_user)} class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-0">
+              <.link navigate={Moly.Utilities.Account.link_profile(@current_user)} class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-003">
                 <Lucideicons.user class="mr-3 size-4 text-gray-700 group-hover:text-gray-900" />
                 Profile
               </.link>

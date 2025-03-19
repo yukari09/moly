@@ -46,7 +46,7 @@ defmodule MolyWeb.Affiliate.SubmitLive do
 
       assign(socket, countries: countries, industries: industries, form: form, post: post)
       |> allow_upload(:media,
-        accept: ~w(.jpg .jpeg .png .gif),
+        accept: ~w(.jpg .jpeg .png .webp),
         max_entries: 6,
         max_file_size: 4_000_000
       )
