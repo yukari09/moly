@@ -93,14 +93,6 @@ config :tailwind,
     ),
     cd: Path.expand("../assets", __DIR__)
   ]
-  # storybook: [
-  #   args: ~w(
-  #     --config=tailwind.config.js
-  #     --input=css/storybook.css
-  #     --output=../priv/static/assets/storybook.css
-  #   ),
-  #   cd: Path.expand("../assets", __DIR__)
-  # ]
 
 # ,
 # admin: [

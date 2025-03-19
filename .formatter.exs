@@ -239,7 +239,6 @@ spark_locals_without_parens = [
   inputs: [
     "{mix,.formatter}.exs",
     "{config,lib,test,benchmarks,flames}/**/*.{ex,exs}",
-    "storybook/**/*.exs"
   ],
   plugins: [Spark.Formatter],
   locals_without_parens: spark_locals_without_parens,

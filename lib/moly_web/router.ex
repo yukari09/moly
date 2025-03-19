@@ -2,7 +2,6 @@ defmodule MolyWeb.Router do
   use MolyWeb, :router
 
   use AshAuthentication.Phoenix.Router
-  import PhoenixStorybook.Router
 
   # import AshAdmin.Router
 
@@ -25,9 +24,6 @@ defmodule MolyWeb.Router do
   #   plug(:put_root_layout, html: {MolyWeb.Layouts, :root_admin})
   # end
 
-  scope "/" do
-    storybook_assets()
-  end
 
   # scope "/", MolyWeb do
     # pipe_through(:browser)
@@ -101,7 +97,6 @@ defmodule MolyWeb.Router do
       live("/affiliate/:post_name", Affiliate.ViewLive)
     end
 
-    live_storybook "/storybook", backend_module: MolyWeb.Storybook
   end
 
   # scope "/" do

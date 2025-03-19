@@ -14,7 +14,6 @@ module.exports = {
     "../lib/moly_web/**/*.*ex",
     "../lib/moly/utilities/*.*ex",
     "../deps/ash_authentication_phoenix/**/*.*ex",
-    "../storybook/**/*.*exs",
   ],
   // daisyui: {
   //   themes: [

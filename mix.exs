@@ -33,7 +33,7 @@ defmodule Moly.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix_storybook, "~> 0.8.1"},
+      {:live_svelte, "~> 0.15.0"},
       {:timex, "~> 3.7"},
       {:flame, "~> 0.5"},
       {:ash_rbac, "~> 0.6.1"},
@@ -101,7 +101,6 @@ defmodule Moly.MixProject do
       "assets.build": ["tailwind moly", "esbuild moly"],
       "assets.deploy": [
         "tailwind moly --minify",
-        # "tailwind storybook --minify",
         "esbuild moly --minify",
         "phx.digest"
       ]
