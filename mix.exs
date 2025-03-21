@@ -33,7 +33,6 @@ defmodule Moly.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:live_svelte, "~> 0.15.0"},
       {:timex, "~> 3.7"},
       {:flame, "~> 0.5"},
       {:ash_rbac, "~> 0.6.1"},
@@ -97,7 +96,6 @@ defmodule Moly.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ash.setup --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      # "assets.build": ["tailwind moly", "tailwind admin", "esbuild moly"],
       "assets.build": ["tailwind moly", "esbuild moly"],
       "assets.deploy": [
         "tailwind moly --minify",

@@ -111,6 +111,7 @@ if config_env() == :prod do
   config :moly, Moly.Mailer,
     adapter: Resend.Swoosh.Adapter,
     api_key: System.fetch_env!("RESEND_API_KEY")
+
   #
   # For this example you need include a HTTP client required by Swoosh API client.
   # Swoosh supports Hackney and Finch out of the box:
@@ -136,9 +137,10 @@ if config_env() == :prod do
     host: System.get_env("S3_HOST"),
     port: String.to_integer(System.get_env("S3_PORT", "443")),
     bucket: System.get_env("S3_BUCKET")
-    #custom args
-    # domain: System.get_env("S3_DOMAIN"),
-    # domain_scheme: System.get_env("S3_DOMAIN_SCHEME")
+
+  # custom args
+  # domain: System.get_env("S3_DOMAIN"),
+  # domain_scheme: System.get_env("S3_DOMAIN_SCHEME")
 
   config :imgproxy,
     prefix: System.get_env("IMGPROXY_PREFIX"),

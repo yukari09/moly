@@ -329,8 +329,7 @@ defmodule Moly.Contents.Post do
     has_many :post_meta, Moly.Contents.PostMeta
     has_many :posts, Moly.Contents.Post, destination_attribute: :post_parent
 
-    many_to_many :term_taxonomy, Moly.Terms.TermTaxonomy,
-      through: Moly.Terms.TermRelationships
+    many_to_many :term_taxonomy, Moly.Terms.TermTaxonomy, through: Moly.Terms.TermRelationships
 
     has_many :post_actions, Moly.Accounts.UserPostAction
 

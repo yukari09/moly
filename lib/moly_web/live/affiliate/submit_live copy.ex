@@ -420,7 +420,7 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
       {"ZAR", "R (ZAR - South African Rand)"}
     ]
 
-  defp commission_model(), do: ["CPC", "CPS", "CPL", "CPI","CPA", "Recurring"]
+  defp commission_model(), do: ["CPC", "CPS", "CPL", "CPI", "CPA", "Recurring"]
 
   defp set_current_user_as_owner(current_user),
     do: %{current_user | roles: [:owner | current_user.roles]}

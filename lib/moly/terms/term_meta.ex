@@ -53,7 +53,7 @@ defmodule Moly.Terms.TermMeta do
   attributes do
     uuid_primary_key :id
 
-    attribute :term_key, :string do
+    attribute :term_key, :atom do
       allow_nil? false
     end
 

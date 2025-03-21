@@ -1,6 +1,11 @@
 {
   "devDependencies": {
     "daisyui": "^5.0.6",
+    "esbuild": "^0.25.1",
+    "esbuild-plugin-import-glob": "^0.1.1",
+    "esbuild-svelte": "^0.9.2",
+    "svelte": "^5.23.2",
+    "svelte-preprocess": "^6.0.3",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-font-inter": "^3.1.0"
   },
@@ -19,7 +24,11 @@
     "easymde": "^2.19.0",
     "flatpickr": "^4.6.13",
     "inter-ui": "^4.1.0",
+    "live_svelte": "file:../deps/live_svelte",
     "luxon": "^3.5.0",
+    "phoenix": "file:../deps/phoenix",
+    "phoenix_html": "file:../deps/phoenix_html",
+    "phoenix_live_view": "file:../deps/phoenix_live_view",
     "preline": "^3.0.1",
     "quill": "^2.0.3",
     "quill-delta-markdown": "^0.0.0",

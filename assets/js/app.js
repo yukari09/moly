@@ -51,7 +51,6 @@ window.addEventListener("phx:show-modal", async (event) => {
   el.showModal()
 })
 
-
 //Admin
 window.addEventListener("app:disabledFormElement", (event) => {
   //disabled this form elements like input, select, checkbox, etc

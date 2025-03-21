@@ -4,9 +4,58 @@
 @variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
 @variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
 
+/* @import "tailwindcss" source("../..");
+@plugin "daisyui";
+@plugin "./heroicons.tailwind.plugin.js"; */
+
 @plugin "./heroicons.tailwind.plugin.js";
 
-@import "tailwindcss" source("../..");
+@source "../js/**/*.js";
+@source "../../lib/moly_web.ex";
+@source "../../lib/moly_web/**/*.*ex";
+
+@import "tailwindcss";
+@plugin "daisyui";
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: oklch(98% 0 0);
+  --color-base-200: oklch(97% 0 0);
+  --color-base-300: oklch(92% 0 0);
+  --color-base-content: oklch(20% 0 0);
+  --color-primary: oklch(64% 0.2 131.684);
+  --color-primary-content: oklch(98% 0.031 120.757);
+  --color-secondary: oklch(54% 0.245 262.881);
+  --color-secondary-content: oklch(97% 0.014 254.604);
+  --color-accent: oklch(62% 0.194 149.214);
+  --color-accent-content: oklch(98% 0.018 155.826);
+  --color-neutral: oklch(26% 0 0);
+  --color-neutral-content: oklch(98% 0 0);
+  --color-info: oklch(74% 0.16 232.661);
+  --color-info-content: oklch(29% 0.066 243.157);
+  --color-success: oklch(76% 0.177 163.223);
+  --color-success-content: oklch(26% 0.051 172.552);
+  --color-warning: oklch(85% 0.199 91.936);
+  --color-warning-content: oklch(28% 0.066 53.813);
+  --color-error: oklch(71% 0.194 13.428);
+  --color-error-content: oklch(27% 0.105 12.094);
+  --radius-selector: 0rem;
+  --radius-field: 2rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+};
+
+@theme {
+  --color-green-primary: #09442b;
+  --color-green-secondary: #005a02;
+  --color-green-light: #92e692;
+};
 
 @import "../node_modules/@yaireo/tagify/dist/tagify.css";
 @import "../node_modules/quill/dist/quill.snow.css";

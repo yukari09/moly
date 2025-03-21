@@ -58,7 +58,7 @@ config :moly, MolyWeb.Endpoint,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/moly_web/(controllers|live|components)/.*(ex|heex)$",
+      ~r"lib/moly_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]
 
@@ -93,8 +93,7 @@ config :moly,
   email_name: "moly@moly.dev",
   email_address: "moly@moly.dev"
 
-
-  config :ex_aws,
+config :ex_aws,
   region: "us-east-1",
   access_key_id: "415efd2219d218600c53964e88d8fe82",
   secret_access_key: "78b72539f2b1daef78868904b452592790d62e00b404455e1a0384bd14f264bf"
@@ -104,6 +103,7 @@ config :ex_aws, :s3,
   host: "9a489bdeb68e9c3976091df2de6de7d8.r2.cloudflarestorage.com",
   port: 443,
   bucket: "moly-dev"
+
 #   domain: "192.168.6.8:9000/local", #set minio bucket public for accsess
 #   domain_scheme: "http"
 

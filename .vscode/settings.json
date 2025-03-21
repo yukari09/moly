@@ -6,6 +6,10 @@
   "tailwindCSS.includeLanguages": { 
     "phoenix-heex": "html", 
     "elixir": "html",
-  }
+  },
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "file": "./.vscode/daisyui.md"
+    }
+  ]
 }
- 

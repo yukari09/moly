@@ -24,32 +24,31 @@ defmodule MolyWeb.Router do
   #   plug(:put_root_layout, html: {MolyWeb.Layouts, :root_admin})
   # end
 
-
   # scope "/", MolyWeb do
-    # pipe_through(:browser)
+  # pipe_through(:browser)
 
-    # ash_authentication_live_session :authenticated_routes do
-    #   # in each liveview, add one of the following at the top of the module:
-    #   #
-    #   # If an authenticated user must be present:
-    #   # on_mount {MolyWeb.LiveUserAuth, :live_user_required}
-    #   #
-    #   # If an authenticated user *may* be present:
-    #   # on_mount {MolyWeb.LiveUserAuth, :live_user_optional}
-    #   #
-    #   # If an authenticated user must *not* be present:
-    #   # on_mount {MolyWeb.LiveUserAuth, :live_no_user}
-    # end
+  # ash_authentication_live_session :authenticated_routes do
+  #   # in each liveview, add one of the following at the top of the module:
+  #   #
+  #   # If an authenticated user must be present:
+  #   # on_mount {MolyWeb.LiveUserAuth, :live_user_required}
+  #   #
+  #   # If an authenticated user *may* be present:
+  #   # on_mount {MolyWeb.LiveUserAuth, :live_user_optional}
+  #   #
+  #   # If an authenticated user must *not* be present:
+  #   # on_mount {MolyWeb.LiveUserAuth, :live_no_user}
+  # end
 
-    # ash_authentication_live_session :authenticated_maybe_routes,
-    #   on_mount: {MolyWeb.LiveUserAuth, :live_user_optional} do
-    #   live("/", Affiliate.PageIndexLive)
-    # end
+  # ash_authentication_live_session :authenticated_maybe_routes,
+  #   on_mount: {MolyWeb.LiveUserAuth, :live_user_optional} do
+  #   live("/", Affiliate.PageIndexLive)
+  # end
 
-    # ash_authentication_live_session :authenticated_routes,
-    #   on_mount: {MolyWeb.LiveUserAuth, :live_user_required} do
-    #   live("/products/submit", Affiliate.ProductSubmitLive)
-    # end
+  # ash_authentication_live_session :authenticated_routes,
+  #   on_mount: {MolyWeb.LiveUserAuth, :live_user_required} do
+  #   live("/products/submit", Affiliate.ProductSubmitLive)
+  # end
   # end
 
   scope "/", MolyWeb do
@@ -88,15 +87,22 @@ defmodule MolyWeb.Router do
 
     ash_authentication_live_session :authenticated_maybe_routes,
       on_mount: {MolyWeb.LiveUserAuth, :live_user_optional} do
-      live("/", Affiliate.PageIndexLive)
+      # v1
+      # live("/", Affiliate.PageIndexLive)
       live("/browse", Affiliate.BrowseLive)
       live("/browse/:slug", Affiliate.BrowseLive)
       live("/search", Affiliate.SearchLive)
       live("/affiliates/:slug", Affiliate.AffiliatesLive)
       live("/user/page/:username", Affiliate.UserPageLive)
       live("/affiliate/:post_name", Affiliate.ViewLive)
+      # v2
+      live("/", Affinew.IndexLive)
+      live("/results", Affinew.ResultsLive)
+      live("/programs", Affinew.ProgramsLive)
+      live("/programs/:term_slug", Affinew.ProgramsTermSlugLive)
+      live("/programs/:term_slug/:post_name", Affinew.ProgramsViewLive)
+      live("/user/@:username", Affinew.UserPageLive)
     end
-
   end
 
   # scope "/" do

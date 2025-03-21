@@ -498,7 +498,7 @@ defmodule MolyWeb.TailwindUI do
   attr(:rest, :global)
   attr(:aria_label, :string, default: nil)
 
-  def input(%{field: field, value: value, field_subfix: field_subfix} = assigns) do
+  def input(%{field: field, field_subfix: field_subfix} = assigns) do
     error_messages = error_messages(field.errors)
     # error_messages =
     #   field.form.source.touched_forms
@@ -508,18 +508,19 @@ defmodule MolyWeb.TailwindUI do
     #     false -> []
     #   end
     assigns = assign(assigns, :errors, error_messages)
-    assigns = if value do
-      field = %{field | value: value}
-      assign(assigns, :field, field)
-    else
-      assigns
-    end
-    assigns = if field_subfix do
-      field = %{field | name: "#{field.name}#{field_subfix}", id: "#{field.id}#{String.replace(field_subfix, ~r/\[|\]/, "_")}"}
-      assign(assigns, :field, field)
-    else
-      assigns
-    end
+
+    assigns =
+      if field_subfix do
+        field = %Phoenix.HTML.FormField{
+          field
+          | name: "#{field.name}#{field_subfix}",
+            id: "#{field.id}#{String.replace(field_subfix, ~r/\[|\]/, "_")}"
+        }
+
+        assign(assigns, :field, field)
+      else
+        assigns
+      end
 
     ~H"""
     <div class={@container_class}>
@@ -528,7 +529,7 @@ defmodule MolyWeb.TailwindUI do
         type={@type}
         name={@field.name}
         id={@field.id}
-        value={@field.value}
+        value={@value || @field.value}
         placeholder={@placeholder}
         aria-label={@aria_label}
         class={[
@@ -544,10 +545,10 @@ defmodule MolyWeb.TailwindUI do
           type={@type}
           name={@field.name}
           id={@field.id}
-          value={@field.value}
+          value={@value || @field.value}
           placeholder={@placeholder}
           class={[
-            "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
+            "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900  outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
             @errors != [] && "col-start-1 row-start-1 text-red-900 outline-red-300 placeholder:text-red-300 focus:outline-red-600 pr-10",
             @class
           ]}
@@ -584,18 +585,28 @@ defmodule MolyWeb.TailwindUI do
   def textarea(%{field: field, value: value, field_subfix: field_subfix} = assigns) do
     error_messages = error_messages(field.errors)
     assigns = assign(assigns, :errors, error_messages)
-    assigns = if value do
-      field = %{field | value: value}
-      assign(assigns, :field, field)
-    else
-      assigns
-    end
-    assigns = if field_subfix do
-      field = %{field | name: "#{field.name}#{field_subfix}", id: "#{field.id}#{String.replace(field_subfix, ~r/\[|\]/, "_")}"}
-      assign(assigns, :field, field)
-    else
-      assigns
-    end
+
+    assigns =
+      if value do
+        field = %{field | value: value}
+        assign(assigns, :field, field)
+      else
+        assigns
+      end
+
+    assigns =
+      if field_subfix do
+        field = %{
+          field
+          | name: "#{field.name}#{field_subfix}",
+            id: "#{field.id}#{String.replace(field_subfix, ~r/\[|\]/, "_")}"
+        }
+
+        assign(assigns, :field, field)
+      else
+        assigns
+      end
+
     ~H"""
     <div>
       <label for={@field.id} class="block text-sm/6 font-medium text-gray-900"><%= @label %></label>
@@ -833,22 +844,31 @@ defmodule MolyWeb.TailwindUI do
   attr(:rest, :global)
 
   def select(%{field: field, value: value, field_subfix: field_subfix} = assigns) do
-    assigns = if value do
-      field = %{field | value: value}
-      assign(assigns, :field, field)
-    else
-      assigns
-    end
-    assigns = if field_subfix do
-      field = %{field | name: "#{field.name}#{field_subfix}", id: "#{field.id}#{String.replace(field_subfix, ~r/\[|\]/, "_")}"}
-      assign(assigns, :field, field)
-    else
-      assigns
-    end
+    assigns =
+      if value do
+        field = %{field | value: value}
+        assign(assigns, :field, field)
+      else
+        assigns
+      end
+
+    assigns =
+      if field_subfix do
+        field = %{
+          field
+          | name: "#{field.name}#{field_subfix}",
+            id: "#{field.id}#{String.replace(field_subfix, ~r/\[|\]/, "_")}"
+        }
+
+        assign(assigns, :field, field)
+      else
+        assigns
+      end
+
     ~H"""
     <div>
       <label for={@field.id} class="block text-sm/6 font-medium text-gray-900"><%= @label %></label>
-      <div class="mt-2 grid grid-cols-1">
+      <div class={[@label &&  "mt-2", "grid grid-cols-1"]}>
         <select
           id={@field.id}
           name={@multiple && "#{@field.name}[]" || @field.name}
@@ -861,9 +881,9 @@ defmodule MolyWeb.TailwindUI do
         >
           <option :if={@prompt} value="" disabled selected>{@prompt}</option>
           <option
-            :for={{value, label} <- @options}
-            value={value}
-            selected={(is_binary(@field.value) && value == @field.value) || (is_list(@field.value) && value in @field.value)}
+            :for={{options_value, label} <- @options}
+            value={options_value}
+            selected={(is_binary(@field.value) && options_value == @field.value) || (is_list(@field.value) && options_value in @field.value)}
           >
             <%= label %>
           </option>

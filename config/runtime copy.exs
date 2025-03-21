@@ -111,6 +111,7 @@ if config_env() == :prod do
   config :moly, Moly.Mailer,
     adapter: Resend.Swoosh.Adapter,
     api_key: System.fetch_env!("RESEND_API_KEY")
+
   #
   # For this example you need include a HTTP client required by Swoosh API client.
   # Swoosh supports Hackney and Finch out of the box:
@@ -120,7 +121,8 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
   # Customize env for this app
   config :moly,
-    google_oauth2_client_id: "486343447885-9jg87vj9h0qafcdvu4k2ugb7dggbsion.apps.googleusercontent.com",
+    google_oauth2_client_id:
+      "486343447885-9jg87vj9h0qafcdvu4k2ugb7dggbsion.apps.googleusercontent.com",
     google_oauth2_redirect_uri: "https://affinew.com/auth/user/google/callback",
     google_oauth2_client_secret: "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",
     email_name: "no-reply@affinew.com",
