@@ -99,8 +99,8 @@ defmodule MolyWeb.Router do
       live("/", Affinew.IndexLive)
       live("/results", Affinew.ResultsLive)
       live("/programs", Affinew.ProgramsLive)
-      live("/programs/:term_slug", Affinew.ProgramsTermSlugLive)
-      live("/programs/:term_slug/:post_name", Affinew.ProgramsViewLive)
+      live("/programs/:term_slug", Affinew.ProgramsLive)
+      live("/programs/:term_slug/:post_name", Affinew.ProgramViewLive)
       live("/user/@:username", Affinew.UserPageLive)
     end
   end

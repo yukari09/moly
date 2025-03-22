@@ -10,12 +10,12 @@
           </label>
       </div>
       <div class="navbar-start flex items-center gap-8 w-auto">
-          <div class="size-8"><img src={~p"/images/logo.svg"} /></div>
+          <div class="size-8"><.link patch="/"><img src={~p"/images/logo.svg"} /></.link></div>
         <ul class="flex items-center text-gray-100 font-medium mx-auto gap-8">
-            <li><.link patch={~p"/program/finance"} class="hover:text-gray-50">Finance</.link></li>
-            <li><.link patch={~p"/program/saas"} class="hover:text-gray-50">SaaS</.link></li>
-            <li><.link patch={~p"/program/health"} class="hover:text-gray-50">Health</.link></li>
-            <li><.link patch={~p"/program/teach"} class="hover:text-gray-50">Tech</.link></li>
+            <li><.link patch={~p"/programs"} class="hover:text-gray-50">Browse</.link></li>
+            <li><.link patch={~p"/program/categories"} class="hover:text-gray-50">Categories</.link></li>
+            <li><.link patch={~p"/news"} class="hover:text-gray-50">News</.link></li>
+            <li><.link patch={~p"/resources"} class="hover:text-gray-50">Resources</.link></li>
         </ul>
       </div>
 
@@ -36,20 +36,20 @@
                   </.link>
                   <.link patch={Moly.Utilities.Account.link_profile(@current_user)} class="block" role="none">
                     <p class="text-sm font-semibold">{Moly.Utilities.Account.user_name(@current_user)}</p>
-                    <p class="text-sm text-gray-500">{@current_user.email}</p>
+                    <p class="text-sm text-base-content/60">{@current_user.email}</p>
                   </.link>
                 </div>
                 <div class="py-1" role="none">
-                  <.link :if={:admin in @current_user.roles} patch={~p"/admin/dashboard"} class="group flex items-center px-4 py-2 text-sm text-gray-500 font-medium  hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1">
-                    <Lucideicons.sticker class="mr-3 size-4 text-gray-500  group-hover:text-gray-900" />
+                  <.link :if={:admin in @current_user.roles} patch={~p"/admin/dashboard"} class="group flex items-center px-4 py-2 text-sm font-medium hover:bg-base-content/10" role="menuitem" tabindex="-1">
+                    <Lucideicons.sticker class="mr-3 size-4" />
                     Admin
                   </.link>
-                  <.link patch={Moly.Utilities.Account.link_profile(@current_user)} class="group flex items-center px-4 py-2 text-sm text-gray-500 font-medium  hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1">
-                    <Lucideicons.user class="mr-3 size-4 text-gray-500 group-hover:text-gray-900" />
+                  <.link patch={Moly.Utilities.Account.link_profile(@current_user)} class="group flex items-center px-4 py-2 text-sm font-medium hover:bg-base-content/10" role="menuitem" tabindex="-1">
+                    <Lucideicons.user class="mr-3 size-4" />
                     Profile
                   </.link>
-                  <.link patch="/sign-out" class="group flex items-center px-4 py-2 text-sm text-gray-500 font-medium   hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1">
-                    <Lucideicons.log_out name="hero-arrow-up-tray" class="mr-3 size-4 text-gray-500  group-hover:text-gray-900" />
+                  <.link patch="/sign-out" class="group flex items-center px-4 py-2 text-sm font-medium hover:bg-base-content/10" role="menuitem" tabindex="-1">
+                    <Lucideicons.log_out name="hero-arrow-up-tray" class="mr-3 size-4" />
                     Sign out
                   </.link>
                 </div>
@@ -63,14 +63,14 @@
     <!-- Page content here -->
     <div class="bg-green-primary">
     <div class="max-w-screen-xl mx-auto" aria-hidden="true">
-        <div class="w-full flex items-center justify-between py-28 px-20">
+        <div class="w-full flex items-center justify-between py-20 px-20">
           <div class="max-w-lg">
             <h1>
-            <p class="text-6xl text-white">Find <span class="text-green-light">High Ticket</span> Affiliate Programs</p>
+            <p class="text-6xl/18 text-white">Find <span class="text-green-light">High Ticket</span> Affiliate Programs</p>
             <p class=" text-white mt-4 font-light">Discover exclusive, high-paying affiliate programs that let you earn more with fewer sales.</p>
             </h1>
              
-             <div class="mt-24 flex items-center gap-4">
+             <div class="mt-16 flex items-center gap-4">
                <button class="btn px-12 rounded-md text-green-primary bg-green-light border-none">Browse</button>
                <button class="btn px-12 rounded-md text-white bg-green-secondary border-green-secondary">Submit</button>
              </div>
@@ -87,7 +87,7 @@
     <div class="flex items-center justify-between max-w-screen-xl mx-auto">
         <div class="flex-1">
             <h2 class="font-semibold text-lg">Top paying Affiliate programs</h2>
-            <div class="text-gray-500 text-sm mt-1 hidden lg:block">Find top paying,high ticket,best paying affiliate programs for beginners or experts.</div>
+            <div class="text-base-content/60 text-sm mt-1 hidden lg:block">Find top paying,high ticket,best paying affiliate programs for beginners or experts.</div>
         </div>
         <.link navigate={~p"/browse"} class="text-sm text-green-primary flex items-center">Brose all<span class="lg:block hidden">&nbsp;top paying affiliate programs</span><.icon name="hero-chevron-right-mini" class="size-4.5 text-green-600 stroke-1 font-bold"/></.link>
     </div>
