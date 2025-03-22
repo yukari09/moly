@@ -55,6 +55,7 @@
   --color-green-primary: #09442b;
   --color-green-secondary: #005a02;
   --color-green-light: #92e692;
+  --color-green-brilliant: #1ac11a;
 };
 
 @import "../node_modules/@yaireo/tagify/dist/tagify.css";
