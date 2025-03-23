@@ -7,6 +7,9 @@
     "phoenix-heex": "html", 
     "elixir": "html",
   },
+  "emmet.includeLanguages": {
+    "phoenix-heex": "html"
+  },
   "github.copilot.chat.codeGeneration.instructions": [
     {
       "file": "./.vscode/daisyui.md"

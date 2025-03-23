@@ -1,99 +1,94 @@
 <div class="drawer">
   <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content flex flex-col">
-    <div class="border-b border-gray-900/10">
+    <div class="border-b border-gray-900/10 bg-white">
       <!-- Navbar -->
       <div class="navbar w-full max-w-screen-xl mx-auto px-10">
-      <div class="flex-none lg:hidden">
+        <div class="flex-none lg:hidden">
           <label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost">
-          <Lucideicons.align_justify class="inline-block h-6 w-6 stroke-current"/>
+            <Lucideicons.align_justify class="inline-block h-6 w-6 stroke-current" />
           </label>
-      </div>
-      <div class="navbar-start flex items-center gap-1 w-auto">
-          <div class="size-8"><img src={~p"/images/logo.svg"} /></div>
-          <.form 
-              action="/search" 
-              method="get"
-              id="search-form"
-              class="mx-auto w-72 ml-4"
-          >
-          <div id="header-search-bar" class="relative bg-gray-900/5 py-1 pl-2.5 pr-8 rounded-full border border-gray-900/0">
+        </div>
+        <div class="navbar-start flex items-center gap-1 w-auto">
+          <div class="size-8"><.link patch={~p"/"}><img src={~p"/images/logo.svg"} /></.link></div>
+          <.form action="/search" method="get" id="search-form" class="mx-auto w-72 ml-4">
+            <div
+              id="header-search-bar"
+              class="relative bg-gray-900/5 py-1 pl-2.5 pr-8 rounded-full border border-gray-900/0"
+            >
               <input
-                  id="search-input"
-                  type="text"
-                  placeholder="Search..."
-                  aria-label="Search"
-                  autocomplete="off"
-                  name="q"
-                  class="w-full py-1 px-2  !border-none focus:shadow-none focus-visible:ring-0 focus:outline-none focus:ring-0 focus:ring-transparent"
-                  phx-focus={JS.toggle_class("bg-gray-900/5 bg-gray-900/0 border-gray-900/10 border-gray-900/0 transition-colors duration-50", to: "#header-search-bar") |> JS.toggle_class("text-gray-400 text-gray-500", to: "#search-icon")}
-                  phx-blur={JS.toggle_class("bg-gray-900/5 bg-gray-900/0  border-gray-900/10 border-gray-900/0 transition-colors duration-50", to: "#header-search-bar") |> JS.toggle_class("text-gray-400 text-gray-500", to: "#search-icon")}
+                id="search-input"
+                type="text"
+                placeholder="Search..."
+                aria-label="Search"
+                autocomplete="off"
+                name="q"
+                class="w-full py-1 px-2  !border-none focus:shadow-none focus-visible:ring-0 focus:outline-none focus:ring-0 focus:ring-transparent"
+                phx-focus={
+                  JS.toggle_class(
+                    "bg-gray-900/5 bg-gray-900/0 border-gray-900/10 border-gray-900/0 transition-colors duration-50",
+                    to: "#header-search-bar"
+                  )
+                  |> JS.toggle_class("text-gray-400 text-gray-500", to: "#search-icon")
+                }
+                phx-blur={
+                  JS.toggle_class(
+                    "bg-gray-900/5 bg-gray-900/0  border-gray-900/10 border-gray-900/0 transition-colors duration-50",
+                    to: "#header-search-bar"
+                  )
+                  |> JS.toggle_class("text-gray-400 text-gray-500", to: "#search-icon")
+                }
               />
               <Lucideicons.search
-                  id="search-icon"
-                  class="w-5 h-5 absolute top-1/2 right-3.5 transform -translate-y-1/2 text-gray-500"
+                id="search-icon"
+                class="w-5 h-5 absolute top-1/2 right-3.5 transform -translate-y-1/2 text-gray-500"
               />
-          </div>
-          </.form>
-      </div>
-      <div class="navbar-center flex-1">
-        <ul class="flex items-center text-gray-500 font-semibold text-sm mx-auto gap-8">
-            <li><.link patch={~p"/program/finance"} class="hover:text-gray-900">Finance</.link></li>
-            <li><.link patch={~p"/program/saas"} class="hover:text-gray-900">SaaS</.link></li>
-            <li><.link patch={~p"/program/health"} class="hover:text-gray-900">Health</.link></li>
-            <li><.link patch={~p"/program/teach"} class="hover:text-gray-900">Tech</.link></li>
-            <li><.link patch={~p"/program/e-learning"} class="hover:text-gray-900">E-learning</.link></li>
-            <li><.link patch={~p"/program/travel"} class="hover:text-gray-900">Travel</.link></li>
-            <li><.link patch={~p"/program/fashion"} class="hover:text-gray-900">Fashion</.link></li>
-        </ul>
-      </div>
-      <div class="hidden lg:block navbar-end w-auto">
-          <ul class="flex items-center gap-4">
-          <!-- Navbar menu content here -->
-          <li><button class="btn btn-dash pr-6 btn-wide flex items-center gap-2"><.icon name="hero-plus-circle" class="size-5" />Submit</button></li>
-          <li>
-            <button class="btn btn-ghost btn-circle"><Lucideicons.bell class="size-5 text-gray-500" /></button>
-          </li>
-          <li>
-            <div class="dropdown dropdown-bottom dropdown-end p-0">
-              <div tabindex="0" class="size-8"><MolyWeb.DaisyUi.avatar user={@current_user} /></div>
-              <div tabindex="0" class="dropdown-content bg-white rounded-box z-1 w-56 shadow-lg border border-gray-900/10 mt-2">
-                <div class="px-2 py-4 flex items-center gap-2 border-b border-gray-900/10" role="none">
-                  <.link patch={Moly.Utilities.Account.link_profile(@current_user)} class="block size-10" role="none">
-                    <MolyWeb.DaisyUi.avatar user={@current_user} size={64} />
-                  </.link>
-                  <.link patch={Moly.Utilities.Account.link_profile(@current_user)} class="block" role="none">
-                    <p class="text-sm font-semibold">{Moly.Utilities.Account.user_name(@current_user)}</p>
-                    <p class="text-sm text-gray-500">{@current_user.email}</p>
-                  </.link>
-                </div>
-                <div class="py-1" role="none">
-                  <.link :if={:admin in @current_user.roles} patch={~p"/admin/dashboard"} class="group flex items-center px-4 py-2 text-sm text-gray-500 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1">
-                    <Lucideicons.sticker class="mr-3 size-4 text-gray-500  group-hover:text-gray-900" />
-                    Admin
-                  </.link>
-                  <.link patch={Moly.Utilities.Account.link_profile(@current_user)} class="group flex items-center px-4 py-2 text-sm text-gray-500 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1">
-                    <Lucideicons.user class="mr-3 size-4 text-gray-500 group-hover:text-gray-900" />
-                    Profile
-                  </.link>
-                  <.link patch="/sign-out" class="group flex items-center px-4 py-2 text-sm text-gray-500 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1">
-                    <Lucideicons.log_out name="hero-arrow-up-tray" class="mr-3 size-4 text-gray-500  group-hover:text-gray-900" />
-                    Sign out
-                  </.link>
-                </div>
-              </div>
             </div>
-          </li>
+          </.form>
+        </div>
+        <div class="navbar-center flex-1">
+          <ul class="flex items-center font-semibold text-base-content/80 text-sm mx-auto gap-10">
+            <li>
+              <.link patch={~p"/program/finance"} class="hover:text-green-brilliant">Finance</.link>
+            </li>
+            <li><.link patch={~p"/program/saas"} class="hover:text-green-brilliant">SaaS</.link></li>
+            <li><.link patch={~p"/program/health"} class="hover:text-green-brilliant">Health</.link></li>
+            <li><.link patch={~p"/program/teach"} class="hover:text-green-brilliant">Tech</.link></li>
+            <li>
+              <.link patch={~p"/program/e-learning"} class="hover:text-green-brilliant">
+                E-learning
+              </.link>
+            </li>
+            <li><.link patch={~p"/program/travel"} class="hover:text-green-brilliant">Travel</.link></li>
+            <li>
+              <.link patch={~p"/program/fashion"} class="hover:text-green-brilliant">Fashion</.link>
+            </li>
           </ul>
-      </div>
+        </div>
+        <div class="hidden lg:block navbar-end w-auto">
+          <ul class="flex items-center gap-4">
+            <!-- Navbar menu content here -->
+            <li>
+              <button class="btn bg-green-light text-green-primary">
+                Submit
+              </button>
+            </li>
+            <li>
+              <button class="btn btn-ghost btn-circle">
+                <Lucideicons.bell class="size-5 text-gray-500" />
+              </button>
+            </li>
+            <li>
+              <MolyWeb.Affinew.Components.user_dropdown  current_user={@current_user}/>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
     <!-- Page content here -->
-    {@inner_content}
-  <div>
-     
+    <div class="min-h-[calc(100vh-_-65px)] bg-white">{@inner_content}</div>
+    <MolyWeb.Affinew.Components.footer/>
   </div>
-</div>
   <div class="drawer-side">
     <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
     <ul class="menu bg-base-200 min-h-full w-80 p-4">

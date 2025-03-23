@@ -230,26 +230,51 @@ defmodule MolyWeb.Affiliate.UserPageLive do
     <div>
       <div class="relative h-[135px] lg:h-[250px] bg-primary mb-20 lg:mb-0">
         <div class="w-full h-full overflow-hidden">
-          <img :if={Moly.Utilities.Account.user_banner(@user, "xxl")} class="w-full h-full object-cover overflow-hidden" src={Moly.Utilities.Account.user_banner(@user, "xxl")} />
+          <img
+            :if={Moly.Utilities.Account.user_banner(@user, "xxl")}
+            class="w-full h-full object-cover overflow-hidden"
+            src={Moly.Utilities.Account.user_banner(@user, "xxl")}
+          />
         </div>
 
         <div class="absolute w-full lg:static">
           <div class="px-2 lg:px-4 flex justify-between items-end -mt-10 lg:-mt-12">
             <div>
-              <img :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)} class="inline-block size-20 lg:size-24 rounded-full" src={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)["128"]} alt="">
-              <span :if={!Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)} class="inline-flex size-20 lg:size-24 items-center justify-center rounded-full bg-primary border-2 border-white">
-                <span class="font-medium text-white uppercase text-4xl">{Moly.Utilities.Account.user_name(@user, 1)}</span>
+              <img
+                :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)}
+                class="inline-block size-20 lg:size-24 rounded-full"
+                src={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)["128"]}
+                alt=""
+              />
+              <span
+                :if={!Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)}
+                class="inline-flex size-20 lg:size-24 items-center justify-center rounded-full bg-primary border-2 border-white"
+              >
+                <span class="font-medium text-white uppercase text-4xl">
+                  {Moly.Utilities.Account.user_name(@user, 1)}
+                </span>
               </span>
             </div>
-            <div class="lg:mt-0 lg:mb-2 space-y-2" :if={@current_user && @current_user.id == @user.id} phx-click={MolyWeb.TailwindUI.show_modal(@modal_id)}>
+            <div
+              :if={@current_user && @current_user.id == @user.id}
+              class="lg:mt-0 lg:mb-2 space-y-2"
+              phx-click={MolyWeb.TailwindUI.show_modal(@modal_id)}
+            >
               <div class="lg:hidden flex items-center"></div>
-              <button type="button" class="rounded-full bg-white px-2.5 py-2 text-sm font-semibold text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Edit Profile</button>
+              <button
+                type="button"
+                class="rounded-full bg-white px-2.5 py-2 text-sm font-semibold text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              >
+                Edit Profile
+              </button>
             </div>
           </div>
           <div class="lg:hidden py-2">
             <div class="px-4">
               <p class="text-gray-900">{Moly.Utilities.Account.user_name(@user)}</p>
-              <p class="text-xs/6 text-gray-500">@{Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :username)}</p>
+              <p class="text-xs/6 text-gray-500">
+                @{Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :username)}
+              </p>
               <p>{Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :description)}</p>
             </div>
           </div>
@@ -260,47 +285,83 @@ defmodule MolyWeb.Affiliate.UserPageLive do
         <div class="w-80 py-4 px-2 mt-16 hidden lg:block">
           <div class="text-2xl px-4 text-gray-900">
             <p>{Moly.Utilities.Account.user_name(@user)}</p>
-            <p class="text-xs/6">@{Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :username)}</p>
+            <p class="text-xs/6">
+              @{Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :username)}
+            </p>
           </div>
-          <p class="text-sm text-gray-500 my-2 px-4">{Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :bio)}</p>
+          <p class="text-sm text-gray-500 my-2 px-4">
+            {Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :bio)}
+          </p>
           <div class="mb-12">
             <div>
-              <div class="px-4 w-full text-sm  !text-gray-500 !outline-none break-words resize-none overflow-hidden">{Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :description)}</div>
+              <div class="px-4 w-full text-sm  !text-gray-500 !outline-none break-words resize-none overflow-hidden">
+                {Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :description)}
+              </div>
             </div>
 
-            <div class="grid grid-cols-1" :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :location)}>
+            <div
+              :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :location)}
+              class="grid grid-cols-1"
+            >
               <div class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-none placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:pl-9 sm:text-sm/6">
                 {Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :location)}
               </div>
-              <.icon name="hero-map-pin" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
+              <.icon
+                name="hero-map-pin"
+                class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4"
+              />
             </div>
 
-            <div class="grid grid-cols-1" :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :website)}>
+            <div
+              :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :website)}
+              class="grid grid-cols-1"
+            >
               <div class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-none placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:pl-9 sm:text-sm/6">
                 {Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :website)}
               </div>
-              <.icon name="hero-globe-alt" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
+              <.icon
+                name="hero-globe-alt"
+                class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4"
+              />
             </div>
 
-            <div class="grid grid-cols-1" :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :twitter)}>
+            <div
+              :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :twitter)}
+              class="grid grid-cols-1"
+            >
               <div class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-none placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:pl-9 sm:text-sm/6">
                 {Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :twitter)}
               </div>
-              <Lucideicons.twitter name="hero-globe-alt" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
+              <Lucideicons.twitter
+                name="hero-globe-alt"
+                class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4"
+              />
             </div>
 
-            <div class="grid grid-cols-1" :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :facebook)}>
+            <div
+              :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :facebook)}
+              class="grid grid-cols-1"
+            >
               <div class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-none placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:pl-9 sm:text-sm/6">
                 {Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :facebook)}
               </div>
-              <Lucideicons.facebook name="hero-globe-alt" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
+              <Lucideicons.facebook
+                name="hero-globe-alt"
+                class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4"
+              />
             </div>
 
-            <div class="grid grid-cols-1" :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :instagram)}>
+            <div
+              :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :instagram)}
+              class="grid grid-cols-1"
+            >
               <div class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-none placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:pl-9 sm:text-sm/6">
                 {Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :instagram)}
               </div>
-              <Lucideicons.instagram name="hero-globe-alt" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
+              <Lucideicons.instagram
+                name="hero-globe-alt"
+                class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4"
+              />
             </div>
           </div>
         </div>
@@ -316,9 +377,12 @@ defmodule MolyWeb.Affiliate.UserPageLive do
                     patch={~p"/user/page/@#{@username}?#{%{type: value}}"}
                     class={[
                       "border-b-2 px-1 pb-2 sm:pb-4 text-sm font-medium whitespace-nowrap",
-                      @post_type == to_string(value) && "border-green-500 text-green-600" || "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                      (@post_type == to_string(value) && "border-green-500 text-green-600") ||
+                        "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                     ]}
-                  >{label}</.link>
+                  >
+                    {label}
+                  </.link>
                 </nav>
               </div>
             </div>
@@ -328,23 +392,36 @@ defmodule MolyWeb.Affiliate.UserPageLive do
             class="mx-auto pt-4 lg:pb-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3"
             phx-page-loading
           >
-            <Moly.Utilities.Affiliate.article_html   :for={post <- @posts} post={post}/>
+            <Moly.Utilities.Affiliate.article_html :for={post <- @posts} post={post} />
           </div>
           <div class="mx-auto my-8 lg:my-16">
             <nav :if={@page_meta.total_pages > 1} class="flex items-center justify-center space-x-2">
               <!-- Previous Button -->
-              <.link :if={@page_meta.prev} patch={live_url(%{username: @username, type: @post_type, page: @page_meta.prev})}   class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100">
+              <.link
+                :if={@page_meta.prev}
+                patch={live_url(%{username: @username, type: @post_type, page: @page_meta.prev})}
+                class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100"
+              >
                 <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
               </.link>
-
-              <!-- Page Numbers -->
+              
+    <!-- Page Numbers -->
               <.link
                 :for={page <- @page_meta.page_range}
                 patch={live_url(%{username: @username, type: @post_type, page: page})}
-                class={["px-3 py-2 text-gray-500 border-b-2 border-white hover:border-gray-900 hover:text-gray-900", page == @page && "border-gray-900 text-gray-900"]}
-              >{page}</.link>
+                class={[
+                  "px-3 py-2 text-gray-500 border-b-2 border-white hover:border-gray-900 hover:text-gray-900",
+                  page == @page && "border-gray-900 text-gray-900"
+                ]}
+              >
+                {page}
+              </.link>
 
-              <.link :if={@page_meta.next} patch={live_url(%{username: @username, type: @post_type, page: @page_meta.next})}   class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100">
+              <.link
+                :if={@page_meta.next}
+                patch={live_url(%{username: @username, type: @post_type, page: @page_meta.next})}
+                class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100"
+              >
                 <Lucideicons.arrow_right class="w-4 h-4 md:w-5 md:h-5" />
               </.link>
             </nav>
@@ -354,30 +431,51 @@ defmodule MolyWeb.Affiliate.UserPageLive do
       </div>
     </div>
     <MolyWeb.TailwindUI.modal
-      id={@modal_id}
       :if={@current_user && @current_user.id == @user.id}
+      id={@modal_id}
       inner_class="!p-0 !m-0 w-[300px] max-h-[80%] overflow-scroll-y"
       show={false}
     >
       <.form for={@form} phx-change="form-changed" phx-submit="save">
         <div class="relative lg:h-[120px] bg-primary">
           <div class="w-full h-full overflow-hidden">
-            <img :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :banner)["xl"]} class="w-full h-full object-cover overflow-hidden" src={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :banner)["xl"]} />
+            <img
+              :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :banner)["xl"]}
+              class="w-full h-full object-cover overflow-hidden"
+              src={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :banner)["xl"]}
+            />
             <div class="w-full h-full">
-              <label for={@uploads.banner.ref} class="p-1 rounded-full  bg-black absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-60 hover:opacity-80 cursor-pointer">
-                <Lucideicons.camera  class="size-5 text-white" />
-                <.live_file_input class="hidden" upload={@uploads.banner}  />
+              <label
+                for={@uploads.banner.ref}
+                class="p-1 rounded-full  bg-black absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-60 hover:opacity-80 cursor-pointer"
+              >
+                <Lucideicons.camera class="size-5 text-white" />
+                <.live_file_input class="hidden" upload={@uploads.banner} />
               </label>
             </div>
           </div>
           <div class="mx-2 flex justify-between items-end -mt-10">
             <div class="relative size-20">
-              <img :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)} class="inline-block size-20 rounded-full" src={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)["128"]} alt="">
-              <span :if={!Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)} class="inline-flex size-20 items-center justify-center rounded-full bg-primary border-2 border-white">
-                <span class="font-medium text-white uppercase text-4xl">{Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :name) |> String.slice(0, 1)}</span>
+              <img
+                :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)}
+                class="inline-block size-20 rounded-full"
+                src={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)["128"]}
+                alt=""
+              />
+              <span
+                :if={!Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)}
+                class="inline-flex size-20 items-center justify-center rounded-full bg-primary border-2 border-white"
+              >
+                <span class="font-medium text-white uppercase text-4xl">
+                  {Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :name)
+                  |> String.slice(0, 1)}
+                </span>
               </span>
-              <label for={@uploads.avatar.ref} class="p-1 rounded-full  bg-black absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-60 hover:opacity-80 cursor-pointer">
-                <Lucideicons.camera  class="size-5 text-white" />
+              <label
+                for={@uploads.avatar.ref}
+                class="p-1 rounded-full  bg-black absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-60 hover:opacity-80 cursor-pointer"
+              >
+                <Lucideicons.camera class="size-5 text-white" />
                 <.live_file_input class="hidden" upload={@uploads.avatar} />
               </label>
             </div>
@@ -386,27 +484,42 @@ defmodule MolyWeb.Affiliate.UserPageLive do
 
         <div class="px-4 mt-16 space-y-6">
           <.user_meta_input
-            :for={{{f, l}, i} <- Enum.with_index([
-              {:name, :Name}, {:username, :UserName}, {:location, :Location},
-              {:bio, :Bio}, {:website, :Website}, {:twitter, :Twitter}, {:facebook, :Facebook},
-              {:instagram, :Instagram}
-            ])}
+            :for={
+              {{f, l}, i} <-
+                Enum.with_index([
+                  {:name, :Name},
+                  {:username, :UserName},
+                  {:location, :Location},
+                  {:bio, :Bio},
+                  {:website, :Website},
+                  {:twitter, :Twitter},
+                  {:facebook, :Facebook},
+                  {:instagram, :Instagram}
+                ])
+            }
             :if={f !== :username || !is_modified_username?(@user)}
-            field={%FormField{
-              id: "#{@form[:user_meta].id}-#{i}-meta-value",
-              name: "#{@form[:user_meta].name}[#{i}][meta_value]",
-              value: Moly.Utilities.Account.load_meta_value_by_meta_key(@user, f),
-              errors: [],
-              field: :user_meta,
-              form: @form
-            }}
+            field={
+              %FormField{
+                id: "#{@form[:user_meta].id}-#{i}-meta-value",
+                name: "#{@form[:user_meta].name}[#{i}][meta_value]",
+                value: Moly.Utilities.Account.load_meta_value_by_meta_key(@user, f),
+                errors: [],
+                field: :user_meta,
+                form: @form
+              }
+            }
             label={l}
             meta_key={%{key: "#{@form[:user_meta].name}[#{i}][meta_key]", value: f}}
             id={"user-meta-#{i}-meta-value-input"}
           />
         </div>
         <div class="p-4 flex items-end justify-end">
-          <button type="submit" class="rounded-md bg-green-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">Save</button>
+          <button
+            type="submit"
+            class="rounded-md bg-green-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+          >
+            Save
+          </button>
         </div>
       </.form>
     </MolyWeb.TailwindUI.modal>
@@ -416,7 +529,12 @@ defmodule MolyWeb.Affiliate.UserPageLive do
   defp user_meta_input(assigns) do
     ~H"""
     <div id={@id} class="relative">
-      <label for={@field.id} class="absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-500">{@label}</label>
+      <label
+        for={@field.id}
+        class="absolute -top-2 left-2 inline-block rounded-lg bg-white px-1 text-xs font-medium text-gray-500"
+      >
+        {@label}
+      </label>
       <input
         id={@field.id}
         type="text"
@@ -424,7 +542,7 @@ defmodule MolyWeb.Affiliate.UserPageLive do
         value={@field.value}
         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6"
       />
-      <input type="hidden" name={@meta_key.key} value={@meta_key.value}/>
+      <input type="hidden" name={@meta_key.key} value={@meta_key.value} />
     </div>
     """
   end

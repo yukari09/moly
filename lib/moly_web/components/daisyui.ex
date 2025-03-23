@@ -16,7 +16,10 @@ defmodule MolyWeb.DaisyUi do
     <div class="avatar">
       <div class={["rounded-full size-full", @class]}>
         <img :if={@user_avatar_src} src={@user_avatar_src} />
-        <span :if={!@user_avatar_src} class="inline-flex size-full items-center justify-center rounded-full bg-primary border-2 border-white">
+        <span
+          :if={!@user_avatar_src}
+          class="inline-flex size-full items-center justify-center rounded-full bg-primary border-2 border-white"
+        >
           <span class="font-medium text-white uppercase text-sm">{user_name(@user, 1)}</span>
         </span>
       </div>

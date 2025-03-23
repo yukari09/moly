@@ -212,28 +212,58 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
     ~H"""
     <div class="xl:w-[1280px] mx-auto lg:mt-24 lg:mb-24">
       <div class="pt-8">
-        <div class="lg:px-6 lg:py-4  lg:text-4xl text-2xl px-4 border-b pb-4 lg:border-none font-medium lg:font-normal">Submit Competitive Products</div>
-        <.form  :let={f} for={@form} class="px-4 lg:px-6 my-6 space-y-4" phx-submit="save" phx-change={JS.dispatch("app:validate-and-exec")}>
+        <div class="lg:px-6 lg:py-4  lg:text-4xl text-2xl px-4 border-b pb-4 lg:border-none font-medium lg:font-normal">
+          Submit Competitive Products
+        </div>
+        <.form
+          :let={f}
+          for={@form}
+          class="px-4 lg:px-6 my-6 space-y-4"
+          phx-submit="save"
+          phx-change={JS.dispatch("app:validate-and-exec")}
+        >
           <div class="rounded-lg lg:p-6 lg:border space-y-4">
             <h3 class="font-semibold  lg:text-xl">Detail</h3>
             <!--Start title-->
-            <.input field={f[:post_title]}  input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "length", params: [8, 255]}}]])}>
+            <.input
+              field={f[:post_title]}
+              input_dispatch={
+                JSON.encode!([
+                  ["app:input-validate", %{detail: %{validator: "length", params: [8, 255]}}]
+                ])
+              }
+            >
               <:label>Product or Service Title <span class="text-red-500">*</span></:label>
               <:input_helper>Product or Service Title must be more than 8 words.</:input_helper>
             </.input>
             <!--End title-->
             <!--Start Link-->
-            <.input  field={%FormField{
-              field: :post_meta,
-              id: "#{f[:post_meta].id}_5_meta_value",
-              name: "#{f[:post_meta].name}[5][meta_value]",
-              value: Moly.Utilities.MetaValue.format_meta_value(@post, :affiliate_link),
-              errors: [],
-              form: f
-            }}  input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "isURL", params: []}}]])}>
-              <:label>What is the link to your service(product)? <span class="text-red-500">*</span></:label>
+            <.input
+              field={
+                %FormField{
+                  field: :post_meta,
+                  id: "#{f[:post_meta].id}_5_meta_value",
+                  name: "#{f[:post_meta].name}[5][meta_value]",
+                  value: Moly.Utilities.MetaValue.format_meta_value(@post, :affiliate_link),
+                  errors: [],
+                  form: f
+                }
+              }
+              input_dispatch={
+                JSON.encode!([["app:input-validate", %{detail: %{validator: "isURL", params: []}}]])
+              }
+            >
+              <:label>
+                What is the link to your service(product)? <span class="text-red-500">*</span>
+              </:label>
               <:input_helper>The link of your service(product).</:input_helper>
-              <:foot_other><input name={"#{f[:post_meta].name}[5][meta_key]"} type="hidden" value={:affiliate_link}/></:foot_other>
+              <:foot_other>
+                <input
+                  name={"#{f[:post_meta].name}[5][meta_key]"}
+                  type="hidden"
+                  value={:affiliate_link}
+                />
+              </:foot_other>
             </.input>
             <!--End Link-->
             <!--Start Tags-->
@@ -241,7 +271,20 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
               <input :for={{tag, i} <- Enum.with_index(f.data && @form.data.post_tags || [])} name={"#{f[:tags].name}[#{i}][name]"} value={tag.name} data-value={tag.name} />
               <input :for={{tag, i} <- Enum.with_index(f.data && @form.data.post_tags || [])} name={"#{f[:tags].name}[#{i}][term_taxonomy][][taxonomy]"} data-value={tag.name}  value={hd(tag.term_taxonomy) |> Map.get(:id)} />
             </div> --%>
-            <.input field={%FormField{id: f[:post_tags].id, name: f[:post_tags].name, value: (f[:post_tags].value || []) |> Enum.map(& &1.name) |> Enum.join(","), errors: nil, form: f, field: :post_tags}} type="text" phx-mounted={JS.dispatch("phx:TagsTagify")}>
+            <.input
+              field={
+                %FormField{
+                  id: f[:post_tags].id,
+                  name: f[:post_tags].name,
+                  value: (f[:post_tags].value || []) |> Enum.map(& &1.name) |> Enum.join(","),
+                  errors: nil,
+                  form: f,
+                  field: :post_tags
+                }
+              }
+              type="text"
+              phx-mounted={JS.dispatch("phx:TagsTagify")}
+            >
               <:label>Tags <span class="text-red-500">*</span></:label>
             </.input>
             <!--End Tags-->
@@ -251,19 +294,35 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
                 id="post-editor"
                 phx-hook="DescriptionEditor"
                 data-target={"##{f[:post_content].id}"}
-                data-config={JSON.encode!(%{
-                  theme: "snow",
-                  placeholder: "Affiliate description(min 20 words)...",
-                  modules: %{
-                    toolbar: [
-                      [%{ header: 2 }, %{ header: 4 }, %{ header: 5 }],
-                      [%{ list: "ordered"}, %{list: "bullet"}],
-                      ["bold", "italic", "underline"],[ %{ align: [] }]
-                    ]
-                  }
-                })}
-              >{raw @post.post_content}</div>
-              <input class="hidden" phx-update="ignore" id={f[:post_content].id} name={f[:post_content].name} value={f[:post_content].value} data-input-dispatch={JSON.encode!([["app:input-validate", %{detail: %{validator: "length", params: [20, 3000]}}]])}/>
+                data-config={
+                  JSON.encode!(%{
+                    theme: "snow",
+                    placeholder: "Affiliate description(min 20 words)...",
+                    modules: %{
+                      toolbar: [
+                        [%{header: 2}, %{header: 4}, %{header: 5}],
+                        [%{list: "ordered"}, %{list: "bullet"}],
+                        ["bold", "italic", "underline"],
+                        [%{align: []}]
+                      ]
+                    }
+                  })
+                }
+              >
+                {raw(@post.post_content)}
+              </div>
+              <input
+                class="hidden"
+                phx-update="ignore"
+                id={f[:post_content].id}
+                name={f[:post_content].name}
+                value={f[:post_content].value}
+                data-input-dispatch={
+                  JSON.encode!([
+                    ["app:input-validate", %{detail: %{validator: "length", params: [20, 3000]}}]
+                  ])
+                }
+              />
             </div>
             <%!-- <.input  field={f[:post_content]} type="textarea"  input_dispatch={JSON.encode!([["app:count_word"],["app:fill_text_with_attribute", %{detail: %{to_el: "#count_word_text", from_attr: "data-count-word"}}],["app:input-validate", %{detail: %{validator: "length", params: [20, 3000]}}]])}>
               <:label>Description <span class="text-red-500">*</span></:label>
@@ -276,12 +335,40 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
           <div class="rounded-lg lg:p-6 lg:border space-y-4">
             <h3 class="font-semibold  lg:text-xl">Location and Category</h3>
             <!--Start Location-->
-            <.input type="select"  field={%FormField{field: :countries, id: "categories_0_term_taxonomy", name: "#{f[:categories].name}[0]", value: find_value(@countries, @post.affiliate_categories), errors: [], form: f}}  input_dispatch = "" options={Map.new(@countries, &({&1.id, &1.term.name}))}>
+            <.input
+              type="select"
+              field={
+                %FormField{
+                  field: :countries,
+                  id: "categories_0_term_taxonomy",
+                  name: "#{f[:categories].name}[0]",
+                  value: find_value(@countries, @post.affiliate_categories),
+                  errors: [],
+                  form: f
+                }
+              }
+              input_dispatch=""
+              options={Map.new(@countries, &{&1.id, &1.term.name})}
+            >
               <:label>Select a country where your service(product) from?</:label>
             </.input>
             <!--End Location-->
             <!--Start Industry-->
-            <.input type="select"  field={%FormField{field: :industries, id: "categories_1_term_taxonomy_id", name: "#{f[:categories].name}[1]", value: find_value(@industries, @post.affiliate_categories), errors: [], form: f}}  input_dispatch = "" options={Map.new(@industries, &({&1.id, &1.term.name}))}>
+            <.input
+              type="select"
+              field={
+                %FormField{
+                  field: :industries,
+                  id: "categories_1_term_taxonomy_id",
+                  name: "#{f[:categories].name}[1]",
+                  value: find_value(@industries, @post.affiliate_categories),
+                  errors: [],
+                  form: f
+                }
+              }
+              input_dispatch=""
+              options={Map.new(@industries, &{&1.id, &1.term.name})}
+            >
               <:label>What industry is your service(product) in?</:label>
             </.input>
             <!--End Industry-->
@@ -295,22 +382,70 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
                 <div class="flex justify-between">
                   <div>
                     <div class="font-medium text-gray-700">Minimum Commission</div>
-                    <div class="text-gray-500 text-sm">Enter the minimum commission amount you are willing to accept, e.g., 10.</div>
+                    <div class="text-gray-500 text-sm">
+                      Enter the minimum commission amount you are willing to accept, e.g., 10.
+                    </div>
                   </div>
-                  <.input type="text" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_1_meta_value", name: "#{f[:post_meta].name}[1][meta_value]", value: Moly.Utilities.MetaValue.format_meta_value(@post, :commission_min), errors: [], form: f}} input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]])} >
+                  <.input
+                    type="text"
+                    field={
+                      %FormField{
+                        field: :post_meta,
+                        id: "#{f[:post_meta].id}_1_meta_value",
+                        name: "#{f[:post_meta].name}[1][meta_value]",
+                        value: Moly.Utilities.MetaValue.format_meta_value(@post, :commission_min),
+                        errors: [],
+                        form: f
+                      }
+                    }
+                    input_dispatch={
+                      JSON.encode!([
+                        ["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]
+                      ])
+                    }
+                  >
                   </.input>
-                  <input type="text" name={"#{f[:post_meta].name}[1][meta_key]"} value={:commission_min} class="hidden"/>
+                  <input
+                    type="text"
+                    name={"#{f[:post_meta].name}[1][meta_key]"}
+                    value={:commission_min}
+                    class="hidden"
+                  />
                 </div>
                 <!--End Minimum Commission-->
                 <!--Start Maximum Commission-->
                 <div class="flex justify-between pt-2">
                   <div>
                     <div class="font-medium text-gray-700">Maximum Commission</div>
-                    <div class="text-gray-500 text-sm">Enter the maximum commission amount you are willing to accept, e.g., 20.</div>
+                    <div class="text-gray-500 text-sm">
+                      Enter the maximum commission amount you are willing to accept, e.g., 20.
+                    </div>
                   </div>
-                  <.input type="text" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_2_meta_value", name: "#{f[:post_meta].name}[2][meta_value]", value: Moly.Utilities.MetaValue.format_meta_value(@post, :commission_max), errors: [], form: f}} input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]])} >
+                  <.input
+                    type="text"
+                    field={
+                      %FormField{
+                        field: :post_meta,
+                        id: "#{f[:post_meta].id}_2_meta_value",
+                        name: "#{f[:post_meta].name}[2][meta_value]",
+                        value: Moly.Utilities.MetaValue.format_meta_value(@post, :commission_max),
+                        errors: [],
+                        form: f
+                      }
+                    }
+                    input_dispatch={
+                      JSON.encode!([
+                        ["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]
+                      ])
+                    }
+                  >
                   </.input>
-                  <input type="text" name={"#{f[:post_meta].name}[2][meta_key]"} value={:commission_max} class="hidden"/>
+                  <input
+                    type="text"
+                    name={"#{f[:post_meta].name}[2][meta_key]"}
+                    value={:commission_max}
+                    class="hidden"
+                  />
                 </div>
                 <!--End Maximum Commission-->
                 <!--Start Commission Unit-->
@@ -319,9 +454,42 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
                     <div class="font-medium text-gray-700">Commission Unit</div>
                     <div class="text-gray-500 text-sm">Commission Unit</div>
                   </div>
-                  <.input type="text" type="select" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_3_meta_value", name: "#{f[:post_meta].name}[3][meta_value]", value: Moly.Utilities.MetaValue.format_meta_value(@post, :commission_unit), errors: [], form: f}} options={get_unit()} option_selectd="" input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "inList", params: [Enum.map(get_unit(), &(elem(&1,0)))]}}]])} >
+                  <.input
+                    type="text"
+                    type="select"
+                    field={
+                      %FormField{
+                        field: :post_meta,
+                        id: "#{f[:post_meta].id}_3_meta_value",
+                        name: "#{f[:post_meta].name}[3][meta_value]",
+                        value: Moly.Utilities.MetaValue.format_meta_value(@post, :commission_unit),
+                        errors: [],
+                        form: f
+                      }
+                    }
+                    options={get_unit()}
+                    option_selectd=""
+                    input_dispatch={
+                      JSON.encode!([
+                        [
+                          "app:input-validate",
+                          %{
+                            detail: %{
+                              validator: "inList",
+                              params: [Enum.map(get_unit(), &elem(&1, 0))]
+                            }
+                          }
+                        ]
+                      ])
+                    }
+                  >
                   </.input>
-                  <input type="text" name={"#{f[:post_meta].name}[3][meta_key]"} value={:commission_unit} class="hidden"/>
+                  <input
+                    type="text"
+                    name={"#{f[:post_meta].name}[3][meta_key]"}
+                    value={:commission_unit}
+                    class="hidden"
+                  />
                 </div>
                 <!--End Commission Unit-->
                 <!--Start Commission Model-->
@@ -330,9 +498,37 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
                     <div class="font-medium text-gray-700">Commission Model</div>
                     <div class="text-gray-500 text-sm">Commission Unit</div>
                   </div>
-                  <.input type="text" type="select" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_4_meta_value", name: "#{f[:post_meta].name}[4][meta_value]", value: Moly.Utilities.MetaValue.format_meta_value(@post, :commission_model), errors: [], form: f}} options={Map.new(commission_model(), &({&1, &1}))} option_selectd="" input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "inList", params: [commission_model()]}}]])} >
+                  <.input
+                    type="text"
+                    type="select"
+                    field={
+                      %FormField{
+                        field: :post_meta,
+                        id: "#{f[:post_meta].id}_4_meta_value",
+                        name: "#{f[:post_meta].name}[4][meta_value]",
+                        value: Moly.Utilities.MetaValue.format_meta_value(@post, :commission_model),
+                        errors: [],
+                        form: f
+                      }
+                    }
+                    options={Map.new(commission_model(), &{&1, &1})}
+                    option_selectd=""
+                    input_dispatch={
+                      JSON.encode!([
+                        [
+                          "app:input-validate",
+                          %{detail: %{validator: "inList", params: [commission_model()]}}
+                        ]
+                      ])
+                    }
+                  >
                   </.input>
-                  <input type="text" name={"#{f[:post_meta].name}[4][meta_key]"} value={:commission_model} class="hidden"/>
+                  <input
+                    type="text"
+                    name={"#{f[:post_meta].name}[4][meta_key]"}
+                    value={:commission_model}
+                    class="hidden"
+                  />
                 </div>
                 <!--End Commission Model-->
                 <!--Start Cookie Duration-->
@@ -341,8 +537,30 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
                     <div class="font-medium text-gray-700">Cookie Duration</div>
                     <div class="text-gray-500 text-sm">Cookie Duration (Days)</div>
                   </div>
-                  <.input type="text" field={%FormField{field: :post_meta, id: "#{f[:post_meta].id}_6_meta_value", name: "#{f[:post_meta].name}[6][meta_value]", value: Moly.Utilities.MetaValue.format_meta_value(@post, :cookie_duration), errors: [], form: f}} input_dispatch = {JSON.encode!([["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]])} />
-                  <input type="text" name={"#{f[:post_meta].name}[6][meta_key]"} value={:cookie_duration} class="hidden"/>
+                  <.input
+                    type="text"
+                    field={
+                      %FormField{
+                        field: :post_meta,
+                        id: "#{f[:post_meta].id}_6_meta_value",
+                        name: "#{f[:post_meta].name}[6][meta_value]",
+                        value: Moly.Utilities.MetaValue.format_meta_value(@post, :cookie_duration),
+                        errors: [],
+                        form: f
+                      }
+                    }
+                    input_dispatch={
+                      JSON.encode!([
+                        ["app:input-validate", %{detail: %{validator: "isNumber", params: []}}]
+                      ])
+                    }
+                  />
+                  <input
+                    type="text"
+                    name={"#{f[:post_meta].name}[6][meta_key]"}
+                    value={:cookie_duration}
+                    class="hidden"
+                  />
                 </div>
                 <!--End Cookie Duration-->
               </div>
@@ -354,9 +572,17 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
           </div>
 
           <div class="flex py-4 px-2 !mt-6">
-            <input name={f[:post_type].name} type="hidden" value={:affiliate}/>
-            <input name={f[:post_date].name} type="hidden" value={DateTime.utc_now()}/>
-            <button id={@form[:submit].id} type="submit" phx-disable-with="Saving..." class="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 w-32"  disabled>Submit</button>
+            <input name={f[:post_type].name} type="hidden" value={:affiliate} />
+            <input name={f[:post_date].name} type="hidden" value={DateTime.utc_now()} />
+            <button
+              id={@form[:submit].id}
+              type="submit"
+              phx-disable-with="Saving..."
+              class="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 w-32"
+              disabled
+            >
+              Submit
+            </button>
           </div>
         </.form>
       </div>
@@ -368,9 +594,16 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
     ~H"""
     <!--Start media-->
     <div>
-      <div class="font-medium text-sm mb-2">Upload media <span class="text-red-500 font-normal">*</span></div>
+      <div class="font-medium text-sm mb-2">
+        Upload media <span class="text-red-500 font-normal">*</span>
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 border border-dashed border-gray-900/25 p-2 rounded-md">
-        <label :if={Enum.count(@uploads.media.entries) < 6} for={@uploads.media.ref} phx-drop-target={@uploads.media.ref} class="flex flex-col cursor-pointer justify-center bg-gray-50 aspect-video rounded-md hover:opacity-80">
+        <label
+          :if={Enum.count(@uploads.media.entries) < 6}
+          for={@uploads.media.ref}
+          phx-drop-target={@uploads.media.ref}
+          class="flex flex-col cursor-pointer justify-center bg-gray-50 aspect-video rounded-md hover:opacity-80"
+        >
           <div class="text-center w-full">
             <.icon name="hero-photo" class="mx-auto size-10 text-gray-300" />
             <div class="mt-4 flex justify-center text-sm/6 text-gray-600">
@@ -386,12 +619,29 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
           <div class="relative">
             <.live_img_preview class="w-full object-cover aspect-video rounded-md" entry={entry} />
             <div class="absolute right-0 top-0 mr-2 mt-2">
-              <button type="button" phx-click="cancel-upload" phx-value-ref={entry.ref} class="bg-white rounded-full text-gray-500 p-1"><Lucideicons.x class="size-4" /></button>
+              <button
+                type="button"
+                phx-click="cancel-upload"
+                phx-value-ref={entry.ref}
+                class="bg-white rounded-full text-gray-500 p-1"
+              >
+                <Lucideicons.x class="size-4" />
+              </button>
             </div>
           </div>
         </div>
       </div>
-      <.live_file_input class="hidden" phx-change="upload-media" upload={@uploads.media} data-input-dispatch="[]"  data-form-name="form" data-validate={Enum.count(@uploads.media.entries) > 0 && Enum.count(@uploads.media.entries) < 7 && "1" || "0"}/>
+      <.live_file_input
+        class="hidden"
+        phx-change="upload-media"
+        upload={@uploads.media}
+        data-input-dispatch="[]"
+        data-form-name="form"
+        data-validate={
+          (Enum.count(@uploads.media.entries) > 0 && Enum.count(@uploads.media.entries) < 7 && "1") ||
+            "0"
+        }
+      />
     </div>
     <!--End media-->
     """
@@ -437,7 +687,9 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
   defp input(%{type: "text"} = assigns) do
     ~H"""
     <div>
-      <label :if={@label} for={@field.id} class="block text-sm/6 font-medium text-gray-900">{render_slot(@label)}</label>
+      <label :if={@label} for={@field.id} class="block text-sm/6 font-medium text-gray-900">
+        {render_slot(@label)}
+      </label>
       <div class="mt-2 grid grid-cols-1">
         <input
           type="text"
@@ -451,11 +703,19 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
           phx-update="ignore"
           data-input-dispatch={@input_dispatch}
           {@rest}
-        >
-        <.icon name="hero-exclamation-circle-solid" class={["#{@field.id}-icon", "pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-red-500 sm:size-4 hidden"]}/>
+        />
+        <.icon
+          name="hero-exclamation-circle-solid"
+          class={[
+            "#{@field.id}-icon",
+            "pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-red-500 sm:size-4 hidden"
+          ]}
+        />
       </div>
       <div class="mt-1 text-sm/6 flex justify-between">
-        <p :if={@input_helper} class="text-sm text-gray-500" id={"#{@field.id}-helper"}>{render_slot(@input_helper)}</p>
+        <p :if={@input_helper} class="text-sm text-gray-500" id={"#{@field.id}-helper"}>
+          {render_slot(@input_helper)}
+        </p>
         <p class="text-sm text-red-500" id={"#{@field.id}-error"}></p>
         <p :if={@foot_other}>{render_slot(@foot_other)}</p>
       </div>
@@ -466,7 +726,9 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
   defp input(%{type: "textarea"} = assigns) do
     ~H"""
     <div>
-      <label :if={@label} for={@field.id} class="block text-sm/6 font-medium text-gray-900">{render_slot(@label)}</label>
+      <label :if={@label} for={@field.id} class="block text-sm/6 font-medium text-gray-900">
+        {render_slot(@label)}
+      </label>
       <div class="mt-2">
         <textarea
           id={@field.id}
@@ -481,7 +743,9 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
         >{@field.value}</textarea>
       </div>
       <div class="mt-1 text-sm/6 flex justify-between">
-        <p :if={@input_helper} class="text-sm text-gray-500" id={"#{@field.id}-helper"}>{render_slot(@input_helper)}</p>
+        <p :if={@input_helper} class="text-sm text-gray-500" id={"#{@field.id}-helper"}>
+          {render_slot(@input_helper)}
+        </p>
         <p class="text-sm text-red-500" id={"#{@field.id}-error"}></p>
         <p :if={@foot_other}>{render_slot(@foot_other)}</p>
       </div>
@@ -492,7 +756,9 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
   defp input(%{type: "select"} = assigns) do
     ~H"""
     <div>
-      <label :if={@label} for={@field.id} class="block text-sm/6 font-medium text-gray-900">{render_slot(@label)}</label>
+      <label :if={@label} for={@field.id} class="block text-sm/6 font-medium text-gray-900">
+        {render_slot(@label)}
+      </label>
       <div class="mt-2 grid grid-cols-1">
         <select
           id={@field.id}
@@ -501,12 +767,19 @@ defmodule MolyWeb.Affiliate.SubmitLive2 do
           class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6"
           {@rest}
         >
-          <option :for={{value, key} <- @options} value={value} selected={value == @field.value}>{key}</option>
+          <option :for={{value, key} <- @options} value={value} selected={value == @field.value}>
+            {key}
+          </option>
         </select>
-        <.icon name="hero-chevron-down" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"/>
+        <.icon
+          name="hero-chevron-down"
+          class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+        />
       </div>
       <div class="mt-1 text-sm/6 flex justify-between">
-        <p :if={@input_helper} class="text-sm text-gray-500" id={"#{@field.id}-helper"}>{render_slot(@input_helper)}</p>
+        <p :if={@input_helper} class="text-sm text-gray-500" id={"#{@field.id}-helper"}>
+          {render_slot(@input_helper)}
+        </p>
         <p class="text-sm text-red-500" id={"#{@field.id}-error"}></p>
         <p :if={@foot_other}>{render_slot(@foot_other)}</p>
       </div>

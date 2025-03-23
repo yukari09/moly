@@ -1,68 +1,123 @@
 <div>
-    <.header title="Posts" description="A list of all the posts in your account including their name, title, email and role.">
-        <.button 
-            class="flex items-center gap-2" 
-            patch={~p"/admin/post/create"}
-            variant="primary"
-            size="sm"
-        >
-            Create Post
-        </.button>
-    </.header>
+  <.header
+    title="Posts"
+    description="A list of all the posts in your account including their name, title, email and role."
+  >
+    <.button
+      class="flex items-center gap-2"
+      patch={~p"/admin/post/create"}
+      variant="primary"
+      size="sm"
+    >
+      Create Post
+    </.button>
+  </.header>
 
-  <div id="post-top-nav" class={["flex items-center justify-between bg-white py-2 sm:py-0  mt-12 border-b"]}>
-
-    <.tabs_with_badges 
-        tabs={[
-            %{label: "All", value: "", href: ~p"/admin/posts?#{%{@params | page: 1, post_status: nil}}", badge: @status_count.all},
-            %{label: "Published", value: "publish", href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "publish"}}", badge: @status_count.publish},
-            %{label: "Draft", value: "draft", href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "draft"}}", badge: @status_count.draft},
-            %{label: "Scheduled", value: "future", href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "future"}}", badge: @status_count.future},
-            %{label: "Trash", value: "trash", href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "trash"}}", badge: @status_count.trash}
-        ]}
-        current_tab={@params.post_status}
-        inner_class = "border-none"
+  <div
+    id="post-top-nav"
+    class={["flex items-center justify-between bg-white py-2 sm:py-0  mt-12 border-b"]}
+  >
+    <.tabs_with_badges
+      tabs={[
+        %{
+          label: "All",
+          value: "",
+          href: ~p"/admin/posts?#{%{@params | page: 1, post_status: nil}}",
+          badge: @status_count.all
+        },
+        %{
+          label: "Published",
+          value: "publish",
+          href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "publish"}}",
+          badge: @status_count.publish
+        },
+        %{
+          label: "Draft",
+          value: "draft",
+          href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "draft"}}",
+          badge: @status_count.draft
+        },
+        %{
+          label: "Scheduled",
+          value: "future",
+          href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "future"}}",
+          badge: @status_count.future
+        },
+        %{
+          label: "Trash",
+          value: "trash",
+          href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "trash"}}",
+          badge: @status_count.trash
+        }
+      ]}
+      current_tab={@params.post_status}
+      inner_class="border-none"
     />
-    <.form for={nil} class="hidden sm:block" phx-save="search" phx-key="enter" phx-keydown="search">
-        <.search_input id="image-search-text-input" name="q" value={@params.q} phx-debounce="300" aria-label="Search" phx-update="ignore"/>
+    <.form
+      for={nil}
+      class="hidden sm:block"
+      phx-save="search"
+      phx-key="enter"
+      phx-keydown="search"
+    >
+      <.search_input
+        id="image-search-text-input"
+        name="q"
+        value={@params.q}
+        phx-debounce="300"
+        aria-label="Search"
+        phx-update="ignore"
+      />
     </.form>
   </div>
 
-    <div class="mt-4 flow-root p-4 border rounded-md"   :if={@posts.results != []}>
-        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <.table
-            rows={@posts.results}
-            class="table-auto"
-            >
-            <:col :let={row} label="Title"> 
-              <div class="flex gap-2">
-                <.badge variant={%{draft: "gray", published: "success", scheduled: "info", trash: "error"}[row.post_status]}>
+  <div :if={@posts.results != []} class="mt-4 flow-root p-4 border rounded-md">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <.table rows={@posts.results} class="table-auto">
+          <:col :let={row} label="Title">
+            <div class="flex gap-2">
+              <.badge variant={
+                %{draft: "gray", published: "success", scheduled: "info", trash: "error"}[
+                  row.post_status
+                ]
+              }>
                 {row.post_status}
-                </.badge>
-                <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline"><span class="font-medium">{row.post_title}</span></.link>
-              </div>
-            </:col>
-            <:col :let={row} label="Created at"> 
-              {row.inserted_at |> Timex.format!("{Mfull} {D}, {YYYY} {h24}:{m}")}
-            </:col>
-            <:col :let={row} label="" align="right"> 
-              <div class="flex items-center gap-1 text-gray-500 justify-end">
-                <.link class="text-gray-500" patch={~p"/admin/post/#{row.id}/edit"} >
-                    <Lucideicons.pen class="size-4" />
-                </.link>
-                <.link class="text-gray-500" phx-click="delete" data-confirm="Are you sure to delete this post?" phx-value-id={row.id} >
-                    <Lucideicons.trash class="size-4" />
-                </.link>
-              </div>
-            </:col>
-            </.table>
+              </.badge>
+              <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline">
+                <span class="font-medium">{row.post_title}</span>
+              </.link>
             </div>
-        </div>
+          </:col>
+          <:col :let={row} label="Created at">
+            {row.inserted_at |> Timex.format!("{Mfull} {D}, {YYYY} {h24}:{m}")}
+          </:col>
+          <:col :let={row} label="" align="right">
+            <div class="flex items-center gap-1 text-gray-500 justify-end">
+              <.link class="text-gray-500" patch={~p"/admin/post/#{row.id}/edit"}>
+                <Lucideicons.pen class="size-4" />
+              </.link>
+              <.link
+                class="text-gray-500"
+                phx-click="delete"
+                data-confirm="Are you sure to delete this post?"
+                phx-value-id={row.id}
+              >
+                <Lucideicons.trash class="size-4" />
+              </.link>
+            </div>
+          </:col>
+        </.table>
+      </div>
     </div>
-    <.pagination :if={@page_meta.total_pages > 1} current_url={live_url(@params)} page_meta={@page_meta} class="border-none" />
-    <div :if={@posts.results == []} class="mt-24 max-w-sm mx-auto">
-        <.no_results />
-    </div>
+  </div>
+  <.pagination
+    :if={@page_meta.total_pages > 1}
+    current_url={live_url(@params)}
+    page_meta={@page_meta}
+    class="border-none"
+  />
+  <div :if={@posts.results == []} class="mt-24 max-w-sm mx-auto">
+    <.no_results />
+  </div>
 </div>
- 

@@ -238,9 +238,12 @@ spark_locals_without_parens = [
   import_deps: [:ash, :spark, :reactor],
   inputs: [
     "{mix,.formatter}.exs",
-    "{config,lib,test,benchmarks,flames}/**/*.{ex,exs}"
+    "{config,lib,test,benchmarks,flames}/**/*.{ex,exs}",
+    "*.{heex,ex,exs}",
+    "priv/*/seeds.exs",
+    "{config,lib,test}/**/*.{heex,ex,exs}"
   ],
-  plugins: [Spark.Formatter],
+  plugins: [Spark.Formatter, Phoenix.LiveView.HTMLFormatter],
   locals_without_parens: spark_locals_without_parens,
   export: [
     locals_without_parens: spark_locals_without_parens

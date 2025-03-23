@@ -191,8 +191,17 @@ defmodule Moly.Utilities.Affiliate do
     ~H"""
     <article class="flex flex-col items-start justify-between">
       <div class="relative w-full">
-        <img src={@cache.feature_image_src} alt={@post.post_title} class="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]">
-        <.link class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" navigate={link_view(@post)}>&nbsp;</.link>
+        <img
+          src={@cache.feature_image_src}
+          alt={@post.post_title}
+          class="aspect-video w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
+        />
+        <.link
+          class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10"
+          navigate={link_view(@post)}
+        >
+          &nbsp;
+        </.link>
       </div>
       <div class="max-w-xl">
         <div class="mt-4 flex items-top gap-x-2 text-xs">
@@ -205,13 +214,20 @@ defmodule Moly.Utilities.Affiliate do
                 {@post.post_title}
               </.link>
             </h3>
-            <div><.commission_label  post={@post}/></div>
+            <div><.commission_label post={@post} /></div>
             <div class="space-x-1 mt-2">
-              <time datetime={@post.inserted_at |> Timex.format!("{YYYY}-{D}-{0M}")} class="text-gray-500">{@post.inserted_at |> Timex.format!("{Mshort} {D}, {YYYY}")}</time>
+              <time
+                datetime={@post.inserted_at |> Timex.format!("{YYYY}-{D}-{0M}")}
+                class="text-gray-500"
+              >
+                {@post.inserted_at |> Timex.format!("{Mshort} {D}, {YYYY}")}
+              </time>
               <.link
                 navigate={@cache.link_industry}
                 class="relative rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
-              >{@cache.affiliate_industry_name}</.link>
+              >
+                {@cache.affiliate_industry_name}
+              </.link>
             </div>
           </div>
         </div>
@@ -232,7 +248,7 @@ defmodule Moly.Utilities.Affiliate do
 
     ~H"""
     <div :if={commission_unit(@post) == "%"}>
-      <span class="text-green-500 font-ligh">{@min == @max && "Up to" || "From"}</span>
+      <span class="text-green-500 font-ligh">{(@min == @max && "Up to") || "From"}</span>
       <span class="font-bold text-green-500 text-lg">
         {@min}
       </span>
@@ -240,13 +256,13 @@ defmodule Moly.Utilities.Affiliate do
         {@unit}
       </span>
       <%= if @min != @max do %>
-      <span class="text-green-500 font-ligh">to</span>
-      <span class="font-bold text-green-500 text-lg">
-        {@max}
-      </span>
-      <span class="text-green-500 font-light">
-        {@unit}
-      </span>
+        <span class="text-green-500 font-ligh">to</span>
+        <span class="font-bold text-green-500 text-lg">
+          {@max}
+        </span>
+        <span class="text-green-500 font-light">
+          {@unit}
+        </span>
       <% end %>
     </div>
 
@@ -278,7 +294,7 @@ defmodule Moly.Utilities.Affiliate do
 
     ~H"""
     <div :if={commission_unit(@post) == "%"}>
-      <span class="text-green-500 font-ligh">{@min == @max && "Up to" || "From"}</span>
+      <span class="text-green-500 font-ligh">{(@min == @max && "Up to") || "From"}</span>
       <span class="font-bold text-green-500 text-lg">
         {@min}
       </span>
@@ -286,13 +302,13 @@ defmodule Moly.Utilities.Affiliate do
         {@unit}
       </span>
       <%= if @min != @max do %>
-      <span class="text-green-500 font-ligh">to</span>
-      <span class="font-bold text-green-500 text-lg">
-        {@max}
-      </span>
-      <span class="text-green-500 font-light">
-        {@unit}
-      </span>
+        <span class="text-green-500 font-ligh">to</span>
+        <span class="font-bold text-green-500 text-lg">
+          {@max}
+        </span>
+        <span class="text-green-500 font-light">
+          {@unit}
+        </span>
       <% end %>
     </div>
 

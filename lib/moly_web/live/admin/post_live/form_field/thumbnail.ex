@@ -37,9 +37,26 @@ defmodule MolyWeb.AdminPostLive.FormField.Thumbnail do
   def render(assigns) do
     ~H"""
     <div>
-      <div id="container" data-id="container" >
-        <div class={["relative aspect-[10/7]", !@cur_feature_image && "hidden"]}  data-id="image-container" >
-          <img id="post-feature-image" data-id="image" src={@cur_feature_image && attachment_metadata_image(%Moly.Contents.Post{id:  @cur_feature_image, post_meta: [@cur_feature_image]}, ["medium","thumbnail"], true)} alt="Featured image" class="w-full h-full object-cover rounded-md" phx-update="ignore" />
+      <div id="container" data-id="container">
+        <div
+          class={["relative aspect-[10/7]", !@cur_feature_image && "hidden"]}
+          data-id="image-container"
+        >
+          <img
+            id="post-feature-image"
+            data-id="image"
+            src={
+              @cur_feature_image &&
+                attachment_metadata_image(
+                  %Moly.Contents.Post{id: @cur_feature_image, post_meta: [@cur_feature_image]},
+                  ["medium", "thumbnail"],
+                  true
+                )
+            }
+            alt="Featured image"
+            class="w-full h-full object-cover rounded-md"
+            phx-update="ignore"
+          />
           <.button
             class="absolute top-2 right-2 !p-1 !size-6 bg-white !rounded-full shadow-md hover:bg-gray-100"
             variant="gray"
@@ -49,15 +66,31 @@ defmodule MolyWeb.AdminPostLive.FormField.Thumbnail do
           </.button>
         </div>
 
-        <input id={generate_random_id()} data-id="meta-key-input"   name={"#{@form[:post_meta].name}[0][meta_key]"}   value={:thumbnail_id}  type="hidden" disabled={!@cur_feature_image}/>
-        <input id={generate_random_id()} data-id="meta-value-input" name={"#{@form[:post_meta].name}[0][meta_value]"} value={@cur_feature_image && @cur_feature_image.post_id || nil} type="hidden" disabled={!@cur_feature_image}/>
+        <input
+          id={generate_random_id()}
+          data-id="meta-key-input"
+          name={"#{@form[:post_meta].name}[0][meta_key]"}
+          value={:thumbnail_id}
+          type="hidden"
+          disabled={!@cur_feature_image}
+        />
+        <input
+          id={generate_random_id()}
+          data-id="meta-value-input"
+          name={"#{@form[:post_meta].name}[0][meta_value]"}
+          value={(@cur_feature_image && @cur_feature_image.post_id) || nil}
+          type="hidden"
+          disabled={!@cur_feature_image}
+        />
 
         <.button
           data-id="set-image-button"
           variant="secondary"
           class={["w-full my-4", @cur_feature_image && "hidden"]}
           phx-click={
-            JS.set_attribute({"src", ~p"/admin/media?media_type=image&modal=true"}, to: "[data-id='iframe']")
+            JS.set_attribute({"src", ~p"/admin/media?media_type=image&modal=true"},
+              to: "[data-id='iframe']"
+            )
             |> show_modal(@modal_id)
           }
         >
@@ -72,7 +105,11 @@ defmodule MolyWeb.AdminPostLive.FormField.Thumbnail do
       >
         <div class="flex flex-col h-full">
           <div class="flex justify-start px-4 py-2.5 gap-2 border-b border-gray-200 mb-1">
-            <.button variant="outline" class="!text-gray-500" phx-click={JS.dispatch("app:historyback", to: "[data-id='iframe']")}>
+            <.button
+              variant="outline"
+              class="!text-gray-500"
+              phx-click={JS.dispatch("app:historyback", to: "[data-id='iframe']")}
+            >
               <Lucideicons.arrow_left class="w-4 h-4" />&nbsp;Back
             </.button>
           </div>
@@ -83,23 +120,15 @@ defmodule MolyWeb.AdminPostLive.FormField.Thumbnail do
               class="w-full h-full"
               phx-hook="SetFeatureImage"
               data-id="iframe"
-            ></iframe>
+            >
+            </iframe>
           </div>
 
           <div class="flex justify-end px-4 pt-2.5 pb-4 gap-2 border-t border-gray-200 mt-1">
-            <.button
-              data-id="cancel-button"
-              variant="gray"
-              class="w-20"
-            >
+            <.button data-id="cancel-button" variant="gray" class="w-20">
               Cancel
             </.button>
-            <.button
-              data-id="confirm-button"
-              variant="primary"
-              class={["w-20"]}
-              disabled={true}
-            >
+            <.button data-id="confirm-button" variant="primary" class={["w-20"]} disabled={true}>
               Insert
             </.button>
           </div>

@@ -1,21 +1,65 @@
 <div class="flex flex-col md:flex-row h-screen bg-gray-100 overflow-hidden">
   <div class="w-full md:w-3/5 h-[40vh] md:h-screen md:sticky md:top-0 flex items-center justify-center p-4">
-    <img :if={is_image_mime_type(@media.post_mime_type)} src={@media.guid} class="max-w-full max-h-full object-contain rounded-md" alt={@media.post_title} />
-    <video :if={is_video_mime_type(@media.post_mime_type)} src={@media.guid} class="max-w-full max-h-full object-contain" controls>
-      <source src={@media.guid} type={@media.post_mime_type}>
+    <img
+      :if={is_image_mime_type(@media.post_mime_type)}
+      src={@media.guid}
+      class="max-w-full max-h-full object-contain rounded-md"
+      alt={@media.post_title}
+    />
+    <video
+      :if={is_video_mime_type(@media.post_mime_type)}
+      src={@media.guid}
+      class="max-w-full max-h-full object-contain"
+      controls
+    >
+      <source src={@media.guid} type={@media.post_mime_type} />
       Your browser does not support the video tag.
     </video>
   </div>
   <div class="w-full md:w-2/5 h-[60vh] md:h-screen overflow-y-auto bg-white shadow-sm">
     <div class="p-6">
       <h2 class="text-2xl font-bold text-gray-800 mb-6">Media Meta</h2>
-      <.form for={@form} :let={f} class="space-y-6" phx-change="partial_update" >
-        <.input field={f[:post_title]} type="text" label="Title" phx-debounce="blur" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
-        <.textarea field={f[:post_content]} type="text" label="Description" rows="4" phx-debounce="blur" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
+      <.form :let={f} for={@form} class="space-y-6" phx-change="partial_update">
+        <.input
+          field={f[:post_title]}
+          type="text"
+          label="Title"
+          phx-debounce="blur"
+          class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+        />
+        <.textarea
+          field={f[:post_content]}
+          type="text"
+          label="Description"
+          rows="4"
+          phx-debounce="blur"
+          class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+        />
         <.inputs_for :let={pm} field={f[:post_meta]}>
-          <.input :if={pm[:meta_key].value == :attachment_image_caption} field={pm[:meta_value]} type="text" phx-debounce="blur" label="Caption" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
-          <.input :if={pm[:meta_key].value == :attachment_image_alt} field={pm[:meta_value]} type="text" phx-debounce="blur" label="Alt" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
-          <.input :if={pm[:meta_key].value not in [:attachment_image_caption, :attachment_image_alt]} field={pm[:meta_value]} type="text" phx-debounce="blur" label="Alt" container_class="hidden"/>
+          <.input
+            :if={pm[:meta_key].value == :attachment_image_caption}
+            field={pm[:meta_value]}
+            type="text"
+            phx-debounce="blur"
+            label="Caption"
+            class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+          />
+          <.input
+            :if={pm[:meta_key].value == :attachment_image_alt}
+            field={pm[:meta_value]}
+            type="text"
+            phx-debounce="blur"
+            label="Alt"
+            class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+          />
+          <.input
+            :if={pm[:meta_key].value not in [:attachment_image_caption, :attachment_image_alt]}
+            field={pm[:meta_value]}
+            type="text"
+            phx-debounce="blur"
+            label="Alt"
+            container_class="hidden"
+          />
         </.inputs_for>
       </.form>
 
@@ -23,26 +67,36 @@
       <div class="mt-8 pt-6 border-t border-gray-200">
         <h3 class="text-xl font-semibold text-gray-800 mb-4">File Information</h3>
         <div class="bg-gray-50 rounded-lg p-6">
-          <p class="text-sm text-gray-700 break-all mb-4"><span class="font-medium">Filename:</span> <%= media_meta["filename"] %></p>
+          <p class="text-sm text-gray-700 break-all mb-4">
+            <span class="font-medium">Filename:</span> {media_meta["filename"]}
+          </p>
           <div class="grid grid-cols-2 gap-6">
             <div class="space-y-4">
               <div>
                 <h4 class="text-sm font-medium text-gray-600">File Type</h4>
-                <p class="mt-1 text-sm text-gray-900 uppercase font-semibold"><%= media_meta["type"] %></p>
+                <p class="mt-1 text-sm text-gray-900 uppercase font-semibold">
+                  {media_meta["type"]}
+                </p>
               </div>
               <div>
                 <h4 class="text-sm font-medium text-gray-600">File Size</h4>
-                <p class="mt-1 text-sm text-gray-900 font-semibold"><%= bits_to_readable(media_meta["filesize"]) %></p>
+                <p class="mt-1 text-sm text-gray-900 font-semibold">
+                  {bits_to_readable(media_meta["filesize"])}
+                </p>
               </div>
             </div>
             <div class="space-y-4">
               <div>
                 <h4 class="text-sm font-medium text-gray-600">Uploaded</h4>
-                <p class="mt-1 text-sm text-gray-900 font-semibold"><%= Timex.format!(@media.inserted_at, "{Mfull} {D}, {YYYY}") %></p>
+                <p class="mt-1 text-sm text-gray-900 font-semibold">
+                  {Timex.format!(@media.inserted_at, "{Mfull} {D}, {YYYY}")}
+                </p>
               </div>
               <div>
                 <h4 class="text-sm font-medium text-gray-600">Dimensions</h4>
-                <p class="mt-1 text-sm text-gray-900 font-semibold"><%= media_meta["width"] %> × <%= media_meta["height"] %></p>
+                <p class="mt-1 text-sm text-gray-900 font-semibold">
+                  {media_meta["width"]} × {media_meta["height"]}
+                </p>
               </div>
             </div>
           </div>

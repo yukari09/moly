@@ -50,25 +50,58 @@ defmodule MolyWeb.AdminWebsiteLive.Form do
   def render(assigns) do
     ~H"""
     <div id={@id} class="py-6">
-    <.form :let={f} for={@form} class="space-y-4" phx-change="change" phx-submit="save" phx-target={@myself}>
-      <.input label="Name of Environment" field={f[:name]}  show_error={false} />
-      <.input label="Slug" field={f[:slug]} show_error={false}/>
-      <input name={f[:term_taxonomy].name<>"[0][taxonomy]"} value="website" class="hidden" type="hidden">
-      <div class="border-b"></div>
-      <.inputs_for :let={ff} field={f[:term_meta]}>
-        <div class="flex items-center gap-2">
-          <.input field={ff[:term_key]} placeholder="Name" show_error={false} />
-          <.input field={ff[:term_value]} placeholder="Value" show_error={false}/>
-          <.button variant="gray" size="sm" phx-click="remove-form" phx-target={@myself} phx-value-path={ff.name}>
-            <.icon name="hero-minus" class="size-3" />
-          </.button>
-        </div>
-      </.inputs_for>
-      <.button variant="gray" size="sm" phx-target={@myself} type="button" phx-click="add-form" phx-value-path={@form.name <> "[term_meta]"}>
-        <.icon name="hero-plus" class="size-4"/> Add a item
-      </.button>
-      <.button size="sm" type="submit" form={f} phx-disable-with="Saving..." class="absolute right-0 top-0 mr-4 !mt-4">Save</.button>
-    </.form>
+      <.form
+        :let={f}
+        for={@form}
+        class="space-y-4"
+        phx-change="change"
+        phx-submit="save"
+        phx-target={@myself}
+      >
+        <.input label="Name of Environment" field={f[:name]} show_error={false} />
+        <.input label="Slug" field={f[:slug]} show_error={false} />
+        <input
+          name={f[:term_taxonomy].name<>"[0][taxonomy]"}
+          value="website"
+          class="hidden"
+          type="hidden"
+        />
+        <div class="border-b"></div>
+        <.inputs_for :let={ff} field={f[:term_meta]}>
+          <div class="flex items-center gap-2">
+            <.input field={ff[:term_key]} placeholder="Name" show_error={false} />
+            <.input field={ff[:term_value]} placeholder="Value" show_error={false} />
+            <.button
+              variant="gray"
+              size="sm"
+              phx-click="remove-form"
+              phx-target={@myself}
+              phx-value-path={ff.name}
+            >
+              <.icon name="hero-minus" class="size-3" />
+            </.button>
+          </div>
+        </.inputs_for>
+        <.button
+          variant="gray"
+          size="sm"
+          phx-target={@myself}
+          type="button"
+          phx-click="add-form"
+          phx-value-path={@form.name <> "[term_meta]"}
+        >
+          <.icon name="hero-plus" class="size-4" /> Add a item
+        </.button>
+        <.button
+          size="sm"
+          type="submit"
+          form={f}
+          phx-disable-with="Saving..."
+          class="absolute right-0 top-0 mr-4 !mt-4"
+        >
+          Save
+        </.button>
+      </.form>
     </div>
     """
   end

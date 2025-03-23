@@ -1,10 +1,17 @@
-<.form :let={f} for={@form} class="h-screen" id={@form.id} phx-submit="save" phx-change={JS.dispatch("re_set_btn")} phx-hook="FormChangeListener">
+<.form
+  :let={f}
+  for={@form}
+  class="h-screen"
+  id={@form.id}
+  phx-submit="save"
+  phx-change={JS.dispatch("re_set_btn")}
+  phx-hook="FormChangeListener"
+>
   <div id="post-container">
-      <.live_component id="nav-bar" module={MolyWeb.AdminPostLive.NavBar} form={f}/>
+    <.live_component id="nav-bar" module={MolyWeb.AdminPostLive.NavBar} form={f} />
   </div>
 
-  <div class="flex items-top justify-between mx-auto h-[calc(100vh-4rem)]"> 
-
+  <div class="flex items-top justify-between mx-auto h-[calc(100vh-4rem)]">
     <div class="flex-1 h-full overflow-y-scroll">
       <div class="mx-auto lg:w-[840px]">
         <div class="w-[650px] mx-auto mt-12">
@@ -19,31 +26,38 @@
             data-id="post-title"
           >{f[:post_title].value}</textarea>
         </div>
-        
-        <div 
-          id="post-content-editor" 
-          phx-hook="Editor" 
+
+        <div
+          id="post-content-editor"
+          phx-hook="Editor"
           class="pt-8"
           data-id="post-content-editor"
           data-placeholder="Type text or paste a link"
           data-target-id={f[:post_content].id}
-        ></div> 
-        <.input field={f[:post_content]}  class="hidden" label={nil}  />
-      </div> 
+        >
+        </div>
+        <.input field={f[:post_content]} class="hidden" label={nil} />
+      </div>
     </div>
-    <.live_component id="side-bar" module={MolyWeb.AdminPostLive.SideBar} form={f} post_slug={@post_slug} host={@host} current_user={@current_user} create_category_modal_id={@create_category_modal_id} />
+    <.live_component
+      id="side-bar"
+      module={MolyWeb.AdminPostLive.SideBar}
+      form={f}
+      post_slug={@post_slug}
+      host={@host}
+      current_user={@current_user}
+      create_category_modal_id={@create_category_modal_id}
+    />
   </div>
   <button data-id="post-submit-btn" class="hidden" />
 </.form>
 
-
-
 <div data-id="temporary-el" class="hidden"></div>
- 
-<.modal
-  id="create_category_modal_id"
-  inner_class=""
-  phx-update="replace"
->
-  {live_render(@socket, MolyWeb.AdminPostLive.NewCategory, id: "sub-menu-container", session: %{"modal_id"=>@create_category_modal_id},  sticky: false) }
+
+<.modal id="create_category_modal_id" inner_class="" phx-update="replace">
+  {live_render(@socket, MolyWeb.AdminPostLive.NewCategory,
+    id: "sub-menu-container",
+    session: %{"modal_id" => @create_category_modal_id},
+    sticky: false
+  )}
 </.modal>

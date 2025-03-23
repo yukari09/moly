@@ -65,7 +65,6 @@ defmodule Moly.Utilities.Account do
     |> JSON.encode!()
   end
 
-  def link_profile(user), do: ~p"/user/page/@#{user_username(user)}"
 
   def user_banner(user, size), do: load_meta_value_by_meta_key(user, :banner, &Map.get(&1, size))
   def user_avatar(user, size), do: load_meta_value_by_meta_key(user, :avatar, &Map.get(&1, size))
@@ -115,8 +114,16 @@ defmodule Moly.Utilities.Account do
 
   def avatar_html(assigns) do
     ~H"""
-    <img :if={user_avatar(@user, "#{@size}")} class="inline-block w-full h-full rounded-full" src={user_avatar(@user, "#{@size}")} alt={user_username(@user)}>
-    <span :if={!user_avatar(@user, "#{@size}")} class="inline-flex w-full h-full items-center justify-center rounded-full bg-primary border-2 border-white">
+    <img
+      :if={user_avatar(@user, "#{@size}")}
+      class="inline-block w-full h-full rounded-full"
+      src={user_avatar(@user, "#{@size}")}
+      alt={user_username(@user)}
+    />
+    <span
+      :if={!user_avatar(@user, "#{@size}")}
+      class="inline-flex w-full h-full items-center justify-center rounded-full bg-primary border-2 border-white"
+    >
       <span class="font-medium text-white uppercase text-sm">{user_name(@user, 1)}</span>
     </span>
     """

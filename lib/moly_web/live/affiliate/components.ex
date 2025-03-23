@@ -7,7 +7,7 @@ defmodule MolyWeb.Affiliate.Components do
 
   def breadcrumb(assigns) do
     ~H"""
-    <nav id={@id} class={[@class && @class || "flex py-4 lg:py-8"]} aria-label="Breadcrumb">
+    <nav id={@id} class={[(@class && @class) || "flex py-4 lg:py-8"]} aria-label="Breadcrumb">
       <ol role="list" class="flex items-center">
         <li>
           <div>
@@ -19,7 +19,9 @@ defmodule MolyWeb.Affiliate.Components do
         <li :for={{label, link} <- @items}>
           <div class="flex items-center">
             <.icon name="hero-slash text-gray-300" class="size-5" />
-            <.link navigate={link} class="text-sm font-medium text-gray-500 hover:text-gray-700">{label}</.link>
+            <.link navigate={link} class="text-sm font-medium text-gray-500 hover:text-gray-700">
+              {label}
+            </.link>
           </div>
         </li>
       </ol>
@@ -34,7 +36,7 @@ defmodule MolyWeb.Affiliate.Components do
 
   def header(assigns) do
     ~H"""
-    <div id={@id} class={[@class && @class || "mb-8"]}>
+    <div id={@id} class={[(@class && @class) || "mb-8"]}>
       <h1 class="text-4xl text-gray-900 font-medium">{@headline}</h1>
       <p class="text-gray-500 mt-3 font-light ">{@subtitle}</p>
     </div>

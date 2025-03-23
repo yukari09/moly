@@ -1,84 +1,182 @@
 <div class="bg-white">
   <header class="absolute inset-x-0 top-0 z-10">
-    <nav class="flex items-center justify-between px-4 py-4 lg:px-8 border-b border-gray-100" aria-label="Global">
+    <nav
+      class="flex items-center justify-between px-4 py-4 lg:px-8 border-b border-gray-100"
+      aria-label="Global"
+    >
       <div class="flex lg:flex-1 items-center gap-12">
-        <.link navigate={"/"} class="-m-1.5 p-1.5 hidden lg:block">
+        <.link navigate="/" class="-m-1.5 p-1.5 hidden lg:block">
           <span class="sr-only">Affinew</span>
-          <img class="h-8 w-auto" src={~p"/images/logo.svg"} alt="">
+          <img class="h-8 w-auto" src={~p"/images/logo.svg"} alt="" />
         </.link>
 
         <div class="hidden lg:flex lg:gap-x-8">
-          <.link navigate={~p"/browse"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Browse</.link>
-          <.link navigate={~p"/affiliates/ai-technology"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">AI Agency</.link>
-          <.link navigate={~p"/affiliates/travel-tourism"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Travel</.link>
-          <.link navigate={~p"/affiliates/financial-insurance"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Financial</.link>
-          <.link navigate={~p"/affiliates/education-learning"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Education</.link>
-          <.link navigate={~p"/affiliates/digital-content-services"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Digital Content</.link>
-          <.link navigate={~p"/affiliates/saas-solutions"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Saas</.link>
+          <.link
+            navigate={~p"/browse"}
+            class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900"
+          >
+            Browse
+          </.link>
+          <.link
+            navigate={~p"/affiliates/ai-technology"}
+            class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900"
+          >
+            AI Agency
+          </.link>
+          <.link
+            navigate={~p"/affiliates/travel-tourism"}
+            class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900"
+          >
+            Travel
+          </.link>
+          <.link
+            navigate={~p"/affiliates/financial-insurance"}
+            class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900"
+          >
+            Financial
+          </.link>
+          <.link
+            navigate={~p"/affiliates/education-learning"}
+            class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900"
+          >
+            Education
+          </.link>
+          <.link
+            navigate={~p"/affiliates/digital-content-services"}
+            class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900"
+          >
+            Digital Content
+          </.link>
+          <.link
+            navigate={~p"/affiliates/saas-solutions"}
+            class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900"
+          >
+            Saas
+          </.link>
           <%!-- <.link navigate={~p"/posts"} class="text-sm/6 font-semibold text-gray-500 hover:text-gray-900">Blog</.link> --%>
         </div>
       </div>
 
       <div class="flex items-center lg:gap-4 gap-2 lg:justify-end">
-
-
         <div class="flex lg:hidden">
-          <button 
-            type="button" 
+          <button
+            type="button"
             class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
             phx-click={MolyWeb.TailwindUI.open_off_canvas_menu("mobile-menu")}
           >
             <span class="sr-only">Open main menu</span>
-            <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            <svg
+              class="size-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              aria-hidden="true"
+              data-slot="icon"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
             </svg>
           </button>
-        </div>     
+        </div>
 
-        <.link navigate={"/"} class="p-1.5 lg:hidden">
+        <.link navigate="/" class="p-1.5 lg:hidden">
           <span class="sr-only">Affinew</span>
-          <img class="!size-6 max-w-6" src={~p"/images/logo.svg"} alt="">
+          <img class="!size-6 max-w-6" src={~p"/images/logo.svg"} alt="" />
         </.link>
 
         <form class="grid grid-cols-1" action={~p"/search"} method="get">
-          <input type="text" name="q"  autocomplete="off" value={assigns[:q] && assigns[:q] || nil}  class="col-start-1 row-start-1 block w-auto lg:w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:pl-9 sm:text-sm/6" placeholder="Search...">
-          <.icon name="hero-magnifying-glass" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4" />
+          <input
+            type="text"
+            name="q"
+            autocomplete="off"
+            value={(assigns[:q] && assigns[:q]) || nil}
+            class="col-start-1 row-start-1 block w-auto lg:w-full rounded-md bg-white py-1.5 pl-10 pr-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:pl-9 sm:text-sm/6"
+            placeholder="Search..."
+          />
+          <.icon
+            name="hero-magnifying-glass"
+            class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4"
+          />
         </form>
 
-        <MolyWeb.TailwindUI.button id="submit-production" navigate={~p"/affiliate/submit"} class="bg-green-600 text-white hover:bg-green-600/90 focus-visible:outline-green-600/90" size="sm">
+        <MolyWeb.TailwindUI.button
+          id="submit-production"
+          navigate={~p"/affiliate/submit"}
+          class="bg-green-600 text-white hover:bg-green-600/90 focus-visible:outline-green-600/90"
+          size="sm"
+        >
           <span class="hidden lg:inline">Submit</span>
-          <.icon  name="hero-plus" class="size-4 inline lg:hidden"/>
+          <.icon name="hero-plus" class="size-4 inline lg:hidden" />
         </MolyWeb.TailwindUI.button>
-        <.link :if={!@current_user} navigate={~p"/sign-in"} class="text-sm/6 font-semibold text-gray-900">Log in <span aria-hidden="true">&rarr;</span></.link>
-        <MolyWeb.TailwindUI.dropdown id="nav-user-menu" :if={@current_user}>
+        <.link
+          :if={!@current_user}
+          navigate={~p"/sign-in"}
+          class="text-sm/6 font-semibold text-gray-900"
+        >
+          Log in <span aria-hidden="true">&rarr;</span>
+        </.link>
+        <MolyWeb.TailwindUI.dropdown :if={@current_user} id="nav-user-menu">
           <:button_slot class="!m-0 !p-0 size-8">
-            <Moly.Utilities.Account.avatar_html user={@current_user} size={32}/>
+            <Moly.Utilities.Account.avatar_html user={@current_user} size={32} />
           </:button_slot>
 
-          <:menu_slot
-            class="mt-4 min-w-52"
-          >
+          <:menu_slot class="mt-4 min-w-52">
             <div class="px-4 py-3 flex items-center gap-2" role="none">
-              <.link navigate={Moly.Utilities.Account.link_profile(@current_user)} class="block size-8" role="none">
-                <Moly.Utilities.Account.avatar_html user={@current_user} size={32}/>
+              <.link
+                navigate={Moly.Utilities.Account.link_profile(@current_user)}
+                class="block size-8"
+                role="none"
+              >
+                <Moly.Utilities.Account.avatar_html user={@current_user} size={32} />
               </.link>
-              <.link navigate={Moly.Utilities.Account.link_profile(@current_user)} class="block" role="none">
-                <p class="text-sm font-semibold">{Moly.Utilities.Account.user_name(@current_user)}</p>
+              <.link
+                navigate={Moly.Utilities.Account.link_profile(@current_user)}
+                class="block"
+                role="none"
+              >
+                <p class="text-sm font-semibold">
+                  {Moly.Utilities.Account.user_name(@current_user)}
+                </p>
                 <p class="text-sm text-gray-500">{@current_user.email}</p>
               </.link>
             </div>
             <div class="py-1" role="none">
-              <.link :if={:admin in @current_user.roles} navigate={~p"/admin/dashboard"} class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-002">
+              <.link
+                :if={:admin in @current_user.roles}
+                navigate={~p"/admin/dashboard"}
+                class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none"
+                role="menuitem"
+                tabindex="-1"
+                id="menu-user-menu-item-002"
+              >
                 <Lucideicons.sticker class="mr-3 size-4 text-gray-700  group-hover:text-gray-900" />
                 Admin
               </.link>
-              <.link navigate={Moly.Utilities.Account.link_profile(@current_user)} class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-003">
+              <.link
+                navigate={Moly.Utilities.Account.link_profile(@current_user)}
+                class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none"
+                role="menuitem"
+                tabindex="-1"
+                id="menu-user-menu-item-003"
+              >
                 <Lucideicons.user class="mr-3 size-4 text-gray-700 group-hover:text-gray-900" />
                 Profile
               </.link>
-              <.link navigate="/sign-out" class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none" role="menuitem" tabindex="-1" id="menu-user-menu-item-1">
-                <Lucideicons.log_out name="hero-arrow-up-tray" class="mr-3 size-4 text-gray-700  group-hover:text-gray-900" />
-                Sign out
+              <.link
+                navigate="/sign-out"
+                class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none"
+                role="menuitem"
+                tabindex="-1"
+                id="menu-user-menu-item-1"
+              >
+                <Lucideicons.log_out
+                  name="hero-arrow-up-tray"
+                  class="mr-3 size-4 text-gray-700  group-hover:text-gray-900"
+                /> Sign out
               </.link>
             </div>
           </:menu_slot>
@@ -89,19 +187,29 @@
     <div id="mobile-menu" class="hidden" role="dialog" aria-modal="true">
       <!-- Background backdrop, show/hide based on slide-over state. -->
       <div id="mobile-menu-backdrop" class="fixed inset-0 z-50"></div>
-      <div id="mobile-menu-content" class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-4 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+      <div
+        id="mobile-menu-content"
+        class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-4 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10"
+      >
         <div class="flex items-center justify-between">
           <a href="#" class="-m-1.5 p-1.5">
             <span class="sr-only">Your Company</span>
-            <img class="h-8 w-auto" src={~p"/images/logo.svg"} alt="">
+            <img class="h-8 w-auto" src={~p"/images/logo.svg"} alt="" />
           </a>
-          <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700" id={"mobile-menu-close-button"}>
+          <button
+            type="button"
+            class="-m-2.5 rounded-md p-2.5 text-gray-700"
+            id="mobile-menu-close-button"
+          >
             <span class="sr-only">Close menu</span>
-            <svg 
-              class="size-6" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon"
+            <svg
+              class="size-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              aria-hidden="true"
+              data-slot="icon"
               phx-click={MolyWeb.TailwindUI.close_off_canvas_menu("mobile-menu")}
             >
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -111,53 +219,115 @@
         <div class="mt-6 flow-root">
           <div class="-my-6 divide-y divide-gray-500/10">
             <div class="space-y-2 py-6">
-      
-              <.link navigate={~p"/browse"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Browse</.link>
-              <.link navigate={~p"/affiliates/ai-technology"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">AI Agency</.link>
-              <.link navigate={~p"/affiliates/travel-tourism"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Travel</.link>
-              <.link navigate={~p"/affiliates/financial-insurance"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Financial</.link>
-              <.link navigate={~p"/affiliates/education-learning"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Education</.link>
-              <.link navigate={~p"/affiliates/digital-content-services"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Digital Content</.link>
-              <.link navigate={~p"/affiliates/saas-solutions"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Saas</.link>
+              <.link
+                navigate={~p"/browse"}
+                class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+              >
+                Browse
+              </.link>
+              <.link
+                navigate={~p"/affiliates/ai-technology"}
+                class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+              >
+                AI Agency
+              </.link>
+              <.link
+                navigate={~p"/affiliates/travel-tourism"}
+                class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+              >
+                Travel
+              </.link>
+              <.link
+                navigate={~p"/affiliates/financial-insurance"}
+                class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+              >
+                Financial
+              </.link>
+              <.link
+                navigate={~p"/affiliates/education-learning"}
+                class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+              >
+                Education
+              </.link>
+              <.link
+                navigate={~p"/affiliates/digital-content-services"}
+                class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+              >
+                Digital Content
+              </.link>
+              <.link
+                navigate={~p"/affiliates/saas-solutions"}
+                class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+              >
+                Saas
+              </.link>
               <%!-- <.link navigate={~p"/posts"} class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Blog</.link> --%>
-
             </div>
             <div class="py-6">
-              <.link :if={!@current_user} navigate={~p"/sign-in"} class="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Log in <span aria-hidden="true">&rarr;</span></.link>
+              <.link
+                :if={!@current_user}
+                navigate={~p"/sign-in"}
+                class="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+              >
+                Log in <span aria-hidden="true">&rarr;</span>
+              </.link>
             </div>
           </div>
         </div>
       </div>
     </div>
   </header>
-  
+
   <main class="mt-[69px] min-h-[calc(100vh_-_69px)]">
     <MolyWeb.TailwindUI.flash_group flash={@flash} id="app-flash" />
-    <.live_component module={MolyWeb.Affiliate.PageIndexAlert} id="user_email_alert" :if={Moly.Utilities.Account.is_active_user(@current_user) == false} current_user={@current_user} />
-    { @inner_content }  
+    <.live_component
+      :if={Moly.Utilities.Account.is_active_user(@current_user) == false}
+      module={MolyWeb.Affiliate.PageIndexAlert}
+      id="user_email_alert"
+      current_user={@current_user}
+    />
+    {@inner_content}
   </main>
 
   <footer class="bg-gray-900">
     <div class="mx-auto max-w-7xl overflow-hidden px-6 py-20 sm:py-24 lg:px-8">
-      <nav :if={Moly.Utilities.Page.website_links != []} class="-mb-6 flex flex-wrap justify-center gap-x-12 gap-y-3 text-sm/6" aria-label="Footer">
-        <a :for={termmeta <- Moly.Utilities.Page.website_links} href={termmeta.meta_value} class="text-gray-400 hover:text-white">{termmeta.meta_key}</a>
-      </nav>
-      <div :if={Moly.Utilities.Page.social_links != []} class="mt-16 flex justify-center gap-x-10">
-        <a :for={termmeta <- Moly.Utilities.Page.social_links} :if={is_map(termmeta.term_value)} href={termmeta.term_value["url"]} class="text-gray-400 hover:text-gray-300">
-          {raw termmeta.term_value["icon"]}
+      <nav
+        :if={Moly.Utilities.Page.website_links() != []}
+        class="-mb-6 flex flex-wrap justify-center gap-x-12 gap-y-3 text-sm/6"
+        aria-label="Footer"
+      >
+        <a
+          :for={termmeta <- Moly.Utilities.Page.website_links()}
+          href={termmeta.meta_value}
+          class="text-gray-400 hover:text-white"
+        >
+          {termmeta.meta_key}
         </a>
-        <a :for={termmeta <- Moly.Utilities.Page.social_links} :if={!is_map(termmeta.term_value)} href={termmeta.term_value} class="text-gray-400 hover:text-gray-300">
+      </nav>
+      <div
+        :if={Moly.Utilities.Page.social_links() != []}
+        class="mt-16 flex justify-center gap-x-10"
+      >
+        <a
+          :for={termmeta <- Moly.Utilities.Page.social_links()}
+          :if={is_map(termmeta.term_value)}
+          href={termmeta.term_value["url"]}
+          class="text-gray-400 hover:text-gray-300"
+        >
+          {raw(termmeta.term_value["icon"])}
+        </a>
+        <a
+          :for={termmeta <- Moly.Utilities.Page.social_links()}
+          :if={!is_map(termmeta.term_value)}
+          href={termmeta.term_value}
+          class="text-gray-400 hover:text-gray-300"
+        >
           {termmeta.term_key}
         </a>
       </div>
-      <p class="mt-10 text-center text-sm/6 text-gray-400">© {Timex.now() |> Timex.format!("{YYYY}")} {Moly.Utilities.Page.website_name}, Inc. All rights reserved.</p>
+      <p class="mt-10 text-center text-sm/6 text-gray-400">
+        © {Timex.now() |> Timex.format!("{YYYY}")} {Moly.Utilities.Page.website_name()}, Inc. All rights reserved.
+      </p>
     </div>
   </footer>
-
 </div>
-
-
-
-
-
- 

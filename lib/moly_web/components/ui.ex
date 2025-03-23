@@ -21,7 +21,9 @@ defmodule MolyWeb.UI do
   def input(%{type: "text"} = assigns) do
     ~H"""
     <div>
-      <label :if={@label} for={@field.id} class="block text-sm/6 font-medium text-gray-900">{render_slot(@label)}</label>
+      <label :if={@label} for={@field.id} class="block text-sm/6 font-medium text-gray-900">
+        {render_slot(@label)}
+      </label>
       <div class="mt-2 grid grid-cols-1">
         <input
           type="text"
@@ -35,11 +37,19 @@ defmodule MolyWeb.UI do
           phx-update="ignore"
           data-input-dispatch={@input_dispatch}
           {@rest}
-        >
-        <.icon name="hero-exclamation-circle-solid" class={["#{@field.id}-icon", "pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-red-500 sm:size-4 hidden"]}/>
+        />
+        <.icon
+          name="hero-exclamation-circle-solid"
+          class={[
+            "#{@field.id}-icon",
+            "pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-red-500 sm:size-4 hidden"
+          ]}
+        />
       </div>
       <div class="mt-1 text-sm/6 flex justify-between">
-        <p :if={@input_helper} class="text-sm text-gray-500" id={"#{@field.id}-helper"}>{render_slot(@input_helper)}</p>
+        <p :if={@input_helper} class="text-sm text-gray-500" id={"#{@field.id}-helper"}>
+          {render_slot(@input_helper)}
+        </p>
         <p class="text-sm text-red-500" id={"#{@field.id}-error"}></p>
         <p :if={@foot_other}>{render_slot(@foot_other)}</p>
       </div>
@@ -50,7 +60,9 @@ defmodule MolyWeb.UI do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div>
-      <label :if={@label} for={@field.id} class="block text-sm/6 font-medium text-gray-900">{render_slot(@label)}</label>
+      <label :if={@label} for={@field.id} class="block text-sm/6 font-medium text-gray-900">
+        {render_slot(@label)}
+      </label>
       <div class="mt-2">
         <textarea
           id={@field.id}
@@ -65,7 +77,9 @@ defmodule MolyWeb.UI do
         >{@field.value}</textarea>
       </div>
       <div class="mt-1 text-sm/6 flex justify-between">
-        <p :if={@input_helper} class="text-sm text-gray-500" id={"#{@field.id}-helper"}>{render_slot(@input_helper)}</p>
+        <p :if={@input_helper} class="text-sm text-gray-500" id={"#{@field.id}-helper"}>
+          {render_slot(@input_helper)}
+        </p>
         <p class="text-sm text-red-500" id={"#{@field.id}-error"}></p>
         <p :if={@foot_other}>{render_slot(@foot_other)}</p>
       </div>
@@ -76,7 +90,9 @@ defmodule MolyWeb.UI do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div>
-      <label :if={@label} for={@field.id} class="block text-sm/6 font-medium text-gray-900">{render_slot(@label)}</label>
+      <label :if={@label} for={@field.id} class="block text-sm/6 font-medium text-gray-900">
+        {render_slot(@label)}
+      </label>
       <div class="mt-2 grid grid-cols-1">
         <select
           id={@field.id}
@@ -85,12 +101,19 @@ defmodule MolyWeb.UI do
           class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6"
           {@rest}
         >
-          <option :for={{value, key} <- @options} value={value} selected={value == @option_selectd}>{key}</option>
+          <option :for={{value, key} <- @options} value={value} selected={value == @option_selectd}>
+            {key}
+          </option>
         </select>
-        <.icon name="hero-chevron-down" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"/>
+        <.icon
+          name="hero-chevron-down"
+          class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+        />
       </div>
       <div class="mt-1 text-sm/6 flex justify-between">
-        <p :if={@input_helper} class="text-sm text-gray-500" id={"#{@field.id}-helper"}>{render_slot(@input_helper)}</p>
+        <p :if={@input_helper} class="text-sm text-gray-500" id={"#{@field.id}-helper"}>
+          {render_slot(@input_helper)}
+        </p>
         <p class="text-sm text-red-500" id={"#{@field.id}-error"}></p>
         <p :if={@foot_other}>{render_slot(@foot_other)}</p>
       </div>

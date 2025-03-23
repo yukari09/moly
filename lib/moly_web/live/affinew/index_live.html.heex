@@ -4,97 +4,77 @@
     <div class="bg-green-primary">
       <!-- Navbar -->
       <div class="navbar w-full max-w-screen-xl mx-auto px-10 ">
-      <div class="flex-none lg:hidden">
+        <div class="flex-none lg:hidden">
           <label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost">
-          <Lucideicons.align_justify class="inline-block h-6 w-6 stroke-current"/>
+            <Lucideicons.align_justify class="inline-block h-6 w-6 stroke-current" />
           </label>
-      </div>
-      <div class="navbar-start flex items-center gap-8 w-auto">
+        </div>
+        <div class="navbar-start flex items-center gap-8 w-auto">
           <div class="size-8"><.link patch="/"><img src={~p"/images/logo.svg"} /></.link></div>
-        <ul class="flex items-center text-gray-100 font-medium mx-auto gap-8">
-            <li><.link patch={~p"/programs"} class="hover:text-gray-50">Browse</.link></li>
-            <li><.link patch={~p"/program/categories"} class="hover:text-gray-50">Categories</.link></li>
-            <li><.link patch={~p"/news"} class="hover:text-gray-50">News</.link></li>
-            <li><.link patch={~p"/resources"} class="hover:text-gray-50">Resources</.link></li>
-        </ul>
-      </div>
-
-      <div class="hidden lg:block navbar-end w-auto flex-1">
-          <ul class="flex items-center gap-4 justify-end">
-          <!-- Navbar menu content here -->
-          <%!-- <li><button class="btn  btn-wide flex items-center border-none text-green-light bg-green-secondary">Submit</button></li> --%>
-          <li>
-            <button class="btn btn-ghost btn-circle"><Lucideicons.bell class="size-5 text-gray-50" /></button>
-          </li>
-          <li>
-            <div class="dropdown dropdown-bottom dropdown-center p-0">
-              <div tabindex="0" class="size-8"><MolyWeb.DaisyUi.avatar user={@current_user} /></div>
-              <div tabindex="0" class="dropdown-content bg-white rounded-box z-1 w-56 shadow-lg  mt-2">
-                <div class="px-2 py-4 flex items-center gap-2 border-b border-gray-900/10" role="none">
-                  <.link patch={Moly.Utilities.Account.link_profile(@current_user)} class="block size-10" role="none">
-                    <MolyWeb.DaisyUi.avatar user={@current_user} size={64} />
-                  </.link>
-                  <.link patch={Moly.Utilities.Account.link_profile(@current_user)} class="block" role="none">
-                    <p class="text-sm font-semibold">{Moly.Utilities.Account.user_name(@current_user)}</p>
-                    <p class="text-sm text-base-content/60">{@current_user.email}</p>
-                  </.link>
-                </div>
-                <div class="py-1" role="none">
-                  <.link :if={:admin in @current_user.roles} patch={~p"/admin/dashboard"} class="group flex items-center px-4 py-2 text-sm font-medium hover:bg-base-content/10" role="menuitem" tabindex="-1">
-                    <Lucideicons.sticker class="mr-3 size-4" />
-                    Admin
-                  </.link>
-                  <.link patch={Moly.Utilities.Account.link_profile(@current_user)} class="group flex items-center px-4 py-2 text-sm font-medium hover:bg-base-content/10" role="menuitem" tabindex="-1">
-                    <Lucideicons.user class="mr-3 size-4" />
-                    Profile
-                  </.link>
-                  <.link patch="/sign-out" class="group flex items-center px-4 py-2 text-sm font-medium hover:bg-base-content/10" role="menuitem" tabindex="-1">
-                    <Lucideicons.log_out name="hero-arrow-up-tray" class="mr-3 size-4" />
-                    Sign out
-                  </.link>
-                </div>
-              </div>
-            </div>
-          </li>
+          <ul class="flex items-center text-gray-100 font-medium mx-auto gap-8">
+            <li><.link patch={page_link(:programs)} class="hover:text-gray-50">Browse</.link></li>
+            <li>
+              <.link patch={page_link(:categries)} patch={~p"/program/categories"} class="hover:text-gray-50">Categories</.link>
+            </li>
+            <li><.link patch={page_link(:news)} class="hover:text-gray-50">News</.link></li>
+            <li><.link patch={page_link(:resource)} class="hover:text-gray-50">Resources</.link></li>
           </ul>
-      </div>
+        </div>
+
+        <div class="hidden lg:block navbar-end w-auto flex-1">
+          <ul class="flex items-center gap-4 justify-end">
+            <!-- Navbar menu content here -->
+            <%!-- <li><button class="btn  btn-wide flex items-center border-none text-green-light bg-green-secondary">Submit</button></li> --%>
+            <li>
+              <button class="btn btn-ghost btn-circle">
+                <Lucideicons.bell class="size-5 text-gray-50" />
+              </button>
+            </li>
+            <li>
+              <.user_dropdown  current_user={@current_user}/>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
     <!-- Page content here -->
     <div class="bg-green-primary">
-    <div class="max-w-screen-xl mx-auto" aria-hidden="true">
+      <div class="max-w-screen-xl mx-auto" aria-hidden="true">
         <div class="w-full flex items-center justify-between py-20 px-20">
           <div class="max-w-lg">
             <h1>
-            <p class="text-6xl/18 text-white">Find <span class="text-green-light">High Ticket</span> Affiliate Programs</p>
-            <p class=" text-white mt-4 font-light">Discover exclusive, high-paying affiliate programs that let you earn more with fewer sales.</p>
+              <p class="text-6xl/18 text-white">
+                Find <span class="text-green-light">High Ticket</span> Affiliate Programs
+              </p>
+              <p class=" text-white mt-4 font-light">
+                Discover exclusive, high-paying affiliate programs that let you earn more with fewer sales.
+              </p>
             </h1>
-             
-             <div class="mt-16 flex items-center gap-4">
-               <button class="btn px-12 rounded-md text-green-primary bg-green-light border-none">Browse</button>
-               <button class="btn px-12 rounded-md text-white bg-green-secondary border-green-secondary">Submit</button>
-             </div>
-          </div>
-            <div class="max-w-md">
-            <img src={~p"/images/backgroud - file.png"} />
+
+            <div class="mt-16 flex items-center gap-4">
+              <button class="btn px-12 py-6 rounded-md text-green-primary bg-green-light border-none">
+                Browse
+              </button>
+              <button class="btn px-12 py-6 rounded-md text-white bg-green-secondary border-green-secondary">
+                Submit
+              </button>
             </div>
+          </div>
+          <div class="max-w-md">
+            <img src={~p"/images/backgroud - file.png"} />
+          </div>
         </div>
+      </div>
     </div>
 
+    <div class="w-full max-w-screen-xl mx-auto p-10">
+      <div class="grid grid-cols-3 gap-6">
+        <MolyWeb.Affinew.Components.card :for={_ <- 0..8} />
+      </div>
+    </div>
 
-    
-    </div>
-    <div class="flex items-center justify-between max-w-screen-xl mx-auto">
-        <div class="flex-1">
-            <h2 class="font-semibold text-lg">Top paying Affiliate programs</h2>
-            <div class="text-base-content/60 text-sm mt-1 hidden lg:block">Find top paying,high ticket,best paying affiliate programs for beginners or experts.</div>
-        </div>
-        <.link navigate={~p"/browse"} class="text-sm text-green-primary flex items-center">Brose all<span class="lg:block hidden">&nbsp;top paying affiliate programs</span><.icon name="hero-chevron-right-mini" class="size-4.5 text-green-600 stroke-1 font-bold"/></.link>
-    </div>
-  <div>
-     
+    <MolyWeb.Affinew.Components.footer/>
   </div>
-</div>
   <div class="drawer-side">
     <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
     <ul class="menu bg-base-200 min-h-full w-80 p-4">

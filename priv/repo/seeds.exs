@@ -254,7 +254,6 @@
 #   ]
 # }
 
-
 # countries = %{
 #   name: "Countries",
 #   slug: "countries",
@@ -312,8 +311,6 @@
 #     %{name: "Liechtenstein", slug: "liechtenstein"}
 #   ]
 # }
-
-
 
 # defmodule Moly.Seed do
 #   require Ash.Query
