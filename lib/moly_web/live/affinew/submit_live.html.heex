@@ -1,0 +1,571 @@
+<.form phx-change="validate" phx-submit="save">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 sm:pb-32 sm:pt-12  lg:px-8">
+    <div class="lg:text-4xl text-2xl pb-12 font-medium lg:font-normal border-b border-gray-900/10">
+      Submit Competitive Products
+    </div>
+    <div class="space-y-12 mt-24">
+      <div
+        id="affiliate-program-info"
+        phx-update="ignore"
+        class="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-3"
+      >
+        <div>
+          <h2 class="text-base/7 font-semibold text-gray-900">Affiliate Program Information</h2>
+          <p class="mt-1 text-sm/6 text-gray-600">
+            Provide key details about the affiliate program.
+          </p>
+        </div>
+
+        <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2">
+          <div class="sm:col-span-4">
+            <.input
+              label="Affiliate Program Name"
+              placeholder="Affiliate Program Name"
+              field={@form[:post_title]}
+              data-validator="require:string:length-3"
+            />
+          </div>
+
+          <div class="col-span-full">
+            <.textarea
+              label="Description"
+              placeholder="Description of affiliate program."
+              field={@form[:post_content]}
+              data-validator="require:string:length-5"
+            />
+            <p class="mt-3 text-sm/6 text-gray-600">
+              Write a few sentences about this affiliate program.
+            </p>
+          </div>
+
+          <div class="col-span-full">
+            <.input
+              label="Tags"
+              placeholder="Tags of affiliate program, tag1,tag2,..."
+              field={@form[:post_tags]}
+              data-validator="require:list:length-1"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-3">
+        <div>
+          <div class="relative">
+            <h2 class="text-base/7 font-semibold text-gray-900">
+              Commission structure&nbsp;
+            </h2>
+          </div>
+          <p class="mt-1 text-sm/6 text-gray-600">
+            The information about the commission structure.<br /><.link class="text-gray-500 underline">
+              How to write commission
+            </.link>
+          </p>
+        </div>
+
+        <div id="commission-payment" phx-update="ignore" class="max-w-2xl md:col-span-2">
+          <div class="text-right">
+            <.link
+              class="text-xs underline text-gray-500"
+              phx-click={JS.dispatch("addNewCommssion")}
+            >
+              Add New
+            </.link>
+          </div>
+          <div class="grid grid-cols-1 gap-x-2 gap-y-8 sm:grid-cols-6 border-gray-900/10 border-b pb-8">
+            <%= for {commission, i} <- Enum.with_index(@commissions) do %>
+              <div class="sm:col-span-2" data-commision-i={0}>
+                <.select
+                  label={(i == 0 && "Commission Type") || nil}
+                  field={@form[:post_meta]}
+                  field_subfix={field_subfix("meta_value", i, 0)}
+                  value={commission_value(commission, :commission_type)}
+                  options={[
+                    {"bounty", "Fixed Bounty"},
+                    {"revenue_share", "Revenue Share"},
+                    {"hybrid", "Hybrid"}
+                  ]}
+                />
+                <.input
+                  class="hidden"
+                  field={@form[:post_meta]}
+                  field_subfix={field_subfix("meta_key", i, 0)}
+                  value={:commission_type}
+                />
+              </div>
+              <div class="sm:col-span-1" data-commision-i={0}>
+                <.input
+                  label={(i == 0 && "Amount") || nil}
+                  type="number"
+                  field={@form[:post_meta]}
+                  field_subfix={field_subfix("meta_value", i, 1)}
+                  value={commission_value(commission, :commission_amount)}
+                  data-validator="require:integer"
+                />
+                <.input
+                  class="hidden"
+                  field={@form[:post_meta]}
+                  field_subfix={field_subfix("meta_key", i, 1)}
+                  value={:commission_amount}
+                />
+              </div>
+              <div class="sm:col-span-1" data-commision-i={0}>
+                <.select
+                  label={(i == 0 && "Unit") || nil}
+                  field={@form[:post_meta]}
+                  field_subfix={field_subfix("meta_value", i, 2)}
+                  value={commission_value(commission, :commission_unit)}
+                  options={[{"USD", "$"}, {"EUR", "€"}, {"%", "%"}]}
+                />
+                <.input
+                  class="hidden"
+                  field={@form[:post_meta]}
+                  field_subfix={field_subfix("meta_key", i, 2)}
+                  value={:commission_unit}
+                />
+              </div>
+              <div class="sm:col-span-2" data-commision-i={0}>
+                <div class="flex items-center gap-0.5 w-full">
+                  <.input
+                    label={(i == 0 && "Notes") || nil}
+                    field={@form[:post_meta]}
+                    field_subfix={field_subfix("meta_value", i, 3)}
+                    value={commission_value(commission, :commission_notes)}
+                    placeholder="Other information."
+                  />
+                  <.input
+                    class="hidden size-0 flex-1"
+                    field={@form[:post_meta]}
+                    field_subfix={field_subfix("meta_key", i, 3)}
+                    value={:commission_notes}
+                  />
+                  <.button size="xs" variant="gray" class={[i === 0 && "!hidden", "remove-btn"]}>
+                    <.icon name="hero-minus" class="size-4.5 text-gray-500 cursor-pointer" />
+                  </.button>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          <div class="grid grid-cols-1 gap-x-2 gap-y-8 sm:grid-cols-6 py-8 border-gray-900/10 border-b">
+            <div class="sm:col-span-3">
+              <.input
+                label="Cookie Duration (days)"
+                type="number"
+                field={@form[:post_meta]}
+                field_subfix="[4][meta_value]"
+                value={post_meta_value(@post, :cookie_duration)}
+                data-validator="integer"
+              />
+              <.input
+                class="hidden"
+                field={@form[:post_meta]}
+                field_subfix="[4][meta_key]"
+                value={:cookie_duration}
+              />
+            </div>
+            <div class="sm:col-span-3">
+              <.input
+                label="Duration Months"
+                type="number"
+                field={@form[:post_meta]}
+                field_subfix="[5][meta_value]"
+                value={post_meta_value(@post, :duration_months)}
+                data-validator="integer"
+              />
+              <.input
+                class="hidden"
+                field={@form[:post_meta]}
+                field_subfix="[5][meta_key]"
+                value={:duration_months}
+              />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-x-2 gap-y-8 sm:grid-cols-6 mt-8">
+            <div class="sm:col-span-2">
+              <.input
+                label="Payment Method"
+                placeholder="Paypal,Bank Transfer"
+                field={@form[:post_meta]}
+                field_subfix="[6][meta_value]"
+                value={post_meta_value(@post, :payment_method)}
+                data-validator="require:list:length-1"
+              />
+              <.input
+                class="hidden"
+                field={@form[:post_meta]}
+                field_subfix="[6][meta_key]"
+                value={:payment_method}
+              />
+            </div>
+            <div class="sm:col-span-2">
+              <.input
+                label="Min Payout Threshold"
+                type="number"
+                field={@form[:post_meta]}
+                field_subfix="[7][meta_value]"
+                value={post_meta_value(@post, :min_payout_threshold)}
+                data-validator="require:integer"
+              />
+              <.input
+                class="hidden"
+                field={@form[:post_meta]}
+                field_subfix="[7][meta_key]"
+                value={:min_payout_threshold}
+              />
+            </div>
+            <div class="sm:col-span-1">
+              <.select
+                label="Payment Cycle"
+                field={@form[:post_meta]}
+                field_subfix="[8][meta_value]"
+                value={post_meta_value(@post, :payment_cycle)}
+                options={[
+                  {"monthly", "Monthly"},
+                  {"semi-monthly", "Semi-Monthly"},
+                  {"weekly", "Weekly"},
+                  {"quarterly", "Quarterly"},
+                  {"bi-annually", "Bi-Annually"},
+                  {"annually", "Annually"},
+                  {"on-demand", "On-Demand"},
+                  {"net-30", "Net 30"},
+                  {"net-60", "Net 60"}
+                ]}
+              />
+              <.input
+                class="hidden"
+                field={@form[:post_meta]}
+                field_subfix="[8][meta_key]"
+                value={:payment_cycle}
+              />
+            </div>
+            <div class="sm:col-span-1">
+              <.select
+                label="Currency"
+                field={@form[:post_meta]}
+                field_subfix="[9][meta_value]"
+                value={post_meta_value(@post, :currency)}
+                options={[{"USD", "$"}, {"EUR", "€"}]}
+              />
+              <.input
+                class="hidden"
+                field={@form[:post_meta]}
+                field_subfix="[9][meta_key]"
+                value={:currency}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-3">
+        <div>
+          <h2 class="text-base/7 font-semibold text-gray-900">Resource</h2>
+          <p class="mt-1 text-sm/6 text-gray-600">Resource of about this affiliate program.</p>
+        </div>
+        <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2">
+          <div class="sm:col-span-4" id="affiliate-affiliate_program-link" phx-update="ignore">
+            <.input
+              label="Affiliate Program Link"
+              placeholder="Affiliate program link begin with http(s)"
+              field={@form[:post_meta]}
+              field_subfix="[10][meta_value]"
+              value={post_meta_value(@post, :affiliate_program_link)}
+              data-validator="require:url"
+            />
+            <.input
+              class="hidden"
+              field={@form[:post_meta]}
+              field_subfix="[10][meta_key]"
+              value={:affiliate_program_link}
+            />
+          </div>
+          <div class="sm:col-span-2" id="affiliate-region" phx-update="ignore">
+            <.input
+              label="Applicable Region"
+              field={@form[:post_meta]}
+              field_subfix="[11][meta_value]"
+              placeholder="Global,USA,UK"
+              value={post_meta_value(@post, :region)}
+              data-validator="require:list:length-1"
+            />
+            <.input
+              class="hidden"
+              field={@form[:post_meta]}
+              field_subfix="[11][meta_key]"
+              value={:region}
+            />
+          </div>
+          <div class="col-span-full" id="affiliate-categories" phx-update="ignore">
+            <.select
+              label="Industry"
+              field={@form[:categories]}
+              field_subfix="[0]"
+              options={Enum.map(@industries, &{&1.id, &1.term.name})}
+            />
+          </div>
+          <div class="col-span-full">
+            <label for="cover-photo" class="block text-sm/6 font-medium text-gray-900">
+              Affiliate program screenshot
+            </label>
+            <div
+              class="mt-2 relative rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
+              phx-drop-target={@uploads.media.ref}
+            >
+              <div :if={Enum.count(@uploads.media.entries) == 0} class="flex flex-col text-center">
+                <.icon name="hero-photo" class="mx-auto size-12 text-gray-300" />
+                <div class="mt-4 flex text-sm/6 text-gray-600 mx-auto">
+                  <label
+                    for={@uploads.media.ref}
+                    class="relative cursor-pointer rounded-md bg-white font-semibold text-green-600 focus-within:ring-2 focus-within:ring-green-600 focus-within:ring-offset-2 focus-within:outline-hidden hover:text-green-500"
+                  >
+                    <span>Upload a file</span>
+                  </label>
+                  <p class="pl-1">or drag and drop</p>
+                </div>
+                <p class="text-xs/5 text-gray-600">PNG, JPG, Webp up to 4MB</p>
+              </div>
+              <div :for={entry <- @uploads.media.entries} class="relative">
+                <div><.live_img_preview entry={entry} /></div>
+                <div class="absolute right-0 top-0 mr-1 mt-1">
+                  <button
+                    type="button"
+                    phx-click="cancel-upload"
+                    phx-value-ref={entry.ref}
+                    class="bg-white shadow rounded-full text-gray-500 p-1 cursor-pointer"
+                  >
+                    <Lucideicons.x class="size-4" />
+                  </button>
+                </div>
+              </div>
+              <.live_file_input
+                class="hidden size-0"
+                upload={@uploads.media}
+                data-validator="require:file:length-1"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-3">
+        <div>
+          <h2 class="text-base/7 font-semibold text-gray-900">Signup Requirements</h2>
+          <p class="mt-1 text-sm/6 text-gray-600">Signup Requirements.</p>
+        </div>
+        <div
+          id="affiliate-signup-requirements"
+          phx-update="ignore"
+          class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2"
+        >
+          <div class="col-span-full">
+            <.textarea
+              placeholder="Requires an active website with tech or hosting-related content, no minimum traffic, application review needed."
+              rows="5"
+              class="w-full"
+              label="Signup Requirements"
+              field={@form[:post_meta]}
+              field_subfix="[12][meta_value]"
+              data-validator="require:string:length-20"
+            >
+              {post_meta_value(@post, :affiliate_signup_requirements)}
+            </.textarea>
+            <.input
+              class="hidden"
+              field={@form[:post_meta]}
+              field_subfix="[12][meta_key]"
+              value={:affiliate_signup_requirements}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 flex items-center justify-end gap-x-6">
+      <button type="button" class="text-sm/6 font-semibold text-gray-900">Cancel</button>
+      <.button id="submit-btn" disable-with="Saving" disabled={true} type="submit">Save</.button>
+    </div>
+  </div>
+</.form>
+
+<script>
+  let counter = 13
+  window.addEventListener("addNewCommssion", event => {
+    document.querySelectorAll("div[data-commision-i='0']").forEach((div, index) => {
+      const clonedDiv = div.cloneNode(true);
+      clonedDiv.querySelector("label").remove();
+      let newCounter = counter + 1
+      let dataCommssionIndex = `cloned-${newCounter}`
+      clonedDiv.setAttribute("data-commision-i", dataCommssionIndex);
+      clonedDiv.querySelector("div.mt-2").classList.remove("mt-2")
+      clonedDiv.querySelectorAll("input,select").forEach((input, index) => {
+        const oldInputName = input.getAttribute("name")
+        const oldInputId = input.getAttribute("id")
+        let newInputName = oldInputName.replace(`13`,`${newCounter}`)
+        let newInputId = oldInputId.replace(`13`,`${newCounter}`)
+        input.setAttribute("id", newInputId)
+        input.setAttribute("name", newInputName)
+        if(input.nodeName != "SELECT" && !input.classList.contains("hidden")){
+          input.value = ""
+        }
+      })
+      const removeBtn = clonedDiv.querySelector(".remove-btn");
+      if(removeBtn){
+        removeBtn.classList.remove("!hidden")
+        removeBtn.addEventListener("click", event => {
+          document.querySelectorAll(`[data-commision-i='${dataCommssionIndex}']`).forEach(e => e.remove())
+          window.document.dispatchEvent(new Event("phx:validateForm", { bubbles: true }))
+        })
+      }
+      div.parentNode.appendChild(clonedDiv)
+    });
+    window.document.dispatchEvent(new Event("phx:validateForm", { bubbles: true }))
+    counter++
+  });
+
+  window.addEventListener("uploadImageDropDrag", (event) => {
+    const dropArea = document.getElementById("upload-image-wrap");
+    const fileInput = document.querySelector("[name='media']")
+    const removePreviewBtn = document.getElementById("remove-preview-btn");
+    const uploadImageDefaultLayer = document.querySelector("#upload-image-default-layer")
+
+    const previewImage = document.createElement("img");
+    previewImage.classList.add("object-cover", "p-2");
+    previewImage.style.display = "none";
+
+    dropArea.appendChild(previewImage); 
+
+    dropArea.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropArea.classList.add("outline-green-500","outline-1");
+    });
+
+    dropArea.addEventListener("dragleave", () => {
+      dropArea.classList.remove("outline-green-500","outline-1");
+    });
+
+    dropArea.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropArea.classList.remove("outline-green-500","outline-1");
+      const file = e.dataTransfer.files[0];
+      fileInput.files = e.dataTransfer.files
+      handleFile(file);
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      handleFile(file);
+    });
+
+    function handleFile(file) {
+      if (!file) return;
+
+      const validTypes = ["image/png", "image/jpeg", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        alert("Only PNG, JPG, and Webp files are allowed.");
+        return;
+      }
+
+      if (file.size > 4 * 1024 * 1024) {
+        alert("File size should not exceed 4MB.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImage.src = e.target.result;
+        previewImage.style.display = "block";
+        uploadImageDefaultLayer.classList.add("hidden")
+        dropArea.classList.remove("px-6","py-10")
+        removePreviewBtn.classList.remove("invisible")
+        window.document.dispatchEvent(new Event("phx:validateForm", { bubbles: true }))
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    removePreviewBtn.querySelector("button").addEventListener("click", event => {
+      previewImage.src = "";
+      previewImage.style.display = "none";
+      removePreviewBtn.classList.add("invisible")
+      uploadImageDefaultLayer.classList.remove("hidden");
+      dropArea.classList.add("px-6", "py-10");
+      fileInput.value = "";
+      window.document.dispatchEvent(new Event("phx:validateForm", { bubbles: true }))
+    }) 
+  });
+
+  /**
+
+  window.addEventListener("autoResizeTextarea", event => {
+    const textarea = event.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+  })
+  */
+  window.addEventListener("phx:validateForm", _ => {
+    const els = document.querySelectorAll("[data-validator]")
+    let errors = []
+    const submitBtn = document.querySelector("#submit-btn")
+    els.forEach(e => {
+      let inputvalue = e.value
+      if(e.getAttribute("type") === "file") inputvalue = e.files
+      let validator = e.getAttribute("data-validator")
+      let result = validateField(inputvalue, validator)
+      if(!result) errors.push({"el": e})
+    })
+    if(errors.length === 0){
+      submitBtn.classList.remove("pointer-events-none","opacity-50")
+      submitBtn.removeAttribute("disabled")
+    }else{
+      submitBtn.classList.add("pointer-events-none","opacity-50")
+      submitBtn.setAttribute("disabled", "disabled")
+    }
+  })
+
+  const countWords = (str) => str.split('').length;
+  const validateField = (value, rule) => {
+      if (!rule) return true; 
+
+      const rules = rule.split(":");
+      const isRequired = rules[0] === "require";
+      const type = isRequired ? rules[1] : rules[0];
+
+      const hasLengthRule = rules.some(r => r.startsWith("length-"));
+      const getExpectedLength = () => parseInt(rules.find(r => r.startsWith("length-")).split("-")[1], 10);
+
+      switch (type) {
+          case "string":
+              if (typeof value !== "string") return false;
+              const wordCount = countWords(value);
+              return hasLengthRule ? wordCount >= getExpectedLength() : wordCount > 0;
+
+          case "integer":
+              const intValue = parseFloat(value);
+              return !isNaN(intValue) && (isRequired ? Number.isInteger(intValue) : true);
+
+          case "list":
+              let listValue = Array.isArray(value) ? value : (typeof value === "string" ? value.split(",") : []);
+              listValue = listValue.map(item => item.trim()).filter(item => item !== "");  
+              return hasLengthRule ? listValue.length >= getExpectedLength() : listValue.length > 0;
+
+          case "file":
+              if (value instanceof FileList) {
+                  return hasLengthRule ? value.length >= getExpectedLength() : value.length > 0;
+              } 
+              if (value instanceof File) {
+                  return hasLengthRule ? 1 >= getExpectedLength() : true;
+              }
+              return false;
+
+          case "url":
+              try {
+                  new URL(value);
+                  return true;
+              } catch (e) {
+                  return false;
+              }
+
+          default:
+              return false;
+      }
+  };
+</script>

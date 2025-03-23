@@ -5,6 +5,7 @@ defmodule MolyWeb.Affinew.Components do
   def page_link(:news), do: ~p"/news"
   def page_link(:resource), do: ~p"/resource"
   def page_link(:categries), do: ~p"/program/categories"
+  def page_link(:submit), do: ~p"/program/submit"
   def page_link(:term, slug), do: ~p"/programs/#{slug}"
   def page_link(:term, slug, post_name), do: ~p"/programs/#{slug}/#{post_name}"
   def page_link(:user, %Moly.Accounts.User{} = user) do
@@ -40,6 +41,21 @@ defmodule MolyWeb.Affinew.Components do
         <div class="mt-4">
           <button class="btn btn-block">Detail -></button>
         </div>
+      </div>
+    </div>
+    """
+  end
+
+  def card2(assigns) do
+    ~H"""
+    <div class="card w-96 shadow-sm">
+        <figure class="aspect-[3/2] overflow-hidden !block">
+        <img
+          src={~p"/images/brevo-affiliates.png"}
+         />
+      </figure>
+      <div class="card-body">
+        <h2 class="text-xl font-bold">Brevo Affiliate Program</h2>
       </div>
     </div>
     """
@@ -232,7 +248,7 @@ defmodule MolyWeb.Affinew.Components do
 
   def sort_by(assigns) do
     ~H"""
-    <button class="btn bg-white text-black border-[#e5e5e5] flex items-center" popovertarget="popover-1" style="anchor-name:--anchor-1">
+    <button class="btn btn-ghost flex items-center" popovertarget="popover-1" style="anchor-name:--anchor-1">
       Last <Lucideicons.chevron_down class="size-4"/>
     </button>
     <ul class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"

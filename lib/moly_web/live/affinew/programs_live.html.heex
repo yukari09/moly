@@ -9,6 +9,7 @@
 
   <div class="flex items-center justify-between mt-8">
     <div class="flex items-center gap-2">
+      <button><.icon name="hero-adjustments-horizontal" class="size-6" /></button>
       <.filter_dropdown name="Categories" />
       <.filter_dropdown name="Commssion" />
       <.filter_dropdown name="Cookie Duration" />
@@ -18,11 +19,20 @@
 
   <div class="my-8">
     <div class="flex items-center justify-between">
-      <div class="text-base-content/50">result: 188</div>
-      <div class="flex items-center">
-        <span>Sort by:</span> 
+      <div class="text-base-content/50 flex items-center gap-2">
+        Result: 188
+        <div class="badge rounded-full flex items-center gap-1">
+          Primary
+          <Lucideicons.x class="size-4" />
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        <span class="text-medium">Sort by:</span> 
         <.sort_by />
       </div>
+    </div>
+    <div class="grid grid-cols-3 gap-6 mt-2">
+    <MolyWeb.Affinew.Components.card :for={_ <- 0..8} />
     </div>
   </div>
 
