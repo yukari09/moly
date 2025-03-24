@@ -30,15 +30,15 @@ defmodule MolyWeb.Affinew.Components do
         <ol class="mt-2 list-decimal list-inside flex flex-col gap-2 text-xs sm:text-sm ml-4">
           <li class="marker:italic">
             <%!-- <Lucideicons.dot class="size-6 me-2 inline-block text-green-light" /> --%>
-            <span><span class="font-bold">$5.00</span> <span class="text-base-content/60">免費註冊</span></span>
+            <span><span class="font-bold">$5.00</span> 免費註冊</span>
           </li>
           <li class="marker:italic">
           <%!-- <Lucideicons.dot class="size-6 me-2 inline-block text-green-light" /> --%>
-            <span><span class="font-bold">$100.00</span> <span class="text-base-content/60">付費訂閱</span></span>
+            <span><span class="font-bold">$100.00</span> 付費訂閱</span>
           </li>
           <li class="marker:italic">
             <%!-- <Lucideicons.dot class="size-6 me-2 inline-block text-green-light" /> --%>
-            <span><span class="font-bold">20%</span> <span class="text-base-content/60">持續收入分成</span></span>
+            <span><span class="font-bold">20%</span> 持續收入分成</span>
           </li>
         </ol>
         <div class="mt-4">
@@ -69,7 +69,8 @@ defmodule MolyWeb.Affinew.Components do
 
   def user_dropdown(assigns) do
     ~H"""
-    <div class="dropdown dropdown-bottom dropdown-end p-0">
+    <.link :if={!@current_user} class="btn" patch={~p"/sign-in"}>Log in</.link>
+    <div :if={@current_user} class="dropdown dropdown-bottom dropdown-end p-0">
       <div tabindex="0" class="size-8">
         <MolyWeb.DaisyUi.avatar user={@current_user} />
       </div>

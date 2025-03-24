@@ -8,27 +8,76 @@ defmodule MolyWeb.AuthOverrides do
   # Below are some examples
 
   # For a complete reference, see https://hexdocs.pm/ash_authentication_phoenix/ui-overrides.html
+  override AshAuthentication.Phoenix.SignInLive do
+    set :root_class, "flex min-h-[100vh] flex-col justify-center py-12 sm:px-6 lg:px-8"
+  end
 
   override AshAuthentication.Phoenix.Components.Banner do
     set(:image_url, "/images/logo.svg")
-    set(:text_class, "text-accent text-4xl")
-    set(:text, "affinew")
-    set(:image_class, "size-12")
-    set(:root_class, "flex items-center justify-center")
+    set(:image_class, "size-10 mx-auto h-10 w-auto")
+    set(:root_class, "mx-auto")
+    set(:text_class, "mt-2 text-center text-2xl/9 font-semibold tracking-tight")
+    set(:text, "Affinew")
   end
 
   override AshAuthentication.Phoenix.Components.SignIn do
-    set(:show_banner, true)
+    set :root_class, """
+    flex-1 flex flex-col justify-center px-4 sm:px-6 lg:flex-none
+    lg:px-20 xl:px-24 shadown-lg
+    """
+    set :strategy_class, "sm:mx-auto sm:w-full sm:max-w-[480px]"
   end
 
   override AshAuthentication.Phoenix.Components.Password do
-    set(:toggler_class, "flex-none text-gray-500 hover:text-gray-600 px-2 first:pl-0")
+    set :root_class, "my-0"
+    set :toggler_class, "flex-none text-base-content px-2 first:pl-0 last:pr-0 last:text-green-brilliant"
+  end
+
+  override AshAuthentication.Phoenix.Components.Password.SignInForm do
+    set(:root_class, "mt-4 bg-white px-12 pt-12 sm:rounded-t-lg sm:pt-12")
+    set(:form_class, "space-y-8")
+  end
+
+  override AshAuthentication.Phoenix.Components.Password.RegisterForm do
+    set(:root_class, "mt-4 bg-white px-12 pt-12 sm:rounded-t-lg sm:pt-12")
+    set(:form_class, "space-y-8")
+  end
+
+  override AshAuthentication.Phoenix.ResetLive do
+    set(:root_class, "!hidden")
+  end
+
+  override AshAuthentication.Phoenix.Components.Reset do
+    set(:root_class, "!hidden")
+  end
+
+  override AshAuthentication.Phoenix.Components.Reset.Form do
+    set(:root_class, "!hidden")
+  end
+
+  override AshAuthentication.Phoenix.Components.Password.ResetForm do
+    set(:root_class, "mt-4 bg-white px-12 pt-12 sm:rounded-t-lg sm:pt-12")
+    set(:form_class, "space-y-8")
   end
 
   override AshAuthentication.Phoenix.Components.Password.Input do
-    set(:submit_class, "w-full flex justify-center py-2 px-4 border border-transparent rounded-md
-    shadow-sm text-sm font-medium text-white bg-green-500 hover:bg-green-600
-    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500
-    mt-4 mb-4")
+    set(:input_class, "input !w-full")
+    set(:submit_class, "btn text-white bg-green-brilliant w-full")
+    set(:field_class, "")
+    set(:identity_input_placeholder, "Email")
+  end
+
+  override AshAuthentication.Phoenix.Components.OAuth2 do
+    set :root_class, "w-full px-12 bg-white pt-4 pb-12 rounded-b-lg"
+    set :link_class, "btn bg-white text-black border-[#e5e5e5] w-full"
+    set :icon_class, "size-6"
+  end
+
+  override AshAuthentication.Phoenix.Components.HorizontalRule do
+    set :text, "Or continue with"
+    set :root_class, "relative pt-12"
+    set :hr_outer_class, "absolute inset-0 flex items-center sm:w-full sm:max-w-[480px] mx-auto bg-white"
+    set :hr_inner_class, "w-4/5 border-t mt-12 border-base-content/5 mx-auto"
+    set :text_inner_class, "text-base-content bg-white px-4 font-meidum"
   end
 end

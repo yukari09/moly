@@ -13,6 +13,7 @@
 @source "../js/**/*.js";
 @source "../../lib/moly_web.ex";
 @source "../../lib/moly_web/**/*.*ex";
+@source "../deps/ash_authentication_phoenix/**/*.*ex";
 
 @import "tailwindcss";
 @plugin "daisyui";
@@ -21,7 +22,7 @@
   default: true;
   prefersdark: false;
   color-scheme: "light";
-  --color-base-100: oklch(98% 0 0);
+  --color-base-100: oklch(0.985 0.002 247.839);
   --color-base-200: oklch(97% 0 0);
   --color-base-300: oklch(92% 0 0);
   --color-base-content: oklch(20% 0 0);
@@ -42,7 +43,7 @@
   --color-error: oklch(71% 0.194 13.428);
   --color-error-content: oklch(27% 0.105 12.094);
   --radius-selector: 0rem;
-  --radius-field: 2rem;
+  --radius-field: 0.25rem;
   --radius-box: 0.5rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
@@ -68,6 +69,8 @@
 
 @theme {
   --font-sans: InterVariable, sans-serif;
+  --font-display--font-feature-settings: "cv02", "cv03", "cv04", "cv11"; 
+  --font-display--font-variation-settings: "opsz" 32;
 }
 
 button[disabled]{

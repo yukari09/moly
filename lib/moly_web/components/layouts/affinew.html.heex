@@ -68,11 +68,6 @@
         <div class="navbar-end ml-auto w-auto">
           <ul class="flex items-center gap-1 xl:gap-4">
             <!-- Navbar menu content here -->
-            <li>
-              <.link patch={MolyWeb.Affinew.Components.page_link(:submit)} class="btn btn-sm md:btn-md bg-green-light border-none text-green-primary">
-                Submit
-              </.link>
-            </li>
             <li class="sm:hidden">
               <button class="btn btn-ghost btn-circle">
                 <Lucideicons.search class="size-6" />
@@ -82,6 +77,11 @@
               <button class="btn btn-ghost btn-circle">
                 <Lucideicons.bell class="size-6" />
               </button>
+            </li>
+            <li>
+              <.link patch={MolyWeb.Affinew.Components.page_link(:submit)} class="btn btn-sm md:btn-md bg-green-light border-none text-green-primary">
+                Submit
+              </.link>
             </li>
             <li>
               <MolyWeb.Affinew.Components.user_dropdown  current_user={@current_user}/>

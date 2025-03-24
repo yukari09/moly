@@ -95,7 +95,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
 
     socket =
       assign(socket, :current_user, record)
-      |> push_navigate(to: ~p"/user/page/@#{new_username}")
+      |> push_navigate(to: ~p"/user/@#{new_username}")
 
     {:noreply, socket}
   end
@@ -242,7 +242,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
             <div>
               <img
                 :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)}
-                class="inline-block size-20 lg:size-24 rounded-full"
+                class="inline-block size-20 lg:size-24 rounded-full border-base-content/5 border-1"
                 src={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :avatar)["128"]}
                 alt=""
               />
@@ -257,25 +257,25 @@ defmodule MolyWeb.Affinew.UserPageLive do
             </div>
             <div
               :if={@current_user && @current_user.id == @user.id}
-              class="lg:mt-0 lg:mb-2 space-y-2"
+              class="lg:mt-0  space-y-2"
               phx-click={MolyWeb.TailwindUI.show_modal(@modal_id)}
             >
               <div class="lg:hidden flex items-center"></div>
               <button
                 type="button"
-                class="rounded-full bg-white px-2.5 py-2 text-sm font-semibold text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                class="btn btn-sm md:btn-md"
               >
                 Edit Profile
               </button>
             </div>
           </div>
-          <div class="lg:hidden py-2">
+          <div class="lg:hidden pt-2">
             <div class="px-4">
               <p class="text-gray-900">{Moly.Utilities.Account.user_name(@user)}</p>
               <p class="text-xs/6 text-gray-500">
                 @{Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :username)}
               </p>
-              <p>{Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :description)}</p>
+              <p>{Moly.Utilities.Account.load_meta_value_by_meta_key(@user, :bio)}</p>
             </div>
           </div>
         </div>
@@ -365,11 +365,11 @@ defmodule MolyWeb.Affinew.UserPageLive do
             </div>
           </div>
         </div>
+
         <!--start tab-->
         <div class="grow container mx-auto px-2 sm:px-6 lg:px-8">
-          <div class="relative border-b border-gray-200 -mx-2 sm:mx-0 px-2 sm:pb-0">
-            <div class="mt-10">
-              <!-- Tabs at small breakpoint and up -->
+          <div class="border-b border-gray-200 -mx-2 sm:mx-0 px-2 sm:pb-0">
+            <div class="mt-16">
               <div>
                 <nav class="-mb-px flex space-x-8">
                   <.link
@@ -392,7 +392,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
             class="mx-auto pt-4 lg:pb-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3"
             phx-page-loading
           >
-            <Moly.Utilities.Affiliate.article_html :for={post <- @posts} post={post} />
+            <MolyWeb.Affinew.Components.card :for={post <- @posts} post={post} />
           </div>
           <div class="mx-auto my-8 lg:my-16">
             <nav :if={@page_meta.total_pages > 1} class="flex items-center justify-center space-x-2">
