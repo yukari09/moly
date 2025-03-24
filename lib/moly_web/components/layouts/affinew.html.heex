@@ -3,15 +3,15 @@
   <div class="drawer-content flex flex-col">
     <div class="border-b border-gray-900/10 bg-white">
       <!-- Navbar -->
-      <div class="navbar w-full max-w-screen-xl mx-auto px-10">
+      <div class="navbar w-full max-w-screen-xl mx-auto px-4 gap-2 xl:gap-0 lg:px-10">
         <div class="flex-none lg:hidden">
-          <label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost">
+          <label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square rounded-md">
             <Lucideicons.align_justify class="inline-block h-6 w-6 stroke-current" />
           </label>
         </div>
-        <div class="navbar-start flex items-center gap-1 w-auto">
-          <div class="size-8"><.link patch={~p"/"}><img src={~p"/images/logo.svg"} /></.link></div>
-          <.form action="/search" method="get" id="search-form" class="mx-auto w-72 ml-4">
+        <div class="navbar-start flex items-center xl:gap-1 w-auto">
+          <div><.link class="btn btn-square bg-inherit border-none" patch="/"><img class="size-8" src={~p"/images/logo.svg"} /></.link></div>
+          <.form action="/search" method="get" id="search-form" class="mx-auto hidden md:block w-72 ml-4">
             <div
               id="header-search-bar"
               class="relative bg-gray-900/5 py-1 pl-2.5 pr-8 rounded-full border border-gray-900/0"
@@ -46,8 +46,8 @@
             </div>
           </.form>
         </div>
-        <div class="navbar-center flex-1">
-          <ul class="flex items-center font-semibold text-base-content/80 text-sm mx-auto gap-10">
+        <div class="navbar-center flex-1 hidden xl:inline-flex">
+          <ul class="flex items-center font-semibold text-base-content/80 text-sm mx-auto gap-6">
             <li>
               <.link patch={~p"/program/finance"} class="hover:text-green-brilliant">Finance</.link>
             </li>
@@ -65,17 +65,22 @@
             </li>
           </ul>
         </div>
-        <div class="hidden lg:block navbar-end w-auto">
-          <ul class="flex items-center gap-4">
+        <div class="navbar-end ml-auto w-auto">
+          <ul class="flex items-center gap-1 xl:gap-4">
             <!-- Navbar menu content here -->
             <li>
-              <.link patch={MolyWeb.Affinew.Components.page_link(:submit)} class="btn bg-green-light border-none text-green-primary">
+              <.link patch={MolyWeb.Affinew.Components.page_link(:submit)} class="btn btn-sm md:btn-md bg-green-light border-none text-green-primary">
                 Submit
               </.link>
             </li>
+            <li class="sm:hidden">
+              <button class="btn btn-ghost btn-circle">
+                <Lucideicons.search class="size-6" />
+              </button>
+            </li>
             <li>
               <button class="btn btn-ghost btn-circle">
-                <Lucideicons.bell class="size-5 text-gray-500" />
+                <Lucideicons.bell class="size-6" />
               </button>
             </li>
             <li>

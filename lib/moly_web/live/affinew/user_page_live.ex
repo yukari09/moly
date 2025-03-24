@@ -1,4 +1,4 @@
-defmodule MolyWeb.Affiliate.UserPageLive do
+defmodule MolyWeb.Affinew.UserPageLive do
   use MolyWeb, :live_view
   require Ash.Query
 
@@ -30,10 +30,10 @@ defmodule MolyWeb.Affiliate.UserPageLive do
         progress: &handle_progress/3
       )
 
-    {:ok, socket}
+    {:ok, socket, layout: {MolyWeb.Layouts, :affinew}}
   end
 
-  def handle_params(%{"username" => "@" <> username} = params, _uri, socket) do
+  def handle_params(%{"username" => username} = params, _uri, socket) do
     page = Map.get(params, "page", "1") |> String.to_integer()
     post_type = Map.get(params, "type", "published")
 

@@ -9,37 +9,40 @@ defmodule MolyWeb.Affinew.Components do
   def page_link(:term, slug), do: ~p"/programs/#{slug}"
   def page_link(:term, slug, post_name), do: ~p"/programs/#{slug}/#{post_name}"
   def page_link(:user, %Moly.Accounts.User{} = user) do
-    username = Moly.Utilities.Account.user_name(user)
+    username = Moly.Utilities.Account.user_username(user)
     ~p"/user/@#{username}"
   end
 
   def card(assigns) do
     ~H"""
-    <div class="card w-96 shadow-sm">
-        <figure class="aspect-[3/2] overflow-hidden !block">
+    <div class="card w-full shadow-sm bg-white">
+        <figure class="aspect-[3/2] overflow-hidden !block relative">
         <img
           src={~p"/images/brevo-affiliates.png"}
          />
+         <span class="badge badge-xs xs:badge-sm sm:badge-md  badge-primary rounded-br-lg absolute top-0 left-0">Financial & Insurance</span>
       </figure>
-      <div class="card-body">
-        <span class="badge badge-xs badge-success">Financial & Insurance</span>
-        <h2 class="text-xl font-bold">Brevo Affiliate Program</h2>
-        <ul class="mt-4 flex flex-col gap-2 text-xs">
-          <li>
-            <Lucideicons.dot class="size-4 me-2 inline-block text-success" />
-            <span>$5.00 免費註冊</span>
+      <div class="card-body py-3">
+        <h2 class="text-lg md:text-xl font-bold text-green-brilliant flex items-center gap-2" >
+          <img src="https://cdn.shopify.com/shopifycloud/web/assets/v1/favicon-default-6cbad9de243dbae3.ico" class="size-6"/>
+          Brevo Affiliate Program
+        </h2>
+        <ol class="mt-2 list-decimal list-inside flex flex-col gap-2 text-xs sm:text-sm ml-4">
+          <li class="marker:italic">
+            <%!-- <Lucideicons.dot class="size-6 me-2 inline-block text-green-light" /> --%>
+            <span><span class="font-bold">$5.00</span> <span class="text-base-content/60">免費註冊</span></span>
           </li>
-          <li>
-          <Lucideicons.dot class="size-4 me-2 inline-block text-success" />
-            <span>$100.00 付費訂閱</span>
+          <li class="marker:italic">
+          <%!-- <Lucideicons.dot class="size-6 me-2 inline-block text-green-light" /> --%>
+            <span><span class="font-bold">$100.00</span> <span class="text-base-content/60">付費訂閱</span></span>
           </li>
-          <li>
-            <Lucideicons.dot class="size-4 me-2 inline-block text-success" />
-            <span>20% 持續收入分成</span>
+          <li class="marker:italic">
+            <%!-- <Lucideicons.dot class="size-6 me-2 inline-block text-green-light" /> --%>
+            <span><span class="font-bold">20%</span> <span class="text-base-content/60">持續收入分成</span></span>
           </li>
-        </ul>
+        </ol>
         <div class="mt-4">
-          <button class="btn btn-block">Detail -></button>
+          <button class="btn rounded-md btn-sm md:btn-md btn-block">Detail -></button>
         </div>
       </div>
     </div>
@@ -48,14 +51,17 @@ defmodule MolyWeb.Affinew.Components do
 
   def card2(assigns) do
     ~H"""
-    <div class="card w-96 shadow-sm">
+    <div class="card w-full shadow-sm">
         <figure class="aspect-[3/2] overflow-hidden !block">
         <img
           src={~p"/images/brevo-affiliates.png"}
          />
       </figure>
-      <div class="card-body">
-        <h2 class="text-xl font-bold">Brevo Affiliate Program</h2>
+      <div class="card-body p-2">
+        <h2 class="font-bold text-green-brilliant flex items-center gap-2" >
+            <img src="https://cdn.shopify.com/shopifycloud/web/assets/v1/favicon-default-6cbad9de243dbae3.ico" class="size-6"/>
+            Brevo Affiliate Program
+          </h2>
       </div>
     </div>
     """
@@ -63,13 +69,13 @@ defmodule MolyWeb.Affinew.Components do
 
   def user_dropdown(assigns) do
     ~H"""
-    <div class="dropdown dropdown-bottom dropdown-center p-0">
+    <div class="dropdown dropdown-bottom dropdown-end p-0">
       <div tabindex="0" class="size-8">
         <MolyWeb.DaisyUi.avatar user={@current_user} />
       </div>
       <div
         tabindex="0"
-        class="dropdown-content bg-white rounded-box z-1 w-56 shadow-lg  mt-2"
+        class="dropdown-content border border-base-300 bg-white rounded-box z-1 w-56 shadow-lg  mt-2"
       >
         <div
           class="px-2 py-4 flex items-center gap-2 border-b border-gray-900/10"
@@ -129,8 +135,8 @@ defmodule MolyWeb.Affinew.Components do
   def header(assigns) do
     ~H"""
     <div id={@id} class={[(@class && @class) || "mb-8"]}>
-      <h1 class="text-4xl text-gray-900 font-medium">{@headline}</h1>
-      <p class="text-gray-500 mt-3 font-light ">{@subtitle}</p>
+      <h1 class="text-2xl sm:text-4xl font-semibold text-green-brilliant">{@headline}</h1>
+      <p class="mt-2 font-light text-sm sm:text-base line-clamp-1">{@subtitle}</p>
     </div>
     """
   end
@@ -182,9 +188,10 @@ defmodule MolyWeb.Affinew.Components do
   end
 
   attr :name, :string, required: true
+  attr :class, :string, default: nil
   def filter_dropdown(assigns) do
     ~H"""
-    <button class="btn bg-white text-black border-[#e5e5e5] flex items-center" popovertarget="popover-1" style="anchor-name:--anchor-1">
+    <button class={["btn btn-xs sm:btn-sm md:btn-md bg-white text-black border-[#e5e5e5] flex items-center rounded-md", @class]} popovertarget="popover-1" style="anchor-name:--anchor-1">
       {@name}<Lucideicons.chevron_down class="size-4"/>
     </button>
     <ul class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
@@ -198,7 +205,7 @@ defmodule MolyWeb.Affinew.Components do
   def breadcrumb(assigns) do
     ~H"""
     <div class="breadcrumbs text-sm mt-4">
-      <ul>
+      <ul class="text-xs sm:text-sm">
           <li><a>Home</a></li>
           <li><a>Documents</a></li>
           <li>Add Document</li>
@@ -209,10 +216,10 @@ defmodule MolyWeb.Affinew.Components do
 
   def search_form(assigns) do
     ~H"""
-    <.form action="/search" method="get" id="search-form" class="mx-auto w-72 ml-4">
+    <.form action="/search" method="get" id="search-form" class="mx-auto w-full">
     <div
         id="index-header-search-bar"
-        class="relative bg-gray-900/5 py-1 pl-2.5 pr-8 rounded-full border border-gray-900/0"
+        class="relative bg-gray-900/5 py-0.5 sm:py-1 md:py-2 pl-2.5 pr-8 rounded-full border border-gray-900/0"
     >
         <input
         id="index-search-input"
@@ -221,7 +228,7 @@ defmodule MolyWeb.Affinew.Components do
         aria-label="Search"
         autocomplete="off"
         name="q"
-        class="w-full py-1 px-2  !border-none focus:shadow-none focus-visible:ring-0 focus:outline-none focus:ring-0 focus:ring-transparent"
+        class="w-full px-2  !border-none focus:shadow-none focus-visible:ring-0 focus:outline-none focus:ring-0 focus:ring-transparent"
         phx-focus={
             JS.toggle_class(
             "bg-gray-900/5 bg-gray-900/0 border-gray-900/10 border-gray-900/0 transition-colors duration-50",
