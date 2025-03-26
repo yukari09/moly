@@ -1,37 +1,36 @@
-<div class="w-full max-w-screen-xl mx-auto px-4 lg:px-10">
+<div class="w-full max-w-screen-xl mx-auto px-4 lg:px-10 mb-28">
   <.breadcrumb />
   <.header
     id="browse-header"
     headline="Affiliate Marketing Programs"
-    class="mt-8"
-    subtitle="Find high ticket best paying affiliate marketing programs for beginners."
+    class="mt-10"
+    subtitle="Find high ticket best paying affiliate marketing programs for beginners experts."
   />
 
-  <div class="flex items-center justify-between mt-10 gap-2">
+  <div class="flex items-center justify-between mt-16 gap-2">
     <div class="flex items-center gap-2">
       <button class="btn btn-square bg-white hidden md:block"><.icon name="hero-adjustments-horizontal" class="size-6"/></button>
       <.filter_dropdown name="Categories" />
       <.filter_dropdown name="Commssion" />
       <.filter_dropdown name="Cookie Duration" />
     </div>
-    <div class="hidden xs:block flex-1 max-w-92"><.search_form /></div>
-  </div>
-
-  <div class="my-4">
-    <div class="flex items-center justify-between">
-      <div class="text-base-content/50 flex items-center gap-2 text-sm md:text-base">
-        Result: 188
-        <div class="badge badge-xs sm:badge-sm md:badge-md rounded-full flex items-center gap-1">
-          Primary
-          <Lucideicons.x class="size-4" />
-        </div>
-      </div>
       <div class="flex items-center gap-1 text-sm md:text-base">
         <span class="text-medium hidden md:block">Sort by:</span> 
         <.sort_by />
       </div>
+  </div>
+
+  <div class="mt-8">
+    <div class="flex items-center justify-between">
+      <div class="text-base-content/50 flex items-center gap-2 text-sm md:text-base">
+        <span class="font-light">Result: 188</span>
+        <div class="badge badge-outline border-base-300 badge-xs sm:badge-sm md:badge-md rounded-full flex items-center gap-1">
+          Primary
+          <Lucideicons.x class="size-4" />
+        </div>
+      </div>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-6 mt-4">
     <MolyWeb.Affinew.Components.card :for={_ <- 0..8} />
     </div>
   </div>

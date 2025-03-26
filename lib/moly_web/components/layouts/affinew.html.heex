@@ -14,7 +14,7 @@
           <.form action="/search" method="get" id="search-form" class="mx-auto hidden md:block w-72 ml-4">
             <div
               id="header-search-bar"
-              class="relative bg-gray-900/5 py-1 pl-2.5 pr-8 rounded-full border border-gray-900/0"
+              class="relative bg-gray-900/5 py-1 pl-2.5 pr-8 rounded-sm border border-gray-900/0"
             >
               <input
                 id="search-input"
@@ -49,19 +49,19 @@
         <div class="navbar-center flex-1 hidden xl:inline-flex">
           <ul class="flex items-center font-semibold text-base-content/80 text-sm mx-auto gap-6">
             <li>
-              <.link patch={~p"/program/finance"} class="hover:text-green-brilliant">Finance</.link>
+              <.link patch={~p"/program/finance"} class="hover:text-primary">Finance</.link>
             </li>
-            <li><.link patch={~p"/program/saas"} class="hover:text-green-brilliant">SaaS</.link></li>
-            <li><.link patch={~p"/program/health"} class="hover:text-green-brilliant">Health</.link></li>
-            <li><.link patch={~p"/program/teach"} class="hover:text-green-brilliant">Tech</.link></li>
+            <li><.link patch={~p"/program/saas"} class="hover:text-primary">SaaS</.link></li>
+            <li><.link patch={~p"/program/health"} class="hover:text-primary">Health</.link></li>
+            <li><.link patch={~p"/program/teach"} class="hover:text-primary">Tech</.link></li>
             <li>
-              <.link patch={~p"/program/e-learning"} class="hover:text-green-brilliant">
+              <.link patch={~p"/program/e-learning"} class="hover:text-primary">
                 E-learning
               </.link>
             </li>
-            <li><.link patch={~p"/program/travel"} class="hover:text-green-brilliant">Travel</.link></li>
+            <li><.link patch={~p"/program/travel"} class="hover:text-primary">Travel</.link></li>
             <li>
-              <.link patch={~p"/program/fashion"} class="hover:text-green-brilliant">Fashion</.link>
+              <.link patch={~p"/program/fashion"} class="hover:text-primary">Fashion</.link>
             </li>
           </ul>
         </div>
@@ -70,12 +70,12 @@
             <!-- Navbar menu content here -->
             <li class="sm:hidden">
               <button class="btn btn-ghost btn-circle">
-                <Lucideicons.search class="size-6" />
+                <Lucideicons.search class="size-5" />
               </button>
             </li>
             <li>
               <button class="btn btn-ghost btn-circle">
-                <Lucideicons.bell class="size-6" />
+                <Lucideicons.bell class="size-5" />
               </button>
             </li>
             <li>
@@ -91,7 +91,10 @@
       </div>
     </div>
     <!-- Page content here -->
-    <div class="min-h-[calc(100vh-_-65px)] bg-white">{@inner_content}</div>
+    <div class="min-h-[calc(100vh-_-65px)] bg-white">
+      <MolyWeb.Affinew.Components.flash_group flash={@flash} id="app-flash" class="mt-20"/>
+      {@inner_content}
+    </div>
     <MolyWeb.Affinew.Components.footer/>
   </div>
   <div class="drawer-side">

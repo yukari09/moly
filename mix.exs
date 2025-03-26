@@ -40,7 +40,8 @@ defmodule Moly.MixProject do
       {:lucide_icons, "~> 2.0.0"},
       {:earmark, "~> 1.4.47"},
       {:imgproxy, "~> 3.0.2"},
-      {:ash_authentication_phoenix, git: "git@bitbucket.org:ehwtw/ash_authentication_phoenix.git", tag: "v2.5.1"},
+      {:ash_authentication_phoenix, git: "git@bitbucket.org:ehwtw/ash_authentication_phoenix.git", tag: "bugfix/v2.5.2"},
+      {:ash_authentication, "~> 4.6"},
       {:bcrypt_elixir, "~> 3.2"},
       {:picosat_elixir, "~> 0.2"},
       {:ash_postgres, "~> 2.5.6"},
@@ -79,7 +80,7 @@ defmodule Moly.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:dns_cluster, "~> 0.2"},
-      {:bandit, "~> 1.6"}
+      {:bandit, "~> 1.6.9"}
     ]
   end
 

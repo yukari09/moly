@@ -8,15 +8,17 @@ defmodule MolyWeb.DaisyUi do
   attr(:user, Moly.Accounts.User, default: nil)
   attr(:size, :string, default: "32")
   attr(:class, :string, default: nil)
+
   def avatar(%{user: nil} = assigns) do
     ~H"""
     <div class="avatar avatar-placeholder">
       <div class="bg-neutral text-neutral-content w-12 rounded-full">
-        <span>SY</span>
+        <span></span>
       </div>
     </div>
     """
   end
+
   def avatar(%{size: size, user: user} = assigns) do
     assigns = assign(assigns, :user_avatar_src, user_avatar(user, "#{size}"))
 
@@ -26,12 +28,11 @@ defmodule MolyWeb.DaisyUi do
         <img src={@user_avatar_src} />
       </div>
     </div>
-    <div :if={!@user_avatar_src} class="avatar avatar-placeholder">
-      <div class="bg-neutral text-neutral-content w-12 rounded-full">
-        <span>user_name(@user, 1)}</span>
+    <div :if={!@user_avatar_src} class="avatar avatar-placeholder size-full cursor-pointer">
+      <div class="bg-neutral text-neutral-content rounded-full ">
+        <span class="uppercase">{user_name(@user, 1)}</span>
       </div>
     </div>
     """
   end
-
 end

@@ -1,7 +1,7 @@
-<div class="drawer">
+<div class="drawer ">
   <input id="affinew-drawer" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content flex flex-col">
-    <div class="bg-green-primary">
+    <div class="bg-white">
       <!-- Navbar -->
       <div class="navbar w-full max-w-screen-xl mx-auto px-4 lg:px-10 ">
         <div class="flex-none lg:hidden mr-4">
@@ -11,13 +11,13 @@
         </div>
         <div class="navbar-start hidden items-center gap-8 w-auto lg:flex">
           <div class="size-8 hidden lg:block"><.link patch="/"><img src={~p"/images/logo.svg"} /></.link></div>
-          <ul class="flex items-center text-gray-100 font-medium mx-auto gap-8">
-            <li><.link patch={page_link(:programs)} class="hover:text-gray-50">Browse</.link></li>
+          <ul class="flex items-center text-sm font-medium mx-auto gap-8 ">
+            <li><.link patch={page_link(:programs)} >Browse</.link></li>
             <li>
-              <.link patch={page_link(:categries)} patch={~p"/program/categories"} class="hover:text-gray-50">Categories</.link>
+              <.link patch={~p"/building"} >Categories</.link>
             </li>
-            <li><.link patch={page_link(:news)} class="hover:text-gray-50">News</.link></li>
-            <li><.link patch={page_link(:resource)} class="hover:text-gray-50">Resources</.link></li>
+            <li><.link patch={~p"/building"} >News</.link></li>
+            <li><.link patch={~p"/building"} >Resources</.link></li>
           </ul>
         </div>
 
@@ -27,7 +27,7 @@
             <%!-- <li><button class="btn  btn-wide flex items-center border-none text-green-light bg-green-secondary">Submit</button></li> --%>
             <li>
               <button class="btn btn-ghost btn-circle">
-                <Lucideicons.bell class="size-5 text-gray-50" />
+                <Lucideicons.bell class="size-5 " />
               </button>
             </li>
             <li>
@@ -38,39 +38,44 @@
       </div>
     </div>
     <!-- Page content here -->
-    <div class="bg-green-primary">
+    <div class="bg-white">
       <div class="max-w-screen-xl mx-auto" aria-hidden="true">
-        <div class="w-full md:flex items-center justify-between p-10 lg:p-20">
-          <div class="lg:max-w-lg">
+        <div class="w-full md:flex items-center justify-between p-10 lg:px-20 lg:pt-10">
+          <div class="lg:max-w-lg flex-1">
             <h1>
-              <p class="text-4xl lg:text-6xl/18 text-white">
-                Find <span class="text-green-light">High Ticket</span> Affiliate Programs
+              <p class="text-4xl lg:text-6xl/16 font-medium tracking-tight">
+                Find <span class="text-primary">high ticket</span> affiliate programs
               </p>
-              <p class="text-white mt-4 font-light text-sm lg:text-base">
-                Discover exclusive, high-paying affiliate programs that let you earn more with fewer sales.
+              <div>
+                <svg aria-hidden="true" viewBox="0 0 418 42" class="w-full fill-[rgb(214,247,230)]" preserveAspectRatio="none"><path d="M203.371.916c-26.013-2.078-76.686 1.963-124.73 9.946L67.3 12.749C35.421 18.062 18.2 21.766 6.004 25.934 1.244 27.561.828 27.778.874 28.61c.07 1.214.828 1.121 9.595-1.176 9.072-2.377 17.15-3.92 39.246-7.496C123.565 7.986 157.869 4.492 195.942 5.046c7.461.108 19.25 1.696 19.17 2.582-.107 1.183-7.874 4.31-25.75 10.366-21.992 7.45-35.43 12.534-36.701 13.884-2.173 2.308-.202 4.407 4.442 4.734 2.654.187 3.263.157 15.593-.78 35.401-2.686 57.944-3.488 88.365-3.143 46.327.526 75.721 2.23 130.788 7.584 19.787 1.924 20.814 1.98 24.557 1.332l.066-.011c1.201-.203 1.53-1.825.399-2.335-2.911-1.31-4.893-1.604-22.048-3.261-57.509-5.556-87.871-7.36-132.059-7.842-23.239-.254-33.617-.116-50.627.674-11.629.54-42.371 2.494-46.696 2.967-2.359.259 8.133-3.625 26.504-9.81 23.239-7.825 27.934-10.149 28.304-14.005.417-4.348-3.529-6-16.878-7.066Z"></path></svg>
+              </div>
+              <p class="mt-8 text-sm lg:text-base">
+                Discover exclusive, high-paying affiliate programs that help you earn more with fewer sales. These programs offer higher commissions, allowing you to maximize your income without many effort.
               </p>
             </h1>
-            <div class="mt-8 lg:mt-16 flex items-center gap-2 xl:gap-6">
-              <.link patch={MolyWeb.Affinew.Components.page_link(:programs)} class="btn xl:px-12 xl:py-6 rounded-md text-green-primary bg-green-light border-none">
-                Browse
+            <div class="mt-10 flex items-center gap-2">
+              <.link patch={MolyWeb.Affinew.Components.page_link(:programs)} class="btn xl:px-6 xl:py-5.5 bg-green-light text-green-primary border-none">
+                Explore
               </.link>
-              <.link patch={MolyWeb.Affinew.Components.page_link(:submit)} class="btn xl:px-12 xl:py-6 rounded-md text-white bg-green-secondary border-green-secondary">
+              <.link patch={MolyWeb.Affinew.Components.page_link(:programs)} class="btn xl:px-6 xl:py-5.5 btn-outline">
                 Submit
               </.link>
             </div>
           </div>
-          <div class="max-w-xs  xl:max-w-md hidden md:block">
-            <img class="aspect-square" src={~p"/images/backgroud - file.png"} />
+          <div class="max-w-xs xl:max-w-lg hidden md:block ">
+            <img class="aspect-square" src={~p"/images/4235568.svg"} />
           </div>
+        </div>
+      </div>
+
+      <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-6">
+          <MolyWeb.Affinew.Components.card :for={_ <- 0..8} />
         </div>
       </div>
     </div>
 
-    <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-6">
-        <MolyWeb.Affinew.Components.card :for={_ <- 0..8} />
-      </div>
-    </div>
+
 
     <MolyWeb.Affinew.Components.footer/>
   </div>
@@ -82,12 +87,12 @@
       </div>
       <ul class="menu mt-4">
         <!-- Sidebar content here -->
-        <li><.link patch={page_link(:programs)} class="hover:text-gray-50">Browse</.link></li>
+        <li><.link patch={page_link(:programs)} >Browse</.link></li>
         <li>
-          <.link patch={page_link(:categries)} patch={~p"/program/categories"} class="hover:text-gray-50">Categories</.link>
+          <.link patch={page_link(:categries)} patch={~p"/program/categories"} >Categories</.link>
         </li>
-        <li><.link patch={page_link(:news)} class="hover:text-gray-50">News</.link></li>
-        <li><.link patch={page_link(:resource)} class="hover:text-gray-50">Resources</.link></li>
+        <li><.link patch={page_link(:news)} >News</.link></li>
+        <li><.link patch={page_link(:resource)} >Resources</.link></li>
       </ul>
     </div>
   </div>

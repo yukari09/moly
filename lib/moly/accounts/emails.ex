@@ -10,7 +10,7 @@ defmodule Moly.Accounts.Emails do
       raise "Cannot deliver confirmation instructions without a url"
     end
 
-    deliver(user.email, "Confirm your email address", """
+    deliver(user.email, :email_confirmation, "Confirm your email address", """
       <p>
         Hi #{user.email},
       </p>
@@ -31,7 +31,7 @@ defmodule Moly.Accounts.Emails do
       raise "Cannot deliver password reset email without a url"
     end
 
-    deliver(user.email, "Reset your password", """
+    deliver(user.email, :reset_password, "Reset your password", """
       <p>
         Hi #{user.email},
       </p>
@@ -53,18 +53,24 @@ defmodule Moly.Accounts.Emails do
   #   * Swoosh - https://hexdocs.pm/swoosh
   #   * Bamboo - https://hexdocs.pm/bamboo
   #
-  defp deliver(to, subject, body) do
-    IO.puts("Sending email to #{to} with subject #{subject} and body #{body}")
+  defp deliver(to, send_type, subject, body) do
+    key = "sender:#{to}:#{send_type}"
 
-    from_email_name = Application.get_env(:moly, :email_name)
-    from_email_address = Application.get_env(:moly, :email_address)
+    deliver_email = fn ->
+      IO.puts("Sending email to #{to} with subject #{subject} and body #{body}")
 
-    new()
-    |> from({from_email_name, from_email_address})
-    |> to(to_string(to))
-    |> subject(subject)
-    |> put_provider_option(:track_links, "None")
-    |> html_body(body)
-    |> Moly.Mailer.deliver!()
+      from_email_name = Application.get_env(:moly, :email_name)
+      from_email_address = Application.get_env(:moly, :email_address)
+
+      new()
+      |> from({from_email_name, from_email_address})
+      |> to(to_string(to))
+      |> subject(subject)
+      |> put_provider_option(:track_links, "None")
+      |> html_body(body)
+      |> Moly.Mailer.deliver!()
+    end
+
+    Moly.Utilities.cache_get_or_put(key, deliver_email, :timer.minutes(10))
   end
 end

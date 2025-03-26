@@ -177,7 +177,7 @@ defmodule MolyWeb.Affinew.SubmitLive do
       )
       |> assign(:is_active_user, is_active_user)
     else
-      push_navigate(socket, to: ~p"/")
+      push_navigate(socket, to: ~p"/user/verify-email")
     end
   end
 

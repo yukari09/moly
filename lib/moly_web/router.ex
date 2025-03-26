@@ -103,6 +103,8 @@ defmodule MolyWeb.Router do
       live("/programs/:term_slug", Affinew.ProgramsLive)
       live("/program/:term_slug/:post_name", Affinew.ProgramViewLive)
       live("/user/@:username", Affinew.UserPageLive)
+      live("/user/verify-email", Affinew.VerifyEmailLive)
+      live("/building", Affinew.BuildingLive)
     end
   end
 

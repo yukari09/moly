@@ -13,7 +13,7 @@
 @source "../js/**/*.js";
 @source "../../lib/moly_web.ex";
 @source "../../lib/moly_web/**/*.*ex";
-@source "../deps/ash_authentication_phoenix/**/*.*ex";
+@source "../../deps/ash_authentication_phoenix/**/*.*ex";
 
 @import "tailwindcss";
 @plugin "daisyui";
@@ -26,7 +26,7 @@
   --color-base-200: oklch(97% 0 0);
   --color-base-300: oklch(92% 0 0);
   --color-base-content: oklch(20% 0 0);
-  --color-primary: oklch(64% 0.2 131.684);
+  --color-primary: oklch(61.45% 0.1984 142.68);
   --color-primary-content: oklch(98% 0.031 120.757);
   --color-secondary: oklch(54% 0.245 262.881);
   --color-secondary-content: oklch(97% 0.014 254.604);
@@ -34,14 +34,14 @@
   --color-accent-content: oklch(98% 0.018 155.826);
   --color-neutral: oklch(26% 0 0);
   --color-neutral-content: oklch(98% 0 0);
-  --color-info: oklch(74% 0.16 232.661);
-  --color-info-content: oklch(29% 0.066 243.157);
-  --color-success: oklch(76% 0.177 163.223);
-  --color-success-content: oklch(26% 0.051 172.552);
+  --color-info: oklch(73.12% 0.1586 237.93);
+  --color-info-content: oklch(100% 0 0);
+  --color-success: oklch(70.38% 0.1931 149.73);
+  --color-success-content: oklch(100% 0 0);
   --color-warning: oklch(85% 0.199 91.936);
-  --color-warning-content: oklch(28% 0.066 53.813);
-  --color-error: oklch(71% 0.194 13.428);
-  --color-error-content: oklch(27% 0.105 12.094);
+  --color-warning-content: oklch(100% 0 0);
+  --color-error: oklch(61.92% 0.2419 11.33);
+  --color-error-content: oklch(100% 0 0);
   --radius-selector: 0rem;
   --radius-field: 0.25rem;
   --radius-box: 0.5rem;
@@ -58,7 +58,6 @@
   --color-green-primary: #09442b;
   --color-green-secondary: #005a02;
   --color-green-light: #92e692;
-  --color-green-brilliant: #19a019;
   --breakpoint-xs: 30rem;
 };
 
@@ -68,10 +67,12 @@
 @import "../node_modules/@splidejs/splide/dist/css/splide.min.css";
 
 @theme {
-  --font-sans: InterVariable, sans-serif;
-  --font-display--font-feature-settings: "cv02", "cv03", "cv04", "cv11"; 
-  --font-display--font-variation-settings: "opsz" 32;
+  /* --font-sans: InterVariable, sans-serif; */
+  --font-sans: outfit, sans-serif;
+  --default-font-feature-settings: "cv02", "cv03", "cv04", "cv11"; 
+  --default-font-variation-settings: "opsz" 32;
 }
+
 
 button[disabled]{
     @apply opacity-50;

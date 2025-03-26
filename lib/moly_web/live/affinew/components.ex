@@ -13,59 +13,69 @@ defmodule MolyWeb.Affinew.Components do
     ~p"/user/@#{username}"
   end
 
+
+  def show(js \\ %JS{}, selector) do
+    JS.show(js,
+      to: selector,
+      time: 300,
+      transition:
+        {"transition-all transform ease-out duration-300",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+         "opacity-100 translate-y-0 sm:scale-100"}
+    )
+  end
+
+  def hide(js \\ %JS{}, selector) do
+    JS.hide(js,
+      to: selector,
+      time: 200,
+      transition:
+        {"transition-all transform ease-in duration-200",
+         "opacity-100 translate-y-0 sm:scale-100",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
+    )
+  end
+
+
   def card(assigns) do
     ~H"""
-    <div class="card w-full shadow-sm bg-white">
-        <figure class="aspect-[3/2] overflow-hidden !block relative">
+    <div class="card w-full bg-white border border-base-content/10">
+    <figure class="aspect-[3/2] overflow-hidden !block relative text-base-content rounded-lg">
         <img
           src={~p"/images/brevo-affiliates.png"}
          />
-         <span class="badge badge-xs xs:badge-sm sm:badge-md  badge-primary rounded-br-lg absolute top-0 left-0">Financial & Insurance</span>
+         <span class="badge badge-xs xs:badge-sm sm:badge-md  bg-primary border-none text-white rounded-br-lg rounded-tl-lg absolute top-0 left-0">Financial & Insurance</span>
       </figure>
-      <div class="card-body py-3">
-        <h2 class="text-lg md:text-xl font-bold text-green-brilliant flex items-center gap-2" >
-          <img src="https://cdn.shopify.com/shopifycloud/web/assets/v1/favicon-default-6cbad9de243dbae3.ico" class="size-6"/>
+      <div class="card-body">
+
+        <h2 class="text-xl font-bold flex items-center my-2 gap-2" >
+          <img src="https://cdn.shopify.com/shopifycloud/web/assets/v1/favicon-default-6cbad9de243dbae3.ico" class="size-5 rounded-lg"/>
           Brevo Affiliate Program
         </h2>
-        <ol class="mt-2 list-decimal list-inside flex flex-col gap-2 text-xs sm:text-sm ml-4">
-          <li class="marker:italic">
+        <div class="flex items-end justify-between">
+          <ol class="list-decimal list-inside flex flex-col gap-2 text-base ml-2">
+            <li class="marker:italic">
+              <%!-- <Lucideicons.dot class="size-6 me-2 inline-block text-green-light" /> --%>
+              <span><span class="font-semibold text-[#ff5000]">$5.00</span> free registration</span>
+            </li>
+            <li class="marker:italic">
             <%!-- <Lucideicons.dot class="size-6 me-2 inline-block text-green-light" /> --%>
-            <span><span class="font-bold">$5.00</span> 免費註冊</span>
-          </li>
-          <li class="marker:italic">
-          <%!-- <Lucideicons.dot class="size-6 me-2 inline-block text-green-light" /> --%>
-            <span><span class="font-bold">$100.00</span> 付費訂閱</span>
-          </li>
-          <li class="marker:italic">
-            <%!-- <Lucideicons.dot class="size-6 me-2 inline-block text-green-light" /> --%>
-            <span><span class="font-bold">20%</span> 持續收入分成</span>
-          </li>
-        </ol>
-        <div class="mt-4">
-          <button class="btn rounded-md btn-sm md:btn-md btn-block">Detail -></button>
+              <span><span class="font-semibold text-[#ff5000]">$100.00</span> pay subscribe</span>
+            </li>
+            <li class="marker:italic">
+              <%!-- <Lucideicons.dot class="size-6 me-2 inline-block text-green-light" /> --%>
+              <span><span class="font-semibold text-[#ff5000]">20%</span> consistently</span>
+            </li>
+          </ol>
+          <div class="mt-4">
+            <button class="btn btn-outline btn-sm">Detail<Lucideicons.arrow_right class="size-4" /></button>
+          </div>
         </div>
       </div>
     </div>
     """
   end
 
-  def card2(assigns) do
-    ~H"""
-    <div class="card w-full shadow-sm">
-        <figure class="aspect-[3/2] overflow-hidden !block">
-        <img
-          src={~p"/images/brevo-affiliates.png"}
-         />
-      </figure>
-      <div class="card-body p-2">
-        <h2 class="font-bold text-green-brilliant flex items-center gap-2" >
-            <img src="https://cdn.shopify.com/shopifycloud/web/assets/v1/favicon-default-6cbad9de243dbae3.ico" class="size-6"/>
-            Brevo Affiliate Program
-          </h2>
-      </div>
-    </div>
-    """
-  end
 
   def user_dropdown(assigns) do
     ~H"""
@@ -136,8 +146,8 @@ defmodule MolyWeb.Affinew.Components do
   def header(assigns) do
     ~H"""
     <div id={@id} class={[(@class && @class) || "mb-8"]}>
-      <h1 class="text-2xl sm:text-4xl font-semibold text-green-brilliant">{@headline}</h1>
-      <p class="mt-2 font-light text-sm sm:text-base line-clamp-1">{@subtitle}</p>
+      <h1 class="text-2xl sm:text-4xl font-semibold text-primary">{@headline}</h1>
+      <p class="mt-3 line-clamp-1">{@subtitle}</p>
     </div>
     """
   end
@@ -203,9 +213,10 @@ defmodule MolyWeb.Affinew.Components do
     """
   end
 
+  attr :class, :string, default: nil
   def breadcrumb(assigns) do
     ~H"""
-    <div class="breadcrumbs text-sm mt-4">
+    <div class={["breadcrumbs text-sm mt-4", @class]}>
       <ul class="text-xs sm:text-sm">
           <li><a>Home</a></li>
           <li><a>Documents</a></li>
@@ -220,7 +231,7 @@ defmodule MolyWeb.Affinew.Components do
     <.form action="/search" method="get" id="search-form" class="mx-auto w-full">
     <div
         id="index-header-search-bar"
-        class="relative bg-gray-900/5 py-0.5 sm:py-1 md:py-2 pl-2.5 pr-8 rounded-full border border-gray-900/0"
+        class="relative bg-gray-900/5 py-0.5 sm:py-1 md:py-2 pl-2.5 pr-8 rounded-sm border border-gray-900/0"
     >
         <input
         id="index-search-input"
@@ -264,6 +275,40 @@ defmodule MolyWeb.Affinew.Components do
       <li><a>Item 1</a></li>
       <li><a>Item 2</a></li>
     </ul>
+    """
+  end
+
+  attr(:flash, :map, required: true, doc: "the map of flash messages")
+  attr(:id, :string, default: "flash-group", doc: "the optional id of flash container")
+  attr(:class, :string, default: nil)
+  def flash_group(assigns) do
+    ~H"""
+    <div id={@id} class={["toast toast-top toast-right z-1", @class]}>
+      <.flash kind={:error} title={gettext("Error!")} flash={@flash} />
+      <.flash kind={:info} title={gettext("Error!")} flash={@flash} />
+    </div>
+    """
+  end
+
+  attr(:id, :string, doc: "the optional id of flash container")
+  attr(:flash, :map, default: %{}, doc: "the map of flash messages to display")
+  attr(:title, :string, default: nil)
+  attr(:kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup")
+  attr(:rest, :global, doc: "the arbitrary HTML attributes to add to the flash container")
+
+  slot(:inner_block, doc: "the optional inner block that renders the flash message")
+  def flash(assigns) do
+    assigns = assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
+    ~H"""
+    <div
+      role="alert"
+      class={["alert", @kind == :info && "alert-success" || "alert-error"]}
+      :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
+      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+    >
+      <.icon name="hero-x-circle" class="size-5"/>
+      <span>{msg}</span>
+    </div>
     """
   end
 end

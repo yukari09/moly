@@ -30,39 +30,39 @@ defmodule MolyWeb.AuthOverrides do
 
   override AshAuthentication.Phoenix.Components.Password do
     set :root_class, "my-0"
-    set :toggler_class, "flex-none text-base-content px-2 first:pl-0 last:pr-0 last:text-green-brilliant"
+    set :toggler_class, "flex-none text-base-content px-2 first:pl-0 last:pr-0 last:text-primary"
   end
 
   override AshAuthentication.Phoenix.Components.Password.SignInForm do
     set(:root_class, "mt-4 bg-white px-12 pt-12 sm:rounded-t-lg sm:pt-12")
-    set(:form_class, "space-y-8")
+    set(:form_class, "space-y-6")
   end
 
   override AshAuthentication.Phoenix.Components.Password.RegisterForm do
     set(:root_class, "mt-4 bg-white px-12 pt-12 sm:rounded-t-lg sm:pt-12")
-    set(:form_class, "space-y-8")
+    set(:form_class, "space-y-6")
   end
 
   override AshAuthentication.Phoenix.ResetLive do
-    set(:root_class, "!hidden")
   end
 
   override AshAuthentication.Phoenix.Components.Reset do
-    set(:root_class, "!hidden")
   end
 
   override AshAuthentication.Phoenix.Components.Reset.Form do
-    set(:root_class, "!hidden")
+    set(:root_class, "mt-4 bg-white px-12 py-12 sm:rounded-t-lg sm:pt-12")
+    set(:form_class, "space-y-6")
+    set(:spacer_class, "py-0")
   end
 
   override AshAuthentication.Phoenix.Components.Password.ResetForm do
     set(:root_class, "mt-4 bg-white px-12 pt-12 sm:rounded-t-lg sm:pt-12")
-    set(:form_class, "space-y-8")
+    set(:form_class, "space-y-6")
   end
 
   override AshAuthentication.Phoenix.Components.Password.Input do
     set(:input_class, "input !w-full")
-    set(:submit_class, "btn text-white bg-green-brilliant w-full")
+    set(:submit_class, "btn text-white bg-primary w-full")
     set(:field_class, "")
     set(:identity_input_placeholder, "Email")
   end

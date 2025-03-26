@@ -12,7 +12,7 @@ defmodule MolyWeb.Endpoint do
   ]
 
   socket("/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [session: @session_options], compress: true],
+    websocket: [connect_info: [session: @session_options], compress: false],
     longpoll: [connect_info: [session: @session_options]]
   )
 
