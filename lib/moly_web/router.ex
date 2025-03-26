@@ -84,6 +84,7 @@ defmodule MolyWeb.Router do
       on_mount: {MolyWeb.LiveUserAuth, :live_user_required} do
       live("/affiliate/submit", Affiliate.SubmitLive)
       live("/program/submit", Affinew.SubmitLive)
+      live("/user/verify-email", Affinew.VerifyEmailLive)
     end
 
     ash_authentication_live_session :authenticated_maybe_routes,
@@ -103,7 +104,6 @@ defmodule MolyWeb.Router do
       live("/programs/:term_slug", Affinew.ProgramsLive)
       live("/program/:term_slug/:post_name", Affinew.ProgramViewLive)
       live("/user/@:username", Affinew.UserPageLive)
-      live("/user/verify-email", Affinew.VerifyEmailLive)
       live("/building", Affinew.BuildingLive)
     end
   end
