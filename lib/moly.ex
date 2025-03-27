@@ -7,100 +7,75 @@ defmodule Moly do
   if it comes from the database, an external API or others.
   """
 
-  def t() do
+  def test() do
     actor =
-      Ash.get!(Moly.Accounts.User, "d5f63c95-61d4-459b-9a47-de568f236160",
+      Ash.get!(Moly.Accounts.User, "aeaa6a0b-1d33-4146-a7e2-11553705ceba",
         context: %{private: %{ash_authentication?: true}}
       )
+      params =  %{"categories" => %{"0" => "448c9b12-5d2a-4459-8b26-7080fb704069"}, "post_content" => "<p>Brevo Affiliate Program</p>", "post_meta" => %{"10" => %{"meta_key" => "affiliate_program_link", "meta_value" => "https://www.brevo.com/affiliates/"}, "11" => %{"meta_key" => "region", "meta_value" => "Global"}, "12" => %{"meta_key" => "affiliate_signup_requirements", "meta_value" => "<p>Brevo Affiliate Program</p>"}, "13" => %{"0" => %{"meta_key" => "commission_type", "meta_value" => "bounty"}, "1" => %{"meta_key" => "commission_amount", "meta_value" => "5"}, "2" => %{"meta_key" => "commission_unit", "meta_value" => "USD"}, "3" => %{"meta_key" => "commission_notes", "meta_value" => "免費註冊"}}, "14" => %{"0" => %{"meta_key" => "commission_type", "meta_value" => "bounty"}, "1" => %{"meta_key" => "commission_amount", "meta_value" => "10"}, "2" => %{"meta_key" => "commission_unit", "meta_value" => "USD"}, "3" => %{"meta_key" => "commission_notes", "meta_value" => "付費訂閱"}}, "15" => %{"0" => %{"meta_key" => "commission_type", "meta_value" => "revenue_share"}, "1" => %{"meta_key" => "commission_amount", "meta_value" => "20"}, "2" => %{"meta_key" => "commission_unit", "meta_value" => "%"}, "3" => %{"meta_key" => "commission_notes", "meta_value" => ""}}, "4" => %{"meta_key" => "cookie_duration", "meta_value" => "90"}, "5" => %{"meta_key" => "duration_months", "meta_value" => "12"}, "6" => %{"meta_key" => "payment_method", "meta_value" => "Paypal,Bank Transfer"}, "7" => %{"meta_key" => "min_payout_threshold", "meta_value" => "100"}, "8" => %{"meta_key" => "payment_cycle", "meta_value" => "monthly"}, "9" => %{"meta_key" => "currency", "meta_value" => "EUR"}}, "post_tags" => "Brevo Affiliate Program", "post_title" => "Brevo Affiliate Program"}
 
-    params = %{
-      "categories" => %{
-        "0" => "8d21c7e7-74e9-435f-82eb-54cbebcd546e",
-        "1" => "0474a5b1-fef5-43c3-a658-b7a809369a36"
-      },
-      "post_content" =>
-        "<p>Join the affiliate program and start earning passive income with ease! Promote products through your affiliate link and earn a <strong>15% recurring commission</strong> on every purchase made through your referral. No investment is required, and there is no cap on how much you can earn. Share your affiliate link, and when it leads to a purchase, you get rewarded. Plus, you can withdraw your commission to your bank account or account balance anytime. Get started today and turn your referrals into a steady income stream. The affiliate commission is effective after the order cycle ends in U.S. time.</p>",
-      "post_date" => "2025-02-22T23:58:23.526785Z",
-      "post_meta" => %{
-        "1" => %{"meta_key" => "commission_min", "meta_value" => "10"},
-        "10" => %{
-          "meta_key" => "attachment_affiliate_media",
-          "meta_value" => "5fc958c9-b70c-4558-9a4c-c6dacb598e44"
-        },
-        "11" => %{
-          "meta_key" => "attachment_affiliate_media_feature",
-          "meta_value" => "5fc958c9-b70c-4558-9a4c-c6dacb598e44"
-        },
-        "2" => %{"meta_key" => "commission_max", "meta_value" => "30"},
-        "3" => %{"meta_key" => "commission_unit", "meta_value" => "%"},
-        "4" => %{"meta_key" => "commission_model", "meta_value" => "CPC"},
-        "5" => %{
-          "meta_key" => "affiliate_link",
-          "meta_value" => "https://www.raksmart.com/reseller/affiliates.html"
-        },
-        "6" => %{"meta_key" => "cookie_duration", "meta_value" => "30"}
-      },
-      "post_name" => "cXpEmwTvrWiS",
-      "post_status" => "pending",
-      "post_title" =>
-        "Become an Affiliate: Earn 30% Recurring Commission on Purchases – No Investment, No Cap!",
-      "post_type" => "affiliate",
-      "tags" => %{
-        "0" => %{
-          "name" => "affiliate program",
-          "slug" => "affiliate-program",
-          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
-        },
-        "1" => %{
-          "name" => "earn money",
-          "slug" => "earn-money",
-          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
-        },
-        "2" => %{
-          "name" => "recurring commission",
-          "slug" => "recurring-commission",
-          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
-        },
-        "3" => %{
-          "name" => "no investment required",
-          "slug" => "no-investment-required",
-          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
-        },
-        "4" => %{
-          "name" => "free to join",
-          "slug" => "free-to-join",
-          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
-        },
-        "5" => %{
-          "name" => "passive income",
-          "slug" => "passive-income",
-          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
-        },
-        "6" => %{
-          "name" => "affiliate marketing",
-          "slug" => "affiliate-marketing",
-          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
-        },
-        "7" => %{
-          "name" => "earn online",
-          "slug" => "earn-online",
-          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
-        },
-        "8" => %{
-          "name" => "affiliate link",
-          "slug" => "affiliate-link",
-          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
-        },
-        "9" => %{
-          "name" => "referral program",
-          "slug" => "referral-program",
-          "term_taxonomy" => [%{"taxonomy" => "post_tag"}]
-        }
-      }
-    }
 
-    actor = Map.put(actor, :roles, [:user, :admin])
 
-    Ash.create(Moly.Contents.Post, params, actor: actor, action: :create_post)
+      post_meta = Map.get(params, "post_meta")
+
+
+      new_post_meta =
+        Enum.reduce(post_meta, [], fn
+          {k, %{"0" => v0, "1" => v1, "2" => v2} = commission}, a1 ->
+            reduce_map = [v0, v1, v2]
+            reduce_map =
+              if Map.has_key?(commission, "3") do
+                v3 = Map.get(commission, "3")
+                [v3 | reduce_map]
+              else
+                reduce_map
+              end
+            Enum.reduce(reduce_map, a1, fn %{
+              "meta_key" => meta_key,
+              "meta_value" => meta_value
+              }, a2 ->
+              [%{"meta_key" => String.to_atom("#{meta_key}_#{k}"), "meta_value" => meta_value} | a2]
+            end)
+
+          {_, v}, a1 ->
+            [v | a1]
+        end)
+
+      new_post_meta =
+        Enum.with_index(new_post_meta)
+        |> Enum.reduce(%{}, &Map.put(&2, "#{elem(&1, 1)}", elem(&1, 0)))
+
+      params = Map.put(params, "post_meta", new_post_meta)
+      params = Map.put(params, "post_status", "pending")
+      params = Map.put(params, "post_name", Moly.Helper.generate_random_str())
+
+      post_excerpt =
+        Floki.parse_document!(params["post_content"]) |> Floki.text() |> String.slice(0..255)
+
+      params = Map.put(params, "post_excerpt", post_excerpt)
+      params = Map.put(params, "post_date", DateTime.utc_now())
+
+      post_tags =
+        Map.get(params, "post_tags")
+        |> String.split(",")
+        |> Enum.map(fn name ->
+          name = String.trim(name)
+          slug = Moly.Helper.string2slug(name)
+
+          %{
+            "name" => name,
+            "slug" => slug,
+            "term_taxonomy" => [%{"taxonomy" => "affiliate_tag"}]
+          }
+        end)
+
+      params = Map.put(params, "tags", post_tags)
+      params = Map.delete(params, "post_tags")
+
+      actor = Map.put(actor, :roles, [:owner])
+
+      IO.inspect(params)
+
+      Ash.create(Moly.Contents.Post, params, action: :create_post, actor: actor)
   end
 end

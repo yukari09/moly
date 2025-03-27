@@ -9,47 +9,14 @@ defmodule MolyWeb.Affinew.SubmitLive do
     {:ok, resource_socket(socket, params), layout: {MolyWeb.Layouts, :affinew}}
   end
 
-  # for commission
-  # def handle_event("validate", %{"_target" => ["form", "post_meta", i, j, field] = keys} = params, socket) do
-  #   socket = push_event(socket, "validateForm", %{})
-  #   i = String.to_integer(i) - 13
-  #   j = String.to_integer(j)
-  #   field = String.to_atom(field)
-  #   value = Moly.Helper.get_in_from_keys(params, keys)
-  #   commissions =
-  #     Enum.with_index(socket.assigns.commissions)
-  #     |> Enum.map(fn {items, i2} ->
-  #       if i2 == i do
-  #         Enum.with_index(items)
-  #         |> Enum.map(fn {item, j2} ->
-  #           if j2 == j do
-  #             Map.put(item, field, value)
-  #           else
-  #             item
-  #           end
-  #         end)
-  #       else
-  #         items
-  #       end
-  #     end)
-  #   socket = assign(socket, :commissions, commissions)
-  #   {:noreply, socket}
-  # end
+  def handle_params(_, _uri, socket) do
+    {:noreply, socket}
+  end
 
   def handle_event("validate", _, socket) do
     socket = push_event(socket, "validateForm", %{})
     {:noreply, socket}
   end
-
-  # def handle_event("add-new-commssion", _, socket) do
-  #   commissions = socket.assigns.commissions  ++ [add_commssion()]
-  #   {:noreply, assign(socket, :commissions, commissions)}
-  # end
-
-  # def handle_event("remove-commssion", %{"ref" => ref}, socket) do
-  #   commissions = List.delete_at(socket.assigns.commissions, String.to_integer(ref))
-  #   {:noreply, assign(socket, :commissions, commissions)}
-  # end
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
     {:noreply, cancel_upload(socket, :media, ref)}
@@ -60,13 +27,24 @@ defmodule MolyWeb.Affinew.SubmitLive do
 
     new_post_meta =
       Enum.reduce(post_meta, [], fn
-        {k, %{"0" => v0, "1" => v1, "2" => v2, "3" => v3}}, a1 ->
-          Enum.reduce([v0, v1, v2, v3], a1, fn %{
-                                                 "meta_key" => meta_key,
-                                                 "meta_value" => meta_value
-                                               },
-                                               a2 ->
-            [%{"meta_key" => String.to_atom("#{meta_key}_#{k}"), "meta_value" => meta_value} | a2]
+        {k, %{"0" => v0, "1" => v1, "2" => v2} = commission}, a1 ->
+          reduce_map = [v0, v1, v2]
+          reduce_map =
+            if Map.has_key?(commission, "3") do
+              v3 = Map.get(commission, "3")
+              [v3 | reduce_map]
+            else
+              reduce_map
+            end
+          Enum.reduce(reduce_map, a1, fn %{
+            "meta_key" => meta_key,
+            "meta_value" => meta_value
+            }, a2 ->
+              if meta_value not in [nil, ""] do
+                [%{"meta_key" => String.to_atom("#{meta_key}_#{k}"), "meta_value" => meta_value} | a2]
+              else
+                a2
+              end
           end)
 
         {_, v}, a1 ->
@@ -104,12 +82,14 @@ defmodule MolyWeb.Affinew.SubmitLive do
 
     params = Map.put(params, "tags", post_tags)
 
+    params = Map.put(params, "post_type", :affiliate)
+
     socket =
       case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
         {:ok, post} ->
           socket
           |> put_flash(:info, "Saved post for #{post.post_title}!")
-          |> push_navigate(to: Moly.Utilities.Affiliate.link_view(post))
+          |> push_navigate(to: MolyWeb.Affinew.Components.page_link(post.post_name))
 
         {:error, form} ->
           flash_msg =

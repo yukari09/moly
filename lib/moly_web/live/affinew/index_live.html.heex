@@ -14,10 +14,10 @@
           <ul class="flex items-center text-sm font-medium mx-auto gap-8 ">
             <li><.link patch={page_link(:programs)} >Browse</.link></li>
             <li>
-              <.link patch={~p"/building"} >Categories</.link>
+              <.link patch={page_link(:under_construction)} >Categories</.link>
             </li>
-            <li><.link patch={~p"/building"} >News</.link></li>
-            <li><.link patch={~p"/building"} >Resources</.link></li>
+            <li><.link patch={page_link(:under_construction)} >News</.link></li>
+            <li><.link patch={page_link(:under_construction)} >Resources</.link></li>
           </ul>
         </div>
 
@@ -62,8 +62,8 @@
               </.link>
             </div>
           </div>
-          <div class="max-w-xs xl:max-w-lg hidden md:block ">
-            <img class="aspect-square" src={~p"/images/4235568.svg"} />
+          <div class="max-w-xs xl:max-w-lg hidden md:block aspect-square w-full">
+            <img src={~p"/images/4235568.svg"} />
           </div>
         </div>
       </div>
@@ -86,10 +86,10 @@
         <!-- Sidebar content here -->
         <li><.link patch={page_link(:programs)} >Browse</.link></li>
         <li>
-          <.link patch={page_link(:categries)} patch={~p"/program/categories"} >Categories</.link>
+          <.link patch={page_link(:under_construction)} patch={~p"/program/categories"} >Categories</.link>
         </li>
-        <li><.link patch={page_link(:news)} >News</.link></li>
-        <li><.link patch={page_link(:resource)} >Resources</.link></li>
+        <li><.link patch={page_link(:under_construction)} >News</.link></li>
+        <li><.link patch={page_link(:under_construction)} >Resources</.link></li>
       </ul>
     </div>
   </div>

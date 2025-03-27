@@ -75,8 +75,8 @@ defmodule MolyWeb.AdminAffiliateLive.Index do
 
     data =
       Ash.Query.filter(data, post_type == :affiliate)
+      |> Ash.Query.load([:post_meta])
       |> Ash.read!(opts)
-      |> Ash.load!([:post_meta])
 
     calc_status = [:publish, :pending, :trash]
 

@@ -49,7 +49,7 @@ defmodule Moly.Contents.PostMeta do
   attributes do
     uuid_primary_key :id
 
-    attribute :meta_key, :atom do
+    attribute :meta_key, :string do
       allow_nil? false
     end
 

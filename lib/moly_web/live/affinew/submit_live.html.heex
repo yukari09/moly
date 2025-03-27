@@ -26,12 +26,37 @@
             />
           </div>
 
-          <div class="col-span-full">
-            <.textarea
+          <div class="col-span-full mb-8">
+            <div
+              id="post-editor"
+              phx-hook="DescriptionEditor"
+              data-target={"##{@form[:post_content].id}"}
+              data-config={
+                JSON.encode!(%{
+                  theme: "snow",
+                  placeholder: "Affiliate description(min 20 words)...",
+                  modules: %{
+                    toolbar: [
+                      [%{header: 2}, %{header: 4}, %{header: 5}],
+                      [%{list: "ordered"}, %{list: "bullet"}],
+                      ["bold", "italic", "underline"],
+                      [%{align: []}]
+                    ]
+                  }
+                })
+              }
+            >
+              {raw(@form[:post_content].value)}
+            </div>
+          </div>
+
+
+          <div class="col-span-full hidden">
+            <.input
               label="Description"
               placeholder="Description of affiliate program."
               field={@form[:post_content]}
-              data-validator="require:string:length-5"
+              data-validator="require:string:length-20"
             />
             <p class="mt-3 text-sm/6 text-gray-600">
               Write a few sentences about this affiliate program.
@@ -357,11 +382,40 @@
           phx-update="ignore"
           class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2"
         >
-          <div class="col-span-full">
+
+
+
+          <div class="col-span-full mb-8">
+            <div
+              id="post-sign-up"
+              phx-hook="DescriptionEditor"
+              data-target={"[data-el-id='affiliate_signup_requirements']"}
+              data-config={
+                JSON.encode!(%{
+                  theme: "snow",
+                  placeholder: "Requires an active website with tech or hosting-related content, no minimum traffic, application review needed.",
+                  modules: %{
+                    toolbar: [
+                      [%{header: 2}, %{header: 4}, %{header: 5}],
+                      [%{list: "ordered"}, %{list: "bullet"}],
+                      ["bold", "italic", "underline"],
+                      [%{align: []}]
+                    ]
+                  }
+                })
+              }
+            >
+              {raw(@form[:post_content].value)}
+            </div>
+          </div>
+
+        
+          <div class="col-span-full  hidden">
             <.textarea
               placeholder="Requires an active website with tech or hosting-related content, no minimum traffic, application review needed."
               rows="5"
               class="w-full"
+              data-el-id="affiliate_signup_requirements"
               label="Signup Requirements"
               field={@form[:post_meta]}
               field_subfix="[12][meta_value]"
@@ -535,6 +589,9 @@
       switch (type) {
           case "string":
               if (typeof value !== "string") return false;
+              const tempElement = document.createElement("div");
+              tempElement.innerHTML = value;
+              value = tempElement.innerText
               const wordCount = countWords(value);
               return hasLengthRule ? wordCount >= getExpectedLength() : wordCount > 0;
 

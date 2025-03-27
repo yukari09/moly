@@ -1,4 +1,4 @@
-defmodule MolyWeb.Affinew.BuildingLive do
+defmodule MolyWeb.Affinew.UnderConstructionLive do
   use MolyWeb, :live_view
 
   def mount(_params, _session, socket) do

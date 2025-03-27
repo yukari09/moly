@@ -1,4 +1,4 @@
-defmodule MolyWeb.Affinew.ProgramViewLive do
+defmodule MolyWeb.Affinew.ViewLive do
   use MolyWeb, :live_view
 
   require Ash.Query

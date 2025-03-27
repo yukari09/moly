@@ -2,12 +2,10 @@ defmodule MolyWeb.Affinew.Components do
   use MolyWeb, :html
 
   def page_link(:programs), do: ~p"/programs"
-  def page_link(:news), do: ~p"/news"
-  def page_link(:resource), do: ~p"/resource"
-  def page_link(:categries), do: ~p"/program/categories"
+  def page_link(:under_construction), do: ~p"/under-construction"
   def page_link(:submit), do: ~p"/program/submit"
   def page_link(:term, slug), do: ~p"/programs/#{slug}"
-  def page_link(:term, slug, post_name), do: ~p"/programs/#{slug}/#{post_name}"
+  def page_link(:post_view, post_name), do: ~p"/program/#{post_name}"
   def page_link(:user, %Moly.Accounts.User{} = user) do
     username = Moly.Utilities.Account.user_username(user)
     ~p"/user/@#{username}"

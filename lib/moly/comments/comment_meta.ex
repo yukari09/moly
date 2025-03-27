@@ -21,7 +21,7 @@ defmodule Moly.Comments.CommentMeta do
   attributes do
     uuid_primary_key :id
 
-    attribute :meta_key, :atom do
+    attribute :meta_key, :string do
       allow_nil? true
     end
 

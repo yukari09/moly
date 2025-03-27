@@ -32,7 +32,7 @@ defmodule MolyWeb.Affinew.VerifyEmailLive do
               <div class="text-2xl md:text-3xl font-medium text-center">Verify your email</div>
               <div class=" mt-4">Please go to your registered email address to verify whether your email address can be used.</div>
               <div class="mt-8 mb-8 lg:mb-0 text-center flex items-center justify-center gap-2 mx-atuo">
-                <.link phx-click={JS.patch("app:historyback")} class="btn btn-neutral">Go Back</.link>
+                <.link phx-click="go-back" class="btn btn-neutral">Go Back</.link>
                 <.link phx-click="resend" class="btn">Resend</.link>
               </div>
             </div>

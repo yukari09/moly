@@ -66,14 +66,14 @@ defmodule Moly.Utilities.Account do
   end
 
 
-  def user_banner(user, size), do: load_meta_value_by_meta_key(user, :banner, &Map.get(&1, size))
-  def user_avatar(user, size), do: load_meta_value_by_meta_key(user, :avatar, &Map.get(&1, size))
+  def user_banner(user, size), do: load_meta_value_by_meta_key(user, "banner", &Map.get(&1, size))
+  def user_avatar(user, size), do: load_meta_value_by_meta_key(user, "avatar", &Map.get(&1, size))
 
   def user_name(user, string_length \\ 0),
     do:
       load_meta_value_by_meta_key(
         user,
-        :name,
+        "name",
         &((string_length == 0 && &1) || String.slice(&1, 0, string_length))
       )
 
@@ -81,7 +81,7 @@ defmodule Moly.Utilities.Account do
     do:
       load_meta_value_by_meta_key(
         user,
-        :username,
+        "username",
         &((string_length == 0 && &1) || String.slice(&1, 0, string_length))
       )
 
@@ -95,7 +95,7 @@ defmodule Moly.Utilities.Account do
         meta_key,
         after_callback \\ nil
       )
-      when is_atom(meta_key) do
+      when is_binary(meta_key) do
     meta_value =
       Enum.find(user_meta, &(&1.meta_key == meta_key))
       |> format_meta_value()
@@ -132,10 +132,10 @@ defmodule Moly.Utilities.Account do
   defp format_meta_value(nil), do: nil
   defp format_meta_value(%{meta_value: nil}), do: nil
 
-  defp format_meta_value(%{meta_key: :avatar, meta_value: meta_value}),
+  defp format_meta_value(%{meta_key: "avatar", meta_value: meta_value}),
     do: JSON.decode!(meta_value)
 
-  defp format_meta_value(%{meta_key: :banner, meta_value: meta_value}),
+  defp format_meta_value(%{meta_key: "banner", meta_value: meta_value}),
     do: JSON.decode!(meta_value)
 
   defp format_meta_value(%{meta_value: meta_value}), do: meta_value
