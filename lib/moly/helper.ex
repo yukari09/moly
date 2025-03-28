@@ -86,24 +86,24 @@ defmodule Moly.Helper do
   end
 
 
-  def image_resize(filename, width \\ nil, height \\ nil) do
-    new_img =
-      Imgproxy.new("s3://#{s3_path(filename)}")
-      |> Imgproxy.set_extension("webp")
+  # def image_resize(filename, width \\ nil, height \\ nil) do
+  #   new_img =
+  #     Imgproxy.new("s3://#{s3_path(filename)}")
+  #     |> Imgproxy.set_extension("webp")
 
-    o =
-      case [width, height] do
-        [nil, nil] ->
-          new_img
+  #   o =
+  #     case [width, height] do
+  #       [nil, nil] ->
+  #         new_img
 
-        [_, _] ->
-          Imgproxy.resize(new_img, width, height, type: "fill")
-      end
+  #       [_, _] ->
+  #         Imgproxy.resize(new_img, width, height, type: "fill")
+  #     end
 
-    to_string(o)
-  end
+  #   to_string(o)
+  # end
 
-  defp s3_path(filename), do: load_s3_config(:bucket) |> Path.join(filename)
+  # defp s3_path(filename), do: load_s3_config(:bucket) |> Path.join(filename)
 
 
   def s3_file_with_domain(filename),

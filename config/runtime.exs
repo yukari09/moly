@@ -142,8 +142,8 @@ if config_env() == :prod do
   # domain: System.get_env("S3_DOMAIN"),
   # domain_scheme: System.get_env("S3_DOMAIN_SCHEME")
 
-  config :imgproxy,
-    prefix: System.get_env("IMGPROXY_PREFIX"),
-    key: System.get_env("IMGPROXY_KEY"),
-    salt: System.get_env("IMGPROXY_SALT")
+  # config :imgproxy,
+  #   prefix: System.get_env("IMGPROXY_PREFIX"),
+  #   key: System.get_env("IMGPROXY_KEY"),
+  #   salt: System.get_env("IMGPROXY_SALT")
 end
