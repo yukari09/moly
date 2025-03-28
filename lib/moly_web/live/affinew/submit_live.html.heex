@@ -140,7 +140,7 @@
                   field={@form[:post_meta]}
                   field_subfix={field_subfix("meta_value", i, 2)}
                   value={commission_value(commission, :commission_unit)}
-                  options={[{"USD", "$"}, {"EUR", "€"}, {"%", "%"}]}
+                  options={MolyWeb.Affinew.Components.commission_options}
                 />
                 <.input
                   class="hidden"
@@ -244,17 +244,7 @@
                 field={@form[:post_meta]}
                 field_subfix="[8][meta_value]"
                 value={post_meta_value(@post, :payment_cycle)}
-                options={[
-                  {"monthly", "Monthly"},
-                  {"semi-monthly", "Semi-Monthly"},
-                  {"weekly", "Weekly"},
-                  {"quarterly", "Quarterly"},
-                  {"bi-annually", "Bi-Annually"},
-                  {"annually", "Annually"},
-                  {"on-demand", "On-Demand"},
-                  {"net-30", "Net 30"},
-                  {"net-60", "Net 60"}
-                ]}
+                options={MolyWeb.Affinew.Components.payment_cycle_options}
               />
               <.input
                 class="hidden"

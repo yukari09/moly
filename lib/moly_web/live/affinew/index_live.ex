@@ -1,38 +1,28 @@
 defmodule MolyWeb.Affinew.IndexLive do
   use MolyWeb, :live_view
 
-  require Ash.Query
-
   import MolyWeb.Affinew.Components
+  alias MolyWeb.Affinew.Links
 
   def mount(_params, _session, socket) do
-    opts = [
-      action: :read,
-      actor: %{roles: [:user]},
-      page: [limit: 12, offset: 0, count: true]
-    ]
-
-    cache_function = fn ->
-      Ash.Query.new(Moly.Contents.Post)
-      |> Ash.Query.filter(post_type == :affiliate and post_status in [:publish])
-      |> Ash.Query.load([
-        :affiliate_tags,
-        :affiliate_categories,
-        author: :user_meta,
-        post_meta: :children
-      ])
-      |> Ash.Query.sort(inserted_at: :desc)
-      |> Ash.read!(opts)
-    end
-
     %{results: posts} =
-      Moly.Utilities.cache_get_or_put("page.index.cache", cache_function, :timer.hours(2))
+      Moly.Utilities.cache_get_or_put("#{__MODULE__}.page.index.cache", &MolyWeb.Affinew.Query.index_query/0, :timer.hours(24))
 
-    # {MolyWeb.Layouts, :affinew}
+    socket = assign(socket, :posts, posts)
+
     {:ok, socket, layout: false}
   end
 
   def handle_params(_, _, socket) do
     {:noreply, socket}
+  end
+
+  defp nav_categories() do
+    [
+      {"Browse", Links.programs()},
+      {"Categories", Links.under_construction()},
+      {"News", Links.under_construction()},
+      {"Resources", Links.under_construction()},
+    ]
   end
 end

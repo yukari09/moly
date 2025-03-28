@@ -10,9 +10,9 @@
   <div class="flex items-center justify-between mt-16 gap-2">
     <div class="flex items-center gap-2">
       <button class="btn btn-square bg-white hidden md:block"><.icon name="hero-adjustments-horizontal" class="size-6"/></button>
-      <.filter_dropdown name="Categories" />
-      <.filter_dropdown name="Commssion" />
-      <.filter_dropdown name="Cookie Duration" />
+      <.filter_dropdown label="Categories" name="category" value={@params["category"]} options={@industries}  />
+      <.filter_dropdown label="Commssion" />
+      <.filter_dropdown label="Cookie Duration" />
     </div>
       <div class="flex items-center gap-1 text-sm md:text-base">
         <span class="text-medium hidden md:block">Sort by:</span> 
@@ -31,7 +31,7 @@
       </div>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-6 mt-4">
-    <MolyWeb.Affinew.Components.card :for={_ <- 0..8} />
+    <MolyWeb.Affinew.Components.card :for={post <- @posts} post={post}/>
     </div>
   </div>
 

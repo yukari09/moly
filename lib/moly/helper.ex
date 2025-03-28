@@ -85,6 +85,7 @@ defmodule Moly.Helper do
     {:ok, %{uploader: "S3", key: key, url: url}, socket}
   end
 
+
   def image_resize(filename, width \\ nil, height \\ nil) do
     new_img =
       Imgproxy.new("s3://#{s3_path(filename)}")
@@ -103,6 +104,7 @@ defmodule Moly.Helper do
   end
 
   defp s3_path(filename), do: load_s3_config(:bucket) |> Path.join(filename)
+
 
   def s3_file_with_domain(filename),
     do: "#{load_s3_config(:domain_scheme)}://#{load_s3_config(:domain)}/#{filename}"
@@ -320,6 +322,7 @@ defmodule Moly.Helper do
         cond do
           is_map(acc) -> Map.get(acc, key, nil)
           is_list(acc) && is_integer(key) -> Enum.at(acc, key)
+          is_tuple(acc) && is_integer(key) -> elem(acc, key)
           true -> nil
         end
 
@@ -346,6 +349,15 @@ defmodule Moly.Helper do
   end
 
   def bits_to_readable(nil), do: 0
+
+
+  def format_to_int(string, decimal_places) do
+    case Float.parse(string) do
+      {float_value, _} -> :erlang.float_to_binary(float_value, [decimals: decimal_places])
+      _ -> 0
+    end
+  end
+
 
   def pagination_meta(total, page_size, page, show_item)
       when is_integer(total) and is_integer(page_size) and is_integer(page) and

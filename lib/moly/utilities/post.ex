@@ -5,20 +5,12 @@ defmodule Moly.Utilities.Post do
   See table post_meta meta_value
   """
 
-  def test() do
-    #   post =
-    #     Ash.get!(Moly.Contents.Post, "3e1e65f0-efb5-4613-9bb1-12eb49ef58b6", actor: %{roles: [:user]})
-    #     |> Ash.load!([:affiliate_categories], actor: %{roles: [:user]})
-
-    #   # Moly.Utilities.Affiliate.affiliate_tags(post)
-  end
-
   def attachment_filesize(%Post{id: _id, post_meta: _} = post) do
-    post_meta_value(post, :attachment_filesize)
+    post_meta_value(post, "attachment_filesize")
   end
 
   def attachment_metadata(%Post{id: _id, post_meta: _} = post) do
-    attachment_metadata_valaue = post_meta_value(post, :attachment_metadata)
+    attachment_metadata_valaue = post_meta_value(post, "attachment_metadata")
 
     if attachment_metadata_valaue do
       JSON.decode!(attachment_metadata_valaue)
@@ -52,19 +44,26 @@ defmodule Moly.Utilities.Post do
     end
   end
 
-  # For post_type :post
-  # example :attachment_affiliate_media_feature
+  @doc """
+    Ash.Query.new(Moly.Contents.Post)
+    |> Ash.Query.load([
+      post_meta: :children
+    ])
+    |> Ash.read!()
+
+    post_attachment_metadata_images([meta_key], ["medium"])
+  """
   def post_attachment_metadata_images(
         %Post{id: id, post_meta: _post_meta} = post,
         meta_key,
         sizes,
         return_all_sizes \\ false
       )
-      when is_binary(id) and is_atom(meta_key) do
+      when is_binary(id) and is_binary(meta_key) do
     filter_by_meta_key(post, meta_key)
     |> Enum.reduce([], fn
       %{children: children}, acc ->
-        filter_by_meta_key(%{post_meta: children}, :attachment_metadata)
+        filter_by_meta_key(%{post_meta: children}, "attachment_metadata")
         |> case do
           post_meta when is_list(post_meta) ->
             acc ++
@@ -77,7 +76,7 @@ defmodule Moly.Utilities.Post do
   end
 
   defp post_attachment_metadata_image(
-         %{meta_key: :attachment_metadata, meta_value: meta_value},
+         %{meta_key: "attachment_metadata", meta_value: meta_value},
          sizes,
          return_all_sizes
        ) do
@@ -111,19 +110,15 @@ defmodule Moly.Utilities.Post do
   end
 
   def post_meta_value(%Post{id: id} = post, meta_key) when is_binary(id) do
-    case filter_by_meta_key(post, meta_key) do
-      post_meta when is_list(post_meta) ->
-        List.first(post_meta)
-        |> Map.get(:meta_value)
-
-      _ ->
-        nil
-    end
+    filter_by_meta_key(post, meta_key)
+    |> Moly.Helper.get_in_from_keys([0, :meta_value])
   end
 
+  def post_meta_by_filter(%Post{id: id} = post, meta_key) when is_binary(id), do: filter_by_meta_key(post, meta_key)
+
   defp filter_by_meta_key(%{post_meta: post_meta}, meta_key)
-       when is_list(post_meta) and is_atom(meta_key) do
-    Enum.filter(post_meta, &(&1.meta_key == meta_key))
+       when is_list(post_meta) and is_binary(meta_key) do
+    Enum.filter(post_meta, &(Regex.compile!(meta_key) |>  Regex.match?(&1.meta_key)))
   end
 
   defp filter_by_meta_key(_, _), do: []

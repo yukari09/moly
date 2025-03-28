@@ -4,7 +4,7 @@ defmodule Moly.Utilities do
     |> case do
       nil ->
         if is_function(get_cache_function) do
-          value = get_cache_function.()
+          value = apply(get_cache_function, [])
           Cachex.put(:cache, key, value, expire: expire)
           value
         else

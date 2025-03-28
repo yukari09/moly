@@ -4,6 +4,9 @@ defmodule MolyWeb.Affinew.SubmitLive do
   require Ash.Query
 
   import MolyWeb.TailwindUI
+  import MolyWeb.Affinew.Query, only: [industries: 0, countries: 0]
+
+  alias MolyWeb.Affinew.Links
 
   def mount(params, _session, socket) do
     {:ok, resource_socket(socket, params), layout: {MolyWeb.Layouts, :affinew}}
@@ -89,7 +92,7 @@ defmodule MolyWeb.Affinew.SubmitLive do
         {:ok, post} ->
           socket
           |> put_flash(:info, "Saved post for #{post.post_title}!")
-          |> push_navigate(to: MolyWeb.Affinew.Components.page_link(post.post_name))
+          |> push_navigate(to: Links.view(post.post_name))
 
         {:error, form} ->
           flash_msg =
@@ -139,13 +142,12 @@ defmodule MolyWeb.Affinew.SubmitLive do
         end
         |> to_form()
 
-      countries = get_term_taxonomy("countries", socket.assigns.current_user)
-      industries = get_term_taxonomy("industries", socket.assigns.current_user)
+
       commissions = post_meta_commssion(post)
 
       assign(socket,
-        countries: countries,
-        industries: industries,
+        countries: countries(),
+        industries: industries(),
         form: form,
         post: post,
         commissions: commissions
@@ -159,12 +161,6 @@ defmodule MolyWeb.Affinew.SubmitLive do
     else
       push_navigate(socket, to: ~p"/user/verify-email")
     end
-  end
-
-  defp get_term_taxonomy(slug, current_user) do
-    Ash.Query.filter(Moly.Terms.TermTaxonomy, parent.slug == ^slug)
-    |> Ash.Query.load([:term])
-    |> Ash.read!(actor: current_user)
   end
 
   defp set_current_user_as_owner(current_user),

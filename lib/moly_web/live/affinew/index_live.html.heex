@@ -6,22 +6,17 @@
       <div class="navbar w-full max-w-screen-xl mx-auto px-4 lg:px-10 ">
         <div class="flex-none lg:hidden mr-4">
           <label for="affinew-drawer" aria-label="open sidebar" class="btn btn-square btn-ghost">
-            <Lucideicons.align_justify class="inline-block h-6 w-6 stroke-current text-white" />
+            <Lucideicons.align_justify class="inline-block size-6 stroke-current" />
           </label>
         </div>
         <div class="navbar-start hidden items-center gap-8 w-auto lg:flex">
           <div class="size-8 hidden lg:block"><.link patch="/"><img src={~p"/images/logo.svg"} /></.link></div>
           <ul class="flex items-center text-sm font-medium mx-auto gap-8 ">
-            <li><.link patch={page_link(:programs)} >Browse</.link></li>
-            <li>
-              <.link patch={page_link(:under_construction)} >Categories</.link>
-            </li>
-            <li><.link patch={page_link(:under_construction)} >News</.link></li>
-            <li><.link patch={page_link(:under_construction)} >Resources</.link></li>
+            <li :for={{label, patch} <- nav_categories() }><.link patch={patch} >{label}</.link></li>
           </ul>
         </div>
 
-        <div class="hidden lg:block navbar-end w-auto flex-1">
+        <div class="navbar-end w-auto flex-1">
           <ul class="flex items-center gap-4 justify-end">
             <!-- Navbar menu content here -->
             <%!-- <li><button class="btn  btn-wide flex items-center border-none text-green-light bg-green-secondary">Submit</button></li> --%>
@@ -31,7 +26,7 @@
               </button>
             </li>
             <li>
-              <.user_dropdown  current_user={@current_user}/>
+              <.user_dropdown current_user={@current_user}/>
             </li>
           </ul>
         </div>
@@ -43,7 +38,7 @@
         <div class="w-full md:flex items-center justify-between p-10 lg:px-20 lg:pt-10">
           <div class="lg:max-w-lg flex-1">
             <h1>
-              <p class="text-4xl lg:text-6xl/16 font-medium tracking-tight">
+              <p class="text-5xl/14 lg:text-6xl/16 font-medium tracking-tight">
                 Find <span class="text-primary">high ticket</span> affiliate programs
               </p>
               <div>
@@ -54,23 +49,23 @@
               </p>
             </h1>
             <div class="mt-10 flex items-center gap-2">
-              <.link patch={MolyWeb.Affinew.Components.page_link(:programs)} class="btn xl:px-6 xl:py-5.5 bg-green-light text-green-primary border-none">
+              <.link patch={Links.programs()} class="btn btn-sm w-full  md:btn-md md:w-auto xl:px-6 xl:py-5.5 bg-green-light text-green-primary border-none">
                 Explore
               </.link>
-              <.link patch={MolyWeb.Affinew.Components.page_link(:submit)} class="btn xl:px-6 xl:py-5.5 btn-outline">
+              <.link patch={Links.submit()} class="btn  btn-sm hidden md:flex md:btn-md md:w-auto xl:px-6 xl:py-5.5 btn-neutral btn-outline">
                 Submit
               </.link>
             </div>
           </div>
-          <div class="max-w-xs xl:max-w-lg hidden md:block aspect-square w-full">
+          <div class="max-w-xs md:max-w-sm xl:max-w-lg hidden md:block aspect-square w-full">
             <img src={~p"/images/4235568.svg"} />
           </div>
         </div>
       </div>
 
-      <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10">
+      <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-6">
-          <MolyWeb.Affinew.Components.card :for={_ <- 0..8} />
+          <MolyWeb.Affinew.Components.card :for={post <- @posts} post={post} />
         </div>
       </div>
     </div>
@@ -82,14 +77,9 @@
       <div class="px-4">
         <.link patch="/" class="size-8 flex items-end gap-2 text-2xl/6 font-meidum"><img src={~p"/images/logo.svg"} />Affinew</.link>
       </div>
-      <ul class="menu mt-4">
+      <ul class="menu mt-4 w-full">
         <!-- Sidebar content here -->
-        <li><.link patch={page_link(:programs)} >Browse</.link></li>
-        <li>
-          <.link patch={page_link(:under_construction)} patch={~p"/program/categories"} >Categories</.link>
-        </li>
-        <li><.link patch={page_link(:under_construction)} >News</.link></li>
-        <li><.link patch={page_link(:under_construction)} >Resources</.link></li>
+        <li :for={{label, patch} <- nav_categories() }><.link patch={patch} >{label}</.link></li>
       </ul>
     </div>
   </div>

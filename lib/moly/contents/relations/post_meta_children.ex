@@ -2,11 +2,15 @@ defmodule Moly.Contents.Relations.PostMetaChildren do
   use Ash.Resource.ManualRelationship
   require Ash.Query
 
-  @meta_key [:attachment_affiliate_media_feature, :attachment_affiliate_media]
-
   def load(records, _opts, %{query: _query} = context) do
     post_ids =
-      Enum.filter(records, &(&1.meta_key in @meta_key))
+      Enum.filter(records, fn
+        %{meta_value: meta_value} ->
+          case Ecto.UUID.dump(meta_value)  do
+            {:ok, _} -> true
+            _ -> false
+          end
+      end)
       |> Enum.reduce([], &(&2 ++ String.split(&1.meta_value, ",")))
 
     opts = Ash.Context.to_opts(context)
