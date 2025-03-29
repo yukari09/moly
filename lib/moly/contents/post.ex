@@ -356,25 +356,25 @@ defmodule Moly.Contents.Post do
   end
 
   calculations do
-    calculate :commission_min,
-              :integer,
-              expr(
-                first(:post_meta,
-                  field: :meta_value,
-                  query: [filter: expr(meta_key == :commission_min)]
-                )
-              )
+    # calculate :commission_min,
+    #           :integer,
+    #           expr(
+    #             first(:post_meta,
+    #               field: :meta_value,
+    #               query: [filter: expr(meta_key == :commission_min)]
+    #             )
+    #           )
 
-    calculate :commission_max,
-              :integer,
-              expr(
-                first(:post_meta,
-                  field: :meta_value,
-                  query: [filter: expr(meta_key == :commission_max)]
-                )
-              )
+    # calculate :commission_max,
+    #           :integer,
+    #           expr(
+    #             first(:post_meta,
+    #               field: :meta_value,
+    #               query: [filter: expr(meta_key == :commission_max)]
+    #             )
+    #           )
 
-    calculate :commission_avg, :integer, expr((commission_min + commission_max) / 2)
+    # calculate :commission_avg, :integer, expr((commission_min + commission_max) / 2)
   end
 
   identities do

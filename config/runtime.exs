@@ -125,7 +125,9 @@ if config_env() == :prod do
     google_oauth2_redirect_uri: System.get_env("GOOGLE_REDIRECT_URI"),
     google_oauth2_client_secret: System.get_env("GOOGLE_CLIENT_SECRET"),
     email_name: System.get_env("EMAIL_NAME"),
-    email_address: System.get_env("EMAIL_ADDRESS")
+    email_address: System.get_env("EMAIL_ADDRESS"),
+    imagor_endpoint: System.get_env("IMAGOR_ENDPOINT"),
+    imagor_secret: System.get_env("IMAGOR_SECRET")
 
   config :ex_aws,
     region: System.get_env("AWS_REGION"),

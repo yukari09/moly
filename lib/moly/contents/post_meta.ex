@@ -10,6 +10,16 @@ defmodule Moly.Contents.PostMeta do
   postgres do
     table "post_meta"
     repo(Moly.Repo)
+
+    custom_statements do
+      statement :meta_value_idx do
+        up(
+          "CREATE INDEX meta_value_idx ON post_meta (substring(meta_value FROM 1 FOR 16));"
+        )
+
+        down("DROP INDEX meta_value_idx;")
+      end
+    end
   end
 
   actions do

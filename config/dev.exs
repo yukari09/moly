@@ -91,7 +91,9 @@ config :moly,
   google_oauth2_redirect_uri: "http://localhost:4000/auth/user/google/callback",
   google_oauth2_client_secret: "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",
   email_name: "moly@moly.dev",
-  email_address: "moly@moly.dev"
+  email_address: "moly@moly.dev",
+  imagor_endpoint: "http://192.168.6.8:8000",
+  imagor_secret: "WpozRdSDvTKVEPkOQ+/mSWEzIPdjXRFhYLB62XBN12knQ2SRvjMmsOJ/kNJT8UgI"
 
 config :ex_aws,
   region: "us-east-1",
@@ -103,6 +105,7 @@ config :ex_aws, :s3,
   host: "9a489bdeb68e9c3976091df2de6de7d8.r2.cloudflarestorage.com",
   port: 443,
   bucket: "moly-dev"
+
 
 #   domain: "192.168.6.8:9000/local", #set minio bucket public for accsess
 #   domain_scheme: "http"

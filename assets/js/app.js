@@ -33,8 +33,8 @@ let liveSocket = new LiveSocket("/live", Socket, {
 })
 
 // Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#19a019"}, shadowColor: "rgba(0, 0, 0, .3)"})
-window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
+topbar.config({barColors: {0: "#09442b"}, shadowColor: "rgba(0, 0, 0, .3)", barThickness: 2})
+window.addEventListener("phx:page-loading-start", _info => topbar.show(0))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 // connect if there are any LiveViews on the page
@@ -69,6 +69,8 @@ window.addEventListener("app:disabledFormElement", (event) => {
 })
 
 window.addEventListener("app:historyback", (event) => {event.target.tagName === "IFRAME"? event.target.contentWindow.history.back() : history.back()})
+window.addEventListener("app:focus-el", event => event.target.focus())
+window.addEventListener("app:blur-el", event => event.target.blur())
 
 window.addEventListener("app:saveLocalStorage", ({detail}) => {
   localStorage.setItem(detail.key, btoa(detail.value))

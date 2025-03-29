@@ -106,6 +106,35 @@ defmodule Moly.Helper do
   # defp s3_path(filename), do: load_s3_config(:bucket) |> Path.join(filename)
 
 
+  @doc """
+    [imagor](https://github.com/cshum/imagor)
+  """
+  def image_resize(filename, width \\ nil, height \\ nil) do
+    with {:ok, addr} = Application.fetch_env(:moly, :imagor_endpoint),
+      {:ok, secret} = Application.fetch_env(:moly, :imagor_secret) do
+        opts = ["smart","filters:format(webp)",filename]
+        path = if width && height do
+          ["#{width}x#{height}" | opts]
+        else
+          opts
+        end
+        path = Enum.join(path, "/")
+        hashstr = hash(path, secret)
+        "#{addr}/#{hashstr}"
+      end
+  end
+
+  defp hash(path, secret) do
+    hash =
+      :crypto.mac(:hmac, :sha, secret, path)
+      |> Base.encode64()
+      |> String.replace("+", "-")
+      |> String.replace("/", "_")
+
+    "#{hash}/#{path}"
+  end
+
+  #have some erros
   def s3_file_with_domain(filename),
     do: "#{load_s3_config(:domain_scheme)}://#{load_s3_config(:domain)}/#{filename}"
 

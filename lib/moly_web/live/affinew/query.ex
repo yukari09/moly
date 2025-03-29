@@ -27,8 +27,9 @@ defmodule MolyWeb.Affinew.Query do
     |> read!(opts())
   end
 
+
   def list_pagination(opts, page, per_page) when is_binary(page) do
-    page = String.to_integer(page)
+    page = page == "" && 1 || String.to_integer(page)
     list_pagination(opts, page, per_page)
   end
   def list_pagination(opts, page, per_page) when is_integer(page) do
@@ -60,10 +61,45 @@ defmodule MolyWeb.Affinew.Query do
     Ash.Query.filter(query, term_taxonomy.term.slug == ^slug)
   end
 
-  # def filter_by_meta(query, key, value) when is_binary(key) and is_binary(value) do
-  #   Ash.Query.filter(query, post_meta.meta_value == ^value and contains(post_meta.meta_key, ^key))
-  # end
-  # def filter_by_meta(query, _, _), do: query
+  def filter_by_commission(filters, ""), do: filters
+  def filter_by_commission(filters, nil), do: filters
+  def filter_by_commission(filters, commission_value) when is_binary(commission_value) do
+    [commission_type, min_value, max_value] = String.split(commission_value, "-")
+    if commission_type != "" && min_value != "" do
+      min_value = String.to_integer(min_value)
+      max_value = max_value == "" && min_value + 500 || String.to_integer(max_value)
+      Enum.reduce(min_value * 10 .. max_value * 10 //1, filters, fn i, acc ->
+        acc = ["#{commission_type}-#{i/10}" | acc]
+        if rem(i , 10) == 0 do
+          ["#{commission_type}-#{trunc(i/10)}" | acc]
+        else
+          acc
+        end
+      end)
+    else
+      filters
+    end
+  end
+
+  def filter_by_cookie_duration(filters, ""), do: filters
+  def filter_by_cookie_duration(filters, nil), do: filters
+  def filter_by_cookie_duration(filters, cookie_duration_value) do
+    [min_value, max_value] = String.split(cookie_duration_value, "-")
+    if min_value != "" do
+      min_value = String.to_integer(min_value)
+      max_value = max_value == "" && min_value + 60 || String.to_integer(max_value)
+      Enum.map(min_value..max_value, &(&1)) ++ filters
+    else
+      filters
+    end
+  end
+
+  def filter_by_payment_cycle(filters, ""), do: filters
+  def filter_by_payment_cycle(filters, nil), do: filters
+  def filter_by_payment_cycle(filters, payment_cycle_value), do: [payment_cycle_value | filters]
+
+  def apply_filters(query, []), do: query
+  def apply_filters(query, filters), do: Ash.Query.filter(query, post_meta.meta_value in ^Enum.uniq(filters))
 
   def industries, do: get_term_taxonomy("industries")
   def countries, do: get_term_taxonomy("countries")

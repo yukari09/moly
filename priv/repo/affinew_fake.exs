@@ -231,7 +231,7 @@ defmodule AffiliateFake do
   end
 end
 
-actor = AffiliateFake.get_actor("4c9b10d5-2f1d-41a0-b0b4-57f07f3c9bb3")
+actor = AffiliateFake.get_actor("27f5177e-eb8d-45c3-a103-dc0ea8f97e9d")
 
 
 for _ <- 1..60 do
@@ -256,6 +256,8 @@ for _ <- 1..60 do
         Enum.reduce(c, [], fn {k, v}, a1 ->
           [%{meta_key: String.to_atom("#{k}_#{i}"), meta_value: v} | a1]
         end)
+
+      # new_item = [%{meta_key: "commission_idx_#{i}", meta_value: "#{c.commission_type}-#{c.commission_amount}"} | new_item]
 
       acc ++ new_item
     end)
