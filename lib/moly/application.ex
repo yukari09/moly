@@ -20,6 +20,7 @@ defmodule Moly.Application do
       MolyWeb.Endpoint,
       {AshAuthentication.Supervisor, [otp_app: :moly]},
       {Cachex, [:cache]},
+      {Moly.Cluster, []},
       {
         FLAME.Pool,
         name: Moly.SamplePool,

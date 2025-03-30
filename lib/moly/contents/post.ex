@@ -4,7 +4,8 @@ defmodule Moly.Contents.Post do
     domain: Moly.Contents,
     authorizers: [Ash.Policy.Authorizer],
     extensions: [AshRbac],
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    notifiers: [Moly.Contents.Notifiers.Post]
 
   require Ash.Query
 

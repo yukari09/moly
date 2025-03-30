@@ -106,6 +106,12 @@ config :ex_aws, :s3,
   port: 443,
   bucket: "moly-dev"
 
+config :moly, Moly.Cluster,
+  url: "https://localhost:9200",
+  username: "elastic",
+  password: "83233167",
+  json_library: JSON,
+  http_client_adapter: {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]}
 
 #   domain: "192.168.6.8:9000/local", #set minio bucket public for accsess
 #   domain_scheme: "http"

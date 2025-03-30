@@ -140,6 +140,12 @@ if config_env() == :prod do
     port: String.to_integer(System.get_env("S3_PORT", "443")),
     bucket: System.get_env("S3_BUCKET")
 
+  config :moly, Moly.Cluster,
+    url: System.get_env("ES_HOST"),
+    username: System.get_env("ES_USER"),
+    password: System.get_env("ES_PASSWD"),
+    json_library: JSON,
+    http_client_adapter: {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]}
   # custom args
   # domain: System.get_env("S3_DOMAIN"),
   # domain_scheme: System.get_env("S3_DOMAIN_SCHEME")
