@@ -32,6 +32,7 @@ defmodule MolyWeb.Affinew.SubmitLive do
       Enum.reduce(post_meta, [], fn
         {k, %{"0" => v0, "1" => v1, "2" => v2} = commission}, a1 ->
           reduce_map = [v0, v1, v2]
+
           reduce_map =
             if Map.has_key?(commission, "3") do
               v3 = Map.get(commission, "3")
@@ -39,15 +40,20 @@ defmodule MolyWeb.Affinew.SubmitLive do
             else
               reduce_map
             end
+
           Enum.reduce(reduce_map, a1, fn %{
-            "meta_key" => meta_key,
-            "meta_value" => meta_value
-            }, a2 ->
-              if meta_value not in [nil, ""] do
-                [%{"meta_key" => String.to_atom("#{meta_key}_#{k}"), "meta_value" => meta_value} | a2]
-              else
-                a2
-              end
+                                           "meta_key" => meta_key,
+                                           "meta_value" => meta_value
+                                         },
+                                         a2 ->
+            if meta_value not in [nil, ""] do
+              [
+                %{"meta_key" => String.to_atom("#{meta_key}_#{k}"), "meta_value" => meta_value}
+                | a2
+              ]
+            else
+              a2
+            end
           end)
 
         {_, v}, a1 ->
@@ -141,7 +147,6 @@ defmodule MolyWeb.Affinew.SubmitLive do
           )
         end
         |> to_form()
-
 
       commissions = post_meta_commssion(post)
 

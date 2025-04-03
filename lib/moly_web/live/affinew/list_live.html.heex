@@ -1,5 +1,11 @@
 <div class="w-full max-w-screen-xl mx-auto px-4 lg:px-10 mb-8">
-  <.breadcrumb />
+  <.breadcrumb 
+      links = {[
+        {"/", "Home"},
+        {MolyWeb.Affinew.Links.programs(), "Affiliate Programs"},
+        {nil, "List"},
+      ]}
+  />
   <.header
     id="browse-header"
     headline="Affiliate Marketing Programs"
@@ -9,33 +15,101 @@
 
   <div class="flex items-center justify-between mt-8 gap-2">
     <div class="flex items-center gap-2">
-      <button class="btn btn-square bg-white hidden md:block"><.icon name="hero-adjustments-horizontal" class="size-6"/></button>
-      <.filter_dropdown params={@params} label="Categories" name="category"   options={@industry_options}  />
-      <.filter_dropdown params={@params} label="Commssion"  name="commission"  options={@commission_options} />
-      <.filter_dropdown params={@params} label="Cookie Duration"   name="cookie-duration" options={@cookie_duration_options} />
-      <.filter_dropdown params={@params} label="Payment Cycle" name="payment-cycle"  options={@payment_cycle_options} />
+      <%!-- <button class="btn btn-square bg-white hidden md:block"><.icon name="hero-adjustments-horizontal" class="size-6"/></button> --%>
+      <.filter_dropdown
+        params={@params}
+        label="Categories"
+        name="category"
+        options={@industry_options}
+      />
+      <.filter_dropdown
+        params={@params}
+        label="Commssion"
+        name="commission"
+        options={@commission_options}
+      />
+      <.filter_dropdown
+        params={@params}
+        label="Cookie Duration"
+        name="cookie-duration"
+        options={@cookie_duration_options}
+      />
+      <.filter_dropdown
+        params={@params}
+        label="Payment Cycle"
+        name="payment-cycle"
+        options={@payment_cycle_options}
+      />
     </div>
-    <.sort_by />
+    <.filter_dropdown
+      params={@params}
+      label="Newest"
+      name="sort"
+      options={@sort_options}
+      class_btn="border-none"
+      class="dropdown-bottom dropdown-end"
+    />
   </div>
 
-  <div class="mt-8">
+  <div class="mt-4">
     <div class="flex items-center justify-between">
-      <div class="text-base-content/50 flex items-center gap-2 text-sm md:text-base">
-        <span class="font-light">Result: 188</span>
-        <div class="badge badge-outline border-base-300 badge-xs sm:badge-sm md:badge-md rounded-full flex items-center gap-1">
-          Primary
+      <div class="flex items-center gap-2 text-sm md:text-base">
+        <span>Result: {@page_meta.total}</span>
+        <.link
+          :for={{p, v} <- @options}
+          :if={!is_nil(v)}
+          patch={MolyWeb.Affinew.Links.programs(Map.put(@params, p, nil))}
+          class="badge badge-outline border-base-300 badge-xs sm:badge-sm md:badge-md rounded-full flex items-center gap-1"
+        >
+          {v}
           <Lucideicons.x class="size-4" />
-        </div>
+        </.link>
       </div>
-      <div class="flex items-center gap-1 text-sm md:text-base">
+      <%!-- <div class="flex items-center gap-1 text-sm md:text-base">
         <span class="text-medium hidden md:block">Sort by:</span> 
         <.sort_by />
-      </div>
+      </div> --%>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-6 mt-4">
-    <MolyWeb.Affinew.Components.card :for={post <- @posts} post={post}/>
+
+    <div :if={Enum.count(@posts) > 0} class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-6 mt-4">
+      <MolyWeb.Affinew.Components.card :for={post <- @posts} post={post} />
+    </div>
+    <div :if={Enum.count(@posts) == 0} class="w-48 mx-auto mt-28 my-40">
+      <img class="w-full" src="/images/7486744.svg" />
+    </div>
+
+    <div class="mx-auto my-8 lg:my-16">
+      <nav
+        :if={@page_meta.total_pages > 1}
+        class="flex items-center justify-center space-x-2 mt-4"
+      >
+        <.link
+          :if={@page_meta.prev}
+          navigate={MolyWeb.Affinew.Links.programs(%{@params | "page" => @page_meta.prev})}
+          class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100"
+        >
+          <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
+        </.link>
+        <.link
+          :for={page <- @page_meta.page_range}
+          navigate={MolyWeb.Affinew.Links.programs(%{@params | "page" => page})}
+          class={[
+            "px-3 py-2 border-b-2 hover:border-base-content hover:text-base-content",
+            (page == @page_meta.current_page && "border-base-content text-base-content") ||
+              "border-white text-base-content/60"
+          ]}
+        >
+          {page}
+        </.link>
+
+        <.link
+          :if={@page_meta.next}
+          navigate={MolyWeb.Affinew.Links.programs(%{@params | "page" => @page_meta.next})}
+          class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100"
+        >
+          <Lucideicons.arrow_right class="w-4 h-4 md:w-5 md:h-5" />
+        </.link>
+      </nav>
     </div>
   </div>
-
 </div>
-    

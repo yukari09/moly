@@ -349,6 +349,7 @@ defmodule Moly.Contents.Post do
       manual Moly.Contents.Relations.PostCategories
       filter expr(term_taxonomy.taxonomy == "affiliate_category")
     end
+
     # only for affiliate
     has_many :affiliate_tags, Moly.Terms.Term do
       manual Moly.Contents.Relations.PostTags

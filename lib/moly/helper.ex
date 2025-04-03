@@ -85,7 +85,6 @@ defmodule Moly.Helper do
     {:ok, %{uploader: "S3", key: key, url: url}, socket}
   end
 
-
   # def image_resize(filename, width \\ nil, height \\ nil) do
   #   new_img =
   #     Imgproxy.new("s3://#{s3_path(filename)}")
@@ -105,23 +104,25 @@ defmodule Moly.Helper do
 
   # defp s3_path(filename), do: load_s3_config(:bucket) |> Path.join(filename)
 
-
   @doc """
     [imagor](https://github.com/cshum/imagor)
   """
   def image_resize(filename, width \\ nil, height \\ nil) do
     with {:ok, addr} = Application.fetch_env(:moly, :imagor_endpoint),
-      {:ok, secret} = Application.fetch_env(:moly, :imagor_secret) do
-        opts = ["smart","filters:format(webp)",filename]
-        path = if width && height do
+         {:ok, secret} = Application.fetch_env(:moly, :imagor_secret) do
+      opts = ["smart", "filters:format(webp)", filename]
+
+      path =
+        if width && height do
           ["#{width}x#{height}" | opts]
         else
           opts
         end
-        path = Enum.join(path, "/")
-        hashstr = hash(path, secret)
-        "#{addr}/#{hashstr}"
-      end
+
+      path = Enum.join(path, "/")
+      hashstr = hash(path, secret)
+      "#{addr}/#{hashstr}"
+    end
   end
 
   defp hash(path, secret) do
@@ -134,7 +135,7 @@ defmodule Moly.Helper do
     "#{hash}/#{path}"
   end
 
-  #have some erros
+  # have some erros
   def s3_file_with_domain(filename),
     do: "#{load_s3_config(:domain_scheme)}://#{load_s3_config(:domain)}/#{filename}"
 
@@ -379,14 +380,12 @@ defmodule Moly.Helper do
 
   def bits_to_readable(nil), do: 0
 
-
   def format_to_int(string, decimal_places) do
     case Float.parse(string) do
-      {float_value, _} -> :erlang.float_to_binary(float_value, [decimals: decimal_places])
+      {float_value, _} -> :erlang.float_to_binary(float_value, decimals: decimal_places)
       _ -> 0
     end
   end
-
 
   def pagination_meta(total, page_size, page, show_item)
       when is_integer(total) and is_integer(page_size) and is_integer(page) and

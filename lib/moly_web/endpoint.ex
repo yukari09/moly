@@ -11,6 +11,8 @@ defmodule MolyWeb.Endpoint do
     same_site: "Lax"
   ]
 
+  plug(Plug.Session, @session_options)
+
   socket("/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options], compress: false, timeout: 60_000],
     longpoll: [connect_info: [session: @session_options]]

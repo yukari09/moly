@@ -7,29 +7,36 @@
     <.live_title suffix={assigns[:page_suffix] || " · Affinew"}>
       {assigns[:page_title] || "Sorry, the page you are looking for does not exist"}
     </.live_title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
     <link phx-track-static rel="stylesheet" href="/assets/app.css" />
   </head>
   <body class="min-h-[100vh] bg-white">
     <div class="flex flex-col  gap-x-12 items-center pt-10 h-full">
-        <div class="md:flex px-4 sm:px-8 xl:px-0 items-center md:mt-36">
-          <div class="max-w-sm order-2"><img src="/images/3804933.svg" /></div>
-          <div class="max-w-md  order-1">
-            <div class="text-2xl md:text-4xl font-medium">So sorry ! The page you are looking for cannot be found</div>
-            <div class="text-lg md:text-xl mt-4">Posssible reason</div>
-            <ol class="list-disc text-base-content/80 space-y-1 md:space-y-2  mt-4 ml-4 font-light text-lg">
-              <li>The address may been typed incorrectly</li>
-              <li>It may be a broken or outdated link</li>
-            </ol>
-            <div class="mt-8 mb-8 lg:mb-0"><.link id="go-back-link" class="btn btn-neutral w-full md:btn-wide">Go back</.link></div>
+      <div class="md:flex px-4 sm:px-8 xl:px-0 items-center md:mt-36">
+        <div class="max-w-sm order-2"><img src="/images/3804933.svg" /></div>
+        <div class="max-w-md  order-1">
+          <div class="text-2xl md:text-4xl font-medium">
+            So sorry ! The page you are looking for cannot be found
+          </div>
+          <div class="text-lg md:text-xl mt-4">Posssible reason</div>
+          <ol class="list-disc text-base-content/80 space-y-1 md:space-y-2  mt-4 ml-4 font-light text-lg">
+            <li>The address may been typed incorrectly</li>
+            <li>It may be a broken or outdated link</li>
+          </ol>
+          <div class="mt-8 mb-8 lg:mb-0">
+            <.link id="go-back-link" class="btn btn-neutral w-full md:btn-wide">Go back</.link>
           </div>
         </div>
+      </div>
     </div>
   </body>
 
-<script>
-  document.querySelector("#go-back-link").addEventListener("click", () => {window.history.back()})
-</script>
+  <script>
+    document.querySelector("#go-back-link").addEventListener("click", () => {window.history.back()})
+  </script>
 </html>

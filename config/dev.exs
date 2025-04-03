@@ -92,26 +92,28 @@ config :moly,
   google_oauth2_client_secret: "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",
   email_name: "moly@moly.dev",
   email_address: "moly@moly.dev",
-  imagor_endpoint: "http://192.168.6.8:8000",
+  imagor_endpoint: "http://10.0.0.2:8000",
   imagor_secret: "WpozRdSDvTKVEPkOQ+/mSWEzIPdjXRFhYLB62XBN12knQ2SRvjMmsOJ/kNJT8UgI"
 
 config :ex_aws,
   region: "us-east-1",
-  access_key_id: "415efd2219d218600c53964e88d8fe82",
-  secret_access_key: "78b72539f2b1daef78868904b452592790d62e00b404455e1a0384bd14f264bf"
+  access_key_id: "yukari",
+  secret_access_key: "83233167"
 
 config :ex_aws, :s3,
-  scheme: "https://",
-  host: "9a489bdeb68e9c3976091df2de6de7d8.r2.cloudflarestorage.com",
-  port: 443,
-  bucket: "moly-dev"
+  scheme: "http://",
+  host: "localhost",
+  port: 9000,
+  bucket: "local"
 
 config :moly, Moly.Cluster,
   url: "https://localhost:9200",
   username: "elastic",
   password: "83233167",
   json_library: JSON,
-  http_client_adapter: {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]}
+  http_client_adapter:
+    {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]},
+  prefix: :affinew
 
 #   domain: "192.168.6.8:9000/local", #set minio bucket public for accsess
 #   domain_scheme: "http"

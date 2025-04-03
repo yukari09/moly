@@ -183,7 +183,7 @@ defmodule Moly.Accounts.User do
       end
 
       # Required if you're using the password & confirmation strategies
-      upsert_fields [:email]
+      upsert_fields []
       change set_attribute(:confirmed_at, &DateTime.utc_now/0)
 
       change after_action(fn changeset, user, context ->

@@ -204,15 +204,12 @@ tags = [
   "affiliate commissions", "digital products for affiliates", "growth hacking", "affiliate tools", "niche websites"
 ]
 
-
-
-
 defmodule AffiliateFake do
   require Ash.Query
   require AshPostgres.DataLayer
 
   def random_image() do
-    Ash.Query.filter(Moly.Contents.Post, post_type == :attachment)
+    Ash.Query.filter(Moly.Contents.Post, post_type == "attachment")
     |> Ash.read!(actor: %{roles: [:user]})
     |> Enum.map(&(&1.id))
     |> random_element(1)
@@ -231,7 +228,7 @@ defmodule AffiliateFake do
   end
 end
 
-actor = AffiliateFake.get_actor("27f5177e-eb8d-45c3-a103-dc0ea8f97e9d")
+actor = AffiliateFake.get_actor("609e44e6-8080-4c42-ae52-36ecb190f2cf")
 
 
 for _ <- 1..60 do

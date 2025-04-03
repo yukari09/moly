@@ -144,8 +144,11 @@ if config_env() == :prod do
     url: System.get_env("ES_HOST"),
     username: System.get_env("ES_USER"),
     password: System.get_env("ES_PASSWD"),
+    prefix: System.get_env("PREFIX"),
     json_library: JSON,
-    http_client_adapter: {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]}
+    http_client_adapter:
+      {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]}
+
   # custom args
   # domain: System.get_env("S3_DOMAIN"),
   # domain_scheme: System.get_env("S3_DOMAIN_SCHEME")

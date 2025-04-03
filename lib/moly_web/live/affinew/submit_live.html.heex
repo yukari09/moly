@@ -50,7 +50,6 @@
             </div>
           </div>
 
-
           <div class="col-span-full hidden">
             <.input
               label="Description"
@@ -82,7 +81,8 @@
             </h2>
           </div>
           <p class="mt-1 text-sm/6 text-gray-600">
-            The information about the commission structure.<br /><.link class="text-gray-500 underline">
+            The information about the commission structure.<br />
+            <.link class="text-gray-500 underline">
               How to write commission
             </.link>
           </p>
@@ -105,11 +105,7 @@
                   field={@form[:post_meta]}
                   field_subfix={field_subfix("meta_value", i, 0)}
                   value={commission_value(commission, :commission_type)}
-                  options={[
-                    {"bounty", "Fixed Bounty"},
-                    {"revenue_share", "Revenue Share"},
-                    {"hybrid", "Hybrid"}
-                  ]}
+                  options={MolyWeb.Affinew.Components.commission_type_option()}
                 />
                 <.input
                   class="hidden"
@@ -140,7 +136,7 @@
                   field={@form[:post_meta]}
                   field_subfix={field_subfix("meta_value", i, 2)}
                   value={commission_value(commission, :commission_unit)}
-                  options={MolyWeb.Affinew.Components.commission_unit_option}
+                  options={MolyWeb.Affinew.Components.commission_unit_option()}
                 />
                 <.input
                   class="hidden"
@@ -244,7 +240,7 @@
                 field={@form[:post_meta]}
                 field_subfix="[8][meta_value]"
                 value={post_meta_value(@post, :payment_cycle)}
-                options={MolyWeb.Affinew.Components.payment_cycle_options}
+                options={MolyWeb.Affinew.Components.payment_cycle_options()}
               />
               <.input
                 class="hidden"
@@ -372,18 +368,16 @@
           phx-update="ignore"
           class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2"
         >
-
-
-
           <div class="col-span-full mb-8">
             <div
               id="post-sign-up"
               phx-hook="DescriptionEditor"
-              data-target={"[data-el-id='affiliate_signup_requirements']"}
+              data-target="[data-el-id='affiliate_signup_requirements']"
               data-config={
                 JSON.encode!(%{
                   theme: "snow",
-                  placeholder: "Requires an active website with tech or hosting-related content, no minimum traffic, application review needed.",
+                  placeholder:
+                    "Requires an active website with tech or hosting-related content, no minimum traffic, application review needed.",
                   modules: %{
                     toolbar: [
                       [%{header: 2}, %{header: 4}, %{header: 5}],
@@ -399,7 +393,6 @@
             </div>
           </div>
 
-        
           <div class="col-span-full  hidden">
             <.textarea
               placeholder="Requires an active website with tech or hosting-related content, no minimum traffic, application review needed."

@@ -404,7 +404,7 @@ defmodule MolyWeb.Affiliate.UserPageLive do
               >
                 <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
               </.link>
-
+              
     <!-- Page Numbers -->
               <.link
                 :for={page <- @page_meta.page_range}

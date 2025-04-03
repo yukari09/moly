@@ -114,11 +114,12 @@ defmodule Moly.Utilities.Post do
     |> Moly.Helper.get_in_from_keys([0, :meta_value])
   end
 
-  def post_meta_by_filter(%Post{id: id} = post, meta_key) when is_binary(id), do: filter_by_meta_key(post, meta_key)
+  def post_meta_by_filter(%Post{id: id} = post, meta_key) when is_binary(id),
+    do: filter_by_meta_key(post, meta_key)
 
   defp filter_by_meta_key(%{post_meta: post_meta}, meta_key)
        when is_list(post_meta) and is_binary(meta_key) do
-    Enum.filter(post_meta, &(Regex.compile!(meta_key) |>  Regex.match?(&1.meta_key)))
+    Enum.filter(post_meta, &(Regex.compile!(meta_key) |> Regex.match?(&1.meta_key)))
   end
 
   defp filter_by_meta_key(_, _), do: []

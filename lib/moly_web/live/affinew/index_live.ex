@@ -5,8 +5,12 @@ defmodule MolyWeb.Affinew.IndexLive do
   alias MolyWeb.Affinew.Links
 
   def mount(_params, _session, socket) do
-    %{results: posts} =
-      Moly.Utilities.cache_get_or_put("#{__MODULE__}.page.index.cache", &MolyWeb.Affinew.Query.index_query/0, :timer.hours(24))
+    posts =
+      Moly.Utilities.cache_get_or_put(
+        "#{__MODULE__}.page.index.cache",
+        &MolyWeb.Affinew.QueryEs.index_query/0,
+        :timer.hours(24)
+      )
 
     socket = assign(socket, :posts, posts)
 
@@ -22,7 +26,7 @@ defmodule MolyWeb.Affinew.IndexLive do
       {"Browse", Links.programs()},
       {"Categories", Links.under_construction()},
       {"News", Links.under_construction()},
-      {"Resources", Links.under_construction()},
+      {"Resources", Links.under_construction()}
     ]
   end
 end

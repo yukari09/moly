@@ -68,7 +68,6 @@
 
   <div class="mx-auto my-8 lg:my-16">
     <nav :if={@page_meta.total_pages > 1} class="flex items-center justify-center space-x-2 mt-4">
-      <!-- Previous Button -->
       <.link
         :if={@page_meta.prev}
         patch={live_url(%{@params | page: @page_meta.prev})}
@@ -76,8 +75,6 @@
       >
         <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
       </.link>
-      
-<!-- Page Numbers -->
       <.link
         :for={page <- @page_meta.page_range}
         patch={live_url(%{@params | page: page})}

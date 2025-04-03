@@ -65,7 +65,6 @@ defmodule Moly.Utilities.Account do
     |> JSON.encode!()
   end
 
-
   def user_banner(user, size), do: load_meta_value_by_meta_key(user, "banner", &Map.get(&1, size))
   def user_avatar(user, size), do: load_meta_value_by_meta_key(user, "avatar", &Map.get(&1, size))
 

@@ -6,7 +6,7 @@ defmodule Moly.Contents.Relations.PostMetaChildren do
     post_ids =
       Enum.filter(records, fn
         %{meta_value: meta_value} ->
-          case Ecto.UUID.dump(meta_value)  do
+          case Ecto.UUID.dump(meta_value) do
             {:ok, _} -> true
             _ -> false
           end

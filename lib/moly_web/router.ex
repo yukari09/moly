@@ -99,9 +99,9 @@ defmodule MolyWeb.Router do
       live("/affiliate/:post_name", Affiliate.ViewLive)
       # v2
       live("/", Affinew.IndexLive)
-      live("/results", Affinew.ListLive)
+      live("/results", Affinew.ListResultsLive)
       live("/programs", Affinew.ListLive)
-      live("/programs/:slug", Affinew.ListLive)
+      live("/programs/:slug", Affinew.ListTermLive)
       live("/program/:post_name", Affinew.ViewLive)
       live("/user/@:username", Affinew.UserPageLive)
       live("/under-construction", Affinew.UnderConstructionLive)

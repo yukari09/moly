@@ -2,55 +2,87 @@ defmodule MolyWeb.Affinew.ListLive do
   use MolyWeb, :live_view
 
   import MolyWeb.Affinew.Components
-  import MolyWeb.Affinew.Query
+  import MolyWeb.Affinew.QueryEs
 
   @per_page 12
 
   def mount(_params, _session, socket) do
     industry_options =
       Moly.Utilities.cache_get_or_put("#{__MODULE__}:industries", &industries/0, :timer.hours(1))
-      |> Enum.map(&({&1.term.slug, &1.term.name}))
+      |> Enum.map(&{&1.term.slug, &1.term.name})
 
-    socket = assign(
-      socket, industry_options: industry_options,
-      commission_options: commission_options(),
-      cookie_duration_options: cookie_duration_options(),
-      payment_cycle_options: payment_cycle_options()
-    )
+    socket =
+      assign(
+        socket,
+        industry_options: industry_options,
+        commission_options: commission_options(),
+        cookie_duration_options: cookie_duration_options(),
+        payment_cycle_options: payment_cycle_options(),
+        sort_options: sort_options()
+      )
+
     {:ok, socket, layout: {MolyWeb.Layouts, :affinew}}
   end
 
-
   def handle_params(params, _uri, socket) do
     current_params =
-      ["page", "sort", "q", "category", "commission", "cookie-duration","payment-cycle"]
-      |> Enum.reduce(%{}, &(Map.put(&2, &1, Map.get(params, &1))))
+      ["page", "sort", "q", "category", "commission", "cookie-duration", "payment-cycle"]
+      |> Enum.reduce(%{}, fn param, a1 ->
+        param_value = Map.get(params, param)
 
-    opts =
-      opts()
-      |> list_pagination(Map.get(params, "page"), @per_page)
+        if param_value != "" do
+          Map.put(a1, param, param_value)
+        else
+          Map.put(a1, param, nil)
+        end
+      end)
 
-    meta_value_filters =
-      filter_by_commission([],current_params["commission"])
-      |> filter_by_cookie_duration(current_params["cookie-duration"])
-      |> filter_by_payment_cycle(current_params["payment-cycle"])
+    options =
+      Enum.reduce(current_params, %{}, fn {option, option_value}, a1 ->
+        if option_value not in [false, "", nil] do
+          case option do
+            "category" ->
+              value = to_option_value(socket.assigns.industry_options, option_value)
+              Map.put(a1, option, value)
 
-    IO.puts("==================")
-    IO.inspect(meta_value_filters)
-    IO.puts("==================")
+            "commission" ->
+              value = to_option_value(socket.assigns.commission_options, option_value)
+              Map.put(a1, option, value)
 
-    %{results: posts} =
-      base()
-      |> list_search(current_params["q"])
-      |> filter_by_slug(current_params["category"])
-      |> apply_filters(meta_value_filters)
-      |> read!(opts)
+            "payment-cycle" ->
+              value = to_option_value(socket.assigns.payment_cycle_options, option_value)
+              Map.put(a1, option, value)
 
-    socket = assign(socket, posts: posts, params: current_params)
+            "cookie-duration" ->
+              value = to_option_value(socket.assigns.cookie_duration_options, option_value)
+              Map.put(a1, option, value)
+
+            _ ->
+              a1
+          end
+        else
+          a1
+        end
+      end)
+
+    page = (current_params["page"] && String.to_integer(current_params["page"])) || 1
+
+    {count, posts} = list_query(current_params, @per_page)
+    page_meta = Moly.Helper.pagination_meta(count, @per_page, page, 8)
+
+    socket =
+      assign(socket, posts: posts, params: current_params, page_meta: page_meta, options: options)
 
     {:noreply, socket}
   end
 
   def page_title, do: nil
 
+  defp to_option_value(options, option_value) do
+    Enum.find(options, &(elem(&1, 0) == option_value))
+    |> case do
+      nil -> nil
+      {_, label} -> label
+    end
+  end
 end

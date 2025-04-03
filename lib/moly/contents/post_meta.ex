@@ -13,9 +13,7 @@ defmodule Moly.Contents.PostMeta do
 
     custom_statements do
       statement :meta_value_idx do
-        up(
-          "CREATE INDEX meta_value_idx ON post_meta (substring(meta_value FROM 1 FOR 16));"
-        )
+        up("CREATE INDEX meta_value_idx ON post_meta (substring(meta_value FROM 1 FOR 16));")
 
         down("DROP INDEX meta_value_idx;")
       end
@@ -83,9 +81,9 @@ defmodule Moly.Contents.PostMeta do
   end
 
   defp remove_attachment(_changeset, postmeta, _context) do
-    meta_key = postmeta.meta_key
+    meta_key = to_string(postmeta.meta_key)
 
-    if meta_key == :attached_file do
+    if meta_key == "attached_file" do
       remove_object(postmeta.meta_value)
       {:ok, postmeta}
     else

@@ -10,8 +10,17 @@
           </label>
         </div>
         <div class="navbar-start flex items-center xl:gap-1 w-auto">
-          <div><.link class="btn btn-square bg-inherit border-none" patch="/"><img class="size-8" src={~p"/images/logo.svg"} /></.link></div>
-          <.form action="/search" method="get" id="search-form" class="mx-auto hidden md:block w-72 ml-4">
+          <div>
+            <.link class="btn btn-square bg-inherit border-none" patch="/">
+              <img class="size-8" src={~p"/images/logo.svg"} />
+            </.link>
+          </div>
+          <.form
+            action="/results"
+            method="get"
+            id="search-form"
+            class="mx-auto hidden md:block w-72 ml-4"
+          >
             <div
               id="header-search-bar"
               class="relative bg-gray-900/5 py-1 pl-2.5 pr-8 rounded-sm border border-gray-900/0"
@@ -79,12 +88,15 @@
               </button>
             </li>
             <li>
-              <.link patch={MolyWeb.Affinew.Links.submit()} class="btn btn-sm md:btn-md bg-green-light border-none text-green-primary">
+              <.link
+                patch={MolyWeb.Affinew.Links.submit()}
+                class="btn btn-sm md:btn-md bg-green-light border-none text-green-primary"
+              >
                 Submit
               </.link>
             </li>
             <li>
-              <MolyWeb.Affinew.Components.user_dropdown  current_user={@current_user}/>
+              <MolyWeb.Affinew.Components.user_dropdown current_user={@current_user} />
             </li>
           </ul>
         </div>
@@ -92,10 +104,10 @@
     </div>
     <!-- Page content here -->
     <div class="min-h-[calc(100vh-_-65px)] bg-white">
-      <MolyWeb.Affinew.Components.flash_group flash={@flash} id="app-flash" class="mt-20"/>
+      <MolyWeb.Affinew.Components.flash_group flash={@flash} id="app-flash" class="mt-20" />
       {@inner_content}
     </div>
-    <MolyWeb.Affinew.Components.footer/>
+    <MolyWeb.Affinew.Components.footer />
   </div>
   <div class="drawer-side">
     <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>

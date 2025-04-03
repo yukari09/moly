@@ -102,6 +102,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
 
   defp handle_progress(uploader, entry, socket) do
     uploader = if is_atom(uploader), do: to_string(uploader), else: uploader
+
     if entry.done? do
       uploaded_file =
         consume_uploaded_entry(socket, entry, fn %{path: path} = _meta ->
@@ -262,10 +263,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
               phx-click={MolyWeb.TailwindUI.show_modal(@modal_id)}
             >
               <div class="lg:hidden flex items-center"></div>
-              <button
-                type="button"
-                class="btn btn-sm md:btn-md"
-              >
+              <button type="button" class="btn btn-sm md:btn-md">
                 Edit Profile
               </button>
             </div>
@@ -366,8 +364,8 @@ defmodule MolyWeb.Affinew.UserPageLive do
             </div>
           </div>
         </div>
-
-        <!--start tab-->
+        
+    <!--start tab-->
         <div class="grow container mx-auto px-2 sm:px-6 lg:px-8">
           <div class="border-b border-gray-200 -mx-2 sm:mx-0 px-2 sm:pb-0">
             <div class="mt-16">
@@ -405,7 +403,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
               >
                 <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
               </.link>
-
+              
     <!-- Page Numbers -->
               <.link
                 :for={page <- @page_meta.page_range}

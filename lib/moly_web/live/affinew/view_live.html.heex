@@ -1,135 +1,29 @@
-<div class="">
-
   <div class="w-full max-w-screen-xl mx-auto px-4 lg:px-10">
-    <.breadcrumb class="!mt-0 py-6" />
-    <div class="grid grid-cols-1 lg:grid-cols-3 place-items-end pt-8 pb-20 lg:gap-12 ">
-      <div class="col-span-2">
-      <div>
-        <h1 class="text-3xl lg:text-4xl font-semibold text-primary">Brevo Affiliate Program</h1>
-        <div class="flex items-center gap-2 mt-6 text-base-content/60"> 
-          <span class="badge badge-sm badge-outline text-white bg-primary  badge-primary rounded-lg">Financial & Insurance</span>
-          <time class="text-sm ">Mar 23,2003</time>
-          <.link class="text-sm flex items-center gap-1 link link-hover">
-            <Lucideicons.share_2 class="size-4 inline"/> Share
-          </.link>
-          <.link class="text-sm flex items-center gap-1 link link-hover">
-            <Lucideicons.book_marked class="size-4 inline"/> Save
-          </.link>
-          <.link class="text-sm flex items-center gap-1 link link-hover">
-            <Lucideicons.external_link class="size-4 inline"/>Website
-          </.link>
-        </div>
+    <.breadcrumb 
+      :if={affiliate_category = Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_category"])}
+      class="!mt-0 py-6" 
+      links = {[
+        {"/", "Home"},
+        {MolyWeb.Affinew.Links.programs(), "Affiliate Programs"},
+        {Moly.Helper.get_in_from_keys(affiliate_category, [0, "slug"]) |> MolyWeb.Affinew.Links.term(), Moly.Helper.get_in_from_keys(affiliate_category, [0, "name"])},
+        {nil, "Affiliate detail"}
+      ]}
+    />
+    <div class="grid grid-cols-11 gap-12 mt-8">
+      <div class="col-span-7">
+        <div><.view_title post={@post} /></div>
+        <div class="mt-12"><.view_base_info post={@post} /></div>
+        <div class="mt-12"><.view_description post={@post} /></div>
+        <div class="mt-12"><.view_signup_requirements post={@post} /></div>
       </div>
-      <!--intro-->
-      <p class="mt-8">Safari has aCSS bugsince 2008 that prevents button elements from being focused, so we use divtabindex="0"as a workaround. This approach is accessible with the addition ofrole="button"and functions consistently across all browsers.</p>
-      <!--commission-->
-     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 mt-6 bg-[rgb(255,253,246)]">
-       <div>
-         <div class="text-sm ">Fixed Bounty</div>
-         <div class="flex items-end gap-1 mt-2">
-           <span class="text-lg/6 md:text-2xl/6 text-[#ff5000]">$5.00</span>
-           <span class="text-sm">免費註冊</span>
-         </div>
-       </div>
-       <div>
-         <div class="text-sm ">Fixed Bounty</div>
-         <div class="flex items-end gap-1 mt-2">
-           <span class="text-lg/6 md:text-2xl/6 text-[#ff5000]">$100.00</span>
-           <span class="text-sm">付費訂閱</span>
-         </div>
-       </div>
-       <div>
-         <div class="text-sm ">Revenue Share</div>
-         <div class="flex items-end gap-1 mt-2">
-           <span class="text-lg/6 md:text-2xl/6 text-[#ff5000]">20%</span>
-           <span class="text-sm">持續收入分成</span>
-         </div>
-       </div>
-       <div>
-         <div class="text-sm ">Duration Months</div>
-         <div class="flex items-end gap-1 mt-2">
-           <span class="text-lg/6 md:text-2xl/6 text-[#ff5000]">12</span>
-           <span class="text-sm">Months</span>
-         </div>
-       </div>
-     </div>
-
+      <div class="col-span-4">
+        <.figure_image post={@post} />
+        <div class="mt-8"><.view_category post={@post} /></div>
+        <div class="mt-8"><.view_tags post={@post} /></div>
+      </div>
     </div>
 
-    <div>
-      <figure class="aspect-[3/2] overflow-hidden rounded-lg">
-        <img
-          src={~p"/images/brevo-affiliates.png"}
-         />
-      </figure>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 -mt-4 mb-12  md:gap-8 lg:mt-20 lg:mb-20 border-t border-base-content/10 pt-20">
+      <.card post={post} :for={post <- @posts} />
     </div>
   </div>
-  </div>
-</div>
-
-
-<div  class="">
-
-<div class="w-full max-w-screen-xl mx-auto px-4 lg:px-10">
-  <div class="grid grid-cols-1 lg:grid-cols-3 mb-4 lg:mb-12 lg:gap-12">
-   <div class="col-span-2">
-     <div class="mb-24">
-       <h2 class="text-xl font-semibold">Base Info</h2>
-       <div class="grid grid-cols-2 gap-4 mt-4 px-4 py-6 bg-green-light/10">
-         <div class="text-sm font-medium">Min Payout Threshold</div>
-         <div><span class="text-lg text-primary font-medium">100.00</span> <span class="text-xs text-base-content/60">EUR</span></div>
-         <div class="text-sm font-medium">Payment Method</div>
-         <div class="text-sm font-medium">Paypal, Bank Transfer</div>
-         <div class="text-sm font-medium">Duration Months</div>
-         <div><span class="text-lg text-primary font-medium">12</span> <span class="text-xs text-base-content/60">Months</span></div>
-         <div class="text-sm font-medium">Cookie Duration</div>
-         <div><span class="text-lg text-primary font-medium">90</span> <span class="text-xs text-base-content/60">Days</span></div>
-         <div class="text-sm font-medium">Payment Cycle</div>
-         <div class="text-sm font-medium">Monthly</div>
-         <div class="text-sm font-medium">Applicable Region</div>
-         <div class="text-sm font-medium">Global</div>
-       </div>
-     </div>
-     <div class="my-24">
-       <h2 class="text-xl font-semibold">Description</h2>
-       <div class="mt-4 px-4 py-6 bg-base-100 prose">
-       Safari has aCSS bugsince 2008 that prevents button elements from being focused, so we use divtabindex="0"as a workaround. This approach is accessible with the addition ofrole="button"and functions consistently across all browsers.
-       </div>
-     </div>
-     <div class="my-24">
-       <h2 class="text-xl font-semibold">Signup Requirements</h2>
-       <div class="mt-4 px-4 py-6 bg-base-100 prose">
-       Safari has aCSS bugsince 2008 that prevents button elements from being focused, so we use divtabindex="0"as a workaround. This approach is accessible with the addition ofrole="button"and functions consistently across all browsers.
-       </div>
-     </div>
-   </div>
-   <div>
-      <div class="mt-0 lg:mb-8 lg:mt-10 px-2 lg:px-8 py-4 rounded-box bg-base-100/50">
-        <h2 class="text-xl font-medium">Categoriy</h2>
-        <p class="mt-4 text-sm text-base-content/80">
-        Financial & Insurance
-        </p>
-      </div>
-      <div class="my-8 px-2 lg:px-8 py-4 rounded-box bg-base-100/50">
-        <h2 class="text-xl font-medium">Tags</h2>
-        <p class="mt-4 text-sm text-base-content/80 flex items-center gap-4 flex-wrap">
-          <.link class="link link-hover">#Domain Names</.link>
-          <.link class="link link-hover">#Online Marketing</.link>
-          <.link class="link link-hover">#SSL Certificates</.link>
-          <.link class="link link-hover">#Small Business Tools</.link>
-          <.link class="link link-hover">#Website Builder</.link>
-          <.link class="link link-hover">#eCommerce Solutions</.link>
-          <.link class="link link-hover">#Professional Email</.link>
-          <.link class="link link-hover">#web hosting</.link>
-          <.link class="link link-hover">#affiliate marketing</.link>
-          <.link class="link link-hover">#Digital Services</.link>
-        </p>
-      </div>
-   </div>
-  </div>
-
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 -mt-4 mb-12  md:gap-8 lg:mt-8 lg:mb-20">
-    <.card :for={_ <- 0..2} />
-  </div>
-</div>
-</div>
