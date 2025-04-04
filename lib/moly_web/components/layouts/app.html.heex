@@ -127,14 +127,14 @@
           <:menu_slot class="mt-4 min-w-52">
             <div class="px-4 py-3 flex items-center gap-2" role="none">
               <.link
-                navigate={Moly.Utilities.Account.link_profile(@current_user)}
+                navigate={MolyWeb.Affinew.Links.user(@current_user)}
                 class="block size-8"
                 role="none"
               >
                 <Moly.Utilities.Account.avatar_html user={@current_user} size={32} />
               </.link>
               <.link
-                navigate={Moly.Utilities.Account.link_profile(@current_user)}
+                navigate={MolyWeb.Affinew.Links.user(@current_user)}
                 class="block"
                 role="none"
               >
@@ -157,7 +157,7 @@
                 Admin
               </.link>
               <.link
-                navigate={Moly.Utilities.Account.link_profile(@current_user)}
+                navigate={MolyWeb.Affinew.Links.user(@current_user)}
                 class="group flex items-center px-4 py-2 text-sm text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-900 hover:outline-none"
                 role="menuitem"
                 tabindex="-1"

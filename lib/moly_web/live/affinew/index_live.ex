@@ -21,12 +21,4 @@ defmodule MolyWeb.Affinew.IndexLive do
     {:noreply, socket}
   end
 
-  defp nav_categories() do
-    [
-      {"Browse", Links.programs()},
-      {"Categories", Links.under_construction()},
-      {"News", Links.under_construction()},
-      {"Resources", Links.under_construction()}
-    ]
-  end
 end

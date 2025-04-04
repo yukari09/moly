@@ -17,6 +17,41 @@ defmodule MolyWeb.Affinew.QueryEs do
     end
   end
 
+  def list_query_by_post_ids(post_ids) when is_list(post_ids) do
+    q = %{
+      query: %{
+        bool: %{
+          must: %{
+            terms: %{"id.keyword": post_ids}
+          }
+        }
+      }
+    }
+    |> query_page(1, Enum.count(post_ids))
+
+    case Snap.Search.search(Cluster, Moly.Contents.Notifiers.Post.index_name(), q) do
+      {:ok, %{hits: %{total: %{"value" => _total}, hits: hits}}} -> hits
+      _ -> []
+    end
+  end
+
+  def list_query_by_user_posted(user_id, page, per_page) do
+    q = %{
+      query: %{
+        bool: %{
+          must: %{
+            term: %{"author_id.keyword": user_id}
+          }
+        }
+      }
+    }
+    |> query_page(page, per_page)
+    case Snap.Search.search(Cluster, Moly.Contents.Notifiers.Post.index_name(), q) do
+      {:ok, %{hits: %{total: %{"value" => total}, hits: hits}}} -> {total, hits}
+      _ -> {0, []}
+    end
+  end
+
   def list_query_by_search(q, sort, page, per_page) do
     q = %{
       query: %{

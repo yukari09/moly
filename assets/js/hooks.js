@@ -541,42 +541,47 @@ Hooks.ShareHook = {
     mounted() {
         this.url = encodeURIComponent(
             document.querySelector("meta[name='twitter:url']")?.content ||
-                document.querySelector("meta[property='og:url']")?.content ||
-                window.location.href,
+            document.querySelector("meta[property='og:url']")?.content ||
+            window.location.href
         );
+        
         this.title = encodeURIComponent(
             document.querySelector("meta[name='twitter:title']")?.content ||
-                document.querySelector("meta[property='og:title']")?.content ||
-                document.title,
+            document.querySelector("meta[property='og:title']")?.content ||
+            document.title
         );
+        
         this.description = encodeURIComponent(
             document.querySelector("meta[name='twitter:description']")
                 ?.content ||
-                document.querySelector("meta[property='og:description']")
-                    ?.content ||
-                "",
+            document.querySelector("meta[property='og:description']")
+                ?.content ||
+            ""
         );
+        
         this.image = encodeURIComponent(
             document.querySelector("meta[name='twitter:image']")?.content ||
-                document.querySelector("meta[property='og:image']")?.content ||
-                "",
+            document.querySelector("meta[property='og:image']")?.content ||
+            ""
         );
-
+        
+        // Share links for various platforms
         this.shareLinks = {
             facebook: `https://www.facebook.com/sharer/sharer.php?u=${this.url}`,
             twitter: `https://twitter.com/intent/tweet?url=${this.url}&text=${this.title}`,
-            linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${this.url}&title=${this.title}&summary=${this.description}`,
+            reddit: `https://www.reddit.com/submit?url=${this.url}&title=${this.title}`,  // Changed to Reddit
+            threads: `https://www.threads.net/share?url=${this.url}&text=${this.title}`,  // Threads share link
         };
-
+        
         let platform = this.el.dataset.share;
-
+        
         if (platform) {
             this.el.addEventListener("click", (event) => {
                 if (this.shareLinks[platform]) {
                     window.open(
                         this.shareLinks[platform],
                         "_blank",
-                        "width=600,height=400,scrollbars=yes,resizable=yes",
+                        "width=600,height=400,scrollbars=yes,resizable=yes"
                     );
                 }
             });

@@ -35,7 +35,79 @@ defmodule MolyWeb.Affinew.ViewLive do
         size: 12
       })
 
-    socket = assign(socket, post: post, posts: posts)
+    socket =
+      assign(socket, post: post, posts: posts)
+      |> assign_new(:bookmark_event, fn ->
+        if socket.assigns.current_user do
+          post_id = Moly.Helper.get_in_from_keys(post, [:source, "id"])
+          Ash.Query.new(Moly.Accounts.UserPostAction)
+          |> Ash.Query.filter(post_id == ^post_id and user_id == ^socket.assigns.current_user.id)
+          |> Ash.exists?(actor: %{roles: [:user]})
+          |> if do
+              "unbookmark_post"
+            else
+              "bookmark_post"
+          end
+        else
+          nil
+        end
+      end)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("bookmark_post", _params, socket) do
+    :timer.sleep(100)
+    current_user = socket.assigns.current_user
+    post_id = Moly.Helper.get_in_from_keys(socket.assigns.post, [:source, "id"])
+
+    socket =
+      if is_nil(current_user) do
+        put_flash(socket, :error, "Please login to bookmark this post")
+        |> push_navigate(to: ~p"/sign-in")
+      else
+        input = %{post: post_id, action: :bookmark}
+        user = Map.put(current_user, :roles, [:owner])
+
+        case Ash.create(Moly.Accounts.UserPostAction, input, actor: user, action: :create) do
+          {:ok, _} ->
+            assign(socket, bookmark_event: "unbookmark_post")
+
+          {:error, _} ->
+            put_flash(socket, :error, "Failed to bookmark post")
+            |> assign(bookmark_event: "bookmark_post")
+        end
+      end
+
+    {:noreply, socket}
+  end
+
+  def handle_event("unbookmark_post", _params, socket) do
+    :timer.sleep(100)
+    current_user = socket.assigns.current_user
+    post_id = Moly.Helper.get_in_from_keys(socket.assigns.post, [:source, "id"])
+
+    socket =
+      if is_nil(current_user) do
+        put_flash(socket, :error, "Please login to bookmark this post")
+        |> push_navigate(to: ~p"/sign-in")
+      else
+        current_user = Map.put(current_user, :roles, [:owner])
+
+        user_action =
+          Ash.Query.new(Moly.Accounts.UserPostAction)
+          |> Ash.Query.filter(post_id == ^post_id and user_id == ^current_user.id)
+          |> Ash.read_first!(actor: current_user)
+
+        case Ash.destroy(user_action, actor: current_user, action: :destroy) do
+          :ok ->
+            assign(socket, bookmark_event: "bookmark_post")
+          {:error, _} ->
+            assign(socket, bookmark_event: "unbookmark_post")
+            |> put_flash(:error, "There is a small problem, please try again later.")
+        end
+      end
+
     {:noreply, socket}
   end
 end

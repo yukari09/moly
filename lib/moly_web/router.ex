@@ -82,8 +82,8 @@ defmodule MolyWeb.Router do
 
     ash_authentication_live_session :authenticated_routes,
       on_mount: {MolyWeb.LiveUserAuth, :live_user_required} do
-      live("/affiliate/submit", Affiliate.SubmitLive)
-      live("/program/submit", Affinew.SubmitLive)
+      # live("/affiliate/submit", Affiliate.SubmitLive)
+      live("/affiliate/submit", Affinew.SubmitLive)
       live("/user/verify-email", Affinew.VerifyEmailLive)
     end
 
@@ -91,18 +91,18 @@ defmodule MolyWeb.Router do
       on_mount: {MolyWeb.LiveUserAuth, :live_user_optional} do
       # v1
       # live("/", Affiliate.PageIndexLive)
-      live("/browse", Affiliate.BrowseLive)
-      live("/browse/:slug", Affiliate.BrowseLive)
-      live("/search", Affiliate.SearchLive)
-      live("/affiliates/:slug", Affiliate.AffiliatesLive)
-      live("/user/page/:username", Affiliate.UserPageLive)
-      live("/affiliate/:post_name", Affiliate.ViewLive)
+      # live("/browse", Affiliate.BrowseLive)
+      # live("/browse/:slug", Affiliate.BrowseLive)
+      # live("/search", Affiliate.SearchLive)
+      # live("/affiliates/:slug", Affiliate.AffiliatesLive)
+      # live("/user/page/:username", Affiliate.UserPageLive)
+      # live("/affiliate/:post_name", Affiliate.ViewLive)
       # v2
       live("/", Affinew.IndexLive)
       live("/results", Affinew.ListResultsLive)
-      live("/programs", Affinew.ListLive)
-      live("/programs/:slug", Affinew.ListTermLive)
-      live("/program/:post_name", Affinew.ViewLive)
+      live("/browse", Affinew.ListLive)
+      live("/affiliates/:slug", Affinew.ListTermLive)
+      live("/affiliate/:post_name", Affinew.ViewLive)
       live("/user/@:username", Affinew.UserPageLive)
       live("/under-construction", Affinew.UnderConstructionLive)
     end

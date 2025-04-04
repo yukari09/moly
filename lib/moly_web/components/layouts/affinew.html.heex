@@ -1,7 +1,7 @@
 <div class="drawer">
   <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content flex flex-col">
-    <div class="border-b border-gray-900/10 bg-white">
+    <div class="bg-white border-b border-base-content/5">
       <!-- Navbar -->
       <div class="navbar w-full max-w-screen-xl mx-auto px-4 gap-2 xl:gap-0 lg:px-10">
         <div class="flex-none lg:hidden">
@@ -9,17 +9,25 @@
             <Lucideicons.align_justify class="inline-block h-6 w-6 stroke-current" />
           </label>
         </div>
-        <div class="navbar-start flex items-center xl:gap-1 w-auto">
-          <div>
-            <.link class="btn btn-square bg-inherit border-none" patch="/">
-              <img class="size-8" src={~p"/images/logo.svg"} />
+        <div class="navbar-start hidden items-center gap-8 w-auto lg:flex">
+           
+            <.link class="btn btn-square bg-inherit border-none mx-0 size-8" navigate="/">
+              <img class="size-full" src={~p"/images/logo.svg"} />
             </.link>
-          </div>
+           
+          <ul class="flex items-center text-sm font-medium mx-auto gap-8 ">
+            <li :for={{label, patch} <- nav_categories()}>
+              <.link navigate={patch}>{label}</.link>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="navbar-end ml-auto w-auto">
           <.form
             action="/results"
             method="get"
             id="search-form"
-            class="mx-auto hidden md:block w-72 ml-4"
+            class="mx-auto hidden md:block w-64 mr-2"
           >
             <div
               id="header-search-bar"
@@ -54,28 +62,8 @@
               />
             </div>
           </.form>
-        </div>
-        <div class="navbar-center flex-1 hidden xl:inline-flex">
-          <ul class="flex items-center font-semibold text-base-content/80 text-sm mx-auto gap-6">
-            <li>
-              <.link patch={~p"/program/finance"} class="hover:text-primary">Finance</.link>
-            </li>
-            <li><.link patch={~p"/program/saas"} class="hover:text-primary">SaaS</.link></li>
-            <li><.link patch={~p"/program/health"} class="hover:text-primary">Health</.link></li>
-            <li><.link patch={~p"/program/teach"} class="hover:text-primary">Tech</.link></li>
-            <li>
-              <.link patch={~p"/program/e-learning"} class="hover:text-primary">
-                E-learning
-              </.link>
-            </li>
-            <li><.link patch={~p"/program/travel"} class="hover:text-primary">Travel</.link></li>
-            <li>
-              <.link patch={~p"/program/fashion"} class="hover:text-primary">Fashion</.link>
-            </li>
-          </ul>
-        </div>
-        <div class="navbar-end ml-auto w-auto">
-          <ul class="flex items-center gap-1 xl:gap-4">
+
+          <ul class="flex items-center gap-1 xl:gap-2">
             <!-- Navbar menu content here -->
             <li class="sm:hidden">
               <button class="btn btn-ghost btn-circle">
@@ -89,7 +77,7 @@
             </li>
             <li>
               <.link
-                patch={MolyWeb.Affinew.Links.submit()}
+                navigate={MolyWeb.Affinew.Links.submit()}
                 class="btn btn-sm md:btn-md bg-green-light border-none text-green-primary"
               >
                 Submit
@@ -111,10 +99,16 @@
   </div>
   <div class="drawer-side">
     <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
-    <ul class="menu bg-base-200 min-h-full w-80 p-4">
-      <!-- Sidebar content here -->
-      <li><a>Sidebar Item 1</a></li>
-      <li><a>Sidebar Item 2</a></li>
-    </ul>
+    <div class="p-4  bg-base-200 w-80 min-h-full">
+      <div class="px-4">
+        <.link navigate="/" class="size-8 flex items-end gap-2 text-2xl/6 font-meidum">
+          <img src={~p"/images/logo.svg"} />Affinew
+        </.link>
+      </div>
+      <ul class="menu mt-4 w-full">
+        <!-- Sidebar content here -->
+        <li :for={{label, patch} <- MolyWeb.Layouts.nav_categories()}><.link navigate={patch}>{label}</.link></li>
+      </ul>
+    </div>
   </div>
 </div>

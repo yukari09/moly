@@ -125,7 +125,6 @@ window.addEventListener("app:click-el", (event) => {
     event.target.click();
   }
 });
- 
 
 //----Start Admin Media Page Script----//
 const mediaDataArrtribute = "data-media-id"

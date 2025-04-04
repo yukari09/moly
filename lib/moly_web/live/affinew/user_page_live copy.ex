@@ -1,4 +1,4 @@
-defmodule MolyWeb.Affinew.UserPageLive do
+defmodule MolyWeb.Affinew.UserPageLive2 do
   use MolyWeb, :live_view
   require Ash.Query
 
@@ -152,13 +152,34 @@ defmodule MolyWeb.Affinew.UserPageLive do
   end
 
   defp get_user_posts(
-         %{assigns: %{page: page, post_type: "published", username: _username}} = socket
+         %{assigns: %{page: page, post_type: "published", username: username}} = socket
        ) do
+    offset = (page - 1) * @per_page
 
-    {count, posts} = MolyWeb.Affinew.QueryEs.list_query_by_user_posted(socket.assigns.user.id, page, @per_page)
+    opts = [
+      action: :read,
+      actor: %{roles: [:user]},
+      page: [limit: @per_page, offset: offset, count: true]
+    ]
 
-    page_meta = Moly.Helper.pagination_meta(count, @per_page, page, 5)
-    socket = assign(socket, posts: posts, page_meta: page_meta)
+    query_result =
+      Ash.Query.filter(
+        Moly.Contents.Post,
+        post_type == :affiliate and post_status in [:pending, :publish]
+      )
+      |> Ash.Query.filter(
+        author.user_meta.meta_key == :username and author.user_meta.meta_value == ^username
+      )
+      |> Ash.Query.load([
+        :affiliate_tags,
+        :affiliate_categories,
+        author: :user_meta,
+        post_meta: :children
+      ])
+      |> Ash.read!(opts)
+
+    page_meta = Moly.Helper.pagination_meta(query_result.count, @per_page, page, 8)
+    socket = assign(socket, posts: query_result.results, page_meta: page_meta)
 
     socket
   end
@@ -178,16 +199,16 @@ defmodule MolyWeb.Affinew.UserPageLive do
         post_type == :affiliate and post_status in [:pending, :publish]
       )
       |> Ash.Query.filter(post_actions.action == :bookmark and post_actions.user_id == ^user.id)
-      |> Ash.Query.select([:id])
+      |> Ash.Query.load([
+        :affiliate_tags,
+        :affiliate_categories,
+        author: :user_meta,
+        post_meta: :children
+      ])
       |> Ash.read!(opts)
 
-    posts =
-      Enum.map(query_result.results, &(&1.id))
-      |> MolyWeb.Affinew.QueryEs.list_query_by_post_ids()
-
-
     page_meta = Moly.Helper.pagination_meta(query_result.count, @per_page, page, 8)
-    socket = assign(socket, posts: posts, page_meta: page_meta)
+    socket = assign(socket, posts: query_result.results, page_meta: page_meta)
 
     socket
   end
@@ -352,7 +373,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
                 <nav class="-mb-px flex space-x-8">
                   <.link
                     :for={{value, label} <- [published: :Published, saved: :Saved]}
-                    patch={live_url(%{username: @username, type: value})}
+                    patch={~p"/user/page/@#{@username}?#{%{type: value}}"}
                     class={[
                       "border-b-2 px-1 pb-2 sm:pb-4 text-sm font-medium whitespace-nowrap",
                       (@post_type == to_string(value) && "border-green-500 text-green-600") ||
@@ -367,7 +388,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
           </div>
           <div
             id={"#{@post_type}-list"}
-            class="mx-auto pt-4 grid max-w-2xl grid-cols-1 gap-4 lg:mx-0 lg:max-w-none lg:grid-cols-3"
+            class="mx-auto pt-4 lg:pb-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3"
             phx-page-loading
           >
             <MolyWeb.Affinew.Components.card :for={post <- @posts} post={post} />
@@ -377,7 +398,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
               <!-- Previous Button -->
               <.link
                 :if={@page_meta.prev}
-                navigate={live_url(%{username: @username, type: @post_type, page: @page_meta.prev})}
+                patch={live_url(%{username: @username, type: @post_type, page: @page_meta.prev})}
                 class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100"
               >
                 <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
@@ -386,7 +407,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
     <!-- Page Numbers -->
               <.link
                 :for={page <- @page_meta.page_range}
-                navigate={live_url(%{username: @username, type: @post_type, page: page})}
+                patch={live_url(%{username: @username, type: @post_type, page: page})}
                 class={[
                   "px-3 py-2 text-gray-500 border-b-2 border-white hover:border-gray-900 hover:text-gray-900",
                   page == @page && "border-gray-900 text-gray-900"
@@ -397,7 +418,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
 
               <.link
                 :if={@page_meta.next}
-                navigate={live_url(%{username: @username, type: @post_type, page: @page_meta.next})}
+                patch={live_url(%{username: @username, type: @post_type, page: @page_meta.next})}
                 class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100"
               >
                 <Lucideicons.arrow_right class="w-4 h-4 md:w-5 md:h-5" />
@@ -538,6 +559,6 @@ defmodule MolyWeb.Affinew.UserPageLive do
   end
 
   defp live_url(params) do
-    ~p"/user/@#{params[:username]}?#{params}"
+    ~p"/user/page/@#{params[:username]}?#{params}"
   end
 end

@@ -68,7 +68,7 @@ defmodule MolyWeb.Affinew.ListLive do
     page = (current_params["page"] && String.to_integer(current_params["page"])) || 1
 
     {count, posts} = list_query(current_params, @per_page)
-    page_meta = Moly.Helper.pagination_meta(count, @per_page, page, 8)
+    page_meta = Moly.Helper.pagination_meta(count, @per_page, page, 5)
 
     socket =
       assign(socket, posts: posts, params: current_params, page_meta: page_meta, options: options)

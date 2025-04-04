@@ -149,4 +149,13 @@ defmodule MolyWeb.Layouts do
     item_views = List.flatten(item_views)
     socket.view in item_views
   end
+
+  def nav_categories() do
+    [
+      {"Browse", MolyWeb.Affinew.Links.programs()},
+      {"Categories", MolyWeb.Affinew.Links.under_construction()},
+      {"News", MolyWeb.Affinew.Links.under_construction()},
+      {"Resources", MolyWeb.Affinew.Links.under_construction()}
+    ]
+  end
 end

@@ -26,7 +26,7 @@ defmodule MolyWeb.Affinew.ListResultsLive do
     sort = Map.get(params, "sort", "created_at_desc")
 
     {count, posts} = MolyWeb.Affinew.QueryEs.list_query_by_search(q, sort, page, @per_page)
-    page_meta = Moly.Helper.pagination_meta(count, @per_page, page, 8)
+    page_meta = Moly.Helper.pagination_meta(count, @per_page, page, 5)
 
     current_params = %{"page" => page, "sort" => sort, "q" => q}
 

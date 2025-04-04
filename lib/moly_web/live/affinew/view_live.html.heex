@@ -1,7 +1,7 @@
   <div class="w-full max-w-screen-xl mx-auto px-4 lg:px-10">
     <.breadcrumb 
       :if={affiliate_category = Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_category"])}
-      class="!mt-0 py-6" 
+      class="!mt-0 py-6 hidden md:flex" 
       links = {[
         {"/", "Home"},
         {MolyWeb.Affinew.Links.programs(), "Affiliate Programs"},
@@ -9,21 +9,21 @@
         {nil, "Affiliate detail"}
       ]}
     />
-    <div class="grid grid-cols-11 gap-12 mt-8">
-      <div class="col-span-7">
-        <div><.view_title post={@post} /></div>
-        <div class="mt-12"><.view_base_info post={@post} /></div>
-        <div class="mt-12"><.view_description post={@post} /></div>
-        <div class="mt-12"><.view_signup_requirements post={@post} /></div>
+    <div class="grid gird-cols-1 lg:grid-cols-11 lg:gap-12 mt-8">
+      <div class="lg:col-span-7">
+        <div><.view_title bookmark_event={@bookmark_event} post={@post} /></div>
+        <div class="mt-4 md:mt-12"><.view_base_info post={@post} /></div>
+        <div class="mt-4 md:mt-12 text-base-content/80"><.view_description post={@post} /></div>
+        <div class="mt-4 md:mt-12 text-base-content/80"><.view_signup_requirements post={@post} /></div>
       </div>
-      <div class="col-span-4">
-        <.figure_image post={@post} />
-        <div class="mt-8"><.view_category post={@post} /></div>
-        <div class="mt-8"><.view_tags post={@post} /></div>
+      <div class="lg:col-span-4">
+        <.figure_image post={@post} class="hidden md:block" />
+        <div class="mt-4 md:mt-8"><.view_category post={@post} /></div>
+        <div class="mt-4 md:mt-8"><.view_tags post={@post} /></div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 -mt-4 mb-12  md:gap-8 lg:mt-20 lg:mb-20 border-t border-base-content/10 pt-20">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 mb-8  md:gap-8 lg:mt-20 lg:mb-20 border-t border-base-content/10 pt-4 md:pt-20">
       <.card post={post} :for={post <- @posts} />
     </div>
   </div>
