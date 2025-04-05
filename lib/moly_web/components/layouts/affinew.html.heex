@@ -1,8 +1,18 @@
 <div class="drawer">
   <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content flex flex-col">
-    <div class="bg-white border-b border-base-content/5">
+    <div class="bg-white border-b border-base-content/5 relative">
       <!-- Navbar -->
+      <div id="nav-bar-search-el" class="absolute bg-white insert-0 w-[100vw] z-1 transition-all -translate-y-full" phx-click-away={JS.transition({"ease-out duration-300", "opacity-100 translate-y-0", "-translate-y-full  opacity-0"})}>
+        <.form class="h-16" action="/results" method="get">
+          <div class="flex flex-col justify-center items-center h-16">
+            <label class="input input-ghost focus-within:shadow-none focus-visible:ring-0 focus-within:outline-none focus-within:ring-0 focus-within:ring-transparent">
+              <Lucideicons.search class="size-5" />
+              <input type="search" name="q" placeholder="Search..." />
+            </label>
+          </div>
+        </.form>
+      </div>
       <div class="navbar w-full max-w-screen-xl mx-auto px-4 gap-2 xl:gap-0 lg:px-10">
         <div class="flex-none lg:hidden">
           <label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square rounded-md">
@@ -66,7 +76,9 @@
           <ul class="flex items-center gap-1 xl:gap-2">
             <!-- Navbar menu content here -->
             <li class="sm:hidden">
-              <button class="btn btn-ghost btn-circle">
+              <button class="btn btn-ghost btn-circle" 
+                phx-click={JS.transition({"ease-out duration-300", "opacity-0 -translate-y-full", "translate-y-0  opacity-100"}, to: "#nav-bar-search-el")}
+              >
                 <Lucideicons.search class="size-5" />
               </button>
             </li>
