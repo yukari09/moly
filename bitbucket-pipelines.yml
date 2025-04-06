@@ -1,13 +1,18 @@
 image: docker:28.0.4
 
+options:
+  size: 2x
+
 pipelines:
   default:
     - step:
         name: Build and Push Docker Images
+        services:
+          - docker
         caches:
           - docker
         script:
-          - export DOCKER_CLI_EXPERIMENTAL=enabled  # 启用 Docker Buildx
-          - docker buildx create --use  # 初始化并使用 Docker Buildx
+          - export DOCKER_CLI_EXPERIMENTAL=enabled
+          - docker buildx create --use
           - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
           - docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/$DOCKER_REPO:$BITBUCKET_BRANCH . --push
