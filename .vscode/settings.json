@@ -14,10 +14,5 @@
     {
       "file": "./.vscode/daisyui.md"
     }
-  ],
-  "elixirLS.dialyzerEnabled": false,
-  "files.watcherExclude": {
-    "**/_build/**": true,
-    "**/deps/**": true
-  }
+  ]
 }

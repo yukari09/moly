@@ -149,12 +149,4 @@ if config_env() == :prod do
     http_client_adapter:
       {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]}
 
-  # custom args
-  # domain: System.get_env("S3_DOMAIN"),
-  # domain_scheme: System.get_env("S3_DOMAIN_SCHEME")
-
-  # config :imgproxy,
-  #   prefix: System.get_env("IMGPROXY_PREFIX"),
-  #   key: System.get_env("IMGPROXY_KEY"),
-  #   salt: System.get_env("IMGPROXY_SALT")
 end

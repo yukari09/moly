@@ -92,7 +92,7 @@ config :moly,
   google_oauth2_client_secret: "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",
   email_name: "moly@moly.dev",
   email_address: "moly@moly.dev",
-  imagor_endpoint: "http://10.0.0.2:8000",
+  imagor_endpoint: "http://localhost:8000",
   imagor_secret: "WpozRdSDvTKVEPkOQ+/mSWEzIPdjXRFhYLB62XBN12knQ2SRvjMmsOJ/kNJT8UgI"
 
 config :ex_aws,
@@ -114,11 +114,3 @@ config :moly, Moly.Cluster,
   http_client_adapter:
     {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]},
   prefix: :affinew
-
-#   domain: "192.168.6.8:9000/local", #set minio bucket public for accsess
-#   domain_scheme: "http"
-
-# config :imgproxy,
-#   prefix: "http://192.168.6.8:8008",
-#   key: "31dde3553997eb7bd3ad1ce2700c2f2e32dc15fffcd19969399e65b7c7d47c81",
-#   salt: "38d48531bc85ac8273a0cb9f057223349141a53954937b97785b9cbf15ee34ee"

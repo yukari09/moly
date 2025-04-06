@@ -3,15 +3,15 @@
       links = {[
         {"/", "Home"},
         {MolyWeb.Affinew.Links.programs(), "Affiliate Programs"},
-        show_option_label(@industry_options, @slug) && {MolyWeb.Affinew.Links.term(@slug), show_option_label(@industry_options, @slug)},
-        !show_option_label(@industry_options, @slug) && {MolyWeb.Affinew.Links.term(@slug), @slug}
+        @keyword && {MolyWeb.Affinew.Links.term(@slug), @keyword},
+        !@keyword && {MolyWeb.Affinew.Links.term(@slug), @slug}
       ]}
   />
   <.header
     id="browse-header"
-    headline={"#{show_option_label(@industry_options, @slug) || @slug }"}
+    headline={"#{@keyword || @slug }"}
     class="mt-6"
-    subtitle={"High ticket best paying #{show_option_label(@industry_options, @slug)  || @slug } affiliate marketing programs."}
+    subtitle={"High ticket best paying #{@keyword  || @slug } affiliate marketing programs."}
   />
 
   <div class="mt-4">

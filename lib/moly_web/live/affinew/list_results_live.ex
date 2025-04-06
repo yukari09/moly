@@ -32,9 +32,13 @@ defmodule MolyWeb.Affinew.ListResultsLive do
 
     socket =
       assign(socket, posts: posts, params: current_params, page_meta: page_meta, q: q)
+      |> page_title()
 
     {:noreply, socket}
   end
 
 
+  defp page_title(socket) do
+    assign(socket, :page_title, "Search Result #{socket.assigns.q} Affiliate Marketing Programs")
+  end
 end

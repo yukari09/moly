@@ -70,7 +70,7 @@ defmodule MolyWeb.Affinew.SubmitLive do
     params = Map.put(params, "post_name", Moly.Helper.generate_random_str())
 
     post_excerpt =
-      Floki.parse_document!(params["post_content"]) |> Floki.text() |> String.slice(0..255)
+      Floki.parse_document!(params["post_content"]) |> Floki.text() |> String.slice(0..511)
 
     params = Map.put(params, "post_excerpt", post_excerpt)
     params = Map.put(params, "post_date", DateTime.utc_now())

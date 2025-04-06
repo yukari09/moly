@@ -53,6 +53,8 @@ defmodule MolyWeb.Affinew.ViewLive do
         end
       end)
 
+    socket = page_meta(socket)
+
     {:noreply, socket}
   end
 
@@ -110,4 +112,26 @@ defmodule MolyWeb.Affinew.ViewLive do
 
     {:noreply, socket}
   end
+
+  defp page_meta(%{assigns: %{post: post}} = socket) do
+    media_url = featrue_image_src(post)
+    post_title = Moly.Helper.get_in_from_keys(post, [:source, "post_title"])
+    post_excerpt = Moly.Helper.get_in_from_keys(post, [:source, "post_excerpt"])
+
+    meta_tags = [
+      %{property: "og:title", content: post_title},
+      %{property: "og:description", content: post_excerpt},
+      %{property: "og:type", content: "article"},
+      %{property: "og:image", content: media_url},
+      %{name: "twitter:card", content: "summary_large_image"},
+      %{name: "twitter:title", content:  post_title},
+      %{name: "twitter:description", content: post_excerpt},
+      %{name: "twitter:image", content: media_url}
+    ]
+
+    assign(socket, :meta_tags, meta_tags)
+    |> assign(:page_title, "#{post_title} Affiliate Marketing Programs")
+  end
+
+
 end

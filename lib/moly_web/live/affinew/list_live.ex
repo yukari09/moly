@@ -72,11 +72,14 @@ defmodule MolyWeb.Affinew.ListLive do
 
     socket =
       assign(socket, posts: posts, params: current_params, page_meta: page_meta, options: options)
+      |> page_title()
 
     {:noreply, socket}
   end
 
-  def page_title, do: nil
+  defp page_title(socket) do
+    assign(socket, :page_title, "Browse Affiliate Marketing Programs")
+  end
 
   defp to_option_value(options, option_value) do
     Enum.find(options, &(elem(&1, 0) == option_value))

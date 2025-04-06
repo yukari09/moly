@@ -23,6 +23,11 @@ defmodule Moly.Terms.Term do
       fields([:name, :slug, :term_group])
       actions([:create, :read, :update, :destroy])
     end
+
+    role :owner do
+      fields([:name, :slug, :term_group])
+      actions([:create, :read, :update, :destroy])
+    end
   end
 
   actions do

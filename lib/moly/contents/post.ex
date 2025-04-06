@@ -125,7 +125,7 @@ defmodule Moly.Contents.Post do
       change manage_relationship(:post_meta, :post_meta, type: :create)
       change relate_actor(:author)
 
-      change after_action(&Moly.Contents.Changes.Post.create_term_relationships/3)
+      change after_action(&Moly.Contents.Changes.PostCategoryTag.term_relationships/3)
     end
 
     update :update_post do
@@ -155,7 +155,7 @@ defmodule Moly.Contents.Post do
 
       change relate_actor(:author)
 
-      change after_action(&Moly.Contents.Changes.Post.update_term_relationships/3)
+      change after_action(&Moly.Contents.Changes.PostCategoryTag.term_relationships/3)
     end
 
     update :update_media do

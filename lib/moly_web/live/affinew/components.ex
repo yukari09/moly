@@ -455,7 +455,7 @@ defmodule MolyWeb.Affinew.Components do
             <span :if={@bookmark_event in [nil, "bookmark_post"]}><Lucideicons.book_marked class="size-4 inline"/> Save</span>
             <span :if={@bookmark_event in ["unbookmark_post"]}><Lucideicons.bookmark_check class="size-4 inline"/> Saved</span>
           </.link>
-          <.link class="text-sm flex items-center gap-1 link link-hover">
+          <.link href={Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_program_link"])} rel="nofollow" class="text-sm flex items-center gap-1 link link-hover">
             <Lucideicons.external_link class="size-4 inline"/>Website
           </.link>
         </div>
@@ -463,7 +463,7 @@ defmodule MolyWeb.Affinew.Components do
     </div>
     <.figure_image post={@post} class="block md:hidden mt-4 md:mt-8" />
     <!--intro-->
-    <p class="mt-4 md:mt-8 line-clamp-3">{Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> Floki.parse_document!() |> Floki.text()}</p>
+    <p class="mt-4 md:mt-8 line-clamp-3">{Moly.Helper.get_in_from_keys(@post, [:source, "post_excerpt"])}</p>
     <ul class="list bg-[rgb(255,253,246)] rounded-box mt-4 md:mt-12">
       <%!-- <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Commissions of this affiliate program</li> --%>
       <li class="list-row" :for={{commission, i} <- Moly.Helper.get_in_from_keys(@post, [:source, "commission"]) |> Enum.with_index()}>
@@ -471,7 +471,7 @@ defmodule MolyWeb.Affinew.Components do
         <div class="flex flex-col justify-center w-16 uppercase font-semibold opacity-60 text-xs">{  Map.get(commission, "commission_type") |> commission_type_option_label()}</div>
         <div class="flex flex-col justify-center w-20">
           <div :if={Map.get(commission, "commission_unit") != "%"} class="text-xl/6 md:text-2xl/6 text-[#ff5000]">
-            {Map.get(commission, "commission_unit")}{Map.get(commission, "commission_amount")}
+            {Map.get(commission, "commission_unit") |> commission_unit_option()}{Map.get(commission, "commission_amount")}
           </div>
           <div :if={Map.get(commission, "commission_unit") == "%"} class="text-xl/6 md:text-2xl/6 text-[#ff5000] mt-1">
             {Map.get(commission, "commission_amount")}%
@@ -534,14 +534,14 @@ defmodule MolyWeb.Affinew.Components do
   def view_description(assigns) do
     ~H"""
     <h3 class="text-xl mb-4">Description</h3>
-    <div class="prose">{raw Moly.Helper.get_in_from_keys(@post, [:source, "post_content"])}</div>
+    <div class="prose">{Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> to_safe_html}</div>
     """
   end
 
   def view_signup_requirements(assigns) do
     ~H"""
     <h3 class="text-xl mb-4">Signup Requirements</h3>
-    <div class="prose">{raw Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_signup_requirements"])}</div>
+    <div class="prose">{Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_signup_requirements"])  |> to_safe_html}</div>
     """
   end
 
@@ -596,7 +596,16 @@ defmodule MolyWeb.Affinew.Components do
     """
   end
 
-  defp featrue_image_src(post) do
+  def to_safe_html(raw_string) do
+    String.replace(raw_string, ~r/<script[^>]*>/, "&lt;script&gt;")
+    |> String.replace(~r/<\/script>/, "&lt;/script&gt;")
+    |> String.replace(~r/<a[^>]*>.*?<\/a>/, "")
+    |> String.replace(~r/<img[^>]*>/, "")
+    |> raw
+  end
+
+
+  def featrue_image_src(post) do
     Moly.Helper.get_in_from_keys(post, [
       :source,
       "attachment_affiliate_media_feature",

@@ -21,6 +21,11 @@ defmodule Moly.Terms.TermTaxonomy do
       fields([:taxonomy, :description, :count])
       actions([:create, :read, :update, :destroy])
     end
+
+    role :owner do
+      fields([:taxonomy, :description, :count])
+      actions([:create, :read, :update, :destroy])
+    end
   end
 
   actions do
