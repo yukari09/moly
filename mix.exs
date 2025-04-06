@@ -28,12 +28,6 @@ defmodule Moly.MixProject do
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
-  defp repositories do
-    [
-      "https://hex.pm",
-      {:local, "local_hex"}
-    ]
-  end
 
   # Specifies your project dependencies.
   #
@@ -48,7 +42,7 @@ defmodule Moly.MixProject do
       {:lucide_icons, "~> 2.0.0"},
       {:earmark, "~> 1.4.47"},
       {:imgproxy, "~> 3.0.2"},
-      {:ash_authentication_phoenix, path: "local_hex/ash_authentication_phoenix"},
+      {:ash_authentication_phoenix, git: "https://github.com/yukari09/ash_authentication_phoenix.git"},
       {:ash_authentication, "~> 4.6"},
       {:bcrypt_elixir, "~> 3.2"},
       {:picosat_elixir, "~> 0.2"},
