@@ -4,19 +4,10 @@ pipelines:
   default:
     - step:
         name: Build and Push Docker Images
-        services:
-          - docker
         caches:
           - docker
         script:
-          # 启用 Docker Buildx
-          - docker buildx create --use
-          
-          # 登录到 Docker Hub
-          - echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-          
-          # 构建并推送 AMD64 版本
-          - docker buildx build --platform linux/amd64 -t $DOCKERHUB_USERNAME/$DOCKER_REPO:${BITBUCKET_BRANCH} . --push
-          
-          # 构建并推送 ARM64 版本
-          - docker buildx build --platform linux/arm64 -t $DOCKERHUB_USERNAME/$DOCKER_REPO:${BITBUCKET_BRANCH} . --push
+          - export DOCKER_CLI_EXPERIMENTAL=enabled  # 启用 Docker Buildx
+          - docker buildx create --use  # 初始化并使用 Docker Buildx
+          - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+          - docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/$DOCKER_REPO:$BITBUCKET_BRANCH . --push
