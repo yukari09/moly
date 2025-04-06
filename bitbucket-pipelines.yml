@@ -1,4 +1,4 @@
-image: atlassian/default-image:3
+image: docker:latest
 
 pipelines:
   default:
@@ -24,8 +24,8 @@ pipelines:
           name: Build and Test
           script:
             - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-            - docker buildx create --use  # 创建并激活 Buildx
-            - docker buildx build --platform linux/amd64,linux/arm64 . --file Dockerfile --tag ${IMAGE_NAME}  # 支持多平台构建
+            - docker buildx create --use
+            - docker buildx build --platform linux/amd64,linux/arm64 . --file Dockerfile --tag ${IMAGE_NAME}
             - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}.tar"
           services:
             - docker
@@ -40,9 +40,8 @@ pipelines:
             - echo ${DOCKERHUB_PASSWORD} | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
             - IMAGE_NAME=$BITBUCKET_REPO_SLUG
             - docker load --input "${IMAGE_NAME}.tar"
-            - VERSION="prod-0.1.${BITBUCKET_BUILD_NUMBER}"
             - IMAGE=${DOCKERHUB_NAMESPACE}/${IMAGE_NAME}
-            - docker tag "${IMAGE_NAME}" "${IMAGE}:${VERSION}"
-            - docker push "${IMAGE}:${VERSION}"
+            - docker tag "${IMAGE_NAME}" "${IMAGE}:${BITBUCKET_BRANCH}"
+            - docker push "${IMAGE}:${BITBUCKET_BRANCH}"
           services:
             - docker
