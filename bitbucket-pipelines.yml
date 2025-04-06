@@ -1,16 +1,16 @@
-image: atlassian/default-image:4  # 使用默认的 Docker 镜像
-
 pipelines:
   default:
     - parallel:
         - step:
             name: Build and Test Multi-Platform Images
+            image: atlassian/default-image:4
             runs-on:
               - linux
               - self.hosted  # 使用自托管的 Linux 机器进行构建
             services:
               - docker  # 启用 Docker 服务
             script:
+              - echo "Executing on self-hosted runner" 
               # 配置 Docker CLI 启用 Buildx 实验性功能
               - export DOCKER_CLI_EXPERIMENTAL=enabled 
               - export BUILDX_VERSION=0.22.0  # 定义要下载的 Buildx 版本
@@ -24,13 +24,13 @@ pipelines:
               - docker buildx create --use  # 启用 Buildx 构建器
 
               # 登录 Docker Hub
-              - echo $DOCKER_HUB_PASS | docker login --username $DOCKER_HUB_USER --password-stdin
+              - echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
               
               # 获取镜像名，通常为仓库名（Bitbucket Repo Slug）
               - IMAGE_NAME=$BITBUCKET_REPO_SLUG
               
               # 构建并推送多平台镜像（支持 amd64, arm64, arm/v7）
-              - docker buildx build --platform linux/amd64,linux/arm64 . --file Dockerfile --tag $DOCKER_HUB_USER/$IMAGE_NAME:$BITBUCKET_BRANCH --push
+              - docker buildx build --platform linux/amd64,linux/arm64 . --file Dockerfile --tag $DOCKERHUB_USERNAME/$IMAGE_NAME:$BITBUCKET_BRANCH --push
               
         - step:
             name: Lint the Dockerfile
