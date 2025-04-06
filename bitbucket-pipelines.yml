@@ -1,47 +1,44 @@
-image: docker:latest
+image: atlassian/default-image:4  # 使用默认的 Docker 镜像
 
 pipelines:
   default:
     - parallel:
         - step:
-            name: Build and Test
-            script:
-              - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-              - docker buildx create --use
-              - docker buildx build --platform linux/amd64,linux/arm64 . --file Dockerfile --tag ${IMAGE_NAME}  # 支持多平台构建
+            name: Build and Test Multi-Platform Images
+            runs-on:
+              - linux
+              - self.hosted  # 使用自托管的 Linux 机器进行构建
             services:
-              - docker
-            caches:
-              - docker
+              - docker  # 启用 Docker 服务
+            script:
+              # 配置 Docker CLI 启用 Buildx 实验性功能
+              - export DOCKER_CLI_EXPERIMENTAL=enabled 
+              - export BUILDX_VERSION=0.22.0  # 定义要下载的 Buildx 版本
+              
+              # 下载并安装 Buildx 插件
+              - curl -fsSLO https://github.com/docker/buildx/releases/download/v${BUILDX_VERSION}/buildx-v${BUILDX_VERSION}.linux-amd64
+              - mkdir -p $HOME/.docker/cli-plugins/ && mv buildx-v${BUILDX_VERSION}.linux-amd64 $HOME/.docker/cli-plugins/docker-buildx && chmod +x ~/.docker/cli-plugins/docker-buildx
+              
+              # 启动 QEMU 模拟环境，支持跨架构构建
+              - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+              - docker buildx create --use  # 启用 Buildx 构建器
+
+              # 登录 Docker Hub
+              - echo $DOCKER_HUB_PASS | docker login --username $DOCKER_HUB_USER --password-stdin
+              
+              # 获取镜像名，通常为仓库名（Bitbucket Repo Slug）
+              - IMAGE_NAME=$BITBUCKET_REPO_SLUG
+              
+              # 构建并推送多平台镜像（支持 amd64, arm64, arm/v7）
+              - docker buildx build --platform linux/amd64,linux/arm64 . --file Dockerfile --tag $DOCKER_HUB_USER/$IMAGE_NAME:$BITBUCKET_BRANCH --push
+              
         - step:
             name: Lint the Dockerfile
-            image: hadolint/hadolint:latest-debian
+            image: hadolint/hadolint:latest-debian  # 使用 Hadolint 镜像进行 Dockerfile 检查
             script:
-              - hadolint Dockerfile
-  branches:
-    master:
-      - step:
-          name: Build and Test
-          script:
-            - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-            - docker buildx create --use
-            - docker buildx build --platform linux/amd64,linux/arm64 . --file Dockerfile --tag ${IMAGE_NAME}
-            - docker save ${IMAGE_NAME} --output "${IMAGE_NAME}.tar"
-          services:
-            - docker
-          caches:
-            - docker
-          artifacts:
-            - "*.tar"
-      - step:
-          name: Deploy to Production
-          deployment: Production
-          script:
-            - echo ${DOCKERHUB_PASSWORD} | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
-            - IMAGE_NAME=$BITBUCKET_REPO_SLUG
-            - docker load --input "${IMAGE_NAME}.tar"
-            - IMAGE=${DOCKERHUB_NAMESPACE}/${IMAGE_NAME}
-            - docker tag "${IMAGE_NAME}" "${IMAGE}:${BITBUCKET_BRANCH}"
-            - docker push "${IMAGE}:${BITBUCKET_BRANCH}"
-          services:
-            - docker
+              - hadolint Dockerfile  # 检查 Dockerfile 是否符合规范
+ 
+definitions:
+  services:
+    docker:
+      image: docker:dind  # 使用 Docker-in-Docker 服务以启用 Docker 构建
