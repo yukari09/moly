@@ -4,14 +4,9 @@ pipelines:
   default:
     - step:
         name: Build and Push Docker Images
-        services:
-          - docker
         caches:
           - docker
         script:
-          # 使用 multiarch/qemu-user-static 设置 QEMU 支持多架构构建
-          - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          
           # 启用 Docker Buildx
           - docker buildx create --use
           
