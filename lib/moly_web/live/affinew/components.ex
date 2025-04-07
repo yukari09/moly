@@ -534,15 +534,15 @@ defmodule MolyWeb.Affinew.Components do
 
   def view_description(assigns) do
     ~H"""
-    <h3 class="text-xl mb-4">Description</h3>
-    <div class="prose prose-sm">{Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> to_safe_html}</div>
+    <h2 class="text-xl mb-4 font-medium">Description</h2>
+    <div class="prose text-base-content/80">{Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> to_safe_html}</div>
     """
   end
 
   def view_signup_requirements(assigns) do
     ~H"""
-    <h3 class="text-xl mb-4">Signup Requirements</h3>
-    <div class="prose prose-sm">{Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_signup_requirements"])  |> to_safe_html}</div>
+    <h2 class="text-xl mb-4 font-medium">Signup Requirements</h2>
+    <div class="prose  text-base-content/80">{Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_signup_requirements"])  |> to_safe_html}</div>
     """
   end
 
