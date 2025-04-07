@@ -9,11 +9,6 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -35,17 +30,35 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-docker-${{ github.sha }}-${{ matrix.platform }}
+          key: ${{ runner.os }}-docker-${{ github.ref }}-${{ github.sha }}
           restore-keys: |
+            ${{ runner.os }}-docker-${{ github.ref }}-
             ${{ runner.os }}-docker-
 
-      - name: Build and push Docker images
+      - name: Build Docker images for linux/amd64
+        id: build-amd64
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: ${{ matrix.platform }}  # 使用 matrix 中的平台
-          push: true
+          platforms: linux/amd64
+          push: false
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
-          cache-from: type=local,src=/tmp/.buildx-cache  # 設置緩存源
-          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max  # 設置緩存目的地
+            ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
+
+      - name: Build Docker images for linux/arm64
+        id: build-arm64
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64
+          push: false
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
+
+      - name: Push images to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
