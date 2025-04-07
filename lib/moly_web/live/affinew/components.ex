@@ -520,7 +520,8 @@ defmodule MolyWeb.Affinew.Components do
       <div class="text-sm font-medium">Payment Method</div>
       <div class="text-sm font-medium">{Moly.Helper.get_in_from_keys(@post, [:source, "payment_method"]) |> Enum.join(",")}</div>
       <div class="text-sm font-medium">Duration Months</div>
-      <div><span class="text-lg text-primary font-medium">{Moly.Helper.get_in_from_keys(@post, [:source, "duration_months"])}</span> <span class="text-xs text-base-content/60">Months</span></div>
+      <div :if={Moly.Helper.get_in_from_keys(@post, [:source, "duration_months"]) != 0}><span class="text-lg text-primary font-medium">{Moly.Helper.get_in_from_keys(@post, [:source, "duration_months"])}</span> <span class="text-xs text-base-content/60">Months</span></div>
+      <div :if={Moly.Helper.get_in_from_keys(@post, [:source, "duration_months"]) == 0}>Not specified</div>
       <div class="text-sm font-medium">Cookie Duration</div>
       <div><span class="text-lg text-primary font-medium">{Moly.Helper.get_in_from_keys(@post, [:source, "cookie_duration"])}</span> <span class="text-xs text-base-content/60">Days</span></div>
       <div class="text-sm font-medium">Payment Cycle</div>
