@@ -43,6 +43,5 @@ jobs:
           push: ${{ github.event_name == 'push' }} # 僅在 push 事件時推送.
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
-            ${{ secrets.DOCKER_USERNAME }}/moly:latest  # 可選：添加 latest 標籤
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
