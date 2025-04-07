@@ -35,30 +35,14 @@ jobs:
             ${{ runner.os }}-docker-${{ github.ref }}-
             ${{ runner.os }}-docker-
 
-      - name: Build Docker images for linux/amd64
-        id: build-amd64
+      - name: Build and Push Docker images
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64
-          push: false
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name == 'push' }} # 僅在 push 事件時推送
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
+            ${{ secrets.DOCKER_USERNAME }}/moly:latest  # 可選：添加 latest 標籤
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
-
-      - name: Build Docker images for linux/arm64
-        id: build-arm64
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/arm64
-          push: false
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
-
-      - name: Push images to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
