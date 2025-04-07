@@ -16,6 +16,7 @@
 @source "../../deps/ash_authentication_phoenix/**/*.*ex";
 
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 @plugin "daisyui";
 @plugin "daisyui/theme" {
   name: "light";
