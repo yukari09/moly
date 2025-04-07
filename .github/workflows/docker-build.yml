@@ -38,7 +38,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-docker-${{ github.sha }}
+          key: ${{ runner.os }}-docker-${{ github.sha }}-${{ matrix.platform }}
           restore-keys: |
             ${{ runner.os }}-docker-
 
