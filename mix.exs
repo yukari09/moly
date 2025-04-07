@@ -42,7 +42,7 @@ defmodule Moly.MixProject do
       {:lucide_icons, "~> 2.0.0"},
       {:earmark, "~> 1.4.47"},
       {:imgproxy, "~> 3.0.2"},
-      {:ash_authentication_phoenix, git: "https://github.com/yukari09/ash_authentication_phoenix.git"},
+      {:ash_authentication_phoenix, git: "https://github.com/yukari09/ash_authentication_phoenix.git", branch: "main"},
       {:ash_authentication, "~> 4.6"},
       {:bcrypt_elixir, "~> 3.2"},
       {:picosat_elixir, "~> 0.2"},
