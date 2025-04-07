@@ -40,7 +40,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name == 'push' }} # 僅在 push 事件時推送
+          push: ${{ github.event_name == 'push' }} # 僅在 push 事件時推送.
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
             ${{ secrets.DOCKER_USERNAME }}/moly:latest  # 可選：添加 latest 標籤
