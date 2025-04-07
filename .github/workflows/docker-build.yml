@@ -35,9 +35,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-docker-${{ github.sha }}-${{ matrix.platform }}
+          key: ${{ runner.os }}-${{ matrix.platform }}
           restore-keys: |
-            ${{ runner.os }}-docker-${{ matrix.platform }}-
+            ${{ runner.os }}-${{ matrix.platform }}
 
       - name: Build and push Docker images
         uses: docker/build-push-action@v6
