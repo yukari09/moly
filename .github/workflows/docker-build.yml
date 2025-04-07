@@ -49,6 +49,6 @@ jobs:
           platforms: ${{ matrix.platform }}  # 使用 matrix 中的平台
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}-${{ matrix.platform | replace('linux/', '') }}
+            ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
           cache-from: type=local,src=/tmp/.buildx-cache  # 設置緩存源
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max  # 設置緩存目的地
