@@ -151,16 +151,16 @@ defmodule MolyWeb.Affinew.Components do
             {Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}
           </h2>
         </.link>
-        <ol>{Moly.Helper.get_in_from_keys(@post, [:source, "commission"])}</ol>
         <ol class="list-decimal list-inside flex flex-col gap-2">
+        <% commissions = Moly.Helper.get_in_from_keys(@post, [:source, "commission"]) %>
+        <% commissions = is_map(commissions) && [commissions] || commissions %>
           <li
-            :if={is_list(Moly.Helper.get_in_from_keys(@post, [:source, "commission"]))}
             :for={
               %{
                 "commission_amount" => commission_amount,
                 "commission_type" => commission_type,
                 "commission_unit" => commission_unit
-              } = c <- Moly.Helper.get_in_from_keys(@post, [:source, "commission"])
+              } = c <- commissions
             }
             class="marker:italic"
           >
