@@ -151,7 +151,7 @@ defmodule MolyWeb.Affinew.Components do
             {Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}
           </h2>
         </.link>
-        <ol :if={!is_list(Moly.Helper.get_in_from_keys(@post, [:source, "commission"]))}>{Moly.Helper.get_in_from_keys(@post, [:source, "commission"])}</ol>
+        <ol>{Moly.Helper.get_in_from_keys(@post, [:source, "commission"])}</ol>
         <ol class="list-decimal list-inside flex flex-col gap-2">
           <li
             :if={is_list(Moly.Helper.get_in_from_keys(@post, [:source, "commission"]))}
