@@ -450,6 +450,7 @@ defmodule Moly.Accounts.User do
         email_or_user_info when is_map(email_or_user_info) ->
           name = email_or_user_info["name"]
           username = email_or_user_info["name"] |> String.replace(" ", "")
+          username = username<>Moly.Helper.generate_random_id(2)
 
           avatar =
             Moly.Utilities.Account.generate_avatar_from_url(email_or_user_info["picture"])

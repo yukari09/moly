@@ -179,7 +179,7 @@ defmodule MolyWeb.Affinew.Components do
     assigns = assign(assigns, :id, Moly.Helper.generate_random_id())
 
     ~H"""
-    <.link :if={!@current_user} class="btn" navigate={~p"/sign-in"}>Log in</.link>
+    <.link :if={!@current_user} class="btn btn-sm md:btn-md" navigate={~p"/sign-in"}>Log in</.link>
     <div :if={@current_user} id={"dropdown-#{@id}"} class="dropdown dropdown-bottom dropdown-end p-0">
       <div tabindex="0" class="size-8" id={"dropdown-btn-#{@id}"}>
         <MolyWeb.DaisyUi.avatar user={@current_user} />
