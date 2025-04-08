@@ -22,14 +22,22 @@ defmodule MolyWeb.Affinew.ViewLive do
     {:ok, posts} =
       Snap.Search.search(Moly.Cluster, Post.index_name(), %{
         query: %{
-          more_like_this: %{
-            fields: [:post_title, :post_content],
-            like: %{
-              _index: Post.index_name(),
-              _id: post.id
-            },
-            min_term_freq: 1,
-            max_query_terms: 12
+          bool: %{
+            must: [
+              %{term: %{post_status: "publish"}},
+              %{term: %{post_type: "affiliate"}},
+              %{
+                more_like_this: %{
+                  fields: [:post_title, :post_content],
+                  like: %{
+                    _index: Post.index_name(),
+                    _id: post.id
+                  },
+                  min_term_freq: 1,
+                  max_query_terms: 12
+                }
+              }
+            ]
           }
         },
         size: 12
