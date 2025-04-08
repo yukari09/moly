@@ -346,7 +346,7 @@ defmodule Moly.Helper do
 
   def timestamp2datetime(_), do: ""
 
-  def get_in_from_keys(map_or_list, keys, default \\ ni) do
+  def get_in_from_keys(map_or_list, keys, default \\ nil) do
     Enum.reduce_while(keys, map_or_list, fn key, acc ->
       value =
         cond do
