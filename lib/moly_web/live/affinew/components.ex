@@ -458,7 +458,7 @@ defmodule MolyWeb.Affinew.Components do
             <span :if={@bookmark_event in ["require_login", "bookmark_post"]}><Lucideicons.book_marked class="size-4 inline"/> Save</span>
             <span :if={@bookmark_event in ["unbookmark_post"]}><Lucideicons.bookmark_check class="size-4 inline"/> Saved</span>
           </.link>
-          <.link href={Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_program_link"])} rel="nofollow" class="text-sm flex items-center gap-1 link link-hover">
+          <.link href={Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_program_link"])} rel="nofollow" target="_blank" class="text-sm flex items-center gap-1 link link-hover">
             <Lucideicons.external_link class="size-4 inline"/>Website
           </.link>
         </div>
