@@ -152,7 +152,7 @@ defmodule MolyWeb.Affinew.Components do
           </h2>
         </.link>
         <ol class="list-decimal list-inside flex flex-col gap-2">
-        <% commissions = Moly.Helper.get_in_from_keys(@post, [:source, "commission"]) %>
+        <% commissions = Moly.Helper.get_in_from_keys(@post, [:source, "commission"], []) %>
         <% commissions = is_map(commissions) && [commissions] || commissions %>
           <li
             :for={

@@ -346,17 +346,17 @@ defmodule Moly.Helper do
 
   def timestamp2datetime(_), do: ""
 
-  def get_in_from_keys(map_or_list, keys) do
+  def get_in_from_keys(map_or_list, keys, default \\ ni) do
     Enum.reduce_while(keys, map_or_list, fn key, acc ->
       value =
         cond do
-          is_map(acc) -> Map.get(acc, key, nil)
+          is_map(acc) -> Map.get(acc, key, default)
           is_list(acc) && is_integer(key) -> Enum.at(acc, key)
           is_tuple(acc) && is_integer(key) -> elem(acc, key)
-          true -> nil
+          true -> default
         end
 
-      if is_nil(value), do: {:halt, nil}, else: {:cont, value}
+      if is_nil(value), do: {:halt, default}, else: {:cont, value}
     end)
   end
 
