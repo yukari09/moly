@@ -43,32 +43,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docker-arm64-
 
-      - name: Build and Push for amd64
+      - name: Build and Push Docker images
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name == 'push' }}
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}-amd64
-          cache-from: type=local,src=/tmp/.buildx-cache-amd64
-          cache-to: type=local,dest=/tmp/.buildx-cache-amd64,mode=max
-
-      - name: Build and Push for arm64
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/arm64
-          push: ${{ github.event_name == 'push' }}
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}-arm64
-          cache-from: type=local,src=/tmp/.buildx-cache-arm64
-          cache-to: type=local,dest=/tmp/.buildx-cache-arm64,mode=max
-
-      - name: Create multi-arch manifest (optional)
-        if: github.event_name == 'push'
-        run: |
-          docker buildx imagetools create \
-            --tag ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }} \
-            ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}-amd64 \
-            ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}-arm64
+            ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
+          cache-from: |
+            type=local,src=/tmp/.buildx-cache-amd64
+            type=local,src=/tmp/.buildx-cache-arm64
+          cache-to: |
+            type=local,dest=/tmp/.buildx-cache-amd64,mode=max,platform=linux/amd64
+            type=local,dest=/tmp/.buildx-cache-arm64,mode=max,platform=linux/arm64
