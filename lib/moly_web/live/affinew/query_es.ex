@@ -6,7 +6,7 @@ defmodule MolyWeb.Affinew.QueryEs do
 
   def index_query() do
     query = %{
-      query: %{match: %{"post_status" => "publish"}},
+      query: %{bool: %{must: [%{term: %{post_status: "publish"}}, %{term: %{post_type: "affiliate"}}]}},
       sort: [%{"updated_at" => %{"order" => "desc"}}],
       size: 12
     }
@@ -21,9 +21,11 @@ defmodule MolyWeb.Affinew.QueryEs do
     q = %{
       query: %{
         bool: %{
-          must: %{
+          must: [%{
             terms: %{"id.keyword": post_ids}
-          }
+          },%{
+            terms: %{post_type: "affiliate"}
+          }]
         }
       }
     }
@@ -39,9 +41,11 @@ defmodule MolyWeb.Affinew.QueryEs do
     q = %{
       query: %{
         bool: %{
-          must: %{
+          must: [%{
             term: %{"author_id.keyword": user_id}
-          }
+          },%{
+            term: %{post_type: "affiliate"}
+          }]
         }
       }
     }
@@ -56,6 +60,10 @@ defmodule MolyWeb.Affinew.QueryEs do
     q = %{
       query: %{
         bool: %{
+          must: [
+            %{term: %{post_status: "publish"}},
+            %{term: %{post_type: "affiliate"}}
+          ],
           should: [
             %{
 
@@ -100,6 +108,10 @@ defmodule MolyWeb.Affinew.QueryEs do
     q = %{
       query: %{
         bool: %{
+          must: [
+            %{term: %{post_status: "publish"}},
+            %{term: %{post_type: "affiliate"}}
+          ],
           should: [
             %{
               term: %{
@@ -142,7 +154,7 @@ defmodule MolyWeb.Affinew.QueryEs do
     query = %{bool: %{}}
 
     must =
-      [%{term: %{post_status: "publish"}}]
+      [%{term: %{post_status: "publish"}}, %{term: %{post_type: "affiliate"}}]
       |> category_query(category)
       |> commission_query(commission)
       |> cookie_duration_query(cookie_duration)

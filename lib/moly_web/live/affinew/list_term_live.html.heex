@@ -43,14 +43,14 @@
       >
         <.link
           :if={@page_meta.prev}
-          navigate={MolyWeb.Affinew.Links.programs(%{@params | "page" => @page_meta.prev})}
+          navigate={MolyWeb.Affinew.Links.term(@slug, %{@params | "page" => @page_meta.prev})}
           class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100"
         >
           <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
         </.link>
         <.link
           :for={page <- @page_meta.page_range}
-          navigate={MolyWeb.Affinew.Links.programs(%{@params | "page" => page})}
+          navigate={MolyWeb.Affinew.Links.term(@slug, %{@params | "page" => page})}
           class={[
             "px-3 py-2 border-b-2 hover:border-base-content hover:text-base-content",
             (page == @page_meta.current_page && "border-base-content text-base-content") ||
@@ -62,7 +62,7 @@
 
         <.link
           :if={@page_meta.next}
-          navigate={MolyWeb.Affinew.Links.programs(%{@params | "page" => @page_meta.next})}
+          navigate={MolyWeb.Affinew.Links.term(@slug, %{@params | "page" => @page_meta.next})}
           class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100"
         >
           <Lucideicons.arrow_right class="w-4 h-4 md:w-5 md:h-5" />
