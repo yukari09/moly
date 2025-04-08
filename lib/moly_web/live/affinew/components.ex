@@ -151,8 +151,10 @@ defmodule MolyWeb.Affinew.Components do
             {Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}
           </h2>
         </.link>
+        <ol :if={!is_list(Moly.Helper.get_in_from_keys(@post, [:source, "commission"]))}>{Moly.Helper.get_in_from_keys(@post, [:source, "commission"])}</ol>
         <ol class="list-decimal list-inside flex flex-col gap-2">
           <li
+            :if={is_list(Moly.Helper.get_in_from_keys(@post, [:source, "commission"]))}
             :for={
               %{
                 "commission_amount" => commission_amount,
@@ -423,11 +425,12 @@ defmodule MolyWeb.Affinew.Components do
     <div
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       role="alert"
-      class={["alert", (@kind == :info && "alert-success") || "alert-error"]}
+      class={["alert gap-1", (@kind == :info && "alert-success") || "alert-error"]}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
     >
-      <.icon name="hero-x-circle" class="size-5" />
+      <%!-- <.icon name="hero-x-circle" class="size-4" /> --%>
       <span>{msg}</span>
+      <Lucideicons.x class="size-4" />
     </div>
     """
   end
@@ -452,7 +455,7 @@ defmodule MolyWeb.Affinew.Components do
             <Lucideicons.share_2 class="size-4 inline"/> Share
           </.link>
           <.link class="text-sm flex items-center gap-1 link link-hover" phx-click={@bookmark_event}>
-            <span :if={@bookmark_event in [nil, "bookmark_post"]}><Lucideicons.book_marked class="size-4 inline"/> Save</span>
+            <span :if={@bookmark_event in ["require_login", "bookmark_post"]}><Lucideicons.book_marked class="size-4 inline"/> Save</span>
             <span :if={@bookmark_event in ["unbookmark_post"]}><Lucideicons.bookmark_check class="size-4 inline"/> Saved</span>
           </.link>
           <.link href={Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_program_link"])} rel="nofollow" class="text-sm flex items-center gap-1 link link-hover">

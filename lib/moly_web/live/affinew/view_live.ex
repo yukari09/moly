@@ -11,7 +11,7 @@ defmodule MolyWeb.Affinew.ViewLive do
     {:ok, socket, layout: {MolyWeb.Layouts, :affinew}}
   end
 
-  def handle_params(%{"post_name" => post_name}, _uri, socket) do
+  def handle_params(%{"post_name" => post_name}, uri, socket) do
     {:ok, post} =
       Snap.Search.search(Moly.Cluster, Post.index_name(), %{
         query: %{term: %{"post_name.keyword" => post_name}}
@@ -49,9 +49,10 @@ defmodule MolyWeb.Affinew.ViewLive do
               "bookmark_post"
           end
         else
-          nil
+          "require_login"
         end
       end)
+      |> assign(:current_uri, uri)
 
     socket = page_meta(socket)
 
@@ -110,6 +111,11 @@ defmodule MolyWeb.Affinew.ViewLive do
         end
       end
 
+    {:noreply, socket}
+  end
+
+  def handle_event("require_login", _, socket) do
+    socket = put_flash(socket, :error, "Please log in first")
     {:noreply, socket}
   end
 

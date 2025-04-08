@@ -38,7 +38,7 @@ defmodule Moly.MixProject do
       {:timex, "~> 3.7"},
       {:flame, "~> 0.5"},
       {:ash_rbac, "~> 0.6.1"},
-      {:ash_admin, "~> 0.12.0"},
+      # {:ash_admin, "~> 0.12.0"},
       {:lucide_icons, "~> 2.0.0"},
       {:earmark, "~> 1.4.47"},
       {:imgproxy, "~> 3.0.2"},
