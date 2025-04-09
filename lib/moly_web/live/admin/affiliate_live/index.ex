@@ -49,12 +49,12 @@ defmodule MolyWeb.AdminAffiliateLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("modify-tag", %{"post-id" => post_id, "tag-id" => tag_id}, socket) do
+  def handle_event("modify-tag", %{"id" => id}, socket) do
     tag_form =
-      Ash.Query.filter(Moly.Terms.TermRelationships, post_id==^post_id and term_taxonomy_id==^tag_id)
+      Ash.Query.filter(Moly.Contents.Post, id==^id)
       |> Ash.Query.load([term_taxonomy: :term])
       |> Ash.read_first!(actor: %{roles: [:admin]})
-      |> AshPhoenix.Form.for_update(:update_relation, actor: socket.assigns.current_user)
+      |> AshPhoenix.Form.for_update(:update_post, actor: socket.assigns.current_user)
       |> to_form()
     socket =
       socket

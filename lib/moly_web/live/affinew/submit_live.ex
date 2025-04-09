@@ -160,7 +160,7 @@ defmodule MolyWeb.Affinew.SubmitLive do
       |> allow_upload(:media,
         accept: ~w(.jpg .jpeg .png .webp),
         max_entries: 1,
-        max_file_size: 4_000_000
+        max_file_size: 8_000_000
       )
       |> assign(:is_active_user, is_active_user)
     else

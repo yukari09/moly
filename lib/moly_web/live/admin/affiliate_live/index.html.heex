@@ -93,9 +93,11 @@
             </.link>
           </:col>
           <:col :let={row} label="Tags" td_class="!whitespace-normal">
-              <.link id={"tag-cell-#{tag.id}"} class="link link-hover" phx-click="modify-tag" phx-value-post-id={row.id} phx-value-tag-id={tag.id} :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "affiliate_tag")}>
+            <.link class="link link-hover" phx-click="modify-tag" phx-value-id={row.id}>
+              <span id={"tag-cell-#{tag.id}"} :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "affiliate_tag")}>
                 {tag.term.name},&nbsp;&nbsp;
-              </.link>
+              </span>
+            </.link>
           </:col>
           <:col :let={row} label="Created at">
             {row.inserted_at |> Timex.format!("{Mfull} {D}, {YYYY} {h24}:{m}")}
@@ -183,6 +185,7 @@
   <.header size="md" title="Modify Tag" />
 
    <.form :let={f} for={@tag_form} class="space-y-6 mt-6" phx-submit="save-tag">
+   <%!-- <.textarea>{Moly.Utilities.Post.term_taxonomy_filter(row, "affiliate_tag") |> Enum.map(&(&1.term.name)) |> Enum.join(",")}</.textarea> --%>
     <div class="flex  items-end pt-6 border-t border-gray-100">
       <.button type="submit">Confirm</.button>
     </div>
