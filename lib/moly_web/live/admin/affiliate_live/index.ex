@@ -44,8 +44,21 @@ defmodule MolyWeb.AdminAffiliateLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("edit-action", %{"id" => _id}, socket) do
+  def handle_event("edit-action", %{"id" => id}, socket) do
     socket = assign(socket, :live_action, :edit)
+    post_form =
+      Ash.get!(Moly.Contents.Post, id, actor: socket.assigns.current_user)
+      |> AshPhoenix.Form.for_update(:update_post, actor: socket.assigns.current_user)
+    socket = assign(socket, :post_form, post_form)
+    {:noreply, socket}
+  end
+
+  def handle_event("update-post", %{"form" => form}, socket) do
+    socket =
+      case AshPhoenix.Form.submit(socket.assigns.post_form, params: form,  action_opts: [actor: socket.assigns.current_user]) do
+        {:ok, _} -> put_flash(socket, :info, "Post has been updated.")
+        {:error, _} -> put_flash(socket, :error, "Some thing wrong, try later.")
+      end
     {:noreply, socket}
   end
 

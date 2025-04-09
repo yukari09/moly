@@ -113,7 +113,7 @@ defmodule MolyWeb.Affinew.Components do
 
   def card(assigns) do
     ~H"""
-    <div class="card w-full bg-white border border-base-content/10">
+    <div class="card w-full bg-base-100/5 border border-base-content/10">
       <figure
         :if={featrue_image_src(@post)}
         class="aspect-video overflow-hidden !block relative text-base-content rounded-t-lg"
@@ -162,7 +162,7 @@ defmodule MolyWeb.Affinew.Components do
                 "commission_unit" => commission_unit
               } = c <- commissions
             }
-            class="marker:italic h-5.5 overflow-hidden"
+            class="marker:italic h-6 text-loose overflow-hidden"
           >
               <.commission_text
                 commission_amount={commission_amount}

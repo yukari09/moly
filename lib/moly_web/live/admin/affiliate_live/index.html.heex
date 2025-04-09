@@ -162,7 +162,7 @@
   show={@live_action in [:modify_category]}
   id="user-form-modal-category"
   on_cancel={JS.patch(live_url(@params))}
-  inner_class="sm:max-w-xl"
+  inner_class="sm:max-w-md"
 >
   <.header size="md" title="Change Category" />
 
@@ -180,7 +180,7 @@
   show={@live_action in [:modify_tag]}
   id="user-form-modal-tag"
   on_cancel={JS.patch(live_url(@params))}
-  inner_class="sm:max-w-xl"
+  inner_class="sm:max-w-md"
 >
   <.header size="md" title="Modify Tag" />
 
@@ -200,4 +200,32 @@
   inner_class="sm:max-w-xl"
 >
   <.header size="md" title="Modify Affiliate" />
+
+   <.form :let={f} for={@post_form} class="mt-6" phx-submit="update-post">
+    <.input field={f[:post_title]} label="Affiliate Title" class="mb-6" />
+    <div
+      id="post-editor"
+      phx-hook="DescriptionEditor"
+      data-target={"##{f[:post_content].id}"}
+      data-config={
+        JSON.encode!(%{
+          theme: "snow",
+          placeholder: "Affiliate description(min 20 words)...",
+          modules: %{
+            toolbar: [
+              [%{list: "ordered"}, %{list: "bullet"}],
+              ["bold", "italic", "underline"],
+              [%{align: []}]
+            ]
+          }
+        })
+      }
+    >
+      {raw(f[:post_content].value)}
+    </div>
+    <div class="!h-0 hidden"><.input field={f[:post_content]} /></div>
+    <div class="flex  items-end pt-6 border-t border-gray-100">
+      <.button type="submit">Confirm</.button>
+    </div>
+  </.form>
 </.modal>
