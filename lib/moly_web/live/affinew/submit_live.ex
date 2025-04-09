@@ -16,8 +16,17 @@ defmodule MolyWeb.Affinew.SubmitLive do
     {:noreply, socket}
   end
 
-  def handle_event("validate", _, socket) do
+  def handle_event("validate", %{"_target" => ["media"]}, socket) do
     socket = push_event(socket, "validateForm", %{})
+    upload_media = socket.assigns.uploads.media
+    upload_media_first_entry = socket.assigns.uploads.media.entries |> List.first()
+    socket =
+      upload_errors(upload_media, upload_media_first_entry)
+      |> case do
+        nil -> socket
+        [error_msg | _] ->
+          put_flash(socket, :error, error_to_string(error_msg))
+      end
     {:noreply, socket}
   end
 
@@ -160,7 +169,7 @@ defmodule MolyWeb.Affinew.SubmitLive do
       |> allow_upload(:media,
         accept: ~w(.jpg .jpeg .png .webp),
         max_entries: 1,
-        max_file_size: 8_000_000
+        max_file_size: 4_000_000
       )
       |> assign(:is_active_user, is_active_user)
     else
@@ -273,4 +282,8 @@ defmodule MolyWeb.Affinew.SubmitLive do
       %{meta_value: meta_value} -> meta_value
     end
   end
+
+  defp error_to_string(:too_large), do: "The file is too large. The maximum allowed size is 4MB."
+  defp error_to_string(:not_accepted), do: "You have selected an unacceptable file type"
+  defp error_to_string(:too_many_files), do: "You have selected too many files"
 end

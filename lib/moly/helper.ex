@@ -380,12 +380,14 @@ defmodule Moly.Helper do
 
   def bits_to_readable(nil), do: 0
 
-  def format_to_int(string, decimal_places) do
+  def format_to_int(string, decimal_places) when is_binary(string) do
     case Float.parse(string) do
-      {float_value, _} -> :erlang.float_to_binary(float_value, decimals: decimal_places)
+      {float_value, _} -> format_to_int(float_value, decimal_places)
       _ -> 0
     end
   end
+  def format_to_int(float_string, decimal_places) when is_float(float_string), do: :erlang.float_to_binary(float_string, decimals: decimal_places)
+
 
   def pagination_meta(total, page_size, page, show_item)
       when is_integer(total) and is_integer(page_size) and is_integer(page) and

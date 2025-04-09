@@ -162,7 +162,7 @@ defmodule MolyWeb.Affinew.Components do
                 "commission_unit" => commission_unit
               } = c <- commissions
             }
-            class="marker:italic"
+            class="marker:italic line-clamp-1"
           >
             <.commission_text
               commission_amount={commission_amount}
@@ -470,11 +470,11 @@ defmodule MolyWeb.Affinew.Components do
     <ul class="list bg-[rgb(255,253,246)] rounded-box mt-4 md:mt-12">
       <%!-- <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Commissions of this affiliate program</li> --%>
       <li class="list-row" :for={{commission, i} <- Moly.Helper.get_in_from_keys(@post, [:source, "commission"]) |> Enum.with_index()}>
-        <div class="text-2xl md:text-4xl font-thin opacity-30 tabular-nums flex flex-col justify-center">0{i + 1}</div>
-        <div class="flex flex-col justify-center w-16 uppercase font-semibold opacity-60 text-xs">{  Map.get(commission, "commission_type") |> commission_type_option_label()}</div>
-        <div class="flex flex-col justify-center w-20">
+        <div class="hidden text-2xl md:text-4xl font-thin opacity-30 tabular-nums md:flex flex-col justify-center">0{i + 1}</div>
+        <div class="flex flex-col justify-center lg:max-w-16 uppercase font-semibold opacity-60 text-xs">{  Map.get(commission, "commission_type") |> commission_type_option_label()}</div>
+        <div class="flex flex-col justify-center lg:min-w-28">
           <div :if={Map.get(commission, "commission_unit") != "%"} class="text-xl/6 md:text-2xl/6 text-[#ff5000]">
-            {Map.get(commission, "commission_unit") |> commission_unit_option()}{Map.get(commission, "commission_amount")}
+            {Map.get(commission, "commission_unit") |> commission_unit_option()}{Map.get(commission, "commission_amount") |> Moly.Helper.format_to_int(1)}
           </div>
           <div :if={Map.get(commission, "commission_unit") == "%"} class="text-xl/6 md:text-2xl/6 text-[#ff5000] mt-1">
             {Map.get(commission, "commission_amount")}%
@@ -590,12 +590,14 @@ defmodule MolyWeb.Affinew.Components do
     ~H"""
     <span class="text-sm md:text-base">
       <span class="font-semibold text-orange">
-        <span :if={@commission_unit != "%"}>{commission_unit_option(@commission_unit)}</span>{@commission_amount}<span :if={
+        <span :if={@commission_unit != "%"}>{commission_unit_option(@commission_unit)}</span>{Moly.Helper.format_to_int(@commission_amount,1)}<span :if={
           @commission_unit == "%"
         }>%</span>
       </span>
+      <span>
       {@commission_notes || (@commission_type == "bounty" && "Fixed Bounty") ||
         (@commission_type == "revenue_share" && "Revenue Share")}
+      </span>
     </span>
     """
   end

@@ -416,7 +416,7 @@
     </div>
 
     <div class="mt-6 flex items-center justify-end gap-x-6">
-      <button type="button" class="text-sm/6 font-semibold text-gray-900">Cancel</button>
+      <.link phx-click={JS.dispatch("app:historyback")} class="text-sm/6 font-semibold text-gray-900">Cancel</.link>
       <.button id="submit-btn" disable-with="Saving" disabled={true} type="submit"><span class="loading loading-spinner loading-xs hidden phx-submit-loading:inline-block"></span>Save</.button>
     </div>
   </div>
