@@ -162,14 +162,14 @@ defmodule MolyWeb.Affinew.Components do
                 "commission_unit" => commission_unit
               } = c <- commissions
             }
-            class="marker:italic line-clamp-1"
+            class="marker:italic h-5.5 overflow-hidden"
           >
-            <.commission_text
-              commission_amount={commission_amount}
-              commission_unit={commission_unit}
-              commission_type={commission_type}
-              commission_notes={Map.get(c, "commission_notes")}
-            />
+              <.commission_text
+                commission_amount={commission_amount}
+                commission_unit={commission_unit}
+                commission_type={commission_type}
+                commission_notes={Map.get(c, "commission_notes")}
+              />
           </li>
         </ol>
       </div>
