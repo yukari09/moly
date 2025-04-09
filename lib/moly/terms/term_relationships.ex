@@ -21,6 +21,14 @@ defmodule Moly.Terms.TermRelationships do
     update :update, primary?: true
     destroy :destroy, primary?: true
 
+    update :update_relation do
+      argument :term_taxonomy_id, :uuid, allow_nil?: false
+      argument :post_id, :uuid, allow_nil?: false
+      require_atomic? false
+      change manage_relationship(:term_taxonomy_id, :term_taxonomy, type: :append_and_remove)
+      change manage_relationship(:post_id, :post, type: :append_and_remove)
+    end
+
     create :create_term_relationships do
       accept [:term_taxonomy_id, :term_order]
     end

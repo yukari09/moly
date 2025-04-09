@@ -12,9 +12,7 @@ defmodule Moly.Contents.Notifiers.Post do
         data: data,
         actor: _actor
       }) do
-    id = data.id
-    document = create_post_document(id)
-    Snap.Document.index(Moly.Cluster, index_name(), document, id)
+    build_post_document(data.id)
   end
 
   def notify(%Ash.Notifier.Notification{
@@ -23,9 +21,7 @@ defmodule Moly.Contents.Notifiers.Post do
         data: data,
         actor: _actor
       }) do
-    id = data.id
-    document = create_post_document(id)
-    Snap.Document.index(Moly.Cluster, index_name(), document, id)
+    build_post_document(data.id)
   end
 
   def notify(%Ash.Notifier.Notification{
@@ -36,6 +32,11 @@ defmodule Moly.Contents.Notifiers.Post do
       }) do
     id = data.id
     Snap.Document.delete(Moly.Cluster, index_name(), id)
+  end
+
+  def build_post_document(post_id) do
+    document = create_post_document(post_id)
+    Snap.Document.index(Moly.Cluster, index_name(), document, post_id)
   end
 
   def create_post_document(post_id) do

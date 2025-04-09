@@ -28,10 +28,7 @@
           <:col :let={row} label="Name">
             <div class="flex items-center">
               <div class="size-11 shrink-0">
-                <.avatar class="!size-11">
-                  <.avatar_image src={row.avatar} />
-                  <.avatar_fallback initials={row.email |> String.slice(0, 1)} />
-                </.avatar>
+                <Moly.Utilities.Account.avatar_html user={row} size={32} />
               </div>
               <div class="ml-4">
                 <div class="font-medium text-gray-900">{row.email}</div>

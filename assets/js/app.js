@@ -33,7 +33,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
 })
 
 // Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#09442b"}, shadowColor: "rgba(0, 0, 0, .3)", barThickness: 2})
+topbar.config({barColors: {0: "#09442b"}, shadowColor: "rgba(0, 0, 0, .3)", barThickness: 1.25})
 window.addEventListener("phx:page-loading-start", _info => topbar.show(0))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
@@ -45,6 +45,15 @@ liveSocket.connect()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
+
+
+window.addEventListener("phx:exec-el", (event) => {
+  if(event.detail.target){
+    const el = document.querySelector(event.detail.target)
+    const el_attr = event.detail.attr
+    liveSocket.execJS(el, `[["exec",{"attr":"${el_attr}"}]]`)
+  }
+})
 
 window.addEventListener("phx:show-modal", async (event) => {  
   let el = document.querySelector(event.detail.el)

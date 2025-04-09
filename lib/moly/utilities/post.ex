@@ -117,6 +117,11 @@ defmodule Moly.Utilities.Post do
   def post_meta_by_filter(%Post{id: id} = post, meta_key) when is_binary(id),
     do: filter_by_meta_key(post, meta_key)
 
+
+  def term_taxonomy_filter(%Post{id: _id, term_taxonomy: term_taxonomy} = _post, taxonomy) do
+    Enum.filter(term_taxonomy, &(&1.taxonomy == taxonomy))
+  end
+
   defp filter_by_meta_key(%{post_meta: post_meta}, meta_key)
        when is_list(post_meta) and is_binary(meta_key) do
     Enum.filter(post_meta, &(Regex.compile!(meta_key) |> Regex.match?(&1.meta_key)))

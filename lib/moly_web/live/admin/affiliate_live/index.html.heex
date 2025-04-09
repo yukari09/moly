@@ -68,8 +68,8 @@
   <div :if={@posts.results != []} class="mt-4 flow-root p-4 border rounded-md">
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-        <.table rows={@posts.results} class="table-auto">
-          <:col :let={row} label="Title">
+        <.table rows={@posts.results} class="table-auto border-collapse w-full">
+          <:col :let={row} label="Title" td_class="!whitespace-normal">
             <div class="flex gap-2">
               <.badge variant={
                 %{draft: "gray", published: "success", scheduled: "info", trash: "error"}[
@@ -87,11 +87,38 @@
               </.link>
             </div>
           </:col>
+          <:col :let={row} label="Categories">
+            <.link id={"category-cell-#{category.id}"} class="link link-hover" phx-click="modify-category" phx-value-post-id={row.id} phx-value-category-id={category.id} :for={category <- Moly.Utilities.Post.term_taxonomy_filter(row, "affiliate_category")}>
+             {category.term.name}
+            </.link>
+          </:col>
+          <:col :let={row} label="Tags" td_class="!whitespace-normal">
+              <.link id={"tag-cell-#{tag.id}"} class="link link-hover" phx-click="modify-tag" phx-value-post-id={row.id} phx-value-tag-id={tag.id} :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "affiliate_tag")}>
+                {tag.term.name},&nbsp;&nbsp;
+              </.link>
+          </:col>
           <:col :let={row} label="Created at">
             {row.inserted_at |> Timex.format!("{Mfull} {D}, {YYYY} {h24}:{m}")}
           </:col>
           <:col :let={row} label="" align="right">
-            <div class="flex items-center gap-1 text-gray-500 justify-end">
+            <div class="flex items-center gap-2 text-gray-500 justify-end">
+              <div class="tooltip">
+                <div class="tooltip-content">
+                  <div>Edit</div>
+                </div>
+                <.link phx-value-id={row.id} phx-click="edit-action">
+                <Lucideicons.pen_line class="size-4" />
+                </.link>
+              </div>
+              <div class="tooltip">
+                <div class="tooltip-content">
+                  <div>rebuild index</div>
+                </div>
+                <.link id={"rebuild-index-btn-#{row.id}"} phx-click={JS.hide() |> JS.show(to: "#rebuild-index-loading-#{row.id}") |> JS.push("rebuild-index")} phx-value-id={row.id} data-hide={JS.hide()} data-show={JS.show()} phx-value-key="info">
+                  <Lucideicons.text_quote class="size-4" />
+                </.link>
+                <span id={"rebuild-index-loading-#{row.id}"} class="loading loading-spinner loading-xs hidden" data-hide={JS.hide()} data-show={JS.show()}></span>
+              </div>
               <.link
                 :if={row.post_status != :publish}
                 class="text-gray-500"
@@ -125,3 +152,49 @@
     <.no_results />
   </div>
 </div>
+
+
+
+<.modal
+  :if={@live_action in [:modify_category]}
+  show={@live_action in [:modify_category]}
+  id="user-form-modal-category"
+  on_cancel={JS.patch(live_url(@params))}
+  inner_class="sm:max-w-xl"
+>
+  <.header size="md" title="Change Category" />
+
+  <.form :let={f} for={@category_form} class="space-y-6 mt-6" phx-submit="save-category">
+    <.select label="Category" value={nil} field={f[:term_taxonomy_id]} options={Enum.map(@categories, &({&1.id, &1.term.name}))} />
+    <.input field={f[:post_id]} class="hidden h-0" />
+    <div class="flex items-end pt-6 border-t border-gray-100">
+      <.button type="submit">Confirm</.button>
+    </div>
+  </.form>
+</.modal>
+
+<.modal
+  :if={@live_action in [:modify_tag]}
+  show={@live_action in [:modify_tag]}
+  id="user-form-modal-tag"
+  on_cancel={JS.patch(live_url(@params))}
+  inner_class="sm:max-w-xl"
+>
+  <.header size="md" title="Modify Tag" />
+
+   <.form :let={f} for={@tag_form} class="space-y-6 mt-6" phx-submit="save-tag">
+    <div class="flex  items-end pt-6 border-t border-gray-100">
+      <.button type="submit">Confirm</.button>
+    </div>
+  </.form>
+</.modal>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  show={@live_action in [:new, :edit]}
+  id="user-form-modal"
+  on_cancel={JS.patch(live_url(@params))}
+  inner_class="sm:max-w-xl"
+>
+  <.header size="md" title="Modify Affiliate" />
+</.modal>
