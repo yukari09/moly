@@ -18,15 +18,15 @@ defmodule MolyWeb.Affinew.SubmitLive do
 
   def handle_event("validate", %{"_target" => ["media"]}, socket) do
     socket = push_event(socket, "validateForm", %{})
-    upload_media = socket.assigns.uploads.media
-    upload_media_first_entry = socket.assigns.uploads.media.entries |> List.first()
-    socket =
-      upload_errors(upload_media, upload_media_first_entry)
-      |> case do
-        nil -> socket
-        [error_msg | _] ->
-          put_flash(socket, :error, error_to_string(error_msg))
-      end
+    # upload_media = socket.assigns.uploads.media
+    # upload_media_first_entry = socket.assigns.uploads.media.entries |> List.first()
+    # socket =
+    #   upload_errors(upload_media, upload_media_first_entry)
+    #   |> case do
+    #     nil -> socket
+    #     [error_msg | _] ->
+    #       put_flash(socket, :error, error_to_string(error_msg))
+    #   end
     {:noreply, socket}
   end
 
