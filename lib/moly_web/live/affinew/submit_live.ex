@@ -23,9 +23,9 @@ defmodule MolyWeb.Affinew.SubmitLive do
     socket =
       upload_errors(upload_media, upload_media_first_entry)
       |> case do
-        nil -> socket
         [error_msg | _] ->
           put_flash(socket, :error, error_to_string(error_msg))
+        _ -> socket
       end
     {:noreply, socket}
   end
