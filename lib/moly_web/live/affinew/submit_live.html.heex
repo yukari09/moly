@@ -117,6 +117,7 @@
                 <.input
                   label={(i == 0 && "Amount") || nil}
                   type="number"
+                  step="any"
                   field={@form[:post_meta]}
                   field_subfix={field_subfix("meta_value", i, 1)}
                   value={commission_value(commission, :commission_amount)}

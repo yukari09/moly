@@ -474,7 +474,7 @@ defmodule MolyWeb.Affinew.Components do
         <div class="flex flex-col justify-center lg:max-w-16 uppercase font-semibold opacity-60 text-xs">{  Map.get(commission, "commission_type") |> commission_type_option_label()}</div>
         <div class="flex flex-col justify-center lg:min-w-28">
           <div :if={Map.get(commission, "commission_unit") != "%"} class="text-xl/6 md:text-2xl/6 text-[#ff5000]">
-            {Map.get(commission, "commission_unit") |> commission_unit_option()}{Map.get(commission, "commission_amount") |> Moly.Helper.format_to_int(1)}
+            {Map.get(commission, "commission_unit") |> commission_unit_option()}{Map.get(commission, "commission_amount") |> Moly.Helper.format_to_int(2)}
           </div>
           <div :if={Map.get(commission, "commission_unit") == "%"} class="text-xl/6 md:text-2xl/6 text-[#ff5000] mt-1">
             {Map.get(commission, "commission_amount")}%
