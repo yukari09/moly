@@ -21,11 +21,15 @@ defmodule MolyWeb.Affinew.SubmitLive do
     upload_media = socket.assigns.uploads.media
     upload_media_first_entry = socket.assigns.uploads.media.entries |> List.first()
     socket =
-      upload_errors(upload_media, upload_media_first_entry)
-      |> case do
-        [error_msg | _] ->
-          put_flash(socket, :error, error_to_string(error_msg))
-        _ -> socket
+      if upload_media_first_entry do
+        upload_errors(upload_media, upload_media_first_entry)
+        |> case do
+          [error_msg | _] ->
+            put_flash(socket, :error, error_to_string(error_msg))
+          _ -> socket
+        end
+      else
+        socket
       end
     {:noreply, socket}
   end
