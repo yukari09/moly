@@ -14,7 +14,7 @@
     subtitle={"High ticket best paying #{@keyword  || @slug } affiliate marketing programs."}
   />
 
-  <div class="mt-4">
+  <div class="mt-8">
     <div class="flex items-center justify-between">
         <span class="px-2 text-sm text-base md:text-base">Result: {@page_meta.total}</span>
         <.filter_dropdown
@@ -28,7 +28,7 @@
         />
     </div>
 
-    <div :if={Enum.count(@posts) > 0} class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
+    <div :if={Enum.count(@posts) > 0} class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-6 mt-4">
       <MolyWeb.Affinew.Components.card :for={post <- @posts} post={post} />
     </div>
     <div :if={Enum.count(@posts) == 0}>

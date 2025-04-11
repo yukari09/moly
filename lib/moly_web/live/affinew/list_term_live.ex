@@ -4,7 +4,7 @@ defmodule MolyWeb.Affinew.ListTermLive do
   import MolyWeb.Affinew.Components
   import MolyWeb.Affinew.QueryEs
 
-  @per_page 12
+  @per_page 16
 
   def mount(_params, _session, socket) do
     industry_options =

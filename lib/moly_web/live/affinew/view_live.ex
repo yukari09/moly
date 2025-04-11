@@ -40,7 +40,7 @@ defmodule MolyWeb.Affinew.ViewLive do
             ]
           }
         },
-        size: 12
+        size: 8
       })
 
     socket =
