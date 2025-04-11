@@ -27,7 +27,7 @@
         />
     </div>
 
-    <div :if={Enum.count(@posts) > 0} class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+    <div :if={Enum.count(@posts) > 0} class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
       <MolyWeb.Affinew.Components.card :for={post <- @posts} post={post} />
     </div>
     <div :if={Enum.count(@posts) == 0} class="w-48 mx-auto mt-28 my-40">
