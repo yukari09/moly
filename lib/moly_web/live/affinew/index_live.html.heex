@@ -3,7 +3,7 @@
   <div class="drawer-content flex flex-col">
     <div class="bg-white">
       <!-- Navbar -->
-      <div class="navbar w-full max-w-screen-2xl mx-auto px-4 lg:px-10 ">
+      <div class="navbar w-full max-w-screen-xl mx-auto px-4 lg:px-10 ">
         <div class="flex-none lg:hidden mr-4">
           <label for="affinew-drawer" aria-label="open sidebar" class="btn btn-square btn-ghost">
             <Lucideicons.align_justify class="inline-block size-6 stroke-current" />
@@ -38,7 +38,7 @@
     </div>
     <!-- Page content here -->
     <div class="bg-white">
-      <div class="max-w-screen-2xl mx-auto" aria-hidden="true">
+      <div class="max-w-screen-xl mx-auto" aria-hidden="true">
         <div class="w-full md:flex items-center justify-between p-10 lg:px-20 lg:pt-10">
           <div class="lg:max-w-lg flex-1">
             <h1>
@@ -81,8 +81,8 @@
         </div>
       </div>
 
-      <div class="w-full max-w-screen-2xl mx-auto p-4 lg:p-10 mb-10">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  gap-x-2 gap-y-4">
+      <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
           <MolyWeb.Affinew.Components.card :for={post <- @posts} post={post} />
         </div>
       </div>

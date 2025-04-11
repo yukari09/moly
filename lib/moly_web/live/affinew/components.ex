@@ -116,7 +116,7 @@ defmodule MolyWeb.Affinew.Components do
     <div class="card w-full bg-base-100/5 border border-base-content/10">
       <figure
         :if={featrue_image_src(@post)}
-        class="aspect-video overflow-hidden !block relative text-base-content rounded-t-lg"
+        class="aspect-[3/2] overflow-hidden !block relative text-base-content rounded-t-lg"
       >
         <.link
           navigate={

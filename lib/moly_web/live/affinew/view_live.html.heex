@@ -1,4 +1,4 @@
-  <div class="w-full max-w-screen-2xl mx-auto px-4 lg:px-10">
+  <div class="w-full max-w-screen-xl mx-auto px-4 lg:px-10">
     <.breadcrumb 
       :if={affiliate_category = Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_category"])}
       class="!mt-0 py-6 hidden md:flex" 
@@ -20,10 +20,13 @@
         <.figure_image post={@post} class="hidden md:block" />
         <div class="mt-4 md:mt-8"><.view_category post={@post} /></div>
         <div class="mt-4 md:mt-8"><.view_tags post={@post} /></div>
+        <div class="mt-4 md:mt-8 space-y-4">
+          <.card post={post} :for={post <- Enum.slice(@posts,0..1)} />
+        </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-6 mt-4 mb-8  lg:mt-20 lg:mb-20 border-t border-base-content/10 pt-4 md:pt-20">
-      <.card post={post} :for={post <- @posts} />
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 mb-8  lg:mt-20 lg:mb-20 border-t border-base-content/10 pt-4 md:pt-20">
+      <.card post={post} :for={post <- Enum.slice(@posts,2..-1)} />
     </div>
   </div>
