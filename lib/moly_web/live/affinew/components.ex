@@ -123,9 +123,8 @@ defmodule MolyWeb.Affinew.Components do
             Moly.Helper.get_in_from_keys(@post, [:source, "post_name"])
             |> MolyWeb.Affinew.Links.view()
           }
-          class="block aspect-[3/2] w-full"
         >
-        <img class="w-full" src={featrue_image_src(@post)} /></.link>
+        <img class="w-full h-[calc(100%/1.5)]" src={featrue_image_src(@post)} /></.link>
         <.link
           :if={
             affiliate_category = Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_category"])
