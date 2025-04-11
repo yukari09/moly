@@ -109,7 +109,7 @@ config :ex_aws, :s3,
 config :moly, Moly.Cluster,
   url: "https://localhost:9200",
   username: "elastic",
-  password: "83233167",
+  password: "Q5je7QitS74WKGBl*cxg",
   json_library: JSON,
   http_client_adapter:
     {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]},

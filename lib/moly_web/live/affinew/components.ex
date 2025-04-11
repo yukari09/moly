@@ -160,7 +160,7 @@ defmodule MolyWeb.Affinew.Components do
                 "commission_amount" => commission_amount,
                 "commission_type" => commission_type,
                 "commission_unit" => commission_unit
-              } = c <- commissions
+              } = c <- Enum.slice(commissions, 0..2)
             }
             class="marker:italic h-6 text-loose overflow-hidden"
           >
@@ -519,7 +519,8 @@ defmodule MolyWeb.Affinew.Components do
     ~H"""
     <div class="grid grid-cols-2 gap-4 px-4 py-6 bg-green-light/10">
       <div class="text-sm font-medium">Min Payout Threshold</div>
-      <div><span class="text-lg text-primary font-medium">{Moly.Helper.get_in_from_keys(@post, [:source, "min_payout_threshold"])}</span> <span class="text-xs text-base-content/60">{Moly.Helper.get_in_from_keys(@post, [:source, "currency"])}</span></div>
+      <div :if={Moly.Helper.get_in_from_keys(@post, [:source, "min_payout_threshold"]) > 0}><span class="text-lg text-primary font-medium">{Moly.Helper.get_in_from_keys(@post, [:source, "min_payout_threshold"])}</span> <span class="text-xs text-base-content/60">{Moly.Helper.get_in_from_keys(@post, [:source, "currency"])}</span></div>
+      <div :if={Moly.Helper.get_in_from_keys(@post, [:source, "duration_months"]) == 0}>Not specified</div>
       <div class="text-sm font-medium">Payment Method</div>
       <div class="text-sm font-medium">{Moly.Helper.get_in_from_keys(@post, [:source, "payment_method"]) |> Enum.join(",")}</div>
       <div class="text-sm font-medium">Duration Months</div>
@@ -590,9 +591,11 @@ defmodule MolyWeb.Affinew.Components do
     ~H"""
     <span class="text-sm md:text-base">
       <span class="font-semibold text-orange">
-        <span :if={@commission_unit != "%"}>{commission_unit_option(@commission_unit)}</span>{Moly.Helper.format_to_int(@commission_amount,1)}<span :if={
-          @commission_unit == "%"
-        }>%</span>
+        <span :if={@commission_unit != "%"}>
+          {commission_unit_option(@commission_unit)}
+          {Moly.Helper.format_to_int(@commission_amount,2)}
+        </span>
+        <span :if={@commission_unit == "%"}>{Moly.Helper.format_to_int(@commission_amount,1)}%</span>
       </span>
       <span>
       {@commission_notes || (@commission_type == "bounty" && "Fixed Bounty") ||

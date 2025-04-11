@@ -17,7 +17,7 @@ defmodule MolyWeb.AdminAffiliateLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     Ash.get!(Moly.Contents.Post, id, actor: socket.assigns.current_user)
-    |> Ash.destroy!(action: :destroy_post, actor: socket.assigns.current_user)
+    |> Ash.update!(%{post_status: :trash}, action: :update_post_status, actor: socket.assigns.current_user)
 
     socket = push_patch(socket, to: ~p"/admin/affiliates?#{socket.assigns.params}")
     {:noreply, socket}
