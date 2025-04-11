@@ -71,6 +71,6 @@ defmodule Moly.Accounts.Emails do
       |> Moly.Mailer.deliver!()
     end
 
-    Moly.Utilities.cache_get_or_put(key, deliver_email, :timer.minutes(5))
+    Moly.Utilities.cache_get_or_put(key, deliver_email, :timer.minutes(15))
   end
 end

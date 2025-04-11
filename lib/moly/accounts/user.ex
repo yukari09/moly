@@ -16,13 +16,13 @@ defmodule Moly.Accounts.User do
     end
 
     strategies do
-      password :password do
-        identity_field(:email)
+      # password :password do
+      #   identity_field(:email)
 
-        resettable do
-          sender(Moly.Accounts.User.Senders.SendPasswordResetEmail)
-        end
-      end
+      #   resettable do
+      #     sender(Moly.Accounts.User.Senders.SendPasswordResetEmail)
+      #   end
+      # end
 
       google do
         client_id(Moly.Secrets)
