@@ -520,7 +520,7 @@ defmodule MolyWeb.Affinew.Components do
     <div class="grid grid-cols-2 gap-4 px-4 py-6 bg-green-light/10">
       <div class="text-sm font-medium">Min Payout Threshold</div>
       <div :if={Moly.Helper.get_in_from_keys(@post, [:source, "min_payout_threshold"]) > 0}><span class="text-lg text-primary font-medium">{Moly.Helper.get_in_from_keys(@post, [:source, "min_payout_threshold"])}</span> <span class="text-xs text-base-content/60">{Moly.Helper.get_in_from_keys(@post, [:source, "currency"])}</span></div>
-      <div :if={Moly.Helper.get_in_from_keys(@post, [:source, "duration_months"]) == 0}>Not specified</div>
+      <div :if={Moly.Helper.get_in_from_keys(@post, [:source, "min_payout_threshold"]) == 0}>Not specified</div>
       <div class="text-sm font-medium">Payment Method</div>
       <div class="text-sm font-medium">{Moly.Helper.get_in_from_keys(@post, [:source, "payment_method"]) |> Enum.join(",")}</div>
       <div class="text-sm font-medium">Duration Months</div>
@@ -539,14 +539,14 @@ defmodule MolyWeb.Affinew.Components do
   def view_description(assigns) do
     ~H"""
     <h2 class="text-xl mb-4 font-medium">Description</h2>
-    <div class="prose text-base-content/70">{Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> to_safe_html}</div>
+    <div class="prose max-w-none text-base-content/70">{Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> to_safe_html}</div>
     """
   end
 
   def view_signup_requirements(assigns) do
     ~H"""
     <h2 class="text-xl mb-4 font-medium">Signup Requirements</h2>
-    <div class="prose  text-base-content/70">{Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_signup_requirements"])  |> to_safe_html}</div>
+    <div class="prose max-w-none  text-base-content/70">{Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_signup_requirements"])  |> to_safe_html}</div>
     """
   end
 
