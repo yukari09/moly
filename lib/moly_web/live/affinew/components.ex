@@ -116,15 +116,14 @@ defmodule MolyWeb.Affinew.Components do
     <div class="card w-full bg-base-100/5 border border-base-content/10">
       <figure
         :if={featrue_image_src(@post)}
-        class="relative text-base-content rounded-t-lg"
+        class="aspect-[3/2] overflow-hidden !block relative text-base-content rounded-t-lg"
       >
         <.link
           navigate={
             Moly.Helper.get_in_from_keys(@post, [:source, "post_name"])
             |> MolyWeb.Affinew.Links.view()
           }
-        >
-        <img class="w-full h-[calc(100%/1.5)]" src={featrue_image_src(@post)} /></.link>
+        ><img class="object-center" src={featrue_image_src(@post)} /></.link>
         <.link
           :if={
             affiliate_category = Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_category"])
