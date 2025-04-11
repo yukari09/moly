@@ -593,7 +593,7 @@ defmodule MolyWeb.Affinew.Components do
       <span class="font-semibold text-orange">
         <span :if={@commission_unit != "%"}>
           {commission_unit_option(@commission_unit)}
-          {Moly.Helper.format_to_int(@commission_amount,2)}
+          {Moly.Helper.format_to_int(@commission_amount,1)}
         </span>
         <span :if={@commission_unit == "%"}>{Moly.Helper.format_to_int(@commission_amount,1)}%</span>
       </span>
