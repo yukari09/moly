@@ -76,7 +76,7 @@ defmodule Moly.MixProject do
        app: false,
        compile: false,
        depth: 1},
-      {:swoosh, "~> 1.8.2"},
+      {:swoosh, "~> 1.8.4"},
       {:finch, "~> 0.19"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},

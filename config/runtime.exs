@@ -108,9 +108,14 @@ if config_env() == :prod do
   # Also, you may need to configure the Swoosh API client of your choice if you
   # are not using SMTP. Here is an example of the configuration:
   #
+
+  # config :moly, Moly.Mailer,
+  #   adapter: Resend.Swoosh.Adapter,
+  #   api_key: System.fetch_env!("RESEND_API_KEY")
+
   config :moly, Moly.Mailer,
-    adapter: Resend.Swoosh.Adapter,
-    api_key: System.fetch_env!("RESEND_API_KEY")
+    adapter: Swoosh.Adapters.Brevo,
+    api_key: System.fetch_env!("BREVO_API_KEY")
 
   #
   # For this example you need include a HTTP client required by Swoosh API client.
