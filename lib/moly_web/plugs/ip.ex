@@ -6,12 +6,16 @@ defmodule MolyWeb.Plugs.Ip do
   def init(default), do: default
 
   def call(conn, _params) do
-    user_ip = get_req_header(conn, "x-forwarded-for")
+    get_req_header(conn, "x-forwarded-for")
     |> List.first()
-    |> String.split(",")
-    |> List.first()
-    |> String.trim()
-    Logger.info("User IP: #{user_ip}")
+    |> case do
+      nil -> conn
+      ip ->
+        String.split(ip, ",")
+        |> List.first()
+        |> String.trim()
+      Logger.info("User IP: #{ip}")
+    end
     conn
   end
 end
