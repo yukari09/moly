@@ -91,15 +91,7 @@ defmodule MolyWeb.Router do
 
     ash_authentication_live_session :authenticated_maybe_routes,
       on_mount: {MolyWeb.LiveUserAuth, :live_user_optional} do
-      # v1
-      # live("/", Affiliate.PageIndexLive)
-      # live("/browse", Affiliate.BrowseLive)
-      # live("/browse/:slug", Affiliate.BrowseLive)
-      # live("/search", Affiliate.SearchLive)
-      # live("/affiliates/:slug", Affiliate.AffiliatesLive)
-      # live("/user/page/:username", Affiliate.UserPageLive)
-      # live("/affiliate/:post_name", Affiliate.ViewLive)
-      # v2
+
       live("/", Affinew.IndexLive)
       live("/results", Affinew.ListResultsLive)
       live("/browse", Affinew.ListLive)
