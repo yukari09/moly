@@ -14,6 +14,7 @@ defmodule MolyWeb.Router do
     plug(:put_secure_browser_headers)
     plug(:load_from_session)
     plug(MolyWeb.Plugs.Ip, [])
+    plug(MolyWeb.Plugs.AllowControies, [])
   end
 
   pipeline :api do
