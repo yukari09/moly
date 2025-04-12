@@ -7,6 +7,8 @@ defmodule Moly.Accounts.Emails do
 
   require Logger
 
+  @max_emails_per_day 100
+
   def deliver_email_confirmation_instructions(user, url) do
     if !url do
       raise "Cannot deliver confirmation instructions without a url"
@@ -65,21 +67,24 @@ defmodule Moly.Accounts.Emails do
     if count > 1 do
       Logger.warning("Email limit reached for #{send_type} to #{to}.")
     else
-      :timer.sleep(10_000)
-      from_email_name = Application.get_env(:moly, :email_name)
-      from_email_address = Application.get_env(:moly, :email_address)
+      if Enum.count(latest_24hour_send_emails) >= @max_emails_per_day do
+        Logger.warning("Email limit reached for #{send_type} to #{to}.")
+      else
+        from_email_name = Application.get_env(:moly, :email_name)
+        from_email_address = Application.get_env(:moly, :email_address)
 
-      new()
-      |> from({from_email_name, from_email_address})
-      |> to(to_string(to))
-      |> subject(subject)
-      |> put_provider_option(:track_links, "None")
-      |> html_body(body)
-      |> Moly.Mailer.deliver!()
+        new()
+        |> from({from_email_name, from_email_address})
+        |> to(to_string(to))
+        |> subject(subject)
+        |> put_provider_option(:track_links, "None")
+        |> html_body(body)
+        |> Moly.Mailer.deliver!()
 
-      ttl = Cachex.ttl!(:cache, key)
-      new_value = [{send_type, to} | latest_24hour_send_emails]
-      Cachex.put(:cache, key, new_value, expire: ttl)
+        ttl = Cachex.ttl!(:cache, key)
+        new_value = [{send_type, to} | latest_24hour_send_emails]
+        Cachex.put(:cache, key, new_value, expire: ttl)
+      end
     end
   end
 end
