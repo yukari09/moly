@@ -5,6 +5,8 @@ defmodule Moly.Accounts.Emails do
 
   import Swoosh.Email
 
+  require Logger
+
   def deliver_email_confirmation_instructions(user, url) do
     if !url do
       raise "Cannot deliver confirmation instructions without a url"
@@ -54,13 +56,16 @@ defmodule Moly.Accounts.Emails do
   #   * Bamboo - https://hexdocs.pm/bamboo
   #
   defp deliver(to, send_type, subject, body) do
-    key = "sender:#{to}:#{send_type}"
+    key = "sender_email_send_list"
+    latest_24hour_send_emails = Moly.Utilities.cache_get_or_put(key, fn -> [] end, :timer.hours(24))
 
-    deliver_email = fn ->
-      :timer.sleep(30_000)
-      # Simulate a delay of 30 seconds before sending the email
-      IO.puts("Sending email to #{to} with subject #{subject} and body #{body}")
+    # Count the number of this email type and address in the last 24 hours
+    count = Enum.count(latest_24hour_send_emails, fn {type, email} -> type == send_type and email == to end)
 
+    if count > 1 do
+      Logger.warning("Email limit reached for #{send_type} to #{to}.")
+    else
+      :timer.sleep(10_000)
       from_email_name = Application.get_env(:moly, :email_name)
       from_email_address = Application.get_env(:moly, :email_address)
 
@@ -71,8 +76,10 @@ defmodule Moly.Accounts.Emails do
       |> put_provider_option(:track_links, "None")
       |> html_body(body)
       |> Moly.Mailer.deliver!()
-    end
 
-    Moly.Utilities.cache_get_or_put(key, deliver_email, :timer.minutes(10))
+      ttl = Cachex.ttl!(:cache, key)
+      new_value = [{send_type, to} | latest_24hour_send_emails]
+      Cachex.put(:cache, key, new_value, expire: ttl)
+    end
   end
 end

@@ -10,7 +10,6 @@ defmodule Moly.Utilities do
         else
           nil
         end
-
       fetched_value ->
         fetched_value
     end
