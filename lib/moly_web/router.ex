@@ -13,8 +13,7 @@ defmodule MolyWeb.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(:load_from_session)
-    plug(MolyWeb.Plugs.Ip, [])
-    plug(MolyWeb.Plugs.AllowControies, [])
+    plug(MolyWeb.Plugs.GeoBlocking, [deny_countries: ["VN"]])
   end
 
   pipeline :api do

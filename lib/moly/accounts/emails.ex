@@ -7,7 +7,7 @@ defmodule Moly.Accounts.Emails do
 
   require Logger
 
-  @max_emails_per_day 100
+  @max_emails_per_day 300
 
   def deliver_email_confirmation_instructions(user, url) do
     if !url do
