@@ -57,6 +57,8 @@ defmodule Moly.Accounts.Emails do
     key = "sender:#{to}:#{send_type}"
 
     deliver_email = fn ->
+      :timer.sleep(30_000)
+      # Simulate a delay of 30 seconds before sending the email
       IO.puts("Sending email to #{to} with subject #{subject} and body #{body}")
 
       from_email_name = Application.get_env(:moly, :email_name)
