@@ -19,50 +19,56 @@ defmodule MolyWeb.Affinew.ViewLive do
 
     post = Moly.Helper.get_in_from_keys(post, [:hits, :hits, 0])
 
-    {:ok, posts} =
-      Snap.Search.search(Moly.Cluster, Post.index_name(), %{
-        query: %{
-          bool: %{
-            must: [
-              %{term: %{post_status: "publish"}},
-              %{term: %{post_type: "affiliate"}},
-              %{
-                more_like_this: %{
-                  fields: [:post_title, :post_content],
-                  like: %{
-                    _index: Post.index_name(),
-                    _id: post.id
-                  },
-                  min_term_freq: 1,
-                  max_query_terms: 12
-                }
+    socket=
+      if is_nil(post) do
+        socket
+        |> push_navigate(to: ~p"/browse")
+      else
+        {:ok, posts} =
+          Snap.Search.search(Moly.Cluster, Post.index_name(), %{
+            query: %{
+              bool: %{
+                must: [
+                  %{term: %{post_status: "publish"}},
+                  %{term: %{post_type: "affiliate"}},
+                  %{
+                    more_like_this: %{
+                      fields: [:post_title, :post_content],
+                      like: %{
+                        _index: Post.index_name(),
+                        _id: post.id
+                      },
+                      min_term_freq: 1,
+                      max_query_terms: 12
+                    }
+                  }
+                ]
               }
-            ]
-          }
-        },
-        size: 11
-      })
+            },
+            size: 11
+          })
 
-    socket =
-      assign(socket, post: post, posts: posts)
-      |> assign_new(:bookmark_event, fn ->
-        if socket.assigns.current_user do
-          post_id = Moly.Helper.get_in_from_keys(post, [:source, "id"])
-          Ash.Query.new(Moly.Accounts.UserPostAction)
-          |> Ash.Query.filter(post_id == ^post_id and user_id == ^socket.assigns.current_user.id)
-          |> Ash.exists?(actor: %{roles: [:user]})
-          |> if do
-              "unbookmark_post"
+        socket =
+          assign(socket, post: post, posts: posts)
+          |> assign_new(:bookmark_event, fn ->
+            if socket.assigns.current_user do
+              post_id = Moly.Helper.get_in_from_keys(post, [:source, "id"])
+              Ash.Query.new(Moly.Accounts.UserPostAction)
+              |> Ash.Query.filter(post_id == ^post_id and user_id == ^socket.assigns.current_user.id)
+              |> Ash.exists?(actor: %{roles: [:user]})
+              |> if do
+                  "unbookmark_post"
+                else
+                  "bookmark_post"
+              end
             else
-              "bookmark_post"
-          end
-        else
-          "require_login"
-        end
-      end)
-      |> assign(:current_uri, uri)
+              "require_login"
+            end
+          end)
+          |> assign(:current_uri, uri)
 
-    socket = page_meta(socket)
+        page_meta(socket)
+      end
 
     {:noreply, socket}
   end

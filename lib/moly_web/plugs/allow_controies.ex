@@ -7,7 +7,7 @@ defmodule MolyWeb.Plugs.AllowControies do
 
   def call(conn, _default) do
 
-    deny_country = []
+    deny_country = ["VN"]
 
     country_code =
       Plug.Conn.get_req_header(conn,"cf-ipcountry")
