@@ -153,9 +153,15 @@ defmodule MolyWeb.Layouts do
   def nav_categories() do
     [
       {"Browse", MolyWeb.Affinew.Links.programs()},
-      {"Categories", MolyWeb.Affinew.Links.under_construction()},
-      {"News", MolyWeb.Affinew.Links.under_construction()},
-      {"Resources", MolyWeb.Affinew.Links.under_construction()}
+      {"AI & Tech", MolyWeb.Affinew.Links.term("ai-technology")},
+      {"Financial", MolyWeb.Affinew.Links.term("financial-insurance")},
+      {"SaaS", MolyWeb.Affinew.Links.term("saas-solutions")}
     ]
+    # [
+    #   {"Browse", MolyWeb.Affinew.Links.programs()},
+    #   {"Categories", MolyWeb.Affinew.Links.under_construction()},
+    #   {"News", MolyWeb.Affinew.Links.under_construction()},
+    #   {"Resources", MolyWeb.Affinew.Links.under_construction()}
+    # ]
   end
 end

@@ -117,7 +117,6 @@
                 <.input
                   label={(i == 0 && "Amount") || nil}
                   type="number"
-                  step="any"
                   field={@form[:post_meta]}
                   field_subfix={field_subfix("meta_value", i, 1)}
                   value={commission_value(commission, :commission_amount)}
@@ -579,7 +578,7 @@
 
           case "integer":
               const intValue = parseFloat(value);
-              return !isNaN(intValue) && (isRequired ? Number.isInteger(intValue) : true);
+              return !isNaN(numValue) && value.trim() !== ""
 
           case "list":
               let listValue = Array.isArray(value) ? value : (typeof value === "string" ? value.split(",") : []);

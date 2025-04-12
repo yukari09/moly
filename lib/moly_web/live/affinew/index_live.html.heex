@@ -15,7 +15,7 @@
           </div>
           <ul class="flex items-center text-sm font-medium mx-auto gap-8 ">
             <li :for={{label, patch} <- MolyWeb.Layouts.nav_categories()}>
-              <.link navigate={patch}>{label}</.link>
+              <.link navigate={patch} class="hover:text-primary">{label}</.link>
             </li>
           </ul>
         </div>
@@ -99,7 +99,7 @@
       </div>
       <ul class="menu mt-4 w-full">
         <!-- Sidebar content here -->
-        <li :for={{label, patch} <- MolyWeb.Layouts.nav_categories()}><.link navigate={patch}>{label}</.link></li>
+        <li :for={{label, patch} <- MolyWeb.Layouts.nav_categories()}><.link navigate={patch} class="hover:text-primary">{label}</.link></li>
       </ul>
     </div>
   </div>
