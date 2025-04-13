@@ -58,35 +58,35 @@ defmodule Moly.Accounts.Emails do
   #   * Bamboo - https://hexdocs.pm/bamboo
   #
   defp deliver(to, send_type, subject, body) do
-    key = "sender_email_send_list"
-    latest_24hour_send_emails = Moly.Utilities.cache_get_or_put(key, fn -> [] end, :timer.hours(24))
+    # key = "sender_email_send_list"
+    # latest_24hour_send_emails = Moly.Utilities.cache_get_or_put(key, fn -> [] end, :timer.hours(24))
 
-    # Count the number of this email type and address in the last 24 hours
-    count = Enum.count(latest_24hour_send_emails, fn {type, email} -> type == send_type and email == to end)
+    # # Count the number of this email type and address in the last 24 hours
+    # count = Enum.count(latest_24hour_send_emails, fn {type, email} -> type == send_type and email == to end)
 
-    if count > 1 do
-      Logger.warning("Email limit reached for #{send_type} to #{to}.")
-    else
-      if Enum.count(latest_24hour_send_emails) >= @max_emails_per_day do
-        Logger.warning("Email limit reached for #{send_type} to #{to}.")
-      else
-        :timer.sleep(500)
-        # Send the email
-        from_email_name = Application.get_env(:moly, :email_name)
-        from_email_address = Application.get_env(:moly, :email_address)
+    # if count > 1 do
+    #   Logger.warning("Email limit reached for #{send_type} to #{to}.")
+    # else
+    #   if Enum.count(latest_24hour_send_emails) >= @max_emails_per_day do
+    #     Logger.warning("Email limit reached for #{send_type} to #{to}.")
+    #   else
+    #     :timer.sleep(500)
+    #     # Send the email
+    #     from_email_name = Application.get_env(:moly, :email_name)
+    #     from_email_address = Application.get_env(:moly, :email_address)
 
-        new()
-        |> from({from_email_name, from_email_address})
-        |> to(to_string(to))
-        |> subject(subject)
-        |> put_provider_option(:track_links, "None")
-        |> html_body(body)
-        |> Moly.Mailer.deliver!()
+    #     new()
+    #     |> from({from_email_name, from_email_address})
+    #     |> to(to_string(to))
+    #     |> subject(subject)
+    #     |> put_provider_option(:track_links, "None")
+    #     |> html_body(body)
+    #     |> Moly.Mailer.deliver!()
 
-        ttl = Cachex.ttl!(:cache, key)
-        new_value = [{send_type, to} | latest_24hour_send_emails]
-        Cachex.put(:cache, key, new_value, expire: ttl)
-      end
-    end
+    #     ttl = Cachex.ttl!(:cache, key)
+    #     new_value = [{send_type, to} | latest_24hour_send_emails]
+    #     Cachex.put(:cache, key, new_value, expire: ttl)
+    #   end
+    # end
   end
 end
