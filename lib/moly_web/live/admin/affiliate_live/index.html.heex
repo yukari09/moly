@@ -201,8 +201,9 @@
 >
   <.header size="md" title="Modify Affiliate" />
 
-   <.form :let={f} for={@post_form} class="mt-6" phx-submit="update-post">
+   <.form :let={f} for={@post_form} class="mt-4" phx-submit="update-post">
     <.input field={f[:post_title]} label="Affiliate Title" class="mb-6" />
+    <div class="my-4"><.textarea roles="6" label="Excerpt" field={f[:post_excerpt]} /></div>
     <div
       id="post-editor"
       phx-hook="DescriptionEditor"
