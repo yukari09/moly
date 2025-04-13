@@ -578,7 +578,7 @@
 
           case "integer":
               const intValue = parseFloat(value);
-              return !isNaN(numValue) && value.trim() !== ""
+              return !isNaN(numValue)
 
           case "list":
               let listValue = Array.isArray(value) ? value : (typeof value === "string" ? value.split(",") : []);
