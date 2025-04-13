@@ -70,7 +70,7 @@ defmodule Moly.Accounts.Emails do
       if Enum.count(latest_24hour_send_emails) >= @max_emails_per_day do
         Logger.warning("Email limit reached for #{send_type} to #{to}.")
       else
-        :timer.sleep(1_000)
+        :timer.sleep(500)
         # Send the email
         from_email_name = Application.get_env(:moly, :email_name)
         from_email_address = Application.get_env(:moly, :email_address)
