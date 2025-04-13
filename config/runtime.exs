@@ -109,10 +109,6 @@ if config_env() == :prod do
   # are not using SMTP. Here is an example of the configuration:
   #
 
-  # config :moly, Moly.Mailer,
-  #   adapter: Resend.Swoosh.Adapter,
-  #   api_key: System.fetch_env!("RESEND_API_KEY")
-
   config :moly, Moly.Mailer,
     adapter: Swoosh.Adapters.Brevo,
     api_key: System.fetch_env!("BREVO_API_KEY")
