@@ -4,7 +4,7 @@ defmodule MolyWeb.Affinew.Components do
   alias MolyWeb.Affinew.Links
   import MolyWeb.Affinew.Helper
 
-  def commission_unit_option, do: [{"USD", "$"}, {"EUR", "€"}, {"%", "%"}, {"$", "$"}]
+  def commission_unit_option, do: [{"USD", "$"}, {"EUR", "€"}, {"%", "%"}, {"$", "$"}, {"GBP", "£"}, {"JPY", "¥"}]
 
   def payment_cycle_options,
     do: [

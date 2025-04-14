@@ -1,0 +1,60 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches: [ affinew ]
+  pull_request:
+    branches: [ affinew ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    # runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Cache Docker layers for amd64
+        id: cache-amd64
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache-amd64
+          key: ${{ runner.os }}-docker-amd64-${{ hashFiles('Dockerfile') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-amd64-
+
+      - name: Cache Docker layers for arm64
+        id: cache-arm64
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache-arm64
+          key: ${{ runner.os }}-docker-arm64-${{ hashFiles('Dockerfile') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-arm64-
+
+      - name: Build and Push Docker images
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name == 'push' }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
+          cache-from: |
+            type=local,src=/tmp/.buildx-cache-amd64
+            type=local,src=/tmp/.buildx-cache-arm64
+          cache-to: |
+            type=local,dest=/tmp/.buildx-cache-amd64,mode=max,platform=linux/amd64
+            type=local,dest=/tmp/.buildx-cache-arm64,mode=max,platform=linux/arm64
