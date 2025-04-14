@@ -90,10 +90,11 @@ config :moly,
     "486343447885-9jg87vj9h0qafcdvu4k2ugb7dggbsion.apps.googleusercontent.com",
   google_oauth2_redirect_uri: "http://localhost:4000/auth/user/google/callback",
   google_oauth2_client_secret: "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",
-  email_name: "moly@moly.dev",
+  email_name: "Affinew",
   email_address: "moly@moly.dev",
   imagor_endpoint: "http://localhost:8000",
-  imagor_secret: "WpozRdSDvTKVEPkOQ+/mSWEzIPdjXRFhYLB62XBN12knQ2SRvjMmsOJ/kNJT8UgI"
+  imagor_secret: "WpozRdSDvTKVEPkOQ+/mSWEzIPdjXRFhYLB62XBN12knQ2SRvjMmsOJ/kNJT8UgI",
+  email_group: "Affinew1:moly@moly.dev:api_key1,Affinew2:no-reply@moly.dev:api_key2"
 
 config :ex_aws,
   region: "us-east-1",

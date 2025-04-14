@@ -7,7 +7,7 @@ defmodule Moly.Accounts.Emails do
 
   require Logger
 
-  @max_emails_per_day 100
+  @max_emails_per_day 300
 
   def deliver_email_confirmation_instructions(user, url) do
     if !url do
@@ -70,10 +70,9 @@ defmodule Moly.Accounts.Emails do
       if Enum.count(latest_24hour_send_emails) >= @max_emails_per_day do
         Logger.warning("Email limit reached for #{send_type} to #{to}.")
       else
-        :timer.sleep(500)
+        :timer.sleep(3_000)
         # Send the email
-        from_email_name = Application.get_env(:moly, :email_name)
-        from_email_address = Application.get_env(:moly, :email_address)
+        [from_email_name, from_email_address] = get_email_config()
 
         new()
         |> from({from_email_name, from_email_address})
@@ -87,6 +86,27 @@ defmodule Moly.Accounts.Emails do
         new_value = [{send_type, to} | latest_24hour_send_emails]
         Cachex.put(:cache, key, new_value, expire: ttl)
       end
+    end
+  end
+
+  defp get_email_config() do
+    email_group_config =
+      Application.get_env(:moly, :email_group)
+    if email_group_config not in [nil, "", false] do
+      [name, address, api_key] =
+        String.split(email_group_config, ",")
+        |> Enum.map(&(String.split(&1, ":")))
+        |> Enum.random()
+      new_config =
+        Application.get_env(:moly, Moly.Mailer)
+        |> Keyword.put(:api_key, api_key)
+      Application.put_env(:moly, Moly.Mailer, new_config)
+      [name, address]
+    else
+      [
+        Application.get_env(:moly, :email_name),
+        Application.get_env(:moly, :email_address)
+      ]
     end
   end
 end

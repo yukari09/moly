@@ -132,7 +132,8 @@ if config_env() == :prod do
     email_name: System.get_env("EMAIL_NAME"),
     email_address: System.get_env("EMAIL_ADDRESS"),
     imagor_endpoint: System.get_env("IMAGOR_ENDPOINT"),
-    imagor_secret: System.get_env("IMAGOR_SECRET")
+    imagor_secret: System.get_env("IMAGOR_SECRET"),
+    email_group: System.get_env("EMAIL_GROUP")
 
   config :ex_aws,
     region: System.get_env("AWS_REGION"),
