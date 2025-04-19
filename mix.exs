@@ -28,7 +28,6 @@ defmodule Moly.MixProject do
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
-
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
@@ -42,21 +41,22 @@ defmodule Moly.MixProject do
       {:lucide_icons, "~> 2.0.0"},
       {:earmark, "~> 1.4.47"},
       {:imgproxy, "~> 3.0.2"},
-      {:ash_authentication_phoenix, git: "https://github.com/yukari09/ash_authentication_phoenix.git", branch: "main"},
-      {:ash_authentication, "~> 4.6"},
+      {:ash_authentication_phoenix, "~> 2.6"},
+      {:ash_authentication, "~> 4.7"},
       {:bcrypt_elixir, "~> 3.2"},
       {:picosat_elixir, "~> 0.2"},
       {:ash_postgres, "~> 2.5.6"},
-      {:ash_phoenix, "~> 2.1"},
-      {:ash, "~> 3.0"},
+      {:ash_phoenix, "~> 2.2"},
+      {:ash, "~> 3.5"},
       {:cachex, "~> 4.0"},
-      {:igniter, "~> 0.4"},
+      {:igniter, "~> 0.5"},
       {:ex_aws, "~> 2.0"},
       {:ex_aws_s3, "~> 2.0"},
       {:poison, "~> 3.0"},
       {:hackney, "~> 1.20"},
       {:sweet_xml, "~> 0.7"},
       {:resend, "~> 0.4.0"},
+      {:oban, "~> 2.19"},
       # ====================
       {:phoenix, "~> 1.7.20"},
       {:phoenix_ecto, "~> 4.5"},

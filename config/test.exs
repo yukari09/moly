@@ -1,4 +1,5 @@
 import Config
+config :moly, Oban, testing: :manual
 config :moly, token_signing_secret: "rMReAXZnWynPngElyZK8DM1RugQ9UufE"
 config :ash, disable_async?: true
 config :ash, :missed_notifications, :ignore

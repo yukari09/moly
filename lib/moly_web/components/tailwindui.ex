@@ -758,6 +758,9 @@ defmodule MolyWeb.TailwindUI do
       assigns
       |> assign(:direction_atom, String.to_existing_atom(assigns.direction))
       |> assign(:size_atom, String.to_existing_atom(assigns.size))
+      |> assign(:spacing_classes, spacing_classes)
+      |> assign(:position_classes, position_classes)
+      |> assign(:arrow_classes, arrow_classes)
 
     ~H"""
     <div class="group relative inline-block">
@@ -781,7 +784,7 @@ defmodule MolyWeb.TailwindUI do
             "lg" -> "px-5 py-3 text-lg"
           end,
           # Position classes
-          position_classes[@direction_atom],
+          @position_classes[@direction_atom],
           # Spacing classes
           spacing_classes[@size_atom][@direction_atom],
           @class
@@ -790,7 +793,7 @@ defmodule MolyWeb.TailwindUI do
         {@text}
         <div class={[
           "absolute h-2 w-2 rotate-45 bg-gray-900",
-          arrow_classes[@direction_atom]
+          @arrow_classes[@direction_atom]
         ]}>
         </div>
       </div>

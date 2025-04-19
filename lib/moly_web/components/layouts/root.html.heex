@@ -21,14 +21,8 @@
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&display=swap"
       rel="stylesheet"
     />
-    <link :if={!assigns[:noappcss]} phx-track-static rel="stylesheet" href="/assets/app.css" />
-    <script
-      :if={!assigns[:noappscript]}
-      defer
-      phx-track-static
-      type="text/javascript"
-      src="/assets/app.js"
-    >
+    <link phx-track-static rel="stylesheet" href="/assets/app.css" />
+    <script defer phx-track-static type="text/javascript" src="/assets/app.js">
     </script>
     <script defer data-domain="affinew.com" src="https://analytics.karian.one/js/script.js">
     </script>

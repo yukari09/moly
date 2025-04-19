@@ -75,7 +75,6 @@
   --default-font-variation-settings: "opsz" 32;
 }
 
-
 button[disabled]{
     @apply opacity-50;
 }

@@ -364,7 +364,7 @@ defmodule MolyWeb.Affinew.UserPageLive2 do
             </div>
           </div>
         </div>
-
+        
     <!--start tab-->
         <div class="grow container mx-auto px-2 sm:px-6 lg:px-8">
           <div class="border-b border-gray-200 -mx-2 sm:mx-0 px-2 sm:pb-0">
@@ -403,7 +403,7 @@ defmodule MolyWeb.Affinew.UserPageLive2 do
               >
                 <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
               </.link>
-
+              
     <!-- Page Numbers -->
               <.link
                 :for={page <- @page_meta.page_range}

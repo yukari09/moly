@@ -34,8 +34,6 @@ defmodule MolyWeb.Admin do
       page: "channel:admin:page"
     ]
 
-
-
     Keyword.fetch!(topics, topic_name)
   end
 end

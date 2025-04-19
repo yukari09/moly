@@ -34,20 +34,23 @@ defmodule MolyWeb.Affinew.ListTermLive do
 
     keyword =
       (term_name || slug)
-      |> String.replace("-"," ")
+      |> String.replace("-", " ")
       |> String.capitalize()
 
     socket =
-      assign(socket, posts: posts, params: current_params, page_meta: page_meta, slug: slug, keyword: keyword)
+      assign(socket,
+        posts: posts,
+        params: current_params,
+        page_meta: page_meta,
+        slug: slug,
+        keyword: keyword
+      )
       |> page_title()
 
     {:noreply, socket}
   end
 
-
   defp page_title(socket) do
     assign(socket, :page_title, "#{socket.assigns.keyword} Affiliate Marketing Programs")
   end
-
-
 end

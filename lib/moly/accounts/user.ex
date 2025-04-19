@@ -18,7 +18,8 @@ defmodule Moly.Accounts.User do
     strategies do
       password :password do
         identity_field(:email)
-
+        sign_in_token_lifetime(3600*24*30)
+        require_confirmed_with :confirmed_at
         resettable do
           sender(Moly.Accounts.User.Senders.SendPasswordResetEmail)
         end
@@ -37,7 +38,16 @@ defmodule Moly.Accounts.User do
         monitor_fields([:email])
         confirm_on_create?(true)
         confirm_on_update?(false)
+        require_interaction?(true)
         sender(Moly.Accounts.User.Senders.SendNewUserConfirmationEmail)
+      end
+      confirmation :confirm_change do
+        monitor_fields [:email]
+        confirm_on_create? false
+        confirm_on_update? true
+        confirm_action_name :confirm_change
+        require_interaction? true
+        sender Moly.Accounts.User.Senders.SendEmailChangeConfirmationEmail
       end
     end
   end
@@ -85,6 +95,11 @@ defmodule Moly.Accounts.User do
         description "The password to check for the matching user."
         allow_nil? false
         sensitive? true
+      end
+
+      argument :agreement, :string do
+        description "The agreement to the terms of service."
+        allow_nil? false
       end
 
       # validates the provided email and password and generates a token
@@ -141,6 +156,11 @@ defmodule Moly.Accounts.User do
         description "The proposed password for the user (again), in plain text."
         allow_nil? false
         sensitive? true
+      end
+
+      argument :agreement, :string do
+        description "The agreement to the terms of service."
+        allow_nil? false
       end
 
       change before_action(fn %{arguments: %{email: email}} = changeset, _context ->
@@ -250,6 +270,11 @@ defmodule Moly.Accounts.User do
       description "Send password reset instructions to a user if they exist."
 
       argument :email, :ci_string do
+        allow_nil? false
+      end
+
+      argument :agreement, :string do
+        description "The agreement to the terms of service."
         allow_nil? false
       end
 
@@ -450,7 +475,7 @@ defmodule Moly.Accounts.User do
         email_or_user_info when is_map(email_or_user_info) ->
           name = email_or_user_info["name"]
           username = email_or_user_info["name"] |> String.replace(" ", "")
-          username = username<>Moly.Helper.generate_random_id(2)
+          username = username <> Moly.Helper.generate_random_id(2)
 
           avatar =
             Moly.Utilities.Account.generate_avatar_from_url(email_or_user_info["picture"])

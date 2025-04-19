@@ -8,9 +8,11 @@ defmodule Moly.Accounts.User.Senders.SendPasswordResetEmail do
 
   @impl true
   def send(user, token, _) do
-    Moly.Accounts.Emails.deliver_reset_password_instructions(
-      user,
-      url(~p"/password-reset/#{token}")
-    )
+    email = user.email
+    url = url(~p"/password-reset/#{token}")
+    %{deliver_type: "deliver_reset_password_instructions", deliver_args: [email, url]}
+    |> Moly.Accounts.Emails.new()
+    |>  Oban.insert()
+    :ok
   end
 end

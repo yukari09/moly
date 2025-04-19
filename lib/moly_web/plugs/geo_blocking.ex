@@ -10,9 +10,11 @@ defmodule MolyWeb.Plugs.GeoBlocking do
     country_code = get_country_code(conn)
     ip = get_ip(conn)
     Logger.info("IP: #{ip}, Country code: #{country_code}.\n")
+
     if country_code in deny_countries do
       Logger.info("Deny country #{country_code}.\n")
       body = "Oops not found, try later."
+
       conn
       |> put_resp_content_type("application/json")
       |> send_resp(404, body)
@@ -36,11 +38,13 @@ defmodule MolyWeb.Plugs.GeoBlocking do
     get_req_header(conn, "x-forwarded-for")
     |> List.first()
     |> case do
-      nil -> nil
+      nil ->
+        nil
+
       ip ->
         String.split(ip, ",")
         |> List.first()
         |> String.trim()
-      end
+    end
   end
 end

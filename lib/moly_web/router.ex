@@ -3,8 +3,6 @@ defmodule MolyWeb.Router do
 
   use AshAuthentication.Phoenix.Router
 
-  # import AshAdmin.Router
-
   pipeline :browser do
     plug(:accepts, ["html"])
     plug(:fetch_session)
@@ -13,7 +11,7 @@ defmodule MolyWeb.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(:load_from_session)
-    plug(MolyWeb.Plugs.GeoBlocking, [deny_countries: ["VN"]])
+    plug(MolyWeb.Plugs.GeoBlocking, deny_countries: [])
   end
 
   pipeline :api do
@@ -57,40 +55,40 @@ defmodule MolyWeb.Router do
 
     get("/page/:post_name", PageController, :page)
 
+    confirm_route(
+      Moly.Accounts.User,
+      :confirm_new_user,
+      live_view: MolyWeb.Account.ConfirmNewUser,
+      auth_routes_prefix: "/auth",
+      path: "/auth/user/confirm_new_user",
+      token_as_route_param?: false,
+      layout: false
+    )
+
     auth_routes(AuthController, Moly.Accounts.User, path: "/auth")
     sign_out_route(AuthController)
 
-    # Remove these if you'd like to use your own authentication views
-    sign_in_route(
-      register_path: "/register",
-      reset_path: "/reset",
-      auth_routes_prefix: "/auth",
-      on_mount: [{MolyWeb.LiveUserAuth, :live_no_user}],
-      overrides: [
-        MolyWeb.AuthOverrides,
-        AshAuthentication.Phoenix.Overrides.Default
-      ]
-    )
 
-    # Remove this if you do not want to use the reset password feature
-    reset_route(
-      auth_routes_prefix: "/auth",
-      overrides: [
-        MolyWeb.AuthOverrides,
-        AshAuthentication.Phoenix.Overrides.Default
-      ]
-    )
+    ash_authentication_live_session :unauthenticated_routes,
+      on_mount: {MolyWeb.LiveUserAuth, :live_no_user},
+      session: {AshAuthentication.Phoenix.Router, :generate_session, [
+        %{"auth_routes_prefix" => "/auth"}
+      ]},
+      layout: false do
+      live("/sign-in", Account.SignInLive)
+      live("/register", Account.SignUpLive)
+      live("/reset", Account.ResetLive)
+      live("/password-reset/:token", Account.PasswordResetLive)
+    end
 
     ash_authentication_live_session :authenticated_routes,
       on_mount: {MolyWeb.LiveUserAuth, :live_user_required} do
-      # live("/affiliate/submit", Affiliate.SubmitLive)
       live("/affiliate/submit", Affinew.SubmitLive)
       live("/user/verify-email", Affinew.VerifyEmailLive)
     end
 
     ash_authentication_live_session :authenticated_maybe_routes,
       on_mount: {MolyWeb.LiveUserAuth, :live_user_optional} do
-
       live("/", Affinew.IndexLive)
       live("/results", Affinew.ListResultsLive)
       live("/browse", Affinew.ListLive)

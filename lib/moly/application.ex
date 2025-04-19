@@ -11,6 +11,7 @@ defmodule Moly.Application do
       MolyWeb.Telemetry,
       Moly.Repo,
       {DNSCluster, query: Application.get_env(:moly, :dns_cluster_query) || :ignore},
+      {Oban, Application.fetch_env!(:moly, Oban)},
       {Phoenix.PubSub, name: Moly.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Moly.Finch},

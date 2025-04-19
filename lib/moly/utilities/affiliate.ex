@@ -6,7 +6,7 @@ defmodule Moly.Utilities.Affiliate do
   alias Moly.Contents.Post
   alias Moly.Terms.Term
 
-  @default_image_size ["xxlarge", "xlarge", "large", "medium", "thumbnail"]
+  # @default_image_size ["xxlarge", "xlarge", "large", "medium", "thumbnail"]
 
   def link_view(post), do: ~p"/affiliate/#{post.post_name}"
 

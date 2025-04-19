@@ -20,17 +20,21 @@ defmodule MolyWeb.Affinew.SubmitLive do
     socket = push_event(socket, "validateForm", %{})
     upload_media = socket.assigns.uploads.media
     upload_media_first_entry = socket.assigns.uploads.media.entries |> List.first()
+
     socket =
       if upload_media_first_entry do
         upload_errors(upload_media, upload_media_first_entry)
         |> case do
           [error_msg | _] ->
             put_flash(socket, :error, error_to_string(error_msg))
-          _ -> socket
+
+          _ ->
+            socket
         end
       else
         socket
       end
+
     {:noreply, socket}
   end
 
@@ -134,6 +138,7 @@ defmodule MolyWeb.Affinew.SubmitLive do
     post_name = Map.get(params, "post_name")
     is_active_user = Moly.Utilities.Account.is_active_user(socket.assigns.current_user)
     is_admin = :admin in socket.assigns.current_user.roles
+
     post =
       if is_nil(post_name) do
         %Moly.Contents.Post{}
@@ -173,7 +178,7 @@ defmodule MolyWeb.Affinew.SubmitLive do
       |> allow_upload(:media,
         accept: ~w(.jpg .jpeg .png .webp),
         max_entries: 1,
-        max_file_size: is_admin && 32_000_000 || 4_000_000
+        max_file_size: (is_admin && 32_000_000) || 4_000_000
       )
       |> assign(:is_active_user, is_active_user)
     else

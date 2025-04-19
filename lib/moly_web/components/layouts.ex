@@ -157,6 +157,7 @@ defmodule MolyWeb.Layouts do
       {"Financial", MolyWeb.Affinew.Links.term("financial-insurance")},
       {"SaaS", MolyWeb.Affinew.Links.term("saas-solutions")}
     ]
+
     # [
     #   {"Browse", MolyWeb.Affinew.Links.programs()},
     #   {"Categories", MolyWeb.Affinew.Links.under_construction()},

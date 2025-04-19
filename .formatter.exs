@@ -235,7 +235,7 @@ spark_locals_without_parens = [
 ]
 
 [
-  import_deps: [:ash, :spark, :reactor],
+  import_deps: [:oban, :ash, :spark, :reactor],
   inputs: [
     "{mix,.formatter}.exs",
     "{config,lib,test,benchmarks,flames}/**/*.{ex,exs}",

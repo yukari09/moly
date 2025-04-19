@@ -60,6 +60,16 @@ window.addEventListener("phx:show-modal", async (event) => {
   el.showModal()
 })
 
+window.addEventListener("app:delay", event => {
+  const { delay, target, attr } = event.detail
+  const el = document.querySelector(target)
+  if (el) {
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("phx:exec-el", { detail: { target } }))
+    }, delay)
+  }
+})
+
 //Admin
 window.addEventListener("app:disabledFormElement", (event) => {
   //disabled this form elements like input, select, checkbox, etc

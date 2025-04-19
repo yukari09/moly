@@ -154,8 +154,8 @@ defmodule MolyWeb.Affinew.UserPageLive do
   defp get_user_posts(
          %{assigns: %{page: page, post_type: "published", username: _username}} = socket
        ) do
-
-    {count, posts} = MolyWeb.Affinew.QueryEs.list_query_by_user_posted(socket.assigns.user.id, page, @per_page)
+    {count, posts} =
+      MolyWeb.Affinew.QueryEs.list_query_by_user_posted(socket.assigns.user.id, page, @per_page)
 
     page_meta = Moly.Helper.pagination_meta(count, @per_page, page, 5)
     socket = assign(socket, posts: posts, page_meta: page_meta)
@@ -182,9 +182,8 @@ defmodule MolyWeb.Affinew.UserPageLive do
       |> Ash.read!(opts)
 
     posts =
-      Enum.map(query_result.results, &(&1.id))
+      Enum.map(query_result.results, & &1.id)
       |> MolyWeb.Affinew.QueryEs.list_query_by_post_ids()
-
 
     page_meta = Moly.Helper.pagination_meta(query_result.count, @per_page, page, 8)
     socket = assign(socket, posts: posts, page_meta: page_meta)
@@ -343,7 +342,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
             </div>
           </div>
         </div>
-
+        
     <!--start tab-->
         <div class="grow container mx-auto px-2 sm:px-6 lg:px-8">
           <div class="border-b border-gray-200 -mx-2 sm:mx-0 px-2 sm:pb-0">
@@ -382,7 +381,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
               >
                 <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
               </.link>
-
+              
     <!-- Page Numbers -->
               <.link
                 :for={page <- @page_meta.page_range}

@@ -386,8 +386,30 @@ defmodule Moly.Helper do
       _ -> 0
     end
   end
-  def format_to_int(float_string, decimal_places) when is_float(float_string), do: :erlang.float_to_binary(float_string, decimals: decimal_places)
 
+  def format_to_int(float_string, decimal_places) when is_float(float_string),
+    do: :erlang.float_to_binary(float_string, decimals: decimal_places)
+
+  def validate_cf(token) do
+    secret_key = Application.get_env(:moly, :cf_app_secret)
+    url = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+    payload = JSON.encode!(%{
+      secret: secret_key,
+      response: token
+    })
+    Logger.debug("CF payload: #{payload}")
+    Finch.build(:post, url, [{"Content-Type", "application/json"}], payload)
+    |> Finch.request(Moly.Finch)
+    |> case do
+      {:ok, %Finch.Response{status: 200, body: body}} ->
+        Logger.debug("CF response: #{body}")
+        case Jason.decode!(body) do
+          %{"success" => true} -> :ok
+          _ -> :error
+        end
+      {:error, _} -> :error
+    end
+  end
 
   def pagination_meta(total, page_size, page, show_item)
       when is_integer(total) and is_integer(page_size) and is_integer(page) and

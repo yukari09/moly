@@ -6,7 +6,9 @@ defmodule MolyWeb.Affinew.QueryEs do
 
   def index_query() do
     query = %{
-      query: %{bool: %{must: [%{term: %{post_status: "publish"}}, %{term: %{post_type: "affiliate"}}]}},
+      query: %{
+        bool: %{must: [%{term: %{post_status: "publish"}}, %{term: %{post_type: "affiliate"}}]}
+      },
       sort: [%{"updated_at" => %{"order" => "desc"}}],
       size: 12
     }
@@ -18,18 +20,22 @@ defmodule MolyWeb.Affinew.QueryEs do
   end
 
   def list_query_by_post_ids(post_ids) when is_list(post_ids) do
-    q = %{
-      query: %{
-        bool: %{
-          must: [%{
-            terms: %{"id.keyword": post_ids}
-          },%{
-            terms: %{post_type: "affiliate"}
-          }]
+    q =
+      %{
+        query: %{
+          bool: %{
+            must: [
+              %{
+                terms: %{"id.keyword": post_ids}
+              },
+              %{
+                terms: %{post_type: "affiliate"}
+              }
+            ]
+          }
         }
       }
-    }
-    |> query_page(1, Enum.count(post_ids))
+      |> query_page(1, Enum.count(post_ids))
 
     case Snap.Search.search(Cluster, Moly.Contents.Notifiers.Post.index_name(), q) do
       {:ok, %{hits: %{total: %{"value" => _total}, hits: hits}}} -> hits
@@ -38,18 +44,23 @@ defmodule MolyWeb.Affinew.QueryEs do
   end
 
   def list_query_by_user_posted(user_id, page, per_page) do
-    q = %{
-      query: %{
-        bool: %{
-          must: [%{
-            term: %{"author_id.keyword": user_id}
-          },%{
-            term: %{post_type: "affiliate"}
-          }]
+    q =
+      %{
+        query: %{
+          bool: %{
+            must: [
+              %{
+                term: %{"author_id.keyword": user_id}
+              },
+              %{
+                term: %{post_type: "affiliate"}
+              }
+            ]
+          }
         }
       }
-    }
-    |> query_page(page, per_page)
+      |> query_page(page, per_page)
+
     case Snap.Search.search(Cluster, Moly.Contents.Notifiers.Post.index_name(), q) do
       {:ok, %{hits: %{total: %{"value" => total}, hits: hits}}} -> {total, hits}
       _ -> {0, []}
@@ -57,44 +68,42 @@ defmodule MolyWeb.Affinew.QueryEs do
   end
 
   def list_query_by_search(q, sort, page, per_page) do
-    q = %{
-      query: %{
-        bool: %{
-          must: [
-            %{term: %{post_status: "publish"}},
-            %{term: %{post_type: "affiliate"}}
-          ],
-          should: [
-            %{
-
-              match: %{
-                "post_title" => q
+    q =
+      %{
+        query: %{
+          bool: %{
+            must: [
+              %{term: %{post_status: "publish"}},
+              %{term: %{post_type: "affiliate"}}
+            ],
+            should: [
+              %{
+                match: %{
+                  "post_title" => q
+                }
+              },
+              %{
+                match: %{
+                  "post_content" => q
+                }
+              },
+              %{
+                term: %{
+                  "affiliate_category.slug.keyword" => q
+                }
+              },
+              %{
+                term: %{
+                  "affiliate_tag.slug.keyword" => q
+                }
               }
-            },
-            %{
-
-              match: %{
-                "post_content" => q
-              }
-            },
-            %{
-
-              term: %{
-                "affiliate_category.slug.keyword" => q
-              }
-            },
-            %{
-              term: %{
-                "affiliate_tag.slug.keyword" => q
-              }
-            }
-          ],
-          minimum_should_match: 1
+            ],
+            minimum_should_match: 1
+          }
         }
       }
-    }
-    |> query_sort(sort)
-    |> query_page(page, per_page)
+      |> query_sort(sort)
+      |> query_page(page, per_page)
 
     Logger.debug(JSON.encode!(q))
 
@@ -105,31 +114,32 @@ defmodule MolyWeb.Affinew.QueryEs do
   end
 
   def list_query_by_category(slug, sort, page, per_page) do
-    q = %{
-      query: %{
-        bool: %{
-          must: [
-            %{term: %{post_status: "publish"}},
-            %{term: %{post_type: "affiliate"}}
-          ],
-          should: [
-            %{
-              term: %{
-                "affiliate_category.slug.keyword" => slug
+    q =
+      %{
+        query: %{
+          bool: %{
+            must: [
+              %{term: %{post_status: "publish"}},
+              %{term: %{post_type: "affiliate"}}
+            ],
+            should: [
+              %{
+                term: %{
+                  "affiliate_category.slug.keyword" => slug
+                }
+              },
+              %{
+                term: %{
+                  "affiliate_tag.slug.keyword" => slug
+                }
               }
-            },
-            %{
-              term: %{
-                "affiliate_tag.slug.keyword" => slug
-              }
-            }
-          ],
-          minimum_should_match: 1
+            ],
+            minimum_should_match: 1
+          }
         }
       }
-    }
-    |> query_sort(sort)
-    |> query_page(page, per_page)
+      |> query_sort(sort)
+      |> query_page(page, per_page)
 
     Logger.debug(JSON.encode!(q))
 
@@ -253,8 +263,11 @@ defmodule MolyWeb.Affinew.QueryEs do
 
   def query_sort(query, sort_str) do
     case sort_str do
-      "created_at_desc" -> Map.put(query, :sort, ["_score", %{"updated_at" => %{"order" => "desc"}}])
-      "created_at_asc" -> Map.put(query, :sort, ["_score", %{"updated_at" => %{"order" => "asc"}}])
+      "created_at_desc" ->
+        Map.put(query, :sort, ["_score", %{"updated_at" => %{"order" => "desc"}}])
+
+      "created_at_asc" ->
+        Map.put(query, :sort, ["_score", %{"updated_at" => %{"order" => "asc"}}])
     end
   end
 end

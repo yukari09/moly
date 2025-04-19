@@ -2,21 +2,30 @@ defmodule Moly.Accounts.Emails do
   @moduledoc """
   Delivers emails.
   """
+  use Oban.Worker, queue: :mailers
 
   import Swoosh.Email
 
   require Logger
 
-  @max_emails_per_day 300
+  @interval 60
+  @max_send_count 3
+  @remove_limited_time :timer.minutes(30)
 
-  def deliver_email_confirmation_instructions(user, url) do
+  def perform(%Oban.Job{args: %{"deliver_type" => deliver_type, "deliver_args" => deliver_args}}) do
+    deliver_type = String.to_atom(deliver_type)
+    apply(__MODULE__, deliver_type, deliver_args)
+    :ok
+  end
+
+  def deliver_email_confirmation_instructions(email, url) do
     if !url do
       raise "Cannot deliver confirmation instructions without a url"
     end
 
-    deliver(user.email, :email_confirmation, "Confirm your email address", """
+    deliver(email, "Confirm your email address", """
       <p>
-        Hi #{user.email},
+        Hi #{email},
       </p>
 
       <p>
@@ -30,14 +39,14 @@ defmodule Moly.Accounts.Emails do
     """)
   end
 
-  def deliver_reset_password_instructions(user, url) do
+  def deliver_reset_password_instructions(email, url) do
     if !url do
       raise "Cannot deliver password reset email without a url"
     end
 
-    deliver(user.email, :reset_password, "Reset your password", """
+    deliver(email, "Reset your password", """
       <p>
-        Hi #{user.email},
+        Hi #{email},
       </p>
 
       <p>
@@ -51,55 +60,84 @@ defmodule Moly.Accounts.Emails do
     """)
   end
 
+  def deliver_email_change_confirmation_instructions(email, url) do
+    if !url do
+      raise "Cannot deliver confirmation instructions without a url"
+    end
+
+    deliver(email, "Confirm your new email address", """
+      <p>
+        Hi #{email},
+      </p>
+
+      <p>
+        You recently changed your email address. Please confirm it.
+      </p>
+
+      <p>
+        <a href="#{url}">Click here to confirm your new email address</a>
+      </p>
+    """)
+  end
+
   # For simplicity, this module simply logs messages to the terminal.
   # You should replace it by a proper email or notification tool, such as:
   #
   #   * Swoosh - https://hexdocs.pm/swoosh
   #   * Bamboo - https://hexdocs.pm/bamboo
   #
-  defp deliver(to, send_type, subject, body) do
-    key = "sender_email_send_list"
-    latest_24hour_send_emails = Moly.Utilities.cache_get_or_put(key, fn -> [] end, :timer.hours(24))
-
-    # Count the number of this email type and address in the last 24 hours
-    count = Enum.count(latest_24hour_send_emails, fn {type, email} -> type == send_type and email == to end)
-
-    if count > 1 do
-      Logger.warning("Email limit reached for #{send_type} to #{to}.")
-    else
-      if Enum.count(latest_24hour_send_emails) >= @max_emails_per_day do
-        Logger.warning("Email limit reached for #{send_type} to #{to}.")
-      else
-        :timer.sleep(3_000)
-        # Send the email
-        [from_email_name, from_email_address] = get_email_config()
-
-        new()
-        |> from({from_email_name, from_email_address})
-        |> to(to_string(to))
-        |> subject(subject)
-        |> put_provider_option(:track_links, "None")
-        |> html_body(body)
-        |> Moly.Mailer.deliver!()
-
-        ttl = Cachex.ttl!(:cache, key)
-        new_value = [{send_type, to} | latest_24hour_send_emails]
-        Cachex.put(:cache, key, new_value, expire: ttl)
-      end
+  defp deliver(to, subject, body) do
+    case get_send_args(to) do
+      [true, true, _, _] ->
+        set_send_args(to)
+        _deliver(to, subject, body)
+      [false | _] ->
+        Logger.debug("Email send limit reached for #{to}. Not sending email.")
+      [true, _, send_count, last_send_datetime] ->
+        set_send_args(to)
+        case last_send_datetime do
+          nil -> nil
+          last_send_datetime ->
+            now = DateTime.utc_now()
+            diff = DateTime.diff(now, last_send_datetime, :second)
+            if diff < @interval do
+              sleep_time = @interval * send_count
+              Logger.debug("Email send limit reached for #{to}, waiting #{sleep_time} seconds")
+              :timer.sleep(sleep_time * 1000)
+            end
+            Logger.debug("Email send limit reached for #{to}, waiting #{diff} seconds")
+            :timer.sleep(diff * 1000)
+        end
+        _deliver(to, subject, body)
     end
   end
 
-  defp get_email_config() do
+  defp _deliver(to, subject, body) do
+    [from_email_name, from_email_address] = _get_email_config()
+    new()
+    |> from({from_email_name, from_email_address})
+    |> to(to_string(to))
+    |> subject(subject)
+    |> put_provider_option(:track_links, "None")
+    |> html_body(body)
+    |> Moly.Mailer.deliver!()
+  end
+
+  defp _get_email_config() do
+
     email_group_config =
       Application.get_env(:moly, :email_group)
+
     if email_group_config not in [nil, "", false] do
       [name, address, api_key] =
         String.split(email_group_config, ",")
-        |> Enum.map(&(String.split(&1, ":")))
+        |> Enum.map(&String.split(&1, ":"))
         |> Enum.random()
+
       new_config =
         Application.get_env(:moly, Moly.Mailer)
         |> Keyword.put(:api_key, api_key)
+
       Application.put_env(:moly, Moly.Mailer, new_config)
       [name, address]
     else
@@ -108,5 +146,42 @@ defmodule Moly.Accounts.Emails do
         Application.get_env(:moly, :email_address)
       ]
     end
+  end
+
+  defp get_send_args(email) do
+    sc = send_count(email)
+    lct = last_send_time(email)
+    arg1 = sc < @max_send_count
+    arg2 = if lct do
+      DateTime.diff(DateTime.utc_now(), lct, :second) > @interval
+    else
+      true
+    end
+    [arg1, arg2, sc, lct]
+  end
+
+  defp set_send_args(email), do: send_count(email, true) && last_send_time(email,true)
+
+  defp send_count(email, only_set \\ false) do
+    key = "count:send:email:#{email}"
+    value = Moly.Utilities.cache_get!(key) || 0
+    if only_set do
+      if not Moly.Utilities.cache_exists?(key) do
+        Moly.Utilities.cache_put(key, 1, expire: @remove_limited_time)
+      else
+        Moly.Utilities.cache_inc(key, 1)
+      end
+    end
+    value
+  end
+
+  defp last_send_time(email, only_set \\ false) do
+    key = "last:send:email:#{email}:dattime"
+    value = Moly.Utilities.cache_get!(key)
+    if only_set do
+      ttl = Moly.Utilities.cache_ttl(key) || @remove_limited_time
+      Moly.Utilities.cache_put(key, DateTime.utc_now(), expire: ttl)
+    end
+    value
   end
 end

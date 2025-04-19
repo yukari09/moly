@@ -17,7 +17,10 @@ defmodule MolyWeb.AdminAffiliateLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     Ash.get!(Moly.Contents.Post, id, actor: socket.assigns.current_user)
-    |> Ash.update!(%{post_status: :trash}, action: :update_post_status, actor: socket.assigns.current_user)
+    |> Ash.update!(%{post_status: :trash},
+      action: :update_post_status,
+      actor: socket.assigns.current_user
+    )
 
     socket = push_patch(socket, to: ~p"/admin/affiliates?#{socket.assigns.params}")
     {:noreply, socket}
@@ -36,56 +39,75 @@ defmodule MolyWeb.AdminAffiliateLive.Index do
 
   def handle_event("rebuild-index", %{"id" => id}, socket) do
     Moly.Contents.Notifiers.Post.build_post_document(id)
+
     socket =
       socket
       |> push_event("exec-el", %{target: "#rebuild-index-btn-#{id}", attr: "data-show"})
       |> push_event("exec-el", %{target: "#rebuild-index-loading-#{id}", attr: "data-hide"})
       |> put_flash_info("This post has been rebuild index.")
+
     {:noreply, socket}
   end
 
   def handle_event("edit-action", %{"id" => id}, socket) do
     socket = assign(socket, :live_action, :edit)
+
     post_form =
       Ash.get!(Moly.Contents.Post, id, actor: socket.assigns.current_user)
       |> AshPhoenix.Form.for_update(:update_post, actor: socket.assigns.current_user)
+
     socket = assign(socket, :post_form, post_form)
     {:noreply, socket}
   end
 
   def handle_event("update-post", %{"form" => form}, socket) do
     socket =
-      case AshPhoenix.Form.submit(socket.assigns.post_form, params: form,  action_opts: [actor: socket.assigns.current_user]) do
+      case AshPhoenix.Form.submit(socket.assigns.post_form,
+             params: form,
+             action_opts: [actor: socket.assigns.current_user]
+           ) do
         {:ok, _} ->
           put_flash(socket, :info, "Post has been updated.")
           |> push_patch(to: live_url(socket.assigns.params))
-        {:error, _} -> put_flash(socket, :error, "Some thing wrong, try later.")
+
+        {:error, _} ->
+          put_flash(socket, :error, "Some thing wrong, try later.")
       end
+
     {:noreply, socket}
   end
 
   def handle_event("modify-tag", %{"id" => id}, socket) do
     tag_form =
-      Ash.Query.filter(Moly.Contents.Post, id==^id)
-      |> Ash.Query.load([term_taxonomy: :term])
+      Ash.Query.filter(Moly.Contents.Post, id == ^id)
+      |> Ash.Query.load(term_taxonomy: :term)
       |> Ash.read_first!(actor: %{roles: [:admin]})
       |> AshPhoenix.Form.for_update(:update_post, actor: socket.assigns.current_user)
       |> to_form()
+
     socket =
       socket
       |> assign(:live_action, :modify_tag)
       |> assign(:tag_form, tag_form)
+
     {:noreply, socket}
   end
 
-  def handle_event("modify-category", %{"post-id" => post_id, "category-id" => category_id}, socket) do
+  def handle_event(
+        "modify-category",
+        %{"post-id" => post_id, "category-id" => category_id},
+        socket
+      ) do
     categories =
       Ash.Query.filter(Moly.Terms.TermTaxonomy, parent.slug == "industries")
       |> Ash.Query.load([:term])
       |> Ash.read!(actor: %{roles: [:user]})
 
     data =
-      Ash.Query.filter(Moly.Terms.TermRelationships, post_id==^post_id and term_taxonomy_id==^category_id)
+      Ash.Query.filter(
+        Moly.Terms.TermRelationships,
+        post_id == ^post_id and term_taxonomy_id == ^category_id
+      )
       |> Ash.read_first!(actor: %{roles: [:admin]})
 
     category_form =
@@ -103,15 +125,20 @@ defmodule MolyWeb.AdminAffiliateLive.Index do
 
   def handle_event("save-category", %{"form" => form} = _params, socket) do
     socket =
-      case AshPhoenix.Form.submit(socket.assigns.category_form, params: form, action_opts: [actor: socket.assigns.current_user]) do
+      case AshPhoenix.Form.submit(socket.assigns.category_form,
+             params: form,
+             action_opts: [actor: socket.assigns.current_user]
+           ) do
         {:ok, _} ->
           put_flash_info(socket, "Category has been updated ,don't forget rebuild index.")
           |> push_patch(to: live_url(socket.assigns.params))
           |> assign(:live_action, :index)
+
         {:error, form} ->
           put_flash_info(socket, "#{form.errors}")
           |> assign(:live_action, :index)
       end
+
     {:noreply, socket}
   end
 

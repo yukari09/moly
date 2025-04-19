@@ -2,6 +2,7 @@ defmodule MolyWeb.AuthController do
   use MolyWeb, :controller
   use AshAuthentication.Phoenix.Controller
 
+
   def success(conn, activity, user, _token) do
     return_to = get_session(conn, :return_to) || ~p"/browse"
 
@@ -45,7 +46,12 @@ defmodule MolyWeb.AuthController do
            }
          }} ->
           "You have already signed in another way, but have not confirmed your account. Please confirm your account."
-
+        {{:password, :sign_in_with_token}, %AshAuthentication.Errors.AuthenticationFailed{
+          caused_by: %Ash.Error.Forbidden{
+            errors: [%AshAuthentication.Errors.CannotConfirmUnconfirmedUser{}]
+          }
+        }} ->
+          "Please checck your email."
         _ ->
           "Incorrect email or password"
       end

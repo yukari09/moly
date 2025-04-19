@@ -99,7 +99,9 @@
       </div>
       <ul class="menu mt-4 w-full">
         <!-- Sidebar content here -->
-        <li :for={{label, patch} <- MolyWeb.Layouts.nav_categories()}><.link navigate={patch} class="hover:text-primary">{label}</.link></li>
+        <li :for={{label, patch} <- MolyWeb.Layouts.nav_categories()}>
+          <.link navigate={patch} class="hover:text-primary">{label}</.link>
+        </li>
       </ul>
     </div>
   </div>

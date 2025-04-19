@@ -121,7 +121,7 @@ if config_env() == :prod do
   # For this example you need include a HTTP client required by Swoosh API client.
   # Swoosh supports Hackney and Finch out of the box:
   #
-  #config :swoosh, :api_client, Swoosh.ApiClient.Finch
+  # config :swoosh, :api_client, Swoosh.ApiClient.Finch
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
   # Customize env for this app
@@ -133,7 +133,9 @@ if config_env() == :prod do
     email_address: System.get_env("EMAIL_ADDRESS"),
     imagor_endpoint: System.get_env("IMAGOR_ENDPOINT"),
     imagor_secret: System.get_env("IMAGOR_SECRET"),
-    email_group: System.get_env("EMAIL_GROUP")
+    email_group: System.get_env("EMAIL_GROUP"),
+    cf_website_secret: System.get_env("CF_WEBSITE_SECRET"),
+    cf_app_secret: System.get_env("CF_APP_SECRET")
 
   config :ex_aws,
     region: System.get_env("AWS_REGION"),
@@ -154,5 +156,4 @@ if config_env() == :prod do
     json_library: JSON,
     http_client_adapter:
       {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]}
-
 end

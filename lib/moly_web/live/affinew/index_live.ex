@@ -12,7 +12,11 @@ defmodule MolyWeb.Affinew.IndexLive do
         :timer.hours(12)
       )
 
-    socket = assign(socket, posts: posts, page_title: "Find high ticket best paying affiliate marketing programs")
+    socket =
+      assign(socket,
+        posts: posts,
+        page_title: "Find high ticket best paying affiliate marketing programs in 2025"
+      )
 
     {:ok, socket, layout: false}
   end
@@ -20,5 +24,4 @@ defmodule MolyWeb.Affinew.IndexLive do
   def handle_params(_, _, socket) do
     {:noreply, socket}
   end
-
 end

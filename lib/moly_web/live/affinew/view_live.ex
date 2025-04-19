@@ -19,7 +19,7 @@ defmodule MolyWeb.Affinew.ViewLive do
 
     post = Moly.Helper.get_in_from_keys(post, [:hits, :hits, 0])
 
-    socket=
+    socket =
       if is_nil(post) do
         socket
         |> push_navigate(to: ~p"/browse")
@@ -53,13 +53,16 @@ defmodule MolyWeb.Affinew.ViewLive do
           |> assign_new(:bookmark_event, fn ->
             if socket.assigns.current_user do
               post_id = Moly.Helper.get_in_from_keys(post, [:source, "id"])
+
               Ash.Query.new(Moly.Accounts.UserPostAction)
-              |> Ash.Query.filter(post_id == ^post_id and user_id == ^socket.assigns.current_user.id)
+              |> Ash.Query.filter(
+                post_id == ^post_id and user_id == ^socket.assigns.current_user.id
+              )
               |> Ash.exists?(actor: %{roles: [:user]})
               |> if do
-                  "unbookmark_post"
-                else
-                  "bookmark_post"
+                "unbookmark_post"
+              else
+                "bookmark_post"
               end
             else
               "require_login"
@@ -119,6 +122,7 @@ defmodule MolyWeb.Affinew.ViewLive do
         case Ash.destroy(user_action, actor: current_user, action: :destroy) do
           :ok ->
             assign(socket, bookmark_event: "bookmark_post")
+
           {:error, _} ->
             assign(socket, bookmark_event: "unbookmark_post")
             |> put_flash(:error, "There is a small problem, please try again later.")
@@ -144,14 +148,15 @@ defmodule MolyWeb.Affinew.ViewLive do
       %{property: "og:type", content: "article"},
       %{property: "og:image", content: media_url},
       %{name: "twitter:card", content: "summary_large_image"},
-      %{name: "twitter:title", content:  post_title},
+      %{name: "twitter:title", content: post_title},
       %{name: "twitter:description", content: post_excerpt},
       %{name: "twitter:image", content: media_url}
     ]
 
     assign(socket, :meta_tags, meta_tags)
-    |> assign(:page_title, "#{post_title} Affiliate Marketing Programs Commission Rates,Referral links,Sign up,Review")
+    |> assign(
+      :page_title,
+      "#{post_title} Affiliate Marketing Programs Commission Rates,Referral links,Sign up,Review"
+    )
   end
-
-
 end

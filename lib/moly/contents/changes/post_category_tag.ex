@@ -66,15 +66,17 @@ defmodule Moly.Contents.Changes.PostCategoryTag do
       |> Ash.Query.filter(post_id == ^post.id)
       |> Ash.Query.load(:term_taxonomy)
       |> Ash.read!(actor: %{roles: [:admin]})
-      |> Enum.group_by(&(&1.term_taxonomy.taxonomy))
+      |> Enum.group_by(& &1.term_taxonomy.taxonomy)
 
-    old_categories = Enum.find(old_term_relationships, fn {k, _} ->
-      String.contains?(k, "category")
-    end)
+    old_categories =
+      Enum.find(old_term_relationships, fn {k, _} ->
+        String.contains?(k, "category")
+      end)
 
-    old_tags = Enum.find(old_term_relationships, fn {k, _} ->
-      String.contains?(k, "tag")
-    end)
+    old_tags =
+      Enum.find(old_term_relationships, fn {k, _} ->
+        String.contains?(k, "tag")
+      end)
 
     categories = Map.get(arguments, :categories, [])
     tags = Map.get(arguments, :tags, [])
@@ -83,7 +85,9 @@ defmodule Moly.Contents.Changes.PostCategoryTag do
 
     term_relationships =
       if categories != [] do
-        if old_categories, do: Ash.bulk_destroy!(old_categories, :destroy, %{}, actor: %{roles: [:admin]})
+        if old_categories,
+          do: Ash.bulk_destroy!(old_categories, :destroy, %{}, actor: %{roles: [:admin]})
+
         Enum.reduce(categories, [], &[%{term_taxonomy_id: &1, post_id: post_id} | &2])
       else
         term_relationships
@@ -92,6 +96,7 @@ defmodule Moly.Contents.Changes.PostCategoryTag do
     term_relationships =
       if tags != [] do
         if old_tags, do: Ash.bulk_destroy!(old_tags, :destroy, %{}, actor: %{roles: [:admin]})
+
         %{status: :success, records: records} =
           Ash.bulk_create!(tags, Moly.Terms.Term, :create,
             actor: %{roles: [:admin]},
@@ -100,6 +105,7 @@ defmodule Moly.Contents.Changes.PostCategoryTag do
             upsert_identity: :unique_slug,
             return_records?: true
           )
+
         Enum.reduce(records, term_relationships, fn %{term_taxonomy: term_taxonomy}, acc ->
           new_items =
             Enum.reduce(term_taxonomy, [], &[%{term_taxonomy_id: &1.id, post_id: post_id} | &2])
@@ -132,7 +138,5 @@ defmodule Moly.Contents.Changes.PostCategoryTag do
     end)
 
     {:ok, post}
-
   end
-
 end

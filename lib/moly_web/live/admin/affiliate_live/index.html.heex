@@ -88,13 +88,25 @@
             </div>
           </:col>
           <:col :let={row} label="Categories">
-            <.link id={"category-cell-#{category.id}"} class="link link-hover" phx-click="modify-category" phx-value-post-id={row.id} phx-value-category-id={category.id} :for={category <- Moly.Utilities.Post.term_taxonomy_filter(row, "affiliate_category")}>
-             {category.term.name}
+            <.link
+              :for={
+                category <- Moly.Utilities.Post.term_taxonomy_filter(row, "affiliate_category")
+              }
+              id={"category-cell-#{category.id}"}
+              class="link link-hover"
+              phx-click="modify-category"
+              phx-value-post-id={row.id}
+              phx-value-category-id={category.id}
+            >
+              {category.term.name}
             </.link>
           </:col>
           <:col :let={row} label="Tags" td_class="!whitespace-normal">
             <.link class="link link-hover" phx-click="modify-tag" phx-value-id={row.id}>
-              <span id={"tag-cell-#{tag.id}"} :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "affiliate_tag")}>
+              <span
+                :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "affiliate_tag")}
+                id={"tag-cell-#{tag.id}"}
+              >
                 {tag.term.name},&nbsp;&nbsp;
               </span>
             </.link>
@@ -109,17 +121,34 @@
                   <div>Edit</div>
                 </div>
                 <.link phx-value-id={row.id} phx-click="edit-action">
-                <Lucideicons.pen_line class="size-4" />
+                  <Lucideicons.pen_line class="size-4" />
                 </.link>
               </div>
               <div class="tooltip">
                 <div class="tooltip-content">
                   <div>rebuild index</div>
                 </div>
-                <.link id={"rebuild-index-btn-#{row.id}"} phx-click={JS.hide() |> JS.show(to: "#rebuild-index-loading-#{row.id}") |> JS.push("rebuild-index")} phx-value-id={row.id} data-hide={JS.hide()} data-show={JS.show()} phx-value-key="info">
+                <.link
+                  id={"rebuild-index-btn-#{row.id}"}
+                  phx-click={
+                    JS.hide()
+                    |> JS.show(to: "#rebuild-index-loading-#{row.id}")
+                    |> JS.push("rebuild-index")
+                  }
+                  phx-value-id={row.id}
+                  data-hide={JS.hide()}
+                  data-show={JS.show()}
+                  phx-value-key="info"
+                >
                   <Lucideicons.text_quote class="size-4" />
                 </.link>
-                <span id={"rebuild-index-loading-#{row.id}"} class="loading loading-spinner loading-xs hidden" data-hide={JS.hide()} data-show={JS.show()}></span>
+                <span
+                  id={"rebuild-index-loading-#{row.id}"}
+                  class="loading loading-spinner loading-xs hidden"
+                  data-hide={JS.hide()}
+                  data-show={JS.show()}
+                >
+                </span>
               </div>
               <.link
                 :if={row.post_status != :publish}
@@ -155,8 +184,6 @@
   </div>
 </div>
 
-
-
 <.modal
   :if={@live_action in [:modify_category]}
   show={@live_action in [:modify_category]}
@@ -167,7 +194,12 @@
   <.header size="md" title="Change Category" />
 
   <.form :let={f} for={@category_form} class="space-y-6 mt-6" phx-submit="save-category">
-    <.select label="Category" value={nil} field={f[:term_taxonomy_id]} options={Enum.map(@categories, &({&1.id, &1.term.name}))} />
+    <.select
+      label="Category"
+      value={nil}
+      field={f[:term_taxonomy_id]}
+      options={Enum.map(@categories, &{&1.id, &1.term.name})}
+    />
     <.input field={f[:post_id]} class="hidden h-0" />
     <div class="flex items-end pt-6 border-t border-gray-100">
       <.button type="submit">Confirm</.button>
@@ -184,8 +216,8 @@
 >
   <.header size="md" title="Modify Tag" />
 
-   <.form :let={f} for={@tag_form} class="space-y-6 mt-6" phx-submit="save-tag">
-   <%!-- <.textarea>{Moly.Utilities.Post.term_taxonomy_filter(row, "affiliate_tag") |> Enum.map(&(&1.term.name)) |> Enum.join(",")}</.textarea> --%>
+  <.form :let={f} for={@tag_form} class="space-y-6 mt-6" phx-submit="save-tag">
+    <%!-- <.textarea>{Moly.Utilities.Post.term_taxonomy_filter(row, "affiliate_tag") |> Enum.map(&(&1.term.name)) |> Enum.join(",")}</.textarea> --%>
     <div class="flex  items-end pt-6 border-t border-gray-100">
       <.button type="submit">Confirm</.button>
     </div>
@@ -201,7 +233,7 @@
 >
   <.header size="md" title="Modify Affiliate" />
 
-   <.form :let={f} for={@post_form} class="mt-4" phx-submit="update-post">
+  <.form :let={f} for={@post_form} class="mt-4" phx-submit="update-post">
     <.input field={f[:post_title]} label="Affiliate Title" class="mb-6" />
     <div class="my-4"><.textarea roles="6" label="Excerpt" field={f[:post_excerpt]} /></div>
     <div
