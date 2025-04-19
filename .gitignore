@@ -48,3 +48,5 @@
 
 # Ignore ssr build for svelte.
 /priv/svelte/
+
+.DS_Store
