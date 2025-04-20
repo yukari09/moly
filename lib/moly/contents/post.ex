@@ -13,6 +13,10 @@ defmodule Moly.Contents.Post do
     table "posts"
     repo(Moly.Repo)
 
+    custom_indexes do
+      index [:post_status], name: "post_status_idx"
+    end
+
     custom_statements do
       statement :pgweb_idx do
         up(

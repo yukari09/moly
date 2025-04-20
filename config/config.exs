@@ -114,7 +114,14 @@ config :phoenix, :json_library, JSON
 
 config :moly, Oban,
   repo: Moly.Repo,
-  queues: [mailers: 20]
+  queues: [mailers: 20],
+  plugins: [
+    {Oban.Plugins.Cron,
+      crontab: [
+        {"@daily", Moly.Affinew.Workers.Sitemap}
+      ]
+    }
+  ]
 
 config :moly, :env, config_env()
 # Import environment specific config. This must remain at the bottom

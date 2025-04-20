@@ -54,6 +54,7 @@ defmodule MolyWeb.Router do
     pipe_through(:browser)
 
     get("/page/:post_name", PageController, :page)
+    get("/sitemaps/:site_map_file", PageController, :sitemaps)
 
     confirm_route(
       Moly.Accounts.User,

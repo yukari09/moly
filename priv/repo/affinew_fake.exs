@@ -228,7 +228,7 @@ defmodule AffiliateFake do
   end
 end
 
-actor = AffiliateFake.get_actor("77664df9-f2a7-4c15-bd82-c3e937934c82")
+actor = AffiliateFake.get_actor("688b21a9-5da9-4bc5-bdfe-bedb0a6062e1")
 
 
 for _ <- 1..60 do

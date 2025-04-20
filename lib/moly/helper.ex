@@ -5,6 +5,15 @@ defmodule Moly.Helper do
 
   require Logger
 
+  def get_object(filename) do
+    bucket = load_s3_config(:bucket)
+
+    case ExAws.S3.get_object(bucket, filename) |> ExAws.request() do
+      {:ok, %{status_code: 200, body: body}} -> {:ok, body}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
   @doc """
   Uploads a file to S3
   """
