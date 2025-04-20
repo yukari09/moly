@@ -1,44 +1,40 @@
-# 忽略所有包含 build 的目錄（例如 base、base1、project 等目錄中的 build 目錄）
 /build/
 
-# 忽略所有包含 cover 的目錄（例如 base、base1、project 等目錄中的 cover 目錄）
+
 /cover/
 
-# 忽略所有包含 deps 的目錄（例如 base、base1、project 等目錄中的 deps 目錄）
+
 /deps/
 
-# 忽略所有包含 doc 的目錄（例如 base、base1、project 等目錄中的 doc 目錄）
 /doc/
 
 /test/
 
 /_build/
 
-# 忽略所有 .fetch 文件
+
 /.fetch
 
-# 忽略所有 erl_crash.dump 文件
 /erl_crash.dump
 
-# 忽略所有 .ez 檔案（例如 mix archive.build 生成的檔案）
+
 /*.ez
 
-# 忽略所有 tmp 目錄（例如 base、base1、project 等目錄中的 tmp 目錄）
+
 /tmp/
 
-# 忽略所有 mix hex.build 生成的 tar 檔案
+
 /*-*.tar
 
-# 忽略所有包含 priv/static/assets 的目錄（例如 base、base1、project 等目錄中的 priv/static/assets 目錄）
+
 /priv/static/assets/
 
-# 忽略所有包含 priv/static/cache_manifest.json 的目錄
+
 /priv/static/cache_manifest.json
 
-# 忽略所有 npm-debug.log 檔案
+
 /npm-debug.log
 
-# 忽略所有包含 node_modules 的目錄
 /assets/node_modules/
 
 /.elixir_ls/

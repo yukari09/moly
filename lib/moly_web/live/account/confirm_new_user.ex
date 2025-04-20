@@ -4,19 +4,29 @@ alias Ash.Resource.Validation.Confirm
 
   require Logger
   alias AshAuthentication.Info
-  import AshAuthentication.Phoenix.Components.Helpers, only: [auth_path: 5, auth_path: 6]
+  import AshAuthentication.Phoenix.Components.Helpers, only: [auth_path: 5]
+  import Slug
 
   def mount(%{"confirm" => confirm}, %{"auth_routes_prefix" => auth_routes_prefix}, socket) do
-    {:ok, strategy} = Info.strategy(Moly.Accounts.User, :password)
+    {:ok, strategy} = Info.strategy(Moly.Accounts.User, :confirm_new_user)
     subject_name = Info.authentication_subject_name!(strategy.resource)
-    action = auth_path(socket, subject_name, auth_routes_prefix, strategy, :sign_in)
-    trigger_action = false
-    confirm = confirm
-    form = generate_form(strategy, subject_name)
-    socket =
-      assign(socket, form: form, strategy: strategy, subject_name: subject_name, action: action, auth_routes_prefix: auth_routes_prefix, trigger_action: trigger_action, confirm: confirm)
+
+    form =
+      strategy.resource
+      |> AshPhoenix.Form.for_action(strategy.confirm_action_name,
+        as: subject_name |> to_string(),
+        tenant: socket.assigns.current_tenant,
+        id:
+          "#{subject_name}-#{strategy.name}-#{strategy.confirm_action_name}"
+          |> slugify(),
+        context: %{strategy: strategy, private: %{ash_authentication?: true}}
+      )
+
+    socket = assign(socket, form: form, subject_name: subject_name, auth_routes_prefix: auth_routes_prefix, strategy: strategy, confirm: confirm)
+
     {:ok, socket}
   end
+
 
   def render(assigns) do
     ~H"""
@@ -32,11 +42,12 @@ alias Ash.Resource.Validation.Confirm
       </div>
       <.form
         for={@form}
-        id="confirm-form"
-        method="post"
-        phx-submit="confirm"
+        id={@form.id}
+        method="POST"
+        phx-change="update"
+        action={auth_path(@socket, @subject_name, @auth_routes_prefix, @strategy, :confirm)}
       >
-        <input type="hidden" name="" value="" />
+        <input type="hidden" name="confirm" value={@confirm} />
         <button
           id="sign-in-btn"
           class={["btn btn-primary btn-wide mt-4 max-w-full gap-3 md:mt-6"]}
@@ -47,13 +58,9 @@ alias Ash.Resource.Validation.Confirm
       </.form>
     </div>
     """
-
-
   end
 
 
-  def generate_form(strategy, subject_name) do
-    context = %{strategy: strategy, private: %{ash_authentication?: true}, token_type: :sign_in}
-    AshPhoenix.Form.for_action(strategy.resource, strategy.sign_in_action_name, as: to_string(subject_name), context: context)
-  end
+
+
 end

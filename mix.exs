@@ -57,6 +57,7 @@ defmodule Moly.MixProject do
       {:sweet_xml, "~> 0.7"},
       {:resend, "~> 0.4.0"},
       {:oban, "~> 2.19"},
+      {:slugify, "~> 1.3"},
       # ====================
       {:phoenix, "~> 1.7.20"},
       {:phoenix_ecto, "~> 4.5"},
