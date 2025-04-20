@@ -156,7 +156,7 @@ defmodule MolyWeb.Affinew.ViewLive do
     assign(socket, :meta_tags, meta_tags)
     |> assign(
       :page_title,
-      "#{post_title} Affiliate Marketing Programs Commission Rates,Referral links,Sign up,Review"
+      "#{post_title}"
     )
   end
 end

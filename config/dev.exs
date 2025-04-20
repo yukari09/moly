@@ -94,7 +94,7 @@ config :moly,
   email_address: "moly@moly.dev",
   imagor_endpoint: "http://localhost:8000",
   imagor_secret: "WpozRdSDvTKVEPkOQ+/mSWEzIPdjXRFhYLB62XBN12knQ2SRvjMmsOJ/kNJT8UgI",
-  email_group: "Affinew1:moly@moly.dev:api_key1,Affinew2:no-reply@moly.dev:api_key2",
+  #email_group: "Affinew1:moly@moly.dev:api_key1,Affinew2:no-reply@moly.dev:api_key2",
   cf_website_secret: "1x00000000000000000000AA",
   cf_app_secret: "1x0000000000000000000000000000000AA"
 
