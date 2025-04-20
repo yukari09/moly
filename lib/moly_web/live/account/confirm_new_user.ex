@@ -11,6 +11,8 @@ defmodule MolyWeb.Account.ConfirmNewUser do
     {:ok, strategy} = Info.strategy(Moly.Accounts.User, :confirm_new_user)
     subject_name = Info.authentication_subject_name!(strategy.resource)
 
+    sitekey = Application.get_env(:moly, :cf_website_secret)
+
     form =
       strategy.resource
       |> AshPhoenix.Form.for_action(strategy.confirm_action_name,
@@ -22,7 +24,7 @@ defmodule MolyWeb.Account.ConfirmNewUser do
         context: %{strategy: strategy, private: %{ash_authentication?: true}}
       )
 
-    socket = assign(socket, form: form, subject_name: subject_name, auth_routes_prefix: auth_routes_prefix, strategy: strategy, confirm: confirm)
+    socket = assign(socket, form: form, subject_name: subject_name, auth_routes_prefix: auth_routes_prefix, strategy: strategy, confirm: confirm, sitekey: sitekey)
 
     {:ok, socket}
   end

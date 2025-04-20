@@ -28,7 +28,7 @@
             <input id={f[:email].id} name={f[:email].name} value={f[:email].value} class="grow focus:outline-0 validator" required placeholder="Email Address" type="email" autocomplete="off" />
           </label>
         </fieldset>
-        <div id="cf-truestile-reset" class="mt-4 md:mt-6  h-[65px] skeleton" data-size="flexible"  phx-hook="CfTurnstile" data-sitekey="1x00000000000000000000AA"></div>
+        <div id="cf-truestile-reset" class="mt-4 md:mt-6  h-[65px] skeleton" data-size="flexible"  phx-hook="CfTurnstile" data-sitekey={@sitekey}></div>
         <div class="mt-4 flex items-center gap-3 md:mt-6">
           <input
             class="checkbox checkbox-sm checkbox-primary validator"

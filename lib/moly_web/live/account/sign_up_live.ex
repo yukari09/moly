@@ -11,8 +11,9 @@ defmodule MolyWeb.Account.SignUpLive do
     form = generate_form(strategy, subject_name)
     action = auth_path(socket, subject_name, auth_routes_prefix, strategy, :register)
     trigger_action = false
+    sitekey = Application.get_env(:moly, :cf_website_secret)
     socket =
-      assign(socket, form: form, strategy: strategy, subject_name: subject_name, action: action, auth_routes_prefix: auth_routes_prefix, trigger_action: trigger_action)
+      assign(socket, form: form, strategy: strategy, subject_name: subject_name, action: action, auth_routes_prefix: auth_routes_prefix, trigger_action: trigger_action, sitekey: sitekey)
     {:ok, socket}
   end
 
