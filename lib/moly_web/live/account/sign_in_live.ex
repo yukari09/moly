@@ -18,8 +18,9 @@ defmodule MolyWeb.Account.SignInLive do
 
   def handle_event("sign-in", %{"cf-turnstile-response"=>cf_turnstile_response} = params, socket) when cf_turnstile_response not in [nil, "", false] do
     login_params = Map.get(params, to_string(socket.assigns.subject_name))
+    request_cf = Moly.Helper.validate_cf(cf_turnstile_response)
     socket =
-      if Moly.Helper.validate_cf(cf_turnstile_response) === :ok do
+      if request_cf === :ok do
         submit_form = AshPhoenix.Form.submit(socket.assigns.form, params: login_params, read_one?: true)
         case submit_form do
           {:ok, user} ->

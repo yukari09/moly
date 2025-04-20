@@ -397,7 +397,6 @@ defmodule Moly.Helper do
       secret: secret_key,
       response: token
     })
-    Logger.debug("CF payload: #{payload}")
     Finch.build(:post, url, [{"Content-Type", "application/json"}], payload)
     |> Finch.request(Moly.Finch)
     |> case do
@@ -405,9 +404,12 @@ defmodule Moly.Helper do
         Logger.debug("CF response: #{body}")
         case Jason.decode!(body) do
           %{"success" => true} -> :ok
-          _ -> :error
+          _ ->
+            Logger.error("CF response: #{body}")
+            :error
         end
-      {:error, _} -> :error
+      {:error, result_body} ->
+        :error
     end
   end
 

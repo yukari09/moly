@@ -1,5 +1,5 @@
 defmodule MolyWeb.Account.ConfirmNewUser do
-alias Ash.Resource.Validation.Confirm
+
   use MolyWeb, :live_view
 
   require Logger
