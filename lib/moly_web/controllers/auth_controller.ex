@@ -51,7 +51,7 @@ defmodule MolyWeb.AuthController do
             errors: [%AshAuthentication.Errors.CannotConfirmUnconfirmedUser{}]
           }
         }} ->
-          "Please checck your email."
+          "Please verify your email address, the email may be in the spam folder."
         _ ->
           "Incorrect email or password"
       end
