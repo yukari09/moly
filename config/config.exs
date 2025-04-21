@@ -114,7 +114,7 @@ config :phoenix, :json_library, JSON
 
 config :moly, Oban,
   repo: Moly.Repo,
-  queues: [mailers: 20],
+  queues: [mailers: 20, periodic: 10],
   plugins: [
     {Oban.Plugins.Cron,
       crontab: [
