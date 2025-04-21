@@ -135,7 +135,9 @@ if config_env() == :prod do
     imagor_secret: System.get_env("IMAGOR_SECRET"),
     email_group: System.get_env("EMAIL_GROUP"),
     cf_website_secret: System.get_env("CF_WEBSITE_SECRET"),
-    cf_app_secret: System.get_env("CF_APP_SECRET")
+    cf_app_secret: System.get_env("CF_APP_SECRET"),
+    team_name: "Affinew",
+    support_email: "support@affinew.com"
 
   config :ex_aws,
     region: System.get_env("AWS_REGION"),

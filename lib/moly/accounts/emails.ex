@@ -24,18 +24,23 @@ defmodule Moly.Accounts.Emails do
     end
 
     deliver(email, "Confirm your email address", """
-      <p>
-        Hi #{email},
-      </p>
+      <p>Hi #{email},</p>
+
+      <p>We received a request to create a new account using this email address. If this was you, please confirm your identity by clicking the link below:</p>
 
       <p>
-        Someone has tried to register a new account using this email address.
-        If it was you, then please click the link below to confirm your identity. If you did not initiate this request then please ignore this email.
+        <a href="#{url}" style="color: #4CAF50; text-decoration: none; font-weight: bold;">Confirm your account</a>
       </p>
 
-      <p>
-        <a href="#{url}">Click here to confirm your account</a>
-      </p>
+      <p>If you did not request to create an account, please ignore this email. Your email address will not be registered.</p>
+
+      <p>If you have any questions or concerns, feel free to <a href="mailto:#{Application.get_env(:moly, :support_email)}">contact our support team</a>.</p>
+
+      <p>Best regards,<br>
+      The #{Application.get_env(:moly, :team_name)} Team</p>
+
+      <p><small>This email was sent because someone attempted to register an account using your email address. If you did not make this request, no further action is required.</small></p>
+
     """)
   end
 
@@ -45,38 +50,47 @@ defmodule Moly.Accounts.Emails do
     end
 
     deliver(email, "Reset your password", """
-      <p>
-        Hi #{email},
-      </p>
+      <p>Hi #{email},</p>
+
+      <p>We received a request to reset the password for your account. If this was you, please click the link below to reset your password:</p>
 
       <p>
-        You have requested to reset your password. If this was you, please click the link below to reset your password.
-        If you did not request this, please ignore this email.
+        <a href="#{url}" style="color: #4CAF50; text-decoration: none; font-weight: bold;">Reset your password</a>
       </p>
 
-      <p>
-        <a href="#{url}">Click here to reset your password</a>
-      </p>
+      <p>If you did not request a password reset, please ignore this email. Your password will not be changed.</p>
+
+      <p>If you have any questions or concerns, please <a href="mailto:#{Application.get_env(:moly, :support_email)}">contact our support team</a>.</p>
+
+      <p>Best regards,<br>
+      The #{Application.get_env(:moly, :team_name)} Team</p>
+
+      <p><small>This email was sent to you because a password reset request was made for your account. If you did not make this request, please disregard this message.</small></p>
     """)
   end
 
-  def deliver_email_change_confirmation_instructions(email, url) do
+  def deliver_email_change_confirmation_instructions(name, email, url) do
     if !url do
       raise "Cannot deliver confirmation instructions without a url"
     end
 
     deliver(email, "Confirm your new email address", """
-      <p>
-        Hi #{email},
-      </p>
+      <p>Hi #{name},</p>
+
+      <p>We noticed that you recently changed your email address. To ensure the security of your account, please confirm your new email address by clicking the link below:</p>
 
       <p>
-        You recently changed your email address. Please confirm it.
+        <a href="#{url}" style="color: #4CAF50; text-decoration: none; font-weight: bold;">Confirm your new email address</a>
       </p>
 
-      <p>
-        <a href="#{url}">Click here to confirm your new email address</a>
-      </p>
+      <p>If you didn’t request this change, please ignore this email.</p>
+
+      <p>Best regards,<br>
+      The #{Application.get_env(:moly, :team_name)} Team</p>
+
+      <p>If you have any questions, feel free to reach out to us at <a href="mailto:#{Application.get_env(:moly, :support_email)}">#{Application.get_env(:moly, :support_email)}</a>.</p>
+
+      <p><small>This email was sent to you because you recently changed your email address associated with your account.</small></p>
     """)
   end
 
