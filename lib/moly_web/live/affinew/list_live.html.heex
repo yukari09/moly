@@ -53,7 +53,7 @@
   <div class="mt-8">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2 text-sm md:text-base">
-        <span class="px-2 text-sm text-base md:text-base">Result: {@page_meta.total}</span>
+        <span class="px-2 text-base md:text-base">Result: {@page_meta.total}</span>
         <.link
           :for={{p, v} <- @options}
           :if={!is_nil(v)}

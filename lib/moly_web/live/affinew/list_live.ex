@@ -78,7 +78,9 @@ defmodule MolyWeb.Affinew.ListLive do
   end
 
   defp page_title(socket) do
-    assign(socket, :page_title, "Browse Affiliate Marketing Programs")
+    category_name = Map.get(socket.assigns.options, "category")
+    dt = Date.utc_today()
+    assign(socket, :page_title, "#{category_name<>" "}High Ticket Best Paying Affiliate Programs You Must Be Know in #{dt.year}")
   end
 
   defp to_option_value(options, option_value) do
