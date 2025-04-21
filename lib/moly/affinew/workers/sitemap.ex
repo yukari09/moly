@@ -25,7 +25,7 @@ defmodule Moly.Affinew.Workers.Sitemap do
   def generate_affiliate_sitemap() do
     config = get_config("affiliates")
     query =
-      Ash.Query.filter(Moly.Contents.Post, post_status == :publish)
+      Ash.Query.filter(Moly.Contents.Post, post_status == :publish and post_type == :affiliate)
       |> Ash.Query.select([:updated_at, :post_name])
     Ash.stream!(query, actor: %{roles: [:admin]})
     |> Stream.map(fn post ->

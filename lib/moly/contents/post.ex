@@ -251,6 +251,7 @@ defmodule Moly.Contents.Post do
       validations(
         one_of: [
           :post,
+          :affiliate,
           :page,
           :attachment,
           :revision,
