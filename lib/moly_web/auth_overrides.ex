@@ -13,7 +13,7 @@ defmodule MolyWeb.AuthOverrides do
   end
 
   override AshAuthentication.Phoenix.Components.Banner do
-    set(:image_url, "/images/logo.svg")
+    set(:image_url, "/images/logo.svgz")
     set(:image_class, "size-10 mx-auto h-10 w-auto")
     set(:root_class, "mx-auto")
     set(:text_class, "mt-2 text-center text-2xl/9 font-semibold tracking-tight")

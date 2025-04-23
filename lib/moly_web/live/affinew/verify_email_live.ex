@@ -41,7 +41,7 @@ defmodule MolyWeb.Affinew.VerifyEmailLive do
           :if={!@current_user.confirmed_at || @current_user.status != :active}
           class="px-4 sm:px-8 xl:px-0 mt-8"
         >
-          <div class="max-w-sm order-2"><img src="/images/3459557.svg" /></div>
+          <div class="max-w-sm order-2"><img src="/images/3459557.svgz" /></div>
           <div class="max-w-md  order-1">
             <div class="text-2xl md:text-3xl font-medium text-center">Verify your email</div>
             <div class=" mt-4">
@@ -59,7 +59,7 @@ defmodule MolyWeb.Affinew.VerifyEmailLive do
           :if={@current_user.confirmed_at && @current_user.status == :active}
           class="px-4 sm:px-8 xl:px-0 mt-8"
         >
-          <div class="max-w-sm order-2"><img src="/images/3459557.svg" /></div>
+          <div class="max-w-sm order-2"><img src="/images/3459557.svgz" /></div>
           <div class="max-w-md  order-1">
             <div class="text-2xl md:text-3xl font-medium text-center">
               Your email has been verified

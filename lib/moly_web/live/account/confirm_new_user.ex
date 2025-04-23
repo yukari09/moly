@@ -37,7 +37,7 @@ defmodule MolyWeb.Account.ConfirmNewUser do
         <a href="/dashboards/ecommerce">
           <img
             class="h-8"
-            src="/images/logo.svg"
+            src="/images/logo.svgz"
           />
         </a>
         <span class="text-2xl/7 font-medium text-base-content/70">Affinew</span>
