@@ -9,7 +9,7 @@ defmodule MolyWeb.Affinew.UnderConstructionLive do
     ~H"""
     <div class="flex flex-col  gap-x-12 items-center pt-10 h-full">
       <div class="md:flex px-4 sm:px-8 xl:px-0 items-center md:mt-36">
-        <div class="max-w-sm order-2"><img src="/images/8447284.svgz" /></div>
+        <div class="max-w-sm order-2"><img src="/images/8447284.svg" /></div>
         <div class="max-w-md  order-1">
           <div class="text-2xl md:text-4xl font-medium">Under Construction</div>
           <p class="text-base-content/80 mt-4">
