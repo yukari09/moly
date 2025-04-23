@@ -25,7 +25,7 @@ defmodule MolyWeb.Endpoint do
   plug(Plug.Static,
     at: "/",
     from: :moly,
-    gzip: false,
+    gzip: true,
     only: MolyWeb.static_paths()
   )
 

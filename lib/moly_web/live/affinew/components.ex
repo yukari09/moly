@@ -123,7 +123,7 @@ defmodule MolyWeb.Affinew.Components do
           Moly.Helper.get_in_from_keys(@post, [:source, "post_name"])
           |> MolyWeb.Affinew.Links.view()
         }>
-          <img class="object-center" id={"cicld-#{@post.id}"} phx-hook="imageLazyLoad" data-src={featrue_image_src(@post)} />
+          <img class="object-center" id={"cicld-#{@post.id}"} src={featrue_image_src(@post)} />
         </.link>
         <.link
           :if={
@@ -936,7 +936,7 @@ defmodule MolyWeb.Affinew.Components do
   def figure_image(assigns) do
     ~H"""
     <figure :if={featrue_image_src(@post)} class={["aspect-[3/2] overflow-hidden rounded-lg", @class]}>
-      <img id={"Illi-nl-#{@post.id}"} phx-hook="imageLazyLoad" data-src={featrue_image_src(@post)} />
+      <img id={"Illi-nl-#{@post.id}"} src={featrue_image_src(@post)} />
     </figure>
     """
   end
@@ -979,7 +979,7 @@ defmodule MolyWeb.Affinew.Components do
         nil
 
       sizes ->
-        Enum.reduce_while(["large", "medium"], nil, fn size, _ ->
+        Enum.reduce_while(["medium", "large"], nil, fn size, _ ->
           image_src = Moly.Helper.get_in_from_keys(sizes, [size, "file"])
           if image_src, do: {:halt, image_src}, else: {:cont, nil}
         end)
