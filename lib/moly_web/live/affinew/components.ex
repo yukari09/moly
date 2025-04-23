@@ -123,7 +123,7 @@ defmodule MolyWeb.Affinew.Components do
           Moly.Helper.get_in_from_keys(@post, [:source, "post_name"])
           |> MolyWeb.Affinew.Links.view()
         }>
-          <img class="object-center" src={featrue_image_src(@post)} />
+          <img class="object-center" id={"cicld-#{@post.id}"} phx-hook="imageLazyLoad" data-src={featrue_image_src(@post)} />
         </.link>
         <.link
           :if={
@@ -936,7 +936,7 @@ defmodule MolyWeb.Affinew.Components do
   def figure_image(assigns) do
     ~H"""
     <figure :if={featrue_image_src(@post)} class={["aspect-[3/2] overflow-hidden rounded-lg", @class]}>
-      <img src={featrue_image_src(@post)} />
+      <img id={"Illi-nl-#{@post.id}"} phx-hook="imageLazyLoad" data-src={featrue_image_src(@post)} />
     </figure>
     """
   end

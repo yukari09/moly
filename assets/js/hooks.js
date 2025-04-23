@@ -184,4 +184,13 @@ Hooks.ShareHook = {
     },
 };
 
+Hooks.imageLazyLoad = {
+    mounted() {
+        const newSrc = this.el.dataset.src;
+        if(newSrc){
+            this.el.setAttribute("src", newSrc)
+        }
+    }
+}
+
 export default Hooks;
