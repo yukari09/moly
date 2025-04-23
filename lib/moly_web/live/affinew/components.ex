@@ -979,7 +979,7 @@ defmodule MolyWeb.Affinew.Components do
         nil
 
       sizes ->
-        Enum.reduce_while(["medium", "large"], nil, fn size, _ ->
+        Enum.reduce_while(["large", "medium"], nil, fn size, _ ->
           image_src = Moly.Helper.get_in_from_keys(sizes, [size, "file"])
           if image_src, do: {:halt, image_src}, else: {:cont, nil}
         end)
