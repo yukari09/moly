@@ -116,10 +116,10 @@ defmodule Moly.Helper do
   @doc """
     [imagor](https://github.com/cshum/imagor)
   """
-  def image_resize(filename, width \\ nil, height \\ nil) do
+  def image_resize(filename, width \\ nil, height \\ nil, opts \\ []) do
     with {:ok, addr} = Application.fetch_env(:moly, :imagor_endpoint),
          {:ok, secret} = Application.fetch_env(:moly, :imagor_secret) do
-      opts = ["smart", "filters:format(webp)", filename]
+      opts = ["smart", "filters:format(webp)", filename] ++ opts
 
       path =
         if width && height do

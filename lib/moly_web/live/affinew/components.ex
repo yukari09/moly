@@ -967,22 +967,37 @@ defmodule MolyWeb.Affinew.Components do
     |> raw
   end
 
+  # def featrue_image_src(post) do
+  #   Moly.Helper.get_in_from_keys(post, [
+  #     :source,
+  #     "attachment_affiliate_media_feature",
+  #     "attachment_metadata",
+  #     "sizes"
+  #   ])
+  #   |> case do
+  #     nil ->
+  #       nil
+
+  #     sizes ->
+  #       Enum.reduce_while(["large", "medium"], nil, fn size, _ ->
+  #         image_src = Moly.Helper.get_in_from_keys(sizes, [size, "file"])
+  #         if image_src, do: {:halt, image_src}, else: {:cont, nil}
+  #       end)
+  #   end
+  # end
+
   def featrue_image_src(post) do
     Moly.Helper.get_in_from_keys(post, [
       :source,
       "attachment_affiliate_media_feature",
       "attachment_metadata",
-      "sizes"
+      "filename"
     ])
     |> case do
       nil ->
         nil
 
-      sizes ->
-        Enum.reduce_while(["large", "medium"], nil, fn size, _ ->
-          image_src = Moly.Helper.get_in_from_keys(sizes, [size, "file"])
-          if image_src, do: {:halt, image_src}, else: {:cont, nil}
-        end)
+      filename -> Moly.Helper.image_resize(filename, 390*2, 260*2)
     end
   end
 end
