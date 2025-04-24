@@ -71,6 +71,17 @@ defmodule MolyWeb.Affinew.ListLive do
     page_meta = Moly.Helper.pagination_meta(count, @per_page, page, 5)
 
     socket =
+      if count == 0 do
+        empty_map_params = %{
+          "category" => nil, "commission" => nil, "cookie-duration"=> nil,
+          "page"=>nil, "payment-cycle" => "novalue", "q" => nil, "sort" => nil
+        }
+        assign(socket, :canonical, ~p"/browse?#{empty_map_params}")
+      else
+        socket
+      end
+
+    socket =
       assign(socket, posts: posts, params: current_params, page_meta: page_meta, options: options)
       |> page_title()
 
