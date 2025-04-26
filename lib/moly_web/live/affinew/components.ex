@@ -997,7 +997,11 @@ defmodule MolyWeb.Affinew.Components do
       nil ->
         nil
 
-      filename -> Moly.Helper.image_resize(filename, 390*2, 260*2)
+      filename ->
+        width = 390 * 2
+        height = 260 * 2
+        opts = ["#{width}x#{height}", "top", "filters:format(webp)"]
+        Moly.Helper.image_src(filename, opts)
     end
   end
 end
