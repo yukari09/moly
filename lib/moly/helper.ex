@@ -399,8 +399,8 @@ defmodule Moly.Helper do
   def format_to_int(float_string, decimal_places) when is_float(float_string),
     do: :erlang.float_to_binary(float_string, decimals: decimal_places)
 
-  def validate_cf(token) do
-    secret_key = Application.get_env(:moly, :cf_app_secret)
+  def validate_cf(token, dev_mod \\ false) do
+    secret_key = dev_mod && "1x0000000000000000000000000000000AA" || Application.get_env(:moly, :cf_app_secret)
     url = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
     payload = JSON.encode!(%{
       secret: secret_key,
