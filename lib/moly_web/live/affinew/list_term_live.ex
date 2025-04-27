@@ -38,6 +38,17 @@ defmodule MolyWeb.Affinew.ListTermLive do
       |> String.capitalize()
 
     socket =
+      if count == 0 do
+        empty_map_params = %{
+          "category" => nil, "commission" => nil, "cookie-duration"=> nil,
+          "page"=>nil, "payment-cycle" => "novalue", "q" => nil, "sort" => nil
+        }
+        assign(socket, :canonical, ~p"/browse?#{empty_map_params}")
+      else
+        socket
+      end
+
+    socket =
       assign(socket,
         posts: posts,
         params: current_params,
