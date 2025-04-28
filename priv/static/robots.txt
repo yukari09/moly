@@ -1,0 +1,13 @@
+User-Agent: *
+Allow: /
+
+User-Agent: GPTBot
+Allow: /llms.txt
+Disallow: /
+
+User-Agent: anthropic-ai
+Allow: /llms.txt
+Disallow: /
+
+User-Agent: Googlebot
+Allow: /
