@@ -12,5 +12,6 @@ Disallow: /
 User-Agent: Googlebot
 Allow: /
 
+
 LLM-Content: https://affinew.com/llms.txt
 LLM-Full-Content: https://affinew.com/llms-full.txt
