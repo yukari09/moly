@@ -62,6 +62,6 @@ defmodule MolyWeb.Affinew.ListTermLive do
   end
 
   defp page_title(socket) do
-    assign(socket, :page_title, "#{socket.assigns.keyword} High Ticket best Paying affiliate marketing program")
+    assign(socket, :page_title, "#{socket.assigns.keyword} High Ticket best Paying affiliate programs")
   end
 end

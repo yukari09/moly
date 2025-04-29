@@ -15,7 +15,7 @@ defmodule MolyWeb.Affinew.IndexLive do
     socket =
       assign(socket,
         posts: posts,
-        page_title: "Find High Ticket Best Paying Affiliate Marketing Programs in 2025"
+        page_title: "Find High Ticket Best Paying affiliate programss in 2025"
       )
 
     {:ok, socket, layout: false}
