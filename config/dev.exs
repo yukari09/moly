@@ -5,7 +5,7 @@ config :moly, Moly.Repo,
   username: "yukari",
   password: "83233167",
   hostname: "localhost",
-  database: "moly_dev",
+  database: "moly_920mi_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -90,15 +90,15 @@ config :moly,
     "486343447885-9jg87vj9h0qafcdvu4k2ugb7dggbsion.apps.googleusercontent.com",
   google_oauth2_redirect_uri: "http://localhost:4000/auth/user/google/callback",
   google_oauth2_client_secret: "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",
-  email_name: "Affinew",
+  email_name: "SideBuilder",
   email_address: "moly@moly.dev",
   imagor_endpoint: "http://localhost:8000",
   imagor_secret: "WpozRdSDvTKVEPkOQ+/mSWEzIPdjXRFhYLB62XBN12knQ2SRvjMmsOJ/kNJT8UgI",
   #email_group: "Affinew1:moly@moly.dev:api_key1,Affinew2:no-reply@moly.dev:api_key2",
   cf_website_secret: "1x00000000000000000000AA",
   cf_app_secret: "1x0000000000000000000000000000000AA",
-  team_name: "Affinew",
-  support_email: "support@affinew.com"
+  team_name: "SideBuilder",
+  support_email: "support@920mi.com"
 
 config :ex_aws,
   region: "us-east-1",
@@ -118,4 +118,4 @@ config :moly, Moly.Cluster,
   json_library: JSON,
   http_client_adapter:
     {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]},
-  prefix: :affinew
+  prefix: :sidebuilder
