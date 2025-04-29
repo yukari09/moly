@@ -5,7 +5,7 @@ config :moly, Moly.Repo,
   username: "yukari",
   password: "83233167",
   hostname: "localhost",
-  database: "moly_920mi_dev",
+  database: "moly_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
