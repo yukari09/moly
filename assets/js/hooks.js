@@ -10,6 +10,7 @@ import {
 
 import Quill, { Delta } from "quill";
 import Splide from "@splidejs/splide";
+import LazyLoad from "vanilla-lazyload";
 
 // let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 
@@ -184,12 +185,26 @@ Hooks.ShareHook = {
     },
 };
 
-Hooks.imageLazyLoad = {
+// Hooks.imageLazyLoad = {
+//     mounted() {
+//         const newSrc = this.el.dataset.src;
+//         if(newSrc){
+//             this.el.setAttribute("src", newSrc)
+//         }
+//     }
+// }
+
+Hooks.lazyLoadImage = {
     mounted() {
-        const newSrc = this.el.dataset.src;
-        if(newSrc){
-            this.el.setAttribute("src", newSrc)
-        }
+      this.lazyLoadInstance = new LazyLoad(this.el);
+    },
+  
+    updated() {
+      this.lazyLoadInstance.update();
+    },
+  
+    destroyed() {
+      this.lazyLoadInstance = null;
     }
 }
 
