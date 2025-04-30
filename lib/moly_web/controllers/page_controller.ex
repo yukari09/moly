@@ -3,6 +3,7 @@ defmodule MolyWeb.PageController do
 
   require Ash.Query
 
+
   def page(conn, %{"post_name" => post_name}) do
     post =
       Ash.Query.filter(
