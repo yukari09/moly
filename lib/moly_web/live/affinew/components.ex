@@ -123,7 +123,7 @@ defmodule MolyWeb.Affinew.Components do
           Moly.Helper.get_in_from_keys(@post, [:source, "post_name"])
           |> MolyWeb.Affinew.Links.view()
         }>
-          <img class="object-center lazy" id={"cicld-#{@post.id}"} data-src={featrue_image_src(@post)} phx-hook="lazyLoadImage" alt={Moly.Helper.get_in_from_keys(@post, ["source", "post_title"])}/>
+          <img class="object-center" id={"cicld-#{@post.id}"} src={featrue_image_src(@post)}  alt={Moly.Helper.get_in_from_keys(@post, ["source", "post_title"])}/>
         </.link>
         <.link
           :if={
