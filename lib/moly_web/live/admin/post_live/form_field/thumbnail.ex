@@ -8,14 +8,14 @@ defmodule MolyWeb.AdminPostLive.FormField.Thumbnail do
     cur_feature_image =
       if form.data do
         form.data.post_meta
-        |> Enum.find(&(&1.meta_key == :thumbnail_id))
+        |> Enum.find(&(&1.meta_key == "thumbnail_id"))
         |> case do
           nil ->
             nil
 
           %{meta_value: media_id} ->
             Moly.Contents.PostMeta
-            |> Ash.Query.filter(post_id == ^media_id and meta_key == :attachment_metadata)
+            |> Ash.Query.filter(post_id == ^media_id and meta_key == "attachment_metadata")
             |> Ash.read!(actor: current_user)
             |> List.first()
         end
@@ -48,7 +48,7 @@ defmodule MolyWeb.AdminPostLive.FormField.Thumbnail do
             src={
               @cur_feature_image &&
                 attachment_metadata_image(
-                  %Moly.Contents.Post{id: @cur_feature_image, post_meta: [@cur_feature_image]},
+                  %Moly.Contents.Post{id: @cur_feature_image.id, post_meta: [@cur_feature_image]},
                   ["medium", "thumbnail"],
                   true
                 )

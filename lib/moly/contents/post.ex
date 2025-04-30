@@ -196,7 +196,10 @@ defmodule Moly.Contents.Post do
 
     destroy :destroy_post do
       soft? true
-      change atomic_update(:post_status, :trash)
+      argument :post_status, :atom do
+        default :trash
+      end
+      change atomic_update(:post_status, expr(^arg(:post_status)))
     end
 
     destroy :destroy_media do

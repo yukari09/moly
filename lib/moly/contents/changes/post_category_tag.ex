@@ -1,6 +1,8 @@
 defmodule Moly.Contents.Changes.PostCategoryTag do
   require Ash.Query
 
+  require Logger
+
   # def create_term_relationships(%{arguments: arguments}, post, _context) do
   #   post_id = post.id
 
@@ -73,6 +75,7 @@ defmodule Moly.Contents.Changes.PostCategoryTag do
         String.contains?(k, "category")
       end)
 
+
     old_tags =
       Enum.find(old_term_relationships, fn {k, _} ->
         String.contains?(k, "tag")
@@ -86,7 +89,7 @@ defmodule Moly.Contents.Changes.PostCategoryTag do
     term_relationships =
       if categories != [] do
         if old_categories,
-          do: Ash.bulk_destroy!(old_categories, :destroy, %{}, actor: %{roles: [:admin]})
+          do: elem(old_categories, 1) |> Ash.bulk_destroy!(:destroy, %{},  actor: %{roles: [:admin]})
 
         Enum.reduce(categories, [], &[%{term_taxonomy_id: &1, post_id: post_id} | &2])
       else
@@ -95,7 +98,7 @@ defmodule Moly.Contents.Changes.PostCategoryTag do
 
     term_relationships =
       if tags != [] do
-        if old_tags, do: Ash.bulk_destroy!(old_tags, :destroy, %{}, actor: %{roles: [:admin]})
+        if old_tags, do: elem(old_tags,1) |>  Ash.bulk_destroy!(:destroy, %{}, actor: %{roles: [:admin]})
 
         %{status: :success, records: records} =
           Ash.bulk_create!(tags, Moly.Terms.Term, :create,
@@ -103,7 +106,8 @@ defmodule Moly.Contents.Changes.PostCategoryTag do
             upsert_fields: [:slug],
             upsert?: true,
             upsert_identity: :unique_slug,
-            return_records?: true
+            return_records?: true,
+            return_errors?: true
           )
 
         Enum.reduce(records, term_relationships, fn %{term_taxonomy: term_taxonomy}, acc ->

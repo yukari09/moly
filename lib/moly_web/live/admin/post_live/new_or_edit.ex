@@ -34,6 +34,18 @@ defmodule MolyWeb.AdminPostLive.NewOrEdit do
 
   @impl true
   def handle_event("save", %{"form" => params}, socket) do
+    params =
+      case Map.get(params, "tags") do
+        nil ->
+          params
+
+        tags ->
+          new_tags = Enum.reduce(tags, tags, fn {k, tag}, acc ->
+            slug = Moly.Helper.string2slug(tag["name"])
+            put_in(acc, [k, "slug"], slug)
+          end)
+          Map.put(params, "tags", new_tags)
+      end
     socket =
       case AshPhoenix.Form.submit(socket.assigns.form,
              params: params,
