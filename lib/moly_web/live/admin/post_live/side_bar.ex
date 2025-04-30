@@ -84,7 +84,7 @@ defmodule MolyWeb.AdminPostLive.SideBar do
             <li class="flex items-center">
               <span class="font-medium w-32">Author</span>
               <span class="text-gray-600">
-                {Moly.Utilities.Account.load_meta_value_by_meta_key(@current_user, :name)}
+                {Moly.Utilities.Account.load_meta_value_by_meta_key(@current_user, "name")}
               </span>
             </li>
             <li :if={@form.data}>

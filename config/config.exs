@@ -85,7 +85,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "4.0.0",
+  version: "4.1.4",
   moly: [
     args: ~w(
       --input=css/app.css

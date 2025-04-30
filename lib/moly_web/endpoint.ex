@@ -14,8 +14,8 @@ defmodule MolyWeb.Endpoint do
   plug(Plug.Session, @session_options)
 
   socket("/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [session: @session_options], compress: false, timeout: 60_000],
-    longpoll: [connect_info: [session: @session_options]]
+    websocket: [connect_info: [session: @session_options], log: false],
+    longpoll: [connect_info: [session: @session_options], log: false]
   )
 
   # Serve at "/" the static files from "priv/static" directory.

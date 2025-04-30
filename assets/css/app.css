@@ -51,7 +51,7 @@
   --border: 1px;
   --depth: 0;
   --noise: 0;
-};
+}
 
 
 
@@ -61,19 +61,15 @@
   --color-green-light: #92e692;
   --color-orange: #ff5000;
   --breakpoint-xs: 30rem;
-};
+  --font-sans: outfit, sans-serif;
+  --default-font-feature-settings: "cv02", "cv03", "cv04", "cv11"; 
+  --default-font-variation-settings: "opsz" 32;
+}
 
 @import "../node_modules/@yaireo/tagify/dist/tagify.css";
 @import "../node_modules/quill/dist/quill.snow.css";
 @import "../node_modules/flatpickr/dist/flatpickr.min.css";
 @import "../node_modules/@splidejs/splide/dist/css/splide.min.css";
-
-@theme {
-  /* --font-sans: InterVariable, sans-serif; */
-  --font-sans: outfit, sans-serif;
-  --default-font-feature-settings: "cv02", "cv03", "cv04", "cv11"; 
-  --default-font-variation-settings: "opsz" 32;
-}
 
 button[disabled]{
     @apply opacity-50;
