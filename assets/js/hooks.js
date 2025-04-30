@@ -198,11 +198,9 @@ Hooks.lazyLoadImage = {
     mounted() {
       this.lazyLoadInstance = new LazyLoad(this.el);
     },
-  
     updated() {
       this.lazyLoadInstance.update();
     },
-  
     destroyed() {
       this.lazyLoadInstance = null;
     }
