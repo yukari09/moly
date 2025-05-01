@@ -103,9 +103,8 @@ defmodule Moly.MixProject do
       "assets.build": ["tailwind moly", "tailwind admin", "esbuild moly"],
       "assets.deploy": [
         "tailwind moly --minify",
-        "esbuild moly --minify",
         "tailwind admin --minify",
-        "esbuild admin --minify",
+        "esbuild moly --minify",
         "phx.digest"
       ]
     ]

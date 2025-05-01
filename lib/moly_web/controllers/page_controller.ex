@@ -8,7 +8,7 @@ defmodule MolyWeb.PageController do
       Moly.Utilities.cache_get_or_put(
         "#{__MODULE__}.page.index.cache",
         &MolyWeb.Affinew.QueryEs.index_query/0,
-        :timer.hours(12)
+        :timer.hours(6)
       )
 
     conn = put_layout(conn, false)

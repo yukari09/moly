@@ -114,23 +114,28 @@ defmodule MolyWeb.Affinew.Components do
 
   def card(assigns) do
     ~H"""
-    <div class="card w-full bg-base-100/5 border border-base-content/10">
+    <div class="card w-full bg-base-100/5 border border-base-content/10 rounded-3xl">
       <figure
         :if={featrue_image_src(@post)}
-        class="aspect-[3/2] overflow-hidden !block relative text-base-content rounded-t-lg"
+        class="aspect-[3/2] overflow-hidden !block relative text-base-content rounded-t-3xl"
       >
         <.link navigate={
           Moly.Helper.get_in_from_keys(@post, [:source, "post_name"])
           |> MolyWeb.Affinew.Links.view()
         }>
-          <img class="object-center" id={"cicld-#{@post.id}"} src={featrue_image_src(@post)}  alt={Moly.Helper.get_in_from_keys(@post, ["source", "post_title"])}/>
+          <img
+            class="object-cover"
+            id={"cicld-#{@post.id}"}
+            src={featrue_image_src(@post)}
+            alt={Moly.Helper.get_in_from_keys(@post, ["source", "post_title"])}
+          />
         </.link>
         <.link
           :if={
             affiliate_category = Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_category"])
           }
           navigate={Moly.Helper.get_in_from_keys(affiliate_category, [0, "slug"]) |> Links.term()}
-          class="badge badge-xs xs:badge-sm sm:badge-md  bg-primary border-none text-white rounded-br-lg rounded-tl-lg absolute top-0 left-0"
+          class="badge badge-xs xs:badge-sm sm:badge-md p-4 bg-primary border-none text-white rounded-br-3xl rounded-tl-3lg absolute top-0 left-0"
         >
           {Moly.Helper.get_in_from_keys(affiliate_category, [0, "name"])}
         </.link>
@@ -144,7 +149,7 @@ defmodule MolyWeb.Affinew.Components do
           Detail
         </.link>
       </figure>
-      <div class="card-body">
+      <div class="card-body bg-white rounded-b-3xl">
         <.link navigate={
           Moly.Helper.get_in_from_keys(@post, [:source, "post_name"]) |> MolyWeb.Affinew.Links.view()
         }>
@@ -335,7 +340,7 @@ defmodule MolyWeb.Affinew.Components do
                 Links.programs(Map.put(@params, @name, value))
             }
           >
-            <%=label%>
+            {label}
           </.link>
           <span :if={!value}>{label}</span>
         </li>
@@ -856,7 +861,8 @@ defmodule MolyWeb.Affinew.Components do
       <div :if={Moly.Helper.get_in_from_keys(@post, [:source, "duration_months"]) != 0}>
         <span class="text-lg text-primary font-medium">
           {Moly.Helper.get_in_from_keys(@post, [:source, "duration_months"])}
-        </span> <span class="text-xs text-base-content/60">Months</span>
+        </span>
+        <span class="text-xs text-base-content/60">Months</span>
       </div>
       <div :if={Moly.Helper.get_in_from_keys(@post, [:source, "duration_months"]) == 0}>
         Not specified
@@ -865,7 +871,8 @@ defmodule MolyWeb.Affinew.Components do
       <div>
         <span class="text-lg text-primary font-medium">
           {Moly.Helper.get_in_from_keys(@post, [:source, "cookie_duration"])}
-        </span> <span class="text-xs text-base-content/60">Days</span>
+        </span>
+        <span class="text-xs text-base-content/60">Days</span>
       </div>
       <div class="text-sm font-medium">Payment Cycle</div>
       <div class="text-sm font-medium uppercase">

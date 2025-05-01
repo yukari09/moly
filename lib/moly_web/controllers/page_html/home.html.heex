@@ -39,11 +39,23 @@
     <!-- Page content here -->
     <div class="bg-white">
       <div class="max-w-screen-xl mx-auto" aria-hidden="true">
-        <div class="w-full md:flex items-center justify-between p-10 lg:px-20 lg:pt-10">
+        <div class="w-full md:flex items-center justify-between px-10 lg:px-20 lg:pt-10 lg:pb-20">
           <div class="lg:max-w-lg flex-1">
-            <h1>
-              <p class="text-5xl/14 lg:text-6xl/16 font-medium tracking-tight">
-                Find <span class="text-primary">high ticket</span> affiliate programs
+            <div class="indicator">
+              <span class="indicator-item indicator-middle status status-success"></span>
+              <button class="btn btn-soft btn-outline bg-white rounded-full">
+                <span class="font-bold bg-gradient-to-r from-success via-secondary to-error text-transparent bg-clip-text">
+                  AI service
+                </span>
+                <span class="font-light"> for affiliate marketing is coming</span>
+              </button>
+            </div>
+            <h1 class="mt-8">
+              <p class="text-5xl/14 lg:text-6xl/18">
+                <span class="text-primary">
+                  Find High Ticket
+                </span>
+                <span class="fong-light">affiliate programs</span>
               </p>
               <div>
                 <svg
@@ -63,52 +75,104 @@
             <div class="mt-10 flex items-center gap-2">
               <.link
                 navigate={MolyWeb.Affinew.Links.programs()}
-                class="btn btn-sm w-full  md:btn-md md:w-auto xl:px-6 xl:py-5.5 bg-green-light text-green-primary border-none"
+                class="btn btn-sm btn-wide w-full  md:btn-md md:w-auto xl:px-6 xl:py-5.5 bg-green-light text-green-primary border-none"
               >
                 Explore
               </.link>
-              <.link
-                navigate={MolyWeb.Affinew.Links.submit()}
-                class="btn  btn-sm hidden md:flex md:btn-md md:w-auto xl:px-6 xl:py-5.5 btn-neutral btn-outline"
-              >
-                Submit
-              </.link>
             </div>
           </div>
-          <div class="max-w-xs md:max-w-sm lg:max-w-lg xl:max-w-xl hidden md:block aspect-square w-full">
+          <div class="max-w-xs md:max-w-sm lg:max-w-lg xl:max-w-xl hidden md:block aspect-square">
             <img id="mwxbt_nk" src={~p"/images/4235568.svg"} />
           </div>
         </div>
       </div>
 
-      <%!-- <div class="w-full bg-base-200">
-        <div class="max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              program affiliate marketing
+      <div class="w-full bg-green-secondary/5 mt-12 lg:mt-0">
+        <div class="max-w-6xl mx-auto">
+          <%!-- <h3 class="text-center text-3xl text-green-secondary ">Our data helps you make more informed decisions.</h3> --%>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 md:py-0">
+            <div class="py-4 md:py-12">
+              <Lucideicons.store class="text-green-secondary/50 mx-auto size-12 mb-12" />
+              <div class="flex gap-4 items-center justify-center">
+                <div class="text-2xl lg:text-4xl text-primary">
+                  133+
+                </div>
+                <div class="text-sm font-light">
+                  <span class="font-medium text-base lg:text-lg">Program</span> <br />affiliate marketing
+                </div>
+              </div>
             </div>
-            <div>
-              travel affiliate marketing programs
+
+            <div class="py-4 md:py-12">
+              <Lucideicons.tickets_plane class="text-green-secondary/50 mx-auto size-12 mb-12" />
+              <div class="flex gap-4 items-center justify-center">
+                <div class="text-2xl lg:text-4xl text-primary">
+                  10+
+                </div>
+                <div class="text-sm font-light">
+                  <span class="font-medium text-base lg:text-lg">Travel</span>
+                  <br />affiliate marketing<br />programs
+                </div>
+              </div>
             </div>
-            <div>
-              affiliate digital marketing
+
+            <div class="py-4 md:py-12">
+              <Lucideicons.keyboard_music class="text-green-secondary/50 mx-auto size-12 mb-12" />
+              <div class="flex gap-4 items-center justify-center">
+                <div class="text-2xl lg:text-4xl text-primary">
+                  50+
+                </div>
+                <div class="text-sm font-light">
+                  <span class="font-medium text-base lg:text-lg">Affiliate</span> <br />digital marketing
+                </div>
+              </div>
             </div>
-            <div>
-              online affiliate marketing
+            <div class="py-4 md:py-12">
+              <Lucideicons.cable class="text-green-secondary/50 mx-auto size-12 mb-12" />
+              <div class="flex gap-4 items-center justify-center">
+                <div class="text-2xl lg:text-4xl text-primary">
+                  80+
+                </div>
+                <div class="text-sm font-light">
+                  <span class="font-medium text-base lg:text-lg">Online</span> <br />Affiliate marketing
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>       --%>
-
-      <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
-          <MolyWeb.Affinew.Components.card :for={post <- @posts} post={post} />
-        </div>
       </div>
 
+      <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
+        <h3 class="mb-12 text-2xl text-opacity-70 text-green-light">
+          Top paying affiliate programs
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
+          <MolyWeb.Affinew.Components.card :for={post <- Enum.slice(@posts, 0..11)} post={post} />
+        </div>
+      </div>
     </div>
+
+    <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
+      <h3 class="mb-12 text-2xl text-opacity-70">Affiliate marketing programs for beginners</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
+        <MolyWeb.Affinew.Components.card :for={post <- Enum.slice(@posts, 12..23)} post={post} />
+      </div>
+    </div>
+
+    <div class="bg-primary/5">
+      <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
+        <h3 class="mb-12 text-2xl text-opacity-70 text-primary">
+          Affiliate marketing programs for beginners
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
+          <MolyWeb.Affinew.Components.card :for={post <- Enum.slice(@posts, 24..35)} post={post} />
+        </div>
+      </div>
+    </div>
+
     <MolyWeb.Affinew.Components.footer />
   </div>
+
   <div class="drawer-side">
     <label for="affinew-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
     <div class="p-4  bg-base-200 w-80 min-h-full">
