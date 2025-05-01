@@ -1,8 +1,8 @@
 {
-  "editor.fontFamily": "'Zed Mono Extended'",
+  "editor.fontFamily": "'Fira Code'",
   "editor.fontSize": 16,
-  "editor.fontLigatures": true, 
-  "editor.fontWeight": 500,
+  "editor.fontLigatures": "'calt', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'zero', 'onum'",
+  "editor.fontWeight": 400,
   "tailwindCSS.includeLanguages": { 
     "phoenix-heex": "html", 
     "elixir": "html",
