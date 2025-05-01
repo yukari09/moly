@@ -1,28 +1,8 @@
-import {
-    SetFeatureImage,
-    PostDatetimePicker,
-    InputValueUpdater,
-    TagsTagify,
-    Editor,
-    FormChangeListener,
-    Resize,
-} from "./hooks/post.js";
-
 import Quill, { Delta } from "quill";
-import Splide from "@splidejs/splide";
-// import LazyLoad from "vanilla-lazyload";
 
-// let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 
 let Hooks = {};
-
-Hooks.SetFeatureImage = SetFeatureImage;
-Hooks.PostDatetimePicker = PostDatetimePicker;
-Hooks.InputValueUpdater = InputValueUpdater;
-Hooks.TagsTagify = TagsTagify;
-Hooks.Editor = Editor;
-Hooks.FormChangeListener = FormChangeListener;
-Hooks.Resize = Resize;
 
 Hooks.DescriptionEditor = {
     init_editor(el) {
@@ -129,14 +109,6 @@ Hooks.CfTurnstile = {
     },
 };
 
-Hooks.Splide = {
-    mounted() {
-        const splide = new Splide(this.el).mount();
-    },
-    updated() {
-        const splide = new Splide(this.el).mount();
-    },
-};
 
 Hooks.ShareHook = {
     mounted() {
@@ -189,17 +161,5 @@ Hooks.ShareHook = {
         }
     },
 };
-
-// Hooks.lazyLoadImage = {
-//     mounted() {
-//         this.lazyLoadInstance = new LazyLoad(this.el);
-//     },
-//     updated() {
-//         this.lazyLoadInstance.update();
-//     },
-//     destroyed() {
-//         this.lazyLoadInstance = null;
-//     },
-// };
 
 export default Hooks;

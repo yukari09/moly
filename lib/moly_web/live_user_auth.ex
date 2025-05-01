@@ -35,11 +35,7 @@ defmodule MolyWeb.LiveUserAuth do
 
   defp check_roles(%{assigns: %{current_user: %{roles: roles, status: :active}}} = socket) do
     if Enum.member?(roles, :admin) do
-      socket
-      |> assign(:page_css, :admin)
-      |> assign(:page_js, :admin)
-
-      {:cont, socket}
+      {:cont, assign(socket, :asset_name, :admin)}
     else
       socket = redirect(socket, to: ~p"/sign-in")
       {:halt, socket}

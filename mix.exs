@@ -100,10 +100,12 @@ defmodule Moly.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ash.setup --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind moly", "esbuild moly"],
+      "assets.build": ["tailwind moly", "tailwind admin", "esbuild moly"],
       "assets.deploy": [
         "tailwind moly --minify",
         "esbuild moly --minify",
+        "tailwind admin --minify",
+        "esbuild admin --minify",
         "phx.digest"
       ]
     ]

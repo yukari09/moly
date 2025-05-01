@@ -3,6 +3,17 @@ defmodule MolyWeb.PageController do
 
   require Ash.Query
 
+  def home(conn, _params) do
+    posts =
+      Moly.Utilities.cache_get_or_put(
+        "#{__MODULE__}.page.index.cache",
+        &MolyWeb.Affinew.QueryEs.index_query/0,
+        :timer.hours(12)
+      )
+
+    conn = put_layout(conn, false)
+    render(conn, :home, posts: posts, page_title: "Find High Ticket Best Paying affiliate programss in 2025")
+  end
 
   def page(conn, %{"post_name" => post_name}) do
     post =

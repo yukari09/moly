@@ -53,6 +53,7 @@ defmodule MolyWeb.Router do
   scope "/", MolyWeb do
     pipe_through(:browser)
 
+    get("/", PageController, :home)
     get("/page/:post_name", PageController, :page)
     get("/sitemaps/:site_map_file", PageController, :sitemaps)
 
@@ -68,7 +69,6 @@ defmodule MolyWeb.Router do
 
     auth_routes(AuthController, Moly.Accounts.User, path: "/auth")
     sign_out_route(AuthController)
-
 
     ash_authentication_live_session :unauthenticated_routes,
       on_mount: {MolyWeb.LiveUserAuth, :live_no_user},
@@ -90,7 +90,6 @@ defmodule MolyWeb.Router do
 
     ash_authentication_live_session :authenticated_maybe_routes,
       on_mount: {MolyWeb.LiveUserAuth, :live_user_optional} do
-      live("/", Affinew.IndexLive)
       live("/results", Affinew.ListResultsLive)
       live("/browse", Affinew.ListLive)
       live("/affiliates/:slug", Affinew.ListTermLive)

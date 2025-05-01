@@ -26,7 +26,8 @@ config :moly, MolyWeb.Endpoint,
   secret_key_base: "TZLcv1+vrTqQP328e/JPkafOivjqfZYGd1sXlvJS/aoGxs3RhId/BtaYJc2nyhMt",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:moly, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:moly, ~w(--watch)]}
+    tailwind: {Tailwind, :install_and_run, [:moly, ~w(--watch)]},
+    tailwind: {Tailwind, :install_and_run, [:admin, ~w(--watch)]}
   ]
 
 # ## SSL Support

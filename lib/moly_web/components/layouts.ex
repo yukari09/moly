@@ -165,4 +165,8 @@ defmodule MolyWeb.Layouts do
     #   {"Resources", MolyWeb.Affinew.Links.under_construction()}
     # ]
   end
+
+  def asset_name(assigns), do: assigns[:asset_name] || "app"
+  def asset_js_url(assigns), do: ~p"/assets" <> "/#{asset_name(assigns)}.js"
+  def asset_css_url(assigns), do: ~p"/assets" <> "/#{asset_name(assigns)}.css"
 end
