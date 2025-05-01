@@ -26,7 +26,7 @@ import Uploaders from "./uploaders"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
-  longpollFallbackMs: 800,
+  longpollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
   hooks: Hooks,
   transport: LongPoll,

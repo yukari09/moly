@@ -72,56 +72,61 @@ Hooks.DescriptionEditor = {
         this.init_editor(this.el).root.innerHTML = tartget_input.value;
     },
 };
- 
+
 Hooks.CfTurnstile = {
     renderTurnstile(el) {
-      const callback = el.dataset.callback;
-  
-      turnstile.render(el, {
-        sitekey: el.dataset.sitekey,
-        callback: token => {
-          if (callback) {
-            window.dispatchEvent(new CustomEvent(callback, { detail: { token, el } }));
-          }
-        },
-      });
+        const callback = el.dataset.callback;
+
+        turnstile.render(el, {
+            sitekey: el.dataset.sitekey,
+            callback: (token) => {
+                if (callback) {
+                    window.dispatchEvent(
+                        new CustomEvent(callback, { detail: { token, el } }),
+                    );
+                }
+            },
+        });
     },
-  
+
     load_script(el) {
-      const existingScript = document.querySelector("script[src*='turnstile']");
-      if (typeof turnstile !== "undefined") {
-        this.renderTurnstile(el);
-        return;
-      }
-  
-      if (existingScript) {
-        const interval = setInterval(() => {
-          if (typeof turnstile !== "undefined") {
-            clearInterval(interval);
+        const existingScript = document.querySelector(
+            "script[src*='turnstile']",
+        );
+        if (typeof turnstile !== "undefined") {
             this.renderTurnstile(el);
-          }
-        }, 100);
-        return;
-      }
-  
-      const src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback';
-      const script = document.createElement("script");
-      script.src = src;
-      script.async = true;
-      document.head.appendChild(script);
-  
-      window.onloadTurnstileCallback = () => {
-        this.renderTurnstile(el);
-      };
+            return;
+        }
+
+        if (existingScript) {
+            const interval = setInterval(() => {
+                if (typeof turnstile !== "undefined") {
+                    clearInterval(interval);
+                    this.renderTurnstile(el);
+                }
+            }, 100);
+            return;
+        }
+
+        const src =
+            "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback";
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = true;
+        document.head.appendChild(script);
+
+        window.onloadTurnstileCallback = () => {
+            this.renderTurnstile(el);
+        };
     },
-  
+
     mounted() {
-      this.load_script(this.el);
+        this.load_script(this.el);
     },
-  
+
     updated() {
-      this.load_script(this.el);
-    }
+        this.load_script(this.el);
+    },
 };
 
 Hooks.Splide = {
@@ -137,47 +142,47 @@ Hooks.ShareHook = {
     mounted() {
         this.url = encodeURIComponent(
             document.querySelector("meta[name='twitter:url']")?.content ||
-            document.querySelector("meta[property='og:url']")?.content ||
-            window.location.href
+                document.querySelector("meta[property='og:url']")?.content ||
+                window.location.href,
         );
-        
+
         this.title = encodeURIComponent(
             document.querySelector("meta[name='twitter:title']")?.content ||
-            document.querySelector("meta[property='og:title']")?.content ||
-            document.title
+                document.querySelector("meta[property='og:title']")?.content ||
+                document.title,
         );
-        
+
         this.description = encodeURIComponent(
             document.querySelector("meta[name='twitter:description']")
                 ?.content ||
-            document.querySelector("meta[property='og:description']")
-                ?.content ||
-            ""
+                document.querySelector("meta[property='og:description']")
+                    ?.content ||
+                "",
         );
-        
+
         this.image = encodeURIComponent(
             document.querySelector("meta[name='twitter:image']")?.content ||
-            document.querySelector("meta[property='og:image']")?.content ||
-            ""
+                document.querySelector("meta[property='og:image']")?.content ||
+                "",
         );
-        
+
         // Share links for various platforms
         this.shareLinks = {
             facebook: `https://www.facebook.com/sharer/sharer.php?u=${this.url}`,
             twitter: `https://twitter.com/intent/tweet?url=${this.url}&text=${this.title}`,
-            reddit: `https://www.reddit.com/submit?url=${this.url}&title=${this.title}`,  // Changed to Reddit
-            threads: `https://www.threads.net/share?url=${this.url}&text=${this.title}`,  // Threads share link
+            reddit: `https://www.reddit.com/submit?url=${this.url}&title=${this.title}`, // Changed to Reddit
+            threads: `https://www.threads.net/share?url=${this.url}&text=${this.title}`, // Threads share link
         };
-        
+
         let platform = this.el.dataset.share;
-        
+
         if (platform) {
             this.el.addEventListener("click", (event) => {
                 if (this.shareLinks[platform]) {
                     window.open(
                         this.shareLinks[platform],
                         "_blank",
-                        "width=600,height=400,scrollbars=yes,resizable=yes"
+                        "width=600,height=400,scrollbars=yes,resizable=yes",
                     );
                 }
             });
@@ -185,25 +190,16 @@ Hooks.ShareHook = {
     },
 };
 
-// Hooks.imageLazyLoad = {
-//     mounted() {
-//         const newSrc = this.el.dataset.src;
-//         if(newSrc){
-//             this.el.setAttribute("src", newSrc)
-//         }
-//     }
-// }
-
 Hooks.lazyLoadImage = {
     mounted() {
-      this.lazyLoadInstance = new LazyLoad(this.el);
+        this.lazyLoadInstance = new LazyLoad(this.el);
     },
     updated() {
-      this.lazyLoadInstance.update();
+        this.lazyLoadInstance.update();
     },
     destroyed() {
-      this.lazyLoadInstance = null;
-    }
-}
+        this.lazyLoadInstance = null;
+    },
+};
 
 export default Hooks;

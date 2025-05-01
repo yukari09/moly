@@ -1,7 +1,7 @@
 <div class="drawer ">
   <input id="affinew-drawer" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content flex flex-col">
-    <div class="bg-white">
+    <div class="bg-white shadow-lg ">
       <!-- Navbar -->
       <div class="navbar w-full max-w-screen-xl mx-auto px-4 lg:px-10 ">
         <div class="flex-none lg:hidden mr-4">
@@ -81,11 +81,31 @@
         </div>
       </div>
 
+      <div class="w-full bg-base-200">
+        <div class="max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              program affiliate marketing
+            </div>
+            <div>
+              travel affiliate marketing programs
+            </div>
+            <div>
+              affiliate digital marketing
+            </div>
+            <div>
+              online affiliate marketing
+            </div>
+          </div>
+        </div>
+      </div>      
+
       <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
           <MolyWeb.Affinew.Components.card :for={post <- @posts} post={post} />
         </div>
       </div>
+
     </div>
     <MolyWeb.Affinew.Components.footer />
   </div>
