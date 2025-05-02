@@ -5,18 +5,32 @@ defmodule MolyWeb.Affinew.QueryEs do
   alias Moly.Cluster
 
   def index_query() do
-    query = %{
+    affiliate_query = %{
       query: %{
         bool: %{must: [%{term: %{post_status: "publish"}}, %{term: %{post_type: "affiliate"}}]}
       },
       sort: [%{"updated_at" => %{"order" => "desc"}}],
       size: 18
     }
+    post_query = %{
+      query: %{
+        bool: %{must: [%{term: %{post_status: "publish"}}, %{term: %{post_type: "post"}}]}
+      },
+      sort: [%{"updated_at" => %{"order" => "desc"}}],
+      size: 6
+    }
 
-    case Snap.Search.search(Cluster, Moly.Contents.Notifiers.Post.index_name(), query) do
-      {:ok, data} -> data.hits.hits
-      _ -> []
-    end
+    affiliate =
+      case Snap.Search.search(Cluster, Moly.Contents.Notifiers.Post.index_name(), affiliate_query) do
+        {:ok, data} -> data.hits.hits
+        _ -> []
+      end
+    post =
+      case Snap.Search.search(Cluster, Moly.Contents.Notifiers.Post.index_name(), post_query) do
+        {:ok, data} -> data.hits.hits
+        _ -> []
+      end
+    {affiliate, post}
   end
 
   def list_query_by_post_ids(post_ids) when is_list(post_ids) do

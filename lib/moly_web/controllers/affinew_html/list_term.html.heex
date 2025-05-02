@@ -1,0 +1,73 @@
+<div class="w-full max-w-screen-xl mx-auto px-4 lg:px-10 mb-8">
+  <MolyWeb.Affinew.Components.breadcrumb links={[
+    {"/", "Home"},
+    {MolyWeb.Affinew.Links.programs(), "affiliate programs"},
+    @keyword && {MolyWeb.Affinew.Links.term(@slug), @keyword},
+    !@keyword && {MolyWeb.Affinew.Links.term(@slug), @slug}
+  ]} />
+  <MolyWeb.Affinew.Components.header
+    id="browse-header"
+    headline={"#{@keyword || @slug }"}
+    class="mt-6"
+    subtitle={"High ticket best paying #{@keyword  || @slug } affiliate programss."}
+  />
+
+  <div class="mt-8">
+    <div class="flex items-center justify-between">
+      <span class="px-2  text-base md:text-base">Result: {@page_meta.total}</span>
+      <MolyWeb.Affinew.Components.filter_dropdown
+        params={@params}
+        label="Newest"
+        name="sort"
+        options={@sort_options}
+        term_slug={@slug}
+        class_btn="border-none"
+        class="dropdown-bottom dropdown-end"
+      />
+    </div>
+
+    <div
+      :if={Enum.count(@posts) > 0}
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4"
+    >
+      <MolyWeb.Affinew.Components.card :for={post <- @posts} post={post} />
+    </div>
+    <div :if={Enum.count(@posts) == 0}>
+      <img src="/images/7486744.svg" />
+    </div>
+
+    <div class="mx-auto my-8 lg:my-16">
+      <nav
+        :if={@page_meta.total_pages > 1}
+        class="flex items-center justify-center space-x-2 mt-4"
+      >
+        <.link
+          :if={@page_meta.prev}
+          navigate={MolyWeb.Affinew.Links.term(@slug, %{@params | "page" => @page_meta.prev})}
+          class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100"
+        >
+          <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
+        </.link>
+        <.link
+          :for={page <- @page_meta.page_range}
+          navigate={MolyWeb.Affinew.Links.term(@slug, %{@params | "page" => page})}
+          class={[
+            "px-3 py-2 border-b-2 hover:border-base-content hover:text-base-content",
+            (page == @page_meta.current_page && "border-base-content text-base-content") ||
+              "border-white text-base-content/60"
+          ]}
+        >
+          {page}
+        </.link>
+
+        <.link
+          :if={@page_meta.next}
+          navigate={MolyWeb.Affinew.Links.term(@slug, %{@params | "page" => @page_meta.next})}
+          class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100"
+        >
+          <Lucideicons.arrow_right class="w-4 h-4 md:w-5 md:h-5" />
+        </.link>
+      </nav>
+    </div>
+  </div>
+</div>

@@ -21,15 +21,16 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="preload" as="image" href={~p"/images/4235568.svg"} />
     <link :if={assigns[:canonical]} rel="canonical" href={assigns[:canonical]} />
     <link phx-track-static rel="stylesheet" href={asset_css_url(assigns)} />
     <script defer phx-track-static type="text/javascript" src={asset_js_url(assigns)}>
     </script>
+    <%= if Application.get_env(:moly, :env, :prod) !== :dev  do %>
     <script defer data-domain="affinew.com" src="https://analytics.karian.one/js/script.js">
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8834563225975418"
      crossorigin="anonymous"></script>
+    <% end %>
   </head>
   <body class="min-h-[100vh]">
     {@inner_content}

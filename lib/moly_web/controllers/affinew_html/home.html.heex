@@ -81,7 +81,7 @@
               </.link>
             </div>
           </div>
-          <div class="max-w-xs md:max-w-sm lg:max-w-lg xl:max-w-xl hidden md:block aspect-square">
+          <div class="max-w-xs md:max-w-sm lg:max-w-lg xl:max-w-xl hidden md:block aspect-square w-full">
             <img id="mwxbt_nk" src={~p"/images/4235568.svg"} />
           </div>
         </div>
@@ -138,29 +138,40 @@
       </div>
 
       <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
-        <h3 class="mb-12 text-2xl text-opacity-70 text-green-light">
-          Top paying affiliate programs
+        <h3 class="mb-12 text-2xl">
+          Top Paying Affiliate Programs
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
-          <MolyWeb.Affinew.Components.card :for={post <- Enum.slice(@posts, 0..5)} post={post} />
+          <MolyWeb.Affinew.Components.card :for={post <- Enum.slice(@affiliates, 0..5)} post={post} />
         </div>
       </div>
     </div>
 
     <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
-      <h3 class="mb-12 text-2xl text-opacity-70">Affiliate marketing programs for beginners</h3>
+      <h3 class="mb-12 text-2xl text-green-light">Affiliate Marketing Programs For Beginners</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
-        <MolyWeb.Affinew.Components.card :for={post <- Enum.slice(@posts, 6..11)} post={post} />
+        <MolyWeb.Affinew.Components.card :for={post <- Enum.slice(@affiliates, 6..11)} post={post} />
       </div>
     </div>
 
     <div class="bg-primary/5">
       <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
-        <h3 class="mb-12 text-2xl text-opacity-70 text-primary">
-          Affiliate marketing programs for beginners
+        <h3 class="mb-12 text-2xl text-primary">
+          Best Paying Affiliate Programs
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
-          <MolyWeb.Affinew.Components.card :for={post <- Enum.slice(@posts, 12..17)} post={post} />
+          <MolyWeb.Affinew.Components.card :for={post <- Enum.slice(@affiliates, 12..17)} post={post} />
+        </div>
+      </div>
+    </div>
+
+    <div :if={@posts != []}>
+      <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
+        <h3 class="mb-12 text-2xl">
+          Affiliate Marketing How To
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
+          <MolyWeb.Affinew.Components.post_card :for={post <- @posts} post={post} />
         </div>
       </div>
     </div>

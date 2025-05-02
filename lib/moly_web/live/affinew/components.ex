@@ -111,13 +111,13 @@ defmodule MolyWeb.Affinew.Components do
   end
 
   attr(:post, :map, required: true)
-
+  attr(:class, :string, default: nil)
   def card(assigns) do
     ~H"""
-    <div class="card w-full bg-base-100/5 border border-base-content/10 rounded-3xl">
+    <div class={["card w-full bg-base-100/5 border border-base-content/10 shadow-md", @class]}>
       <figure
         :if={featrue_image_src(@post)}
-        class="aspect-[3/2] overflow-hidden !block relative text-base-content rounded-t-3xl"
+        class="aspect-[3/2] overflow-hidden !block relative text-base-content rounded-t-lg"
       >
         <.link navigate={
           Moly.Helper.get_in_from_keys(@post, [:source, "post_name"])
@@ -135,7 +135,7 @@ defmodule MolyWeb.Affinew.Components do
             affiliate_category = Moly.Helper.get_in_from_keys(@post, [:source, "affiliate_category"])
           }
           navigate={Moly.Helper.get_in_from_keys(affiliate_category, [0, "slug"]) |> Links.term()}
-          class="badge badge-xs xs:badge-sm sm:badge-md p-4 bg-primary border-none text-white rounded-br-3xl rounded-tl-3lg absolute top-0 left-0"
+          class="badge badge-xs xs:badge-sm sm:badge-md   bg-primary border-none text-white rounded-br-xl rounded-tl-lg absolute top-0 left-0"
         >
           {Moly.Helper.get_in_from_keys(affiliate_category, [0, "name"])}
         </.link>
@@ -153,7 +153,7 @@ defmodule MolyWeb.Affinew.Components do
         <.link navigate={
           Moly.Helper.get_in_from_keys(@post, [:source, "post_name"]) |> MolyWeb.Affinew.Links.view()
         }>
-          <h2 class="lg:text-lg font-bold flex items-top gap-2 mb-1">
+          <h2 class="lg:text-lg font-bold flex items-top gap-2 mb-1 line-clamp-2">
             {Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}
           </h2>
         </.link>
@@ -182,6 +182,58 @@ defmodule MolyWeb.Affinew.Components do
     </div>
     """
   end
+
+  attr(:post, :map, required: true)
+  attr(:class, :string, default: nil)
+  def post_card(assigns) do
+    ~H"""
+    <div class={["card bg-base-100 border border-base-200 shadow-md",@class]}>
+      <figure :if={post_featrue_image_src(@post)} class="aspect-[3/2] overflow-hidden">
+        <.link navigate={
+          Moly.Helper.get_in_from_keys(@post, [:source, "post_name"])
+          |> MolyWeb.Affinew.Links.view()
+        }>
+          <img
+            class="object-cover w-full h-full"
+            src={post_featrue_image_src(@post)}
+            alt={Moly.Helper.get_in_from_keys(@post, ["source", "post_title"])}
+          />
+        </.link>
+      </figure>
+      <div class="card-body">
+        <.link
+          navigate={
+            Moly.Helper.get_in_from_keys(@post, [:source, "post_name"]) |> MolyWeb.Affinew.Links.view()
+          }
+        >
+          <h2 class="card-title line-clamp-2">
+            {Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}
+          </h2>
+        </.link>
+        <p class="line-clamp-3 text-base-content/70">
+          {Moly.Helper.get_in_from_keys(@post, [:source, "post_excerpt"])}
+        </p>
+        <div class="card-actions justify-between items-center mt-4">
+          <div class="flex items-center gap-2 text-sm text-base-content/60">
+            <time>
+              {Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> format_es_data()}
+            </time>
+          </div>
+          <.link
+            navigate={
+              ~p"/post/#{Moly.Helper.get_in_from_keys(@post, [:source, "post_name"])}"
+            }
+            class="btn btn-sm"
+          >
+            Read more
+          </.link>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+
 
   def user_dropdown(assigns) do
     assigns = assign(assigns, :id, Moly.Helper.generate_random_id())
@@ -974,29 +1026,30 @@ defmodule MolyWeb.Affinew.Components do
     |> raw
   end
 
-  # def featrue_image_src(post) do
-  #   Moly.Helper.get_in_from_keys(post, [
-  #     :source,
-  #     "attachment_affiliate_media_feature",
-  #     "attachment_metadata",
-  #     "sizes"
-  #   ])
-  #   |> case do
-  #     nil ->
-  #       nil
-
-  #     sizes ->
-  #       Enum.reduce_while(["large", "medium"], nil, fn size, _ ->
-  #         image_src = Moly.Helper.get_in_from_keys(sizes, [size, "file"])
-  #         if image_src, do: {:halt, image_src}, else: {:cont, nil}
-  #       end)
-  #   end
-  # end
 
   def featrue_image_src(post) do
     Moly.Helper.get_in_from_keys(post, [
       :source,
       "attachment_affiliate_media_feature",
+      "attachment_metadata",
+      "filename"
+    ])
+    |> case do
+      nil ->
+        nil
+
+      filename ->
+        width = 390 * 2
+        height = 260 * 2
+        opts = ["#{width}x#{height}", "top", "filters:format(webp)"]
+        Moly.Helper.image_src(filename, opts)
+    end
+  end
+
+  def post_featrue_image_src(post) do
+    Moly.Helper.get_in_from_keys(post, [
+      :source,
+      "thumbnail_id",
       "attachment_metadata",
       "filename"
     ])

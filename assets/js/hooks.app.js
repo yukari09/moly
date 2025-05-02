@@ -1,4 +1,4 @@
-import Quill, { Delta } from "quill";
+// import Quill, { Delta } from "quill";
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 
@@ -6,43 +6,83 @@ let Hooks = {};
 
 Hooks.DescriptionEditor = {
     init_editor(el) {
-        const config = JSON.parse(el.dataset.config);
-        const tartget_input = document.querySelector(el.dataset.target);
+        return new Promise((resolve) => {
+            const initQuillEditor = () => {
+                const config = JSON.parse(el.dataset.config);
+                const tartget_input = document.querySelector(el.dataset.target);
+                const Delta = Quill.import('delta');
+                
+                const quillInstance = new Quill(el, config);
+                quillInstance.clipboard.addMatcher(
+                    Node.ELEMENT_NODE,
+                    function (node, delta) {
+                        if (node.style) {
+                            node.style.backgroundColor = "";
+                            node.style.color = "";
+                        }
+                        if (node.tagName === "IMG") {
+                            return new Delta();
+                        }
+                        if (node.tagName === "A") {
+                            const textContent = node.textContent;
+                            return new Delta().insert(textContent);
+                        }
+                        delta.forEach((e) => {
+                            if (e.attributes) {
+                                e.attributes.color = "";
+                                e.attributes.background = "";
+                            }
+                        });
+                        return delta;
+                    },
+                );
+                quillInstance.on("text-change", function() {
+                    let editorContent = quillInstance.root.innerHTML;
+                    tartget_input.value = editorContent;
+                    let event = new Event("input", {
+                        bubbles: true,
+                        cancelable: true,
+                    });
+                    tartget_input.dispatchEvent(event);
+                });
+                resolve(quillInstance);
+            };
 
-        const quillInstance = new Quill(el, config);
-        quillInstance.clipboard.addMatcher(
-            Node.ELEMENT_NODE,
-            function (node, delta) {
-                if (node.style) {
-                    node.style.backgroundColor = "";
-                    node.style.color = "";
-                }
-                if (node.tagName === "IMG") {
-                    return new Delta();
-                }
-                if (node.tagName === "A") {
-                    const textContent = node.textContent;
-                    return new Delta().insert(textContent);
-                }
-                delta.forEach((e) => {
-                    if (e.attributes) {
-                        e.attributes.color = "";
-                        e.attributes.background = "";
+            if (typeof Quill === "undefined") {
+                const libs = [
+                    {
+                        type: "js",
+                        url: "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js",
+                        id: "quill-js"
+                    },
+                    {
+                        type: "css", 
+                        url: "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css",
+                        id: "quill-css"
+                    }
+                ];
+                
+                const jsLib = libs.find(lib => lib.type === "js");
+                const script = document.createElement("script");
+                script.src = jsLib.url;
+                script.id = jsLib.id;
+                script.onload = initQuillEditor;
+                
+                libs.forEach(lib => {
+                    if (lib.type === "css") {
+                        const link = document.createElement("link");
+                        link.href = lib.url;
+                        link.id = lib.id;
+                        link.rel = "stylesheet";
+                        document.head.appendChild(link);
                     }
                 });
-                return delta;
-            },
-        );
-        quillInstance.on("text-change", function (delta, oldDelta, source) {
-            let editorContent = quillInstance.root.innerHTML;
-            tartget_input.value = editorContent;
-            let event = new Event("input", {
-                bubbles: true,
-                cancelable: true,
-            });
-            tartget_input.dispatchEvent(event);
+                
+                document.head.appendChild(script);
+            } else {
+                initQuillEditor();
+            }
         });
-        return quillInstance;
     },
     mounted() {
         this.init_editor(this.el);
@@ -50,6 +90,69 @@ Hooks.DescriptionEditor = {
     updated() {
         const tartget_input = document.querySelector(this.el.dataset.target);
         this.init_editor(this.el).root.innerHTML = tartget_input.value;
+    },
+};
+
+// Hook to dynamically load CSS/JS libraries
+// Usage: Add data-lib attribute with JSON config to an element
+// Example: data-libs=[{ "type": "css", "url": "https://example.com/style.css", "id": "example-css" }]
+Hooks.DynamicLoadLibraries = {
+    loadLibrary(libData) {
+        try {
+            // Handle CSS files
+            if (libData.type === "css") {
+                // Check if CSS is already loaded
+                const existingLink = document.getElementById(libData.id);
+                if (!existingLink) {
+                    // Create and append link element
+                    const link = document.createElement("link");
+                    link.href = libData.url;
+                    link.id = libData.id;
+                    link.rel = "stylesheet";
+                    document.head.appendChild(link);
+                }
+            // Handle JavaScript files 
+            } else if (libData.type === "js") {
+                // Check if script is already loaded
+                const existingScript = document.getElementById(libData.id);
+                if (!existingScript) {
+                    // Create and append script element
+                    const script = document.createElement("script");
+                    script.src = libData.url;
+                    script.id = libData.id;
+                    script.async = true; 
+                    document.head.appendChild(script);
+                }
+            }
+        } catch (error) {
+            console.error("Error loading library:", error);
+        }
+    },
+    loadLibraries(el) {
+        const libDatas = JSON.parse(el.dataset.libs || "[]");
+        // Check if libDatas is an array
+        if (!libDatas || !Array.isArray(libDatas)) {
+            console.error("Invalid libraries data:", libDatas);
+            return;
+        }
+        libDatas.forEach((libData) => {
+            // Check if libData is an object and has the required properties
+            if (libData && typeof libData === "object" && libData.url) {
+                // Check if the library is already loaded
+                const existingLib = document.getElementById(libData.id);
+                if (!existingLib) {
+                    this.loadLibrary(libData);
+                }
+            } else {
+                console.error("Invalid library data:", libData);
+            }
+        });
+    },
+    mounted() {
+        this.loadLibraries(this.el);
+    },
+    updated() {
+        this.loadLibraries(this.el);
     },
 };
 

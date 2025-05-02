@@ -67,6 +67,7 @@ defmodule Moly.Helper do
     end)
   end
 
+  def remove_object(nil), do: nil
   def remove_object(filename) do
     bucket = load_s3_config(:bucket)
 

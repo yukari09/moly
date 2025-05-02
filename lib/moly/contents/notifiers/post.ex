@@ -133,7 +133,7 @@ defmodule Moly.Contents.Notifiers.Post do
   end
 
   defp convert_meta_value(key, value)
-       when key in [:attachment_affiliate_media_feature] and is_binary(value) and value != "" do
+       when key in [:attachment_affiliate_media_feature, :thumbnail_id] and is_binary(value) and value != "" do
     Ash.Query.new(Moly.Contents.PostMeta)
     |> Ash.Query.filter(post_id == ^value)
     |> Ash.read!(actor: @actor)
