@@ -10,7 +10,7 @@ defmodule MolyWeb.Affinew.QueryEs do
         bool: %{must: [%{term: %{post_status: "publish"}}, %{term: %{post_type: "affiliate"}}]}
       },
       sort: [%{"updated_at" => %{"order" => "desc"}}],
-      size: 36
+      size: 18
     }
 
     case Snap.Search.search(Cluster, Moly.Contents.Notifiers.Post.index_name(), query) do
