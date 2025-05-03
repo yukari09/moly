@@ -14,26 +14,26 @@
     <div class="flex items-center gap-2">
       <%!-- <button class="btn btn-square bg-white hidden md:block"><.icon name="hero-adjustments-horizontal" class="size-6"/></button> --%>
       <.filter_dropdown
-        params={@params}
+        params={%{@params | "page" => 1}}
         label="Categories"
         name="category"
         options={@industry_options}
       />
       <.filter_dropdown
-        params={@params}
+        params={%{@params | "page" => 1}}
         label="Commssion"
         name="commission"
         options={@commission_options}
       />
       <.filter_dropdown
-        params={@params}
+        params={%{@params | "page" => 1}}
         label="Cookie Duration"
         name="cookie-duration"
         class="hidden sm:block"
         options={@cookie_duration_options}
       />
       <.filter_dropdown
-        params={@params}
+        params={%{@params | "page" => 1}}
         label="Payment Cycle"
         class="hidden sm:block"
         name="payment-cycle"
@@ -41,7 +41,7 @@
       />
     </div>
     <.filter_dropdown
-      params={@params}
+      params={%{@params | "page" => 1}}
       label="Newest"
       name="sort"
       options={@sort_options}

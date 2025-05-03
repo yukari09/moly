@@ -2,7 +2,6 @@ defmodule MolyWeb.Affinew.Components do
   use MolyWeb, :html
 
   alias MolyWeb.Affinew.Links
-  import MolyWeb.Affinew.Helper
 
   def commission_unit_option,
     do: [{"USD", "$"}, {"EUR", "€"}, {"%", "%"}, {"$", "$"}, {"GBP", "£"}, {"JPY", "¥"}]
@@ -149,7 +148,7 @@ defmodule MolyWeb.Affinew.Components do
           Detail
         </.link>
       </figure>
-      <div class="card-body bg-white rounded-b-3xl">
+      <div class="card-body bg-white rounded-b-lg">
         <.link navigate={
           Moly.Helper.get_in_from_keys(@post, [:source, "post_name"]) |> MolyWeb.Affinew.Links.view()
         }>
@@ -215,8 +214,8 @@ defmodule MolyWeb.Affinew.Components do
         </p>
         <div class="card-actions justify-between items-center mt-4">
           <div class="flex items-center gap-2 text-sm text-base-content/60">
-            <time>
-              {Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> format_es_data()}
+            <time datetime={Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_data()}>
+              {Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_data()}
             </time>
           </div>
           <.link
@@ -511,7 +510,7 @@ defmodule MolyWeb.Affinew.Components do
         </.link>
         <div class="flex items-center gap-2 mt-2 md:mt-0">
           <time class="text-sm ">
-            {Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> format_es_data()}
+            {Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_data()}
           </time>
           <.link
             onclick="share_modal.showModal()"

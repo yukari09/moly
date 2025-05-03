@@ -237,7 +237,7 @@ for _ <- 1..60 do
     |> Enum.uniq()
     |> Enum.reduce([], fn tag, acc ->
       name = String.trim(tag)
-      slug = Moly.Helper.string2slug(name)
+      slug = Slug.slugify(name)
       new = %{"name" => name, "slug" => slug, "term_taxonomy" => [%{"taxonomy" => "affiliate_tag"}]}
       [new | acc]
     end)

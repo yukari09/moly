@@ -273,14 +273,6 @@ defmodule Moly.Helper do
     end
   end
 
-  def string2slug(str) do
-    str
-    |> String.trim()
-    |> String.downcase()
-    |> String.replace(~r/\s+/, "-")
-    |> String.replace(~r/[^\w-]/, "")
-  end
-
   def extract_filename_without_extension(filename) do
     filename
     |> Path.basename()
@@ -361,6 +353,13 @@ defmodule Moly.Helper do
 
   def timestamp2datetime(_), do: ""
 
+  def format_es_data(nil, _), do: nil
+
+  def format_es_data(data_str, format \\ "{Mfull} {D}, {YYYY}") do
+    Timex.parse!(data_str, "{ISO:Extended:Z}")
+    |> Timex.format!(format)
+  end
+
   def get_in_from_keys(map_or_list, keys, default \\ nil) do
     Enum.reduce_while(keys, map_or_list, fn key, acc ->
       value =
@@ -423,10 +422,23 @@ defmodule Moly.Helper do
             Logger.error("CF response: #{body}")
             :error
         end
-      {:error, result_body} ->
+      {:error, _result_body} ->
         :error
     end
   end
+
+  def es_query_result(cluster, index_name, query) do
+    case Snap.Search.search(cluster, index_name, query) do
+      {:ok, %{hits: %{total: %{"value" => total}, hits: hits}}} ->
+        case hits do
+          [] -> nil
+          result -> [total, result]
+        end
+      _ ->
+        nil
+    end
+  end
+
 
   def pagination_meta(total, page_size, page, show_item)
       when is_integer(total) and is_integer(page_size) and is_integer(page) and

@@ -15,7 +15,7 @@ defmodule MolyWeb.AdminPostLive.SideBar do
       aria-expanded="true"
     >
       <div class="h-full overflow-y-scroll bg-white flex flex-col px-2 sm:px-4 space-y-4">
-        <div class="flex items-start justify-between border-b pb-4 pt-6 sticky top-0 bg-white z-20">
+        <div class="flex items-start justify-between border-b border-gray-200 pb-4 pt-6 sticky top-0 bg-white z-20">
           <h2 class="text-base font-semibold text-gray-900" id="slide-over-title">Post settings</h2>
         </div>
         <div class="space-y-5">
@@ -105,7 +105,7 @@ defmodule MolyWeb.AdminPostLive.SideBar do
             <div>
               <button
                 type="button"
-                class="hover:bg-gray-50 border flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700 rounded-bl-none rounded-br-none"
+                class="hover:bg-gray-50 border border-gray-200 flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700 rounded-bl-none rounded-br-none"
                 aria-controls="sub-menu-1"
                 aria-expanded="false"
                 phx-click={accordion("#sub-menu-1-icon", "#sub-menu-1")}
@@ -113,7 +113,7 @@ defmodule MolyWeb.AdminPostLive.SideBar do
                 Excerpt <Lucideicons.chevron_up id="sub-menu-1-icon" class="w-4 h-4" />
               </button>
               <div
-                class="bg-gray-50 p-2 border  border-t-0 rounded-br-md rounded-bl-md"
+                class="bg-gray-50 p-2 border border-gray-200 border-t-0 rounded-br-md rounded-bl-md"
                 id="sub-menu-1"
               >
                 <.textarea field={@form[:post_excerpt]} placeholder="Add an excerpt" rows={3}>
@@ -171,7 +171,7 @@ defmodule MolyWeb.AdminPostLive.SideBar do
                     :for={{tag, i} <- Enum.with_index((@form.data && @form.data.post_tags) || [])}
                     name={"#{@form[:tags].name}[#{i}][term_taxonomy][][taxonomy]"}
                     data-value={tag.name}
-                    value={hd(tag.term_taxonomy) |> Map.get(:id)}
+                    value={hd(tag.term_taxonomy) |> Map.get(:taxonomy)}
                     type="hidden"
                   /> Separate with commas or the Enter key.
                 </div>

@@ -1,7 +1,18 @@
 defmodule Moly.Utilities.Account do
   use MolyWeb, :html
 
+  require Ash.Query
+
   @bucket_prefix "user_meta"
+
+  def get_users_by_id(user_id) when is_list(user_id) do
+      Moly.Accounts.User
+      |> Ash.Query.new()
+      |> Ash.Query.filter(id in ^user_id)
+      |> Ash.Query.load(:user_meta)
+      |> Ash.read!(context: %{private: %{ash_authentication?: true}})
+      |> Enum.reduce(%{}, fn user, acc -> Map.put(acc, user.id, user) end)
+  end
 
   def generate_avatar_from_url(url) do
     hashed_path = Moly.Helper.put_object_from_url(url, @bucket_prefix)

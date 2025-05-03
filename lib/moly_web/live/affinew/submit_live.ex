@@ -97,7 +97,7 @@ defmodule MolyWeb.Affinew.SubmitLive do
       |> String.split(",")
       |> Enum.map(fn name ->
         name = String.trim(name)
-        slug = Moly.Helper.string2slug(name)
+        slug = Slug.slugify(name)
 
         %{
           "name" => name,

@@ -55,14 +55,9 @@ defmodule MolyWeb.Router do
     pipe_through(:browser)
 
     get("/", AffinewController, :home)
-    get("/browse", AffinewController, :browse)
-    get("/affiliates/:slug", AffinewController, :list_term)
-    get("/results", AffinewController, :results)
+
     get("/page/:post_name", PageController, :page)
     get("/sitemaps/:site_map_file", PageController, :sitemaps)
-
-    get("/posts", PostController, :index)
-    get("/post/:post_name", PostController, :view)
 
     confirm_route(
       Moly.Accounts.User,
@@ -97,12 +92,14 @@ defmodule MolyWeb.Router do
 
     ash_authentication_live_session :authenticated_maybe_routes,
       on_mount: {MolyWeb.LiveUserAuth, :live_user_optional} do
-      # live("/results", Affinew.ListResultsLive)
-      # live("/browse", Affinew.ListLive)
-      # live("/affiliates/:slug", Affinew.ListTermLive)
+      live("/results", Affinew.ListResultsLive)
+      live("/browse", Affinew.ListLive)
+      live("/affiliates/:slug", Affinew.ListTermLive)
       live("/affiliate/:post_name", Affinew.ViewLive)
       live("/user/@:username", Affinew.UserPageLive)
       live("/under-construction", Affinew.UnderConstructionLive)
+      live("/posts", Affinew.ListPostsLive)
+      live("/post/:post_name", Affinew.PostViewLive)
     end
   end
 

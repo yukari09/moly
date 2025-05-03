@@ -14,9 +14,9 @@
 
   <div class="mt-8">
     <div class="flex items-center justify-between">
-      <span class="px-2 text-sm text-base md:text-base">Result: {@page_meta.total}</span>
+      <span class="px-2 text-base md:text-base">Result: {@page_meta.total}</span>
       <.filter_dropdown
-        params={@params}
+        params={%{@params | "page" => 1}}
         label="Newest"
         name="sort"
         options={@sort_options}

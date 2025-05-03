@@ -41,7 +41,7 @@ defmodule MolyWeb.AdminPostLive.NewOrEdit do
 
         tags ->
           new_tags = Enum.reduce(tags, tags, fn {k, tag}, acc ->
-            slug = Moly.Helper.string2slug(tag["name"])
+            slug = Slug.slugify(tag["name"])
             put_in(acc, [k, "slug"], slug)
           end)
           Map.put(params, "tags", new_tags)
