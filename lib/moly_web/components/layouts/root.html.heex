@@ -15,12 +15,11 @@
         content={tag_attrs[:content]}
       />
     <% end %>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap"
-      rel="stylesheet"
-    />
+    <!--Google Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <!--Assigns-->
     <link :if={assigns[:canonical]} rel="canonical" href={assigns[:canonical]} />
     <link phx-track-static rel="stylesheet" href={asset_css_url(assigns)} />
     <script defer phx-track-static type="text/javascript" src={asset_js_url(assigns)}>

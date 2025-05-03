@@ -150,7 +150,8 @@ defmodule MolyWeb.Affinew.ViewLive do
       %{name: "twitter:card", content: "summary_large_image"},
       %{name: "twitter:title", content: post_title},
       %{name: "twitter:description", content: post_excerpt},
-      %{name: "twitter:image", content: media_url}
+      %{name: "twitter:image", content: media_url},
+      %{name: "description", content: post_excerpt},
     ]
 
     assign(socket, :meta_tags, meta_tags)

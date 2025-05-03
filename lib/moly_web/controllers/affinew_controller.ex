@@ -1,4 +1,5 @@
 defmodule MolyWeb.AffinewController do
+  alias Ash.Type.DateTime
   use MolyWeb, :controller
 
   require Ash.Query
@@ -13,8 +14,17 @@ defmodule MolyWeb.AffinewController do
         :timer.hours(6)
       )
 
+    page_title = "Find High Ticket Best Paying affiliate programss for beginners in #{Date.utc_today() |> Map.get(:year)}."
+
+    meta_tags = [
+      %{
+        name: "description",
+        content: "Explore the best paying affiliate marketing programs for beginners and influencers. With 133+ programs, including high-ticket offers, discover how to maximize your earnings with higher commissions and fewer sales. Start earning more today!"
+      },
+    ]
+
     conn = put_layout(conn, false)
-    render(conn, :home, affiliates: affiliates, posts: posts, page_title: "Find High Ticket Best Paying affiliate programss for beginners in 2025")
+    render(conn, :home, affiliates: affiliates, posts: posts, page_title: page_title, meta_tags: meta_tags)
   end
 
 

@@ -189,8 +189,7 @@ defmodule MolyWeb.Affinew.Components do
     <div class={["card bg-base-100 border border-base-200 shadow-md",@class]}>
       <figure :if={post_featrue_image_src(@post)} class="aspect-[3/2] overflow-hidden">
         <.link navigate={
-          Moly.Helper.get_in_from_keys(@post, [:source, "post_name"])
-          |> MolyWeb.Affinew.Links.view()
+          ~p"/post/#{Moly.Helper.get_in_from_keys(@post, [:source, "post_name"])}"
         }>
           <img
             class="object-cover w-full h-full"
@@ -199,10 +198,10 @@ defmodule MolyWeb.Affinew.Components do
           />
         </.link>
       </figure>
-      <div class="card-body">
+      <div class="card-body bg-white rounded-b-lg">
         <.link
           navigate={
-            Moly.Helper.get_in_from_keys(@post, [:source, "post_name"]) |> MolyWeb.Affinew.Links.view()
+            ~p"/post/#{Moly.Helper.get_in_from_keys(@post, [:source, "post_name"])}"
           }
         >
           <h2 class="card-title line-clamp-2">
@@ -1045,7 +1044,7 @@ defmodule MolyWeb.Affinew.Components do
     end
   end
 
-  def post_featrue_image_src(post) do
+  def post_featrue_image_src(post, width \\ 780, height \\ 520) do
     Moly.Helper.get_in_from_keys(post, [
       :source,
       "thumbnail_id",
@@ -1057,8 +1056,6 @@ defmodule MolyWeb.Affinew.Components do
         nil
 
       filename ->
-        width = 390 * 2
-        height = 260 * 2
         opts = ["#{width}x#{height}", "top", "filters:format(webp)"]
         Moly.Helper.image_src(filename, opts)
     end

@@ -40,10 +40,13 @@ defmodule MolyWeb.AdminPostLive.NewOrEdit do
           params
 
         tags ->
-          new_tags = Enum.reduce(tags, tags, fn {k, tag}, acc ->
-            slug = Slug.slugify(tag["name"])
-            put_in(acc, [k, "slug"], slug)
-          end)
+          new_tags =
+            Enum.uniq_by(tags, fn {_k, %{"name" => name}} -> name end)
+            |> Enum.with_index()
+            |> Enum.reduce(%{}, fn {{_k, v}, index}, acc ->
+              slug = Slug.slugify(v["name"])
+              Map.put(acc, index, Map.put(v, "slug", slug))
+            end)
           Map.put(params, "tags", new_tags)
       end
     socket =

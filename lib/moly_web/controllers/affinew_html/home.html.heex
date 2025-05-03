@@ -44,7 +44,7 @@
             <div class="indicator">
               <span class="indicator-item indicator-middle status status-success"></span>
               <button class="btn btn-soft btn-outline bg-white rounded-full">
-                <span class="font-bold bg-gradient-to-r from-success via-secondary to-error text-transparent bg-clip-text">
+                <span class="font-bold bg-gradient-to-r from-success via-error to-secondary text-transparent bg-clip-text text-sm">
                   AI service
                 </span>
                 <span class="font-light"> for affiliate marketing is coming</span>
@@ -52,7 +52,7 @@
             </div>
             <h1 class="mt-8">
               <p class="text-5xl/14 lg:text-6xl/18">
-                <span class="text-primary">
+                <span class="text-primary font-bold">
                   Find High Ticket
                 </span>
                 <span class="fong-light">affiliate programs</span>
@@ -68,7 +68,7 @@
                   </path>
                 </svg>
               </div>
-              <p class="mt-8 text-sm lg:text-base">
+              <p class="mt-8 text-sm lg:text-base ">
                 Discover exclusive, high-paying affiliate programs that help you earn more with fewer sales. These programs offer higher commissions, allowing you to maximize your income without many effort.
               </p>
             </h1>
@@ -138,28 +138,28 @@
       </div>
 
       <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
-        <h3 class="mb-12 text-2xl">
+        <h3 class="mb-12 mt-8 text-2xl font-bold">
           Top Paying Affiliate Programs
         </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4 lg:gap-5">
           <MolyWeb.Affinew.Components.card :for={post <- Enum.slice(@affiliates, 0..5)} post={post} />
         </div>
       </div>
     </div>
 
     <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
-      <h3 class="mb-12 text-2xl text-green-light">Affiliate Marketing Programs For Beginners</h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
+      <h3 class="mb-12 mt-8 text-2xl text-green-primary font-bold">Affiliate Marketing Programs For Beginners</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4 lg:gap-5">
         <MolyWeb.Affinew.Components.card :for={post <- Enum.slice(@affiliates, 6..11)} post={post} />
       </div>
     </div>
 
     <div class="bg-primary/5">
       <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
-        <h3 class="mb-12 text-2xl text-primary">
+        <h3 class="mb-12 mt-8 text-2xl text-primary font-bold">
           Best Paying Affiliate Programs
         </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4 lg:gap-5">
           <MolyWeb.Affinew.Components.card :for={post <- Enum.slice(@affiliates, 12..17)} post={post} />
         </div>
       </div>
@@ -167,10 +167,10 @@
 
     <div :if={@posts != []}>
       <div class="w-full max-w-screen-xl mx-auto p-4 lg:p-10 mb-10">
-        <h3 class="mb-12 text-2xl">
+        <h3 class="mb-12 mt-8 text-2xl font-bold">
           Affiliate Marketing How To
         </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4 lg:gap-5">
           <MolyWeb.Affinew.Components.post_card :for={post <- @posts} post={post} />
         </div>
       </div>

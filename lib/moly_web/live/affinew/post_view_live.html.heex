@@ -1,0 +1,62 @@
+
+<div class="container mx-auto px-4 py-8 mb-4 md:mb-8 lg:mb-16 max-w-4xl">
+  <div class="mb-8">
+    <h1 class="text-3xl md:text-5xl font-medium mt-0 md:mt-4 mb-8 lg:mt-8 lg:mb-12 text-primary">{Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}</h1>
+
+    <div class="flex flex-row items-center mb-4">
+      <div class="avatar mr-4 mb-2 sm:mb-0">
+          <div class="avatar">
+            <MolyWeb.DaisyUi.avatar user={@author} />
+          </div>
+      </div>
+      <div>
+        <p class="font-bold">{Moly.Utilities.Account.user_name(@author)}</p>
+        <div class="flex flex-wrap items-center text-sm text-base-content/70">
+            <time datetime={Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_data()}>
+              {Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_data()}
+            </time>
+          <span class="mx-2 hidden sm:inline">•</span>
+          <span>Reading time:&nbsp;&nbsp;{(Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> String.length()) / 1000 |> floor()} Min</span>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="w-full h-72 rounded-box overflow-hidden">
+      <img
+        src={post_featrue_image_src(@post, 1728, 576)}
+        alt={Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}
+        class="w-full h-full object-cover"
+      />
+    </div>
+  </div>
+
+  <article class="prose prose-sm sm:prose lg:prose-lg max-w-none mt-6 bricolage-grotesque-4 mx-auto font-light break-words">
+    <%= for %{"data" => data, "id" => id, "type" => type} <- Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> JSON.decode! |> Moly.Helper.get_in_from_keys(["blocks"]) do %>
+    <h2 id={id} :if={type == "header" && data["level"] == 2}>{data["text"]}</h2>
+    <h3 id={id} :if={type == "header" && data["level"] == 3}>{data["text"]}</h3>
+    <h4 id={id} :if={type == "header" && data["level"] == 4}>{data["text"]}</h4>
+    <h5 id={id} :if={type == "header" && data["level"] == 5}>{data["text"]}</h5>
+    <p id={id} :if={type == "paragraph"}>{data["text"]}</p>
+    <% end %>
+    <p class="flex flex-wrap items-center text-sm text-base-content/70 gap-2">
+      <span class="mr-2">Tags:</span>
+    <.link navigate={~p"/posts/#{tag["slug"]}"} class="badge badge-ghost link link-hover" :for={tag <- Moly.Helper.get_in_from_keys(@post, [:source, "post_tag"])}>{tag["name"]}</.link>
+    </p>
+  </article>
+   
+ 
+
+  <div class="mt-8 border-t border-base-content/10 pt-8" :if={@related_posts != []}>
+    <h3 class="text-xl sm:text-2xl font-bold mb-6">Related Articles</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-2">
+      <.post_card
+        :for={post <- @related_posts}
+        post={post}
+      />
+    </div>
+  </div>
+</div>
+
+ 
