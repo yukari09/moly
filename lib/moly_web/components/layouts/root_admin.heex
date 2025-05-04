@@ -7,14 +7,6 @@
     <.live_title suffix={assigns[:page_suffix] || " · Affinew"}>
       {assigns[:page_title] || "Find high ticket best paying affiliate programss"}
     </.live_title>
-    <%= if assigns[:meta_tags] do %>
-      <meta
-        :for={tag_attrs <- assigns[:meta_tags]}
-        name={tag_attrs[:name]}
-        property={tag_attrs[:property]}
-        content={tag_attrs[:content]}
-      />
-    <% end %>
     <!--Google Fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,21 +14,10 @@
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&display=swap"
       rel="stylesheet"
     />
-    <!--Assigns-->
     <link :if={assigns[:canonical]} rel="canonical" href={assigns[:canonical]} />
-    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/admin.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/admin.js"}>
     </script>
-    <%= if Application.get_env(:moly, :env, :prod) !== :dev  do %>
-      <script defer data-domain="affinew.com" src="https://analytics.karian.one/js/script.js">
-      </script>
-      <script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8834563225975418"
-        crossorigin="anonymous"
-      >
-      </script>
-    <% end %>
   </head>
   <body class="min-h-[100vh]">
     {@inner_content}

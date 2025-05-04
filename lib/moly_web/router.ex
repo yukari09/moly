@@ -74,9 +74,11 @@ defmodule MolyWeb.Router do
 
     ash_authentication_live_session :unauthenticated_routes,
       on_mount: {MolyWeb.LiveUserAuth, :live_no_user},
-      session: {AshAuthentication.Phoenix.Router, :generate_session, [
-        %{"auth_routes_prefix" => "/auth"}
-      ]},
+      session:
+        {AshAuthentication.Phoenix.Router, :generate_session,
+         [
+           %{"auth_routes_prefix" => "/auth"}
+         ]},
       layout: false do
       live("/sign-in", Account.SignInLive)
       live("/register", Account.SignUpLive)
@@ -115,6 +117,7 @@ defmodule MolyWeb.Router do
 
     ash_authentication_live_session :live_admin,
       on_mount: {MolyWeb.LiveUserAuth, :live_admin_required},
+      root_layout: {MolyWeb.Layouts, :root_admin},
       layout: {MolyWeb.Layouts, :admin} do
       live("/dashboard", AdminDashboardLive)
       live("/users", AdminUserLive.Index, :index)
