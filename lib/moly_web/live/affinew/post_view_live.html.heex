@@ -44,6 +44,20 @@
     <ul id={id} :if={type == "list" && data["style"] == "unordered"}>
       <li :for={item <- data["items"]}>{raw item["content"]}</li>
     </ul>
+    <div id={id} class={["rounded-box border border-base-content/5 bg-base-100 not-prose", data["stretched"] && "overflow-x-auto"]} :if={type == "table"}>
+      <table class="table">
+        <thead :if={data["withHeadings"]}>
+          <tr>
+            <th :for={cell <- hd(data["content"])}>{raw cell}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={{row, i} <- Enum.with_index(data["content"])}>
+            <td :if={!data["withHeadings"] || i > 0} :for={cell <- row}>{raw cell}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <% end %>
     <p class="flex flex-wrap items-center text-sm text-base-content/70 gap-2">
       <span class="mr-2">Tags:</span>

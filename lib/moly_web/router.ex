@@ -1,5 +1,4 @@
 defmodule MolyWeb.Router do
-  alias Moly.Contents.Notifiers.Post
   use MolyWeb, :router
 
   use AshAuthentication.Phoenix.Router
