@@ -1044,20 +1044,21 @@ defmodule MolyWeb.Affinew.Components do
     end
   end
 
-  def post_featrue_image_src(post, width \\ 780, height \\ 520) do
+  def post_featrue_image_src(post, size \\ "medium") do
     Moly.Helper.get_in_from_keys(post, [
       :source,
       "thumbnail_id",
       "attachment_metadata",
-      "filename"
+      "sizes",
+      size,
+      "file"
     ])
     |> case do
       nil ->
         nil
 
       filename ->
-        opts = ["#{width}x#{height}", "top", "filters:format(webp)"]
-        Moly.Helper.image_src(filename, opts)
+        filename
     end
   end
 end

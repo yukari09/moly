@@ -22,9 +22,9 @@
     </div>
 
 
-    <div class="w-full h-72 rounded-box overflow-hidden">
+    <div class="w-full aspect-[4/3] rounded-box overflow-hidden">
       <img
-        src={post_featrue_image_src(@post, 1728, 576)}
+        src={post_featrue_image_src(@post, "xlarge")}
         alt={Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}
         class="w-full h-full object-cover"
       />
@@ -37,7 +37,13 @@
     <h3 id={id} :if={type == "header" && data["level"] == 3}>{data["text"]}</h3>
     <h4 id={id} :if={type == "header" && data["level"] == 4}>{data["text"]}</h4>
     <h5 id={id} :if={type == "header" && data["level"] == 5}>{data["text"]}</h5>
-    <p id={id} :if={type == "paragraph"}>{data["text"]}</p>
+    <p id={id}  :if={type == "paragraph"}>{raw data["text"]}</p>
+    <ol id={id} :if={type == "list" && data["style"] == "ordered"}>
+      <li :for={item <- data["items"]}>{item["content"]}</li>
+    </ol>
+    <ul id={id} :if={type == "list" && data["style"] == "unordered"}>
+      <li :for={item <- data["items"]}>{item["content"]}</li>
+    </ul>
     <% end %>
     <p class="flex flex-wrap items-center text-sm text-base-content/70 gap-2">
       <span class="mr-2">Tags:</span>
