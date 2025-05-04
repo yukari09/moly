@@ -1,3 +1,6 @@
+import Table from '@editorjs/table'
+import CodeTool from '@editorjs/code'
+import Embed from '@editorjs/embed'
 import EditorJS from '@editorjs/editorjs'
 import Header from "@editorjs/header"
 import List from '@editorjs/list'
@@ -406,8 +409,12 @@ export const Editor = {
 
     this.editor = new EditorJS({
       holder: this.el,
+      code: CodeTool,
       placeholder: this.el.dataset.placeholder || 'Type text or paste a link',
       tools: {
+        table: Table,
+        embed: Embed,
+        code: CodeTool,
         header: {
           class: Header,
           inlineToolbar: true

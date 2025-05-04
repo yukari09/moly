@@ -2,6 +2,7 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
     "daisyui": "^5.0.6",
+    "editorjs-table": "^1.4.10",
     "esbuild": "^0.25.1",
     "esbuild-plugin-import-glob": "^0.1.1",
     "esbuild-svelte": "^0.9.2",
@@ -12,10 +13,13 @@
     "tailwindcss-font-inter": "^3.1.0"
   },
   "dependencies": {
+    "@editorjs/code": "^2.9.3",
     "@editorjs/editorjs": "^2.30.7",
+    "@editorjs/embed": "^2.7.6",
     "@editorjs/header": "^2.8.8",
     "@editorjs/list": "^2.0.2",
     "@editorjs/quote": "^2.7.6",
+    "@editorjs/table": "^2.4.4",
     "@milkdown/kit": "^7.6.3",
     "@milkdown/theme-nord": "^7.6.3",
     "@mux/upchunk": "^3.4.0",
