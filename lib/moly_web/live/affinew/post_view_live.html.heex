@@ -61,7 +61,7 @@
     <% end %>
     <p class="flex flex-wrap items-center text-sm text-base-content/70 gap-2">
       <span class="mr-2">Tags:</span>
-    <.link navigate={~p"/posts/#{tag["slug"]}"} class="badge badge-ghost link link-hover" :for={tag <- Moly.Helper.get_in_from_keys(@post, [:source, "post_tag"])}>{tag["name"]}</.link>
+    <.link  class="badge badge-ghost link link-hover" :for={tag <- Moly.Helper.get_in_from_keys(@post, [:source, "post_tag"])}>{tag["name"]}</.link>
     </p>
   </article>
    
