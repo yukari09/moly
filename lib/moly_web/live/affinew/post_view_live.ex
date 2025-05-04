@@ -15,7 +15,7 @@ defmodule MolyWeb.Affinew.PostViewLive do
             Moly.Utilities.Account.get_users_by_id([author_id])
             |> Map.get(author_id)
 
-          [_, relative] = relative_posts(post, 6)
+          [_, relative] = if rp = relative_posts(post, 6), do: rp, else: [nil, []]
 
           [post, author, relative || []]
         end,

@@ -87,7 +87,7 @@
               <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline">
                 <span class="font-medium">{row.post_title}</span>
               </.link>
-              <.link href={~p"/post/#{row.post_name}"} target="_blank"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500" /></.link>
+              <.link href={~p"/post/#{row.post_name}"} target="_blank" class="flex items-center hover:underline"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500" /></.link>
             </div>
           </:col>
           <:col :let={row} label="Created at">
