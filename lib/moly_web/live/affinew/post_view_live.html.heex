@@ -39,10 +39,10 @@
     <h5 id={id} :if={type == "header" && data["level"] == 5}>{data["text"]}</h5>
     <p id={id}  :if={type == "paragraph"}>{raw data["text"]}</p>
     <ol id={id} :if={type == "list" && data["style"] == "ordered"}>
-      <li :for={item <- data["items"]}>{item["content"]}</li>
+      <li :for={item <- data["items"]}>{raw item["content"]}</li>
     </ol>
     <ul id={id} :if={type == "list" && data["style"] == "unordered"}>
-      <li :for={item <- data["items"]}>{item["content"]}</li>
+      <li :for={item <- data["items"]}>{raw item["content"]}</li>
     </ul>
     <% end %>
     <p class="flex flex-wrap items-center text-sm text-base-content/70 gap-2">
