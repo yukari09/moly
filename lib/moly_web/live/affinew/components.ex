@@ -1044,21 +1044,23 @@ defmodule MolyWeb.Affinew.Components do
     end
   end
 
-  def post_featrue_image_src(post, size \\ "medium") do
-    Moly.Helper.get_in_from_keys(post, [
+  def post_featrue_image_src(post, sizes \\ ["medium"]) do
+    org_sizes = Moly.Helper.get_in_from_keys(post, [
       :source,
       "thumbnail_id",
       "attachment_metadata",
-      "sizes",
-      size,
-      "file"
+      "sizes"
     ])
-    |> case do
-      nil ->
-        nil
 
-      filename ->
-        filename
+    if org_sizes do
+      Enum.reduce_while(sizes, nil, fn size, _ ->
+        case Enum.find(org_sizes, fn {org_size, _} -> org_size == size  end) do
+          nil ->
+            {:cont, nil}
+          {_, result} ->
+            {:halt, Map.get(result, "file")}
+        end
+      end)
     end
   end
 end
