@@ -9,6 +9,10 @@ defmodule Moly.Terms.TermRelationships do
   postgres do
     table "term_relationships"
     repo(Moly.Repo)
+    references do
+      reference :post, on_delete: :delete, on_update: :update, name: "term_relationships_to_posts_fkey"
+    end
+
   end
 
   actions do

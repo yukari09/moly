@@ -24,7 +24,7 @@
 
     <div class="w-full aspect-[4/3] rounded-box overflow-hidden">
       <img
-        src={post_featrue_image_src(@post, ["xlarge","large"])}
+        src={post_featrue_image_src(@post, ["xlarge","large", "medium", "small"])}
         alt={Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}
         class="w-full h-full object-cover"
       />

@@ -98,14 +98,56 @@
               <.link class="text-gray-500" patch={~p"/admin/post/#{row.id}/edit"}>
                 <Lucideicons.pen class="size-4" />
               </.link>
-              <.link
-                class="text-gray-500"
-                phx-click="delete"
-                data-confirm="Are you sure to delete this post?"
-                phx-value-id={row.id}
-              >
-                <Lucideicons.trash class="size-4" />
-              </.link>
+
+              <.tooltip text="Rebuild index" direction="top" size="xs">
+                <.link 
+                  class="text-gray-500" phx-click={JS.toggle_class("animate-spin", to: "#rebuild-index-icon-#{row.id}") |> JS.push("rebuild-index")} phx-value-id={row.id} phx-value-spin-id={"#rebuild-index-icon-#{row.id}"}>
+                  <Lucideicons.loader_circle id={"rebuild-index-icon-#{row.id}"} class="size-4" data-loaded={JS.toggle_class("animate-spin")} />
+                </.link>
+              </.tooltip>
+
+              <.tooltip  text="Save in draft" :if={row.post_status in [:publish, :trash]} direction="top" size="xs">
+                <.link
+                  class="text-gray-500"
+                  phx-click="draft"
+                  phx-value-id={row.id}
+                >
+                  <Lucideicons.book_dashed class="size-4" />
+                </.link>
+              </.tooltip>
+
+              <.tooltip  text="Publish" :if={row.post_status in [:draft]} direction="top" size="xs">
+                <.link
+                  class="text-gray-500"
+                  phx-click="publish"
+                  phx-value-id={row.id}
+                >
+                  <Lucideicons.book class="size-4" />
+                </.link>
+              </.tooltip>
+
+              <.tooltip :if={row.post_status !== :trash} text="Rebuild index" direction="top" size="xs">
+                <.link
+                  class="text-gray-500"
+                  phx-click="delete"
+                  data-confirm="Are you sure to delete this post forever?"
+                  phx-value-id={row.id}
+                >
+                  <Lucideicons.trash class="size-4" />
+                </.link>
+              </.tooltip>
+
+              <.tooltip :if={row.post_status == :trash} text="Delete forever" direction="top" size="xs">
+                <.link
+                  class="text-red-500"
+                  phx-click="delete-forever"
+                  data-confirm="Are you sure to delete this post forever?"
+                  phx-value-id={row.id}
+                >
+                  <Lucideicons.trash_2 class="size-4" />
+                </.link>
+              </.tooltip>
+
             </div>
           </:col>
         </.table>

@@ -18,6 +18,43 @@ defmodule MolyWeb.AdminPostLive.Index do
     {:noreply, socket}
   end
 
+  def handle_event("draft", %{"id" => id}, socket) do
+    Ash.get!(Moly.Contents.Post, id, actor: socket.assigns.current_user)
+    |> Ash.update!(%{post_status: :draft}, actor: socket.assigns.current_user, action: :update_post_status)
+
+    socket = push_patch(socket, to: ~p"/admin/posts?#{socket.assigns.params}")
+    {:noreply, socket}
+  end
+
+  def handle_event("publish", %{"id" => id}, socket) do
+    Ash.get!(Moly.Contents.Post, id, actor: socket.assigns.current_user)
+    |> Ash.update!(%{post_status: :publish}, actor: socket.assigns.current_user, action: :update_post_status)
+
+    socket = push_patch(socket, to: ~p"/admin/posts?#{socket.assigns.params}")
+    {:noreply, socket}
+  end
+
+  def handle_event("rebuild-index", %{"id" => id, "spin-id" => spin_id}, socket) do
+    Moly.Contents.Notifiers.Post.build_post_document(id)
+
+    socket =
+      socket
+      |> push_event("js-exec", %{to: spin_id, attr: "data-loaded"})
+
+    :timer.sleep(500)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("delete-forever", %{"id" => id}, socket) do
+    Ash.get!(Moly.Contents.Post, id, actor: socket.assigns.current_user)
+    |> Ash.Changeset.for_destroy(:destroy_forever, %{}, actor: socket.assigns.current_user)
+    |> Ash.destroy!()
+
+    socket = push_patch(socket, to: ~p"/admin/posts?#{socket.assigns.params}")
+    {:noreply, socket}
+  end
+
   defp get_list_by_params(socket, params) do
     current_user = socket.assigns.current_user
 

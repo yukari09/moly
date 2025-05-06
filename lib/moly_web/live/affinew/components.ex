@@ -1044,7 +1044,7 @@ defmodule MolyWeb.Affinew.Components do
     end
   end
 
-  def post_featrue_image_src(post, sizes \\ ["medium"]) do
+  def post_featrue_image_src(post, sizes \\ ["medium", "thumbnail"]) do
     org_sizes = Moly.Helper.get_in_from_keys(post, [
       :source,
       "thumbnail_id",

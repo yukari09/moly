@@ -19,7 +19,7 @@ defmodule Moly.Terms.TermTaxonomy do
 
     role :admin do
       fields([:taxonomy, :description, :count])
-      actions([:create, :read, :update, :destroy])
+      actions([:create, :read, :update, :destroy, :inc_count])
     end
 
     role :owner do
@@ -75,6 +75,11 @@ defmodule Moly.Terms.TermTaxonomy do
       end
 
       change manage_relationship(:parent_id, :parent, type: :append_and_remove)
+    end
+
+    update :inc_count do
+      argument :amount, :integer, allow_nil?: false
+      change increment :count, amount: arg(:amount)
     end
 
     # update :update, primary?: true

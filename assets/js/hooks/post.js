@@ -138,7 +138,7 @@ export const SetFeatureImage = {
 
   bindClickImageSelecte(iframeDoc){
     const mediaElements = iframeDoc.querySelectorAll('[data-media-id]');
-    const {confirmButton, metaValueInput, image} = this.document_el();
+    const {confirmButton, metaValueInput, image, metaKeyInput} = this.document_el();
 
     mediaElements.forEach((el) => {
       if (!el.hasAttribute('data-click-processed')) {
@@ -151,6 +151,7 @@ export const SetFeatureImage = {
           confirmButton.removeAttribute("disabled");
 
           metaValueInput.value = el.getAttribute('data-media-id');
+          metaKeyInput.value = "thumbnail_id"
           image.setAttribute('src', el.getAttribute('data-media-url'));
         })
         el.setAttribute('data-click-processed', 'true');
