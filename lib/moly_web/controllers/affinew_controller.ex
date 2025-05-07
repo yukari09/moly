@@ -1,5 +1,4 @@
 defmodule MolyWeb.AffinewController do
-  alias Ash.Type.DateTime
   use MolyWeb, :controller
 
   require Ash.Query
@@ -9,9 +8,9 @@ defmodule MolyWeb.AffinewController do
   def home(conn, _params) do
     {affiliates, posts} =
       Moly.Utilities.cache_get_or_put(
-        "#{__MODULE__}.page.index.cache",
+        "#{__MODULE__}.home.cache",
         &index_query/0,
-        :timer.hours(6)
+        :timer.hours(2)
       )
 
     page_title = "Find High Ticket Best Paying affiliate programss for beginners in #{Date.utc_today() |> Map.get(:year)}."
