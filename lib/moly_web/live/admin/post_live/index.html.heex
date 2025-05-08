@@ -75,7 +75,7 @@
   <div :if={@posts.results != []} class="mt-4 flow-root p-4 border border-gray-200  rounded-md">
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8 via-0">
-        <.table rows={@posts.results} class="table-auto">
+        <.table rows={@posts.results} class="table-auto !max-w-full">
           <:col :let={row} label="Title">
             <div>
               <.badge variant={
@@ -85,23 +85,22 @@
               }>
                 {row.post_status}
               </.badge>
-              <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline">
-                <span class="font-medium">{row.post_title}</span>
+              <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline" >
+                {row.post_title}
               </.link>
-              <.link href={~p"/post/#{row.post_name}"} target="_blank" class="inline"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500 inline" /></.link>
+              <.link href={~p"/post/#{row.post_name}"} target="_blank" class="inline"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500 inline" /></.link> 
             </div>
           </:col>
-          <:col :let={row} label="Tags">
+          <%!-- <:col :let={row} label="Tags">
             <div class="flex flex-wrap gap-1">
               <span
                 :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "post_tag")}
                 id={"tag-cell-#{tag.id}"}
               >
-                <%!-- <Lucideicons.x class="size-4 bg-white rounded-full"/>  --%>
                 {tag.term.name}
               </span>
             </div>
-          </:col>
+          </:col> --%>
           <:col :let={row} label="Category">
             <span
               :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "category")}
@@ -184,3 +183,6 @@
     <.no_results />
   </div>
 </div>
+
+
+ 

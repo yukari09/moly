@@ -23,6 +23,10 @@
 @import "../node_modules/flatpickr/dist/flatpickr.min.css";
 @import "../node_modules/@splidejs/splide/dist/css/splide.min.css";
 
+@theme {
+  --font-sans: InterVariable, sans-serif;
+}
+
 button[disabled]{
     @apply opacity-50;
 }
