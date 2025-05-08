@@ -1,6 +1,8 @@
 defmodule MolyWeb.AdminPostLive.NewOrEdit do
   use MolyWeb.Admin, :live_view
 
+  require Logger
+
   @impl true
   def mount(params, _session, socket) do
     temporary_assigns = [
