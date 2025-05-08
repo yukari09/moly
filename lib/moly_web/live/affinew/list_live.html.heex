@@ -5,9 +5,9 @@
   ]} />
   <.header
     id="browse-header"
-    headline="Browse affiliate programs"
+    headline={@category_name != "" && @category_name || "Browse all affiliate programs"}
     class="mt-6"
-    subtitle="Find high ticket best paying affiliate programss for beginners experts."
+    subtitle={"#{@category_name != "" && @category_name || "Find"} high ticket best paying affiliate programs."}
   />
 
   <div class="flex items-center justify-between mt-8 gap-2">

@@ -367,7 +367,7 @@ defmodule MolyWeb.Affinew.Components do
         id={"dropdown-btn-#{@id}"}
         tabindex="0"
         class={[
-          "btn btn-xs sm:btn-sm md:btn-md bg-white text-black border-[#e5e5e5] flex items-center rounded-md",
+          "btn btn-xs sm:btn-sm md:btn-md bg-white text-black border-[#e5e5e5] flex items-center rounded-md ",
           @class_btn
         ]}
         role="button"
