@@ -21,7 +21,6 @@ defmodule MolyWeb.AdminPostLive.FormField.PostDate do
       </label>
       <.input
         field={@form[:post_date]}
-        label={nil}
         class="!w-0 !h-0 !border-0 !m-0 !!ring-0 !p-0 hidden"
         data-id="post-date-input"
         type="hidden"

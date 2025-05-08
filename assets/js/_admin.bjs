@@ -21,20 +21,28 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
-import Hooks from "./hooks.app"
+import Hooks from "./hooks.admin"
 import Uploaders from "./uploaders"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
-  longpollFallbackMs: 100,
+  longPollFallbackMs: 3000,
   params: {_csrf_token: csrfToken},
   hooks: Hooks,
-  uploaders: Uploaders
+  uploaders: Uploaders,
+  dom: {
+    onBeforeElUpdated(from, to) {
+      if (from._x_dataStack) {
+        window.Alpine.clone(from, to)
+      }
+    }
+  }
 })
 
+
 // Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#09442b"}, shadowColor: "rgba(0, 0, 0, .3)", barThickness: 1.25})
-window.addEventListener("phx:page-loading-start", _info => topbar.show(50))
+topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
+window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 // connect if there are any LiveViews on the page
@@ -46,31 +54,14 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
-
-window.addEventListener("phx:exec-el", (event) => {
-  if(event.detail.target){
-    const el = document.querySelector(event.detail.target)
-    const el_attr = event.detail.attr
-    liveSocket.execJS(el, `[["exec",{"attr":"${el_attr}"}]]`)
-  }
+// Allows to execute JS commands from the server
+window.addEventListener("phx:js-exec", ({detail}) => {
+  document.querySelectorAll(detail.to).forEach(el => {
+    liveSocket.execJS(el, el.getAttribute(detail.attr))
+  })
 })
 
-window.addEventListener("phx:show-modal", async (event) => {  
-  let el = document.querySelector(event.detail.el)
-  el.showModal()
-})
-
-window.addEventListener("app:delay", event => {
-  const { delay, target, attr } = event.detail
-  const el = document.querySelector(target)
-  if (el) {
-    setTimeout(() => {
-      window.dispatchEvent(new CustomEvent("phx:exec-el", { detail: { target } }))
-    }, delay)
-  }
-})
-
-//Admin
+ 
 window.addEventListener("app:disabledFormElement", (event) => {
   //disabled this form elements like input, select, checkbox, etc
   const form = event.target
@@ -88,8 +79,6 @@ window.addEventListener("app:disabledFormElement", (event) => {
 })
 
 window.addEventListener("app:historyback", (event) => {event.target.tagName === "IFRAME"? event.target.contentWindow.history.back() : history.back()})
-window.addEventListener("app:focus-el", event => event.target.focus())
-window.addEventListener("app:blur-el", event => event.target.blur())
 
 window.addEventListener("app:saveLocalStorage", ({detail}) => {
   localStorage.setItem(detail.key, btoa(detail.value))
@@ -144,6 +133,7 @@ window.addEventListener("app:click-el", (event) => {
     event.target.click();
   }
 });
+ 
 
 //----Start Admin Media Page Script----//
 const mediaDataArrtribute = "data-media-id"

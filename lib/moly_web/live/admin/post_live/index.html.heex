@@ -1,7 +1,7 @@
 <div>
   <.header
     title="Posts"
-    description="A list of all the posts in your account including their name, title, email and role."
+    description="A list of all the posts."
   >
     <.button
       class="flex items-center gap-2"
@@ -15,9 +15,10 @@
 
   <div
     id="post-top-nav"
-    class={["flex items-center justify-between bg-white py-2 sm:py-0  mt-12 border-b"]}
+    class={["flex items-center justify-between bg-white py-2 sm:py-0  mt-12 border-b border-gray-200"]}
   >
     <.tabs_with_badges
+      id={Moly.Helper.generate_random_id()}
       tabs={[
         %{
           label: "All",
@@ -71,12 +72,12 @@
     </.form>
   </div>
 
-  <div :if={@posts.results != []} class="mt-4 flow-root p-4 border rounded-md">
+  <div :if={@posts.results != []} class="mt-4 flow-root p-4 border border-gray-200  rounded-md">
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8 via-0">
         <.table rows={@posts.results} class="table-auto">
           <:col :let={row} label="Title">
-            <div class="flex gap-2">
+            <div>
               <.badge variant={
                 %{draft: "gray", published: "success", scheduled: "info", trash: "error"}[
                   row.post_status
@@ -87,8 +88,27 @@
               <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline">
                 <span class="font-medium">{row.post_title}</span>
               </.link>
-              <.link href={~p"/post/#{row.post_name}"} target="_blank" class="flex items-center hover:underline"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500" /></.link>
+              <.link href={~p"/post/#{row.post_name}"} target="_blank" class="inline"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500 inline" /></.link>
             </div>
+          </:col>
+          <:col :let={row} label="Tags">
+            <div class="flex flex-wrap gap-1">
+              <span
+                :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "post_tag")}
+                id={"tag-cell-#{tag.id}"}
+              >
+                <%!-- <Lucideicons.x class="size-4 bg-white rounded-full"/>  --%>
+                {tag.term.name}
+              </span>
+            </div>
+          </:col>
+          <:col :let={row} label="Category">
+            <span
+              :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "category")}
+              id={"tag-cell-#{tag.id}"}
+            >
+              {tag.term.name}
+            </span>
           </:col>
           <:col :let={row} label="Created at">
             {row.inserted_at |> Timex.format!("{Mfull} {D}, {YYYY} {h24}:{m}")}
@@ -99,14 +119,14 @@
                 <Lucideicons.pen class="size-4" />
               </.link>
 
-              <.tooltip text="Rebuild index" direction="top" size="xs">
+              <.tooltip text="Reindex" direction="top" size="xs">
                 <.link 
                   class="text-gray-500" phx-click={JS.toggle_class("animate-spin", to: "#rebuild-index-icon-#{row.id}") |> JS.push("rebuild-index")} phx-value-id={row.id} phx-value-spin-id={"#rebuild-index-icon-#{row.id}"}>
                   <Lucideicons.loader_circle id={"rebuild-index-icon-#{row.id}"} class="size-4" data-loaded={JS.toggle_class("animate-spin")} />
                 </.link>
               </.tooltip>
 
-              <.tooltip  text="Save in draft" :if={row.post_status in [:publish, :trash]} direction="top" size="xs">
+              <.tooltip  text="Draft" :if={row.post_status in [:publish, :trash]} direction="top" size="xs">
                 <.link
                   class="text-gray-500"
                   phx-click="draft"
@@ -126,7 +146,7 @@
                 </.link>
               </.tooltip>
 
-              <.tooltip :if={row.post_status !== :trash} text="Rebuild index" direction="top" size="xs">
+              <.tooltip :if={row.post_status !== :trash} text="Delete" direction="top" size="xs">
                 <.link
                   class="text-gray-500"
                   phx-click="delete"
@@ -137,7 +157,7 @@
                 </.link>
               </.tooltip>
 
-              <.tooltip :if={row.post_status == :trash} text="Delete forever" direction="top" size="xs">
+              <.tooltip :if={row.post_status == :trash} text="Forever" direction="top" size="xs">
                 <.link
                   class="text-red-500"
                   phx-click="delete-forever"

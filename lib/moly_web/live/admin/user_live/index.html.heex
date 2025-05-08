@@ -134,7 +134,7 @@
       <div>
         <.select
           field={f[:roles]}
-          options={%{admin: "Admin", user: "User"}}
+          options={[admin: "Admin", user: "User"]}
           label="Roles"
           multiple={true}
           size="2"
@@ -154,7 +154,7 @@
       />
     </div>
     <div class="flex gap-2 mt-6 justify-end">
-      <.button type="submit" form={@form} phx-disable-with="Saving..." }>Save</.button>
+      <.button type="submit" form={@form} phx-disable-with="Saving...">Save</.button>
       <.button variant="outline" phx-click={JS.patch(generate_live_url(@params))}>Cancel</.button>
     </div>
   </.form>

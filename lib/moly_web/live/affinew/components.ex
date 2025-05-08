@@ -213,8 +213,8 @@ defmodule MolyWeb.Affinew.Components do
         </p>
         <div class="card-actions justify-between items-center mt-4">
           <div class="flex items-center gap-2 text-sm text-base-content/60">
-            <time datetime={Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_data()}>
-              {Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_data()}
+            <time datetime={Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_date()}>
+              {Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_date()}
             </time>
           </div>
           <.link
@@ -366,7 +366,6 @@ defmodule MolyWeb.Affinew.Components do
       <div
         id={"dropdown-btn-#{@id}"}
         tabindex="0"
-        id={"dropdown-button-#{id}"}
         class={[
           "btn btn-xs sm:btn-sm md:btn-md bg-white text-black border-[#e5e5e5] flex items-center rounded-md",
           @class_btn
@@ -380,7 +379,7 @@ defmodule MolyWeb.Affinew.Components do
         tabindex="0"
         class="dropdown-content menu menu-sm md:menu-md mt-1 w-60 rounded-box bg-white border border-base-300 shadow-lg max-h-[240px] overflow-y-scroll overflow-x-hidden block"
       >
-        <li :for={{value, label} <- @options} class={[!value && "menu-title"]}>
+        <li :for={{value, label2} <- @options} class={[!value && "menu-title"]}>
           <.link
             :if={value}
             phx-click={close_dropdown("#dropdown-btn-#{@id}")}
@@ -389,10 +388,8 @@ defmodule MolyWeb.Affinew.Components do
                 (@term_slug && Links.term(@term_slug, Map.put(@params, @name, value))) ||
                 Links.programs(Map.put(@params, @name, value))
             }
-          >
-            {label}
-          </.link>
-          <span :if={!value}>{label}</span>
+          ><%=label2%></.link>
+          <span :if={!value}><%=label2%></span>
         </li>
       </ul>
     </div>
@@ -417,7 +414,7 @@ defmodule MolyWeb.Affinew.Components do
 
   def search_form(assigns) do
     ~H"""
-    <.form action="/search" method="get" id="search-form" class="mx-auto w-full">
+    <form action="/search" method="get" id="search-form" class="mx-auto w-full">
       <div
         id="index-header-search-bar"
         class="relative bg-gray-900/5 py-0.5 sm:py-1 md:py-2 pl-2.5 pr-8 rounded-sm border border-gray-900/0"
@@ -450,7 +447,7 @@ defmodule MolyWeb.Affinew.Components do
           class="w-5 h-5 absolute top-1/2 right-3.5 transform -translate-y-1/2 text-gray-500"
         />
       </div>
-    </.form>
+    </form>
     """
   end
 
@@ -509,7 +506,7 @@ defmodule MolyWeb.Affinew.Components do
         </.link>
         <div class="flex items-center gap-2 mt-2 md:mt-0">
           <time class="text-sm ">
-            {Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_data()}
+            {Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_date()}
           </time>
           <.link
             onclick="share_modal.showModal()"

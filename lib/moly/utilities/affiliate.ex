@@ -205,7 +205,7 @@ defmodule Moly.Utilities.Affiliate do
       </div>
       <div class="max-w-xl">
         <div class="mt-4 flex items-top gap-x-2 text-xs">
-          <.link class="size-8" patch={~p"/user/page/@#{@cache.username}"}>
+          <.link class="size-8" patch={~p"/user/@#{@cache.username}"}>
             <Moly.Utilities.Account.avatar_html user={@post.author} size={32} />
           </.link>
           <div class="flex-1">

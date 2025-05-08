@@ -10,7 +10,7 @@ defmodule MolyWeb.AffinewController do
       Moly.Utilities.cache_get_or_put(
         "#{__MODULE__}.home.cache",
         &index_query/0,
-        :timer.hours(2)
+        :timer.minutes(5)
       )
 
     page_title = "Find High Ticket Best Paying affiliate programss for beginners in #{Date.utc_today() |> Map.get(:year)}."

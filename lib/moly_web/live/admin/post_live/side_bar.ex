@@ -39,7 +39,6 @@ defmodule MolyWeb.AdminPostLive.SideBar do
               <.input
                 data-id="post-status-input"
                 field={@form[:post_status]}
-                label={nil}
                 class="hidden"
               />
             </li>
@@ -116,7 +115,8 @@ defmodule MolyWeb.AdminPostLive.SideBar do
                 class="bg-gray-50 p-2 border border-gray-200 border-t-0 rounded-br-md rounded-bl-md"
                 id="sub-menu-1"
               >
-                <.textarea field={@form[:post_excerpt]} placeholder="Add an excerpt" rows={3}>
+                <.textarea field={@form[:post_excerpt]} placeholder="Add an excerpt" rows="3">
+                  <%= @form[:post_excerpt].value %>
                 </.textarea>
               </div>
             </div>

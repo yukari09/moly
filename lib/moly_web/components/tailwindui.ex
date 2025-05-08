@@ -100,8 +100,9 @@ defmodule MolyWeb.TailwindUI do
   """
   attr(:id, :string, required: true)
   attr(:class, :string, default: nil)
-  slot(:button_slot, required: true)
-  slot(:menu_slot, required: true)
+  attr(:rest, :global)
+  slot(:button_slot, required: true, validate_attrs: false)
+  slot(:menu_slot, required: true, validate_attrs: false)
 
   def dropdown(assigns) do
     menu_id = generate_random_id(8)
@@ -113,7 +114,7 @@ defmodule MolyWeb.TailwindUI do
       |> assign(button_id: button_id)
 
     ~H"""
-    <div class={["relative overflow-visible", @class]} id={@id}>
+    <div class={["relative overflow-visible", @class]} id={@id} {@rest}>
       <button
         :for={{slot, index} <- Enum.with_index(@button_slot)}
         id={"#{@button_id}-#{index}"}
@@ -181,10 +182,9 @@ defmodule MolyWeb.TailwindUI do
     </a>
     """
   end
-
   attr(:type, :string, default: "button")
   attr(:class, :string, default: nil)
-  attr(:variant, :string, default: "primary", values: ["primary", "secondary", "gray", "error"])
+  attr(:variant, :string, default: "primary", values: ["primary", "secondary", "gray", "error", "outline"])
   attr(:size, :string, default: "md", values: ["xs", "sm", "md", "lg", "xl"])
   attr(:navigate, :string, default: nil)
   attr(:patch, :string, default: nil)
@@ -224,6 +224,8 @@ defmodule MolyWeb.TailwindUI do
           @variant == "gray" && "bg-gray-50 text-gray-900 hover:bg-gray-100 hover:text-gray-900",
           @variant == "error" &&
             "bg-red-600 text-white hover:bg-red-500 focus-visible:outline-red-500",
+          @variant == "outline" &&
+            "border border-gray-900 text-gray-900 hover:bg-gray-100 focus-visible:outline-gray-800",
           (@disabled || (@form && (@form.errors != [] || @form.source.valid? == false))) &&
             "opacity-50 pointer-events-none",
           # Custom classes
@@ -256,6 +258,8 @@ defmodule MolyWeb.TailwindUI do
           @variant == "gray" && "bg-gray-50 text-gray-900 hover:bg-gray-100 hover:text-gray-900",
           @variant == "error" &&
             "bg-red-600 text-white hover:bg-red-500 focus-visible:outline-red-500",
+          @variant == "outline" &&
+            "border border-gray-900 text-gray-900 hover:bg-gray-100 focus-visible:outline-gray-800",
           (@disabled || (@form && (@form.errors != [] || @form.source.valid? == false))) &&
             "opacity-50 pointer-events-none",
           # Custom classes
@@ -316,7 +320,7 @@ defmodule MolyWeb.TailwindUI do
 
   def table(assigns) do
     ~H"""
-    <table class={["min-w-full divide-y divide-gray-300 ", @class]}>
+    <table class={["min-w-full divide-y divide-gray-300", @class]}>
       <thead>
         <tr>
           <th
@@ -383,6 +387,7 @@ defmodule MolyWeb.TailwindUI do
 
   attr(:class, :string, default: nil)
   attr(:rest, :global)
+  attr(:label, :string, default: nil)
   slot(:inner_block, required: true)
 
   def badge(assigns) do
@@ -518,7 +523,7 @@ defmodule MolyWeb.TailwindUI do
   attr(:show_error, :boolean, default: true)
   attr(:value, :any, default: nil)
   attr(:field_subfix, :string, default: nil)
-  attr(:rest, :global)
+  attr(:rest, :global, include: ~w(autocomplete))
   attr(:aria_label, :string, default: nil)
 
   def input(%{field: field, field_subfix: field_subfix} = assigns) do
@@ -556,7 +561,7 @@ defmodule MolyWeb.TailwindUI do
         placeholder={@placeholder}
         aria-label={@aria_label}
         class={[
-          "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
+          "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
           @errors != [] &&
             "text-red-900 outline-red-300 placeholder:text-red-300 focus:outline-red-600",
           @class
@@ -574,7 +579,7 @@ defmodule MolyWeb.TailwindUI do
           value={@value || @field.value}
           placeholder={@placeholder}
           class={[
-            "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900  outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
+            "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900  outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400  focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
             @errors != [] &&
               "col-start-1 row-start-1 text-red-900 outline-red-300 placeholder:text-red-300 focus:outline-red-600 pr-10",
             @class
@@ -631,7 +636,7 @@ defmodule MolyWeb.TailwindUI do
   attr(:value, :any, default: nil)
   attr(:field_subfix, :string, default: nil)
   attr(:rest, :global)
-  attr(:rows, :integer, default: 3)
+  attr(:rows, :string, default: "3")
   slot(:inner_block)
 
   def textarea(%{field: field, value: value, field_subfix: field_subfix} = assigns) do
@@ -669,7 +674,7 @@ defmodule MolyWeb.TailwindUI do
           placeholder={@placeholder}
           rows={@rows}
           class={[
-            "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
+            "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400  focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
             @errors != [] &&
               "col-start-1 row-start-1 text-red-900 outline-red-300 placeholder:text-red-300 focus:outline-red-600",
             @class
@@ -712,91 +717,88 @@ defmodule MolyWeb.TailwindUI do
     </div>
     """
   end
-
   @doc """
-  Renders a tooltip component.
+  Renders a tooltip component that appears on hover.
 
   ## Examples
 
-      <.tooltip text="This is a tooltip" direction="top" size="sm">
-        <button>Hover me</button>
-      </.tooltip>
+    <.tooltip text="This is a tooltip">
+      <button>Hover me</button>
+    </.tooltip>
+
+    <.tooltip text="Large tooltip" direction="bottom" size="lg">
+      <button>Hover for large tooltip</button>
+    </.tooltip>
   """
   attr(:text, :string, required: true)
   attr(:direction, :string, default: "top", values: ["top", "right", "bottom", "left"])
   attr(:size, :string, default: "sm", values: ["xs", "sm", "md", "lg"])
   attr(:class, :string, default: nil)
+  attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def tooltip(assigns) do
-    # Pre-calculate spacing based on size and direction
-    spacing_classes = %{
-      xs: %{top: "mb-1", right: "ml-1", bottom: "mt-1", left: "mr-1"},
-      sm: %{top: "mb-2", right: "ml-2", bottom: "mt-2", left: "mr-2"},
-      md: %{top: "mb-2.5", right: "ml-2.5", bottom: "mt-2.5", left: "mr-2.5"},
-      lg: %{top: "mb-3", right: "ml-3", bottom: "mt-3", left: "mr-3"}
+    # Predefine all static class maps
+    spacing = %{
+    xs: %{top: "mb-1", right: "ml-1", bottom: "mt-1", left: "mr-1"},
+    sm: %{top: "mb-2", right: "ml-2", bottom: "mt-2", left: "mr-2"},
+    md: %{top: "mb-2.5", right: "ml-2.5", bottom: "mt-2.5", left: "mr-2.5"},
+    lg: %{top: "mb-3", right: "ml-3", bottom: "mt-3", left: "mr-3"}
     }
 
-    # Pre-calculate positioning classes
-    position_classes = %{
-      top: "bottom-full left-1/2 -translate-x-1/2",
-      right: "left-full top-1/2 -translate-y-1/2",
-      bottom: "top-full left-1/2 -translate-x-1/2",
-      left: "right-full top-1/2 -translate-y-1/2"
+    position = %{
+    top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
+    right: "left-full top-1/2 -translate-y-1/2 ml-2",
+    bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
+    left: "right-full top-1/2 -translate-y-1/2 mr-2"
     }
 
-    # Pre-calculate arrow positioning
-    arrow_classes = %{
-      top: "bottom-[-4px] left-1/2 -translate-x-1/2",
-      right: "left-[-4px] top-1/2 -translate-y-1/2",
-      bottom: "top-[-4px] left-1/2 -translate-x-1/2",
-      left: "right-[-4px] top-1/2 -translate-y-1/2"
+    arrow = %{
+    top: "bottom-[-4px] left-1/2 -translate-x-1/2",
+    right: "left-[-4px] top-1/2 -translate-y-1/2",
+    bottom: "top-[-4px] left-1/2 -translate-x-1/2",
+    left: "right-[-4px] top-1/2 -translate-y-1/2"
     }
 
-    # Convert direction and size to atoms for map lookup
-    assigns =
-      assigns
-      |> assign(:direction_atom, String.to_existing_atom(assigns.direction))
-      |> assign(:size_atom, String.to_existing_atom(assigns.size))
-      |> assign(:spacing_classes, spacing_classes)
-      |> assign(:position_classes, position_classes)
-      |> assign(:arrow_classes, arrow_classes)
+    size_classes = %{
+    xs: "px-2 py-1 text-xs",
+    sm: "px-3 py-2 text-sm",
+    md: "px-4 py-2.5 text-base",
+    lg: "px-5 py-3 text-lg"
+    }
+
+    assigns = assign(assigns, :spacing, spacing)
+    assigns = assign(assigns, :position, position)
+    assigns = assign(assigns, :arrow, arrow)
+    assigns = assign(assigns, :size_classes, size_classes)
 
     ~H"""
-    <div class="group relative inline-block">
-      <div class={[
-        @direction == "top" && "mt-1",
-        @direction == "right" && "ml-1",
-        @direction == "bottom" && "mb-1",
-        @direction == "left" && "mr-1"
-      ]}>
-        {render_slot(@inner_block)}
-      </div>
-      <div class={
-        [
-          # Base classes
-          "invisible absolute z-50 whitespace-nowrap rounded-md bg-gray-900 opacity-0 shadow-sm transition-all group-hover:visible group-hover:opacity-100 text-white",
-          # Size-based padding and text
-          case @size do
-            "xs" -> "px-2 py-1 text-xs"
-            "sm" -> "px-3 py-2 text-sm"
-            "md" -> "px-4 py-2.5 text-base"
-            "lg" -> "px-5 py-3 text-lg"
-          end,
-          # Position classes
-          @position_classes[@direction_atom],
-          # Spacing classes
-          spacing_classes[@size_atom][@direction_atom],
-          @class
-        ]
-      }>
-        {@text}
-        <div class={[
-          "absolute h-2 w-2 rotate-45 bg-gray-900",
-          @arrow_classes[@direction_atom]
-        ]}>
-        </div>
-      </div>
+    <div class="group relative inline-block" {@rest}>
+    <div>
+      <%= render_slot(@inner_block) %>
+    </div>
+    <div
+      class={[
+      "invisible absolute z-50 whitespace-nowrap rounded-md bg-gray-900 text-white",
+      "opacity-0 shadow-sm transition-all",
+      "group-hover:visible group-hover:opacity-100",
+      @size_classes[String.to_atom(@size)],
+      @position[String.to_atom(@direction)],
+      @spacing[String.to_atom(@size)][String.to_atom(@direction)],
+      @class
+      ]}
+      role="tooltip"
+      aria-hidden="true"
+    >
+      <%= @text %>
+      <div
+      class={[
+        "absolute h-2 w-2 rotate-45 bg-gray-900",
+        @arrow[String.to_atom(@direction)]
+      ]}
+      aria-hidden="true"
+      />
+    </div>
     </div>
     """
   end
@@ -930,6 +932,7 @@ defmodule MolyWeb.TailwindUI do
   attr(:field, Phoenix.HTML.FormField, required: true)
   attr(:value, :any, default: nil)
   attr(:field_subfix, :string, default: nil)
+  attr(:size, :string, default: "4")
   attr(:options, :list, required: true)
   attr(:class, :string, default: nil)
   attr(:multiple, :boolean, default: false)
@@ -965,8 +968,9 @@ defmodule MolyWeb.TailwindUI do
         <select
           id={@field.id}
           name={(@multiple && "#{@field.name}[]") || @field.name}
+          size={@size}
           class={[
-            "col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
+            "col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900  outline-1 -outline-offset-1 outline-gray-300  focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600 sm:text-sm/6 phx-submit-loading:opacity-50",
             @class
           ]}
           multiple={@multiple}
@@ -1028,7 +1032,7 @@ defmodule MolyWeb.TailwindUI do
               "col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white",
               "checked:border-gray-600 checked:bg-gray-600",
               "indeterminate:border-gray-600 indeterminate:bg-gray-600",
-              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
+              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
               "disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100",
               "forced-colors:appearance-auto",
               @class
@@ -1082,7 +1086,7 @@ defmodule MolyWeb.TailwindUI do
     <div
       id={@id}
       class={[
-        "flex items-center rounded-md bg-white pl-3 outline outline-1 -outline-offset-1 outline-gray-300 has-[input:focus-within]:outline has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-gray-600",
+        "flex items-center rounded-md bg-white pl-3  outline-1 -outline-offset-1 outline-gray-300  has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-gray-600",
         @class
       ]}
     >
@@ -1093,7 +1097,7 @@ defmodule MolyWeb.TailwindUI do
         value={@value}
         autocomplete="off"
         class={[
-          "block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6",
+          "block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400  focus:outline-0 sm:text-sm/6",
           @input_class
         ]}
         placeholder={@placeholder || "Search"}
@@ -1119,7 +1123,7 @@ defmodule MolyWeb.TailwindUI do
         <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
         <select
           aria-label="Select a tab"
-          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600"
+          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900  outline-1 -outline-offset-1 outline-gray-300  focus:outline-2 focus:-outline-offset-2 focus:outline-gray-600"
         >
           <option
             :for={tab <- @tabs}
@@ -1155,7 +1159,7 @@ defmodule MolyWeb.TailwindUI do
                 "flex whitespace-nowrap px-1 py-4 text-sm font-medium border-b-2 ",
                 tab.value == @current_tab && "border-gray-500 text-gray-600",
                 tab.value != @current_tab &&
-                  "border-b-transparent text-gray-500 hover:border-b-gray-200 hover:text-gray-700",
+                  "border-b-transparent text-gray-500 hover:border-b-gray-400 hover:text-gray-700",
                 tab[:disabled] && "pointer-events-none opacity-50"
               ]}
             >
@@ -1180,7 +1184,7 @@ defmodule MolyWeb.TailwindUI do
       <div class="grid grid-cols-1 sm:hidden">
         <select
           aria-label="Select a tab"
-          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900  outline-1 -outline-offset-1 outline-gray-300  focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
         >
           <%= for tab <- @tabs do %>
             <option selected={tab.value == @selected} value={tab.value}>{tab.label}</option>
@@ -1453,7 +1457,7 @@ defmodule MolyWeb.TailwindUI do
               class={[
                 "relative inline-flex items-center px-4 py-2 text-sm font-semibold",
                 page == @page_meta.current_page &&
-                  "z-10 bg-gray-800 text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
+                  "z-10 bg-gray-800 text-white focus:z-20  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
                 page != @page_meta.current_page &&
                   "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
               ]}

@@ -60,7 +60,6 @@ defmodule MolyWeb.AdminPostLive.FormField.PostName do
         data-id="post-slug-guid"
         field={@form[:guid]}
         value={@form[:post_name].value || "#{@host}#{@post_slug}"}
-        label={nil}
         class="hidden"
       />
     </div>

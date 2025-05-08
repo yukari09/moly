@@ -109,6 +109,9 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, JSON
 
+config :phoenix,
+  static_compressors: [Phoenix.Digester.Gzip, Moly.BrotliCompressor]
+
 config :moly, Oban,
   repo: Moly.Repo,
   queues: [mailers: 20, periodic: 10],

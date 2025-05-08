@@ -47,7 +47,7 @@ defmodule MolyWeb.AdminPostLive.NavBar do
         <div class="flex items-center gap-x-4 lg:gap-x-6">
           <.button
             size="sm"
-            class={["pointer-events-none opacity-50"]}
+            class={"pointer-events-none opacity-50"}
             data-id="publish-button"
             phx-click={
               JS.set_attribute({"value", "publish"}, to: "[data-id='post-status-input']")

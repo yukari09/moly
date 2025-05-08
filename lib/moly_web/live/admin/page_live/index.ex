@@ -4,6 +4,7 @@ defmodule MolyWeb.AdminPageLive.Index do
   @per_page "10"
   @model Moly.Contents.Post
 
+  @impl true
   def mount(_params, _session, socket) do
     {:ok, socket, temporary_assigns: [modal_id: Moly.Helper.generate_random_id()]}
   end

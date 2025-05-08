@@ -40,10 +40,10 @@ defmodule MolyWeb.UI do
         />
         <.icon
           name="hero-exclamation-circle-solid"
-          class={[
-            "#{@field.id}-icon",
+          class={
+            "#{@field.id}-icon" <>
             "pointer-events-none col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-red-500 sm:size-4 hidden"
-          ]}
+          }
         />
       </div>
       <div class="mt-1 text-sm/6 flex justify-between">

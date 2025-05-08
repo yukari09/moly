@@ -12,9 +12,10 @@
 
   <div
     id="tags-top-nav"
-    class={["flex items-center justify-between bg-white py-2 sm:py-0  mt-12 border-b"]}
+    class={["flex items-center justify-between bg-white py-2 sm:py-0  mt-12 border-b border-gray-200"]}
   >
     <.tabs_with_badges
+      id={Moly.Helper.generate_random_id()}
       tabs={[
         %{
           label: "All",
@@ -31,7 +32,7 @@
     </.form>
   </div>
 
-  <div :if={@tags.results != []} class="mt-4 flow-root p-4 border rounded-md">
+  <div :if={@tags.results != []} class="mt-4 flow-root p-4 border border-gray-200  rounded-md">
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
         <.table rows={@tags.results} class="table-auto">

@@ -122,7 +122,6 @@ end %>
           field={f[:post_content]}
           type="hidden"
           class="hidden"
-          label={nil}
         />
       </div>
     </div>
@@ -199,7 +198,7 @@ end %>
             <li class="flex items-center">
               <span class="font-medium w-32">Status</span>
               <span class="text-gray-600 capitalize">{@post.post_status}</span>
-              <.input field={f[:post_status]} label={nil} class="hidden" />
+              <.input field={f[:post_status]}  class="hidden" />
             </li>
             <li id="post-date" class="flex items-center" phx-update="ignore">
               <span class="font-medium w-32">Publish</span>
@@ -214,7 +213,6 @@ end %>
               </label>
               <.input
                 field={f[:post_date]}
-                label={nil}
                 class="!w-0 !h-0 !border-0 !m-0 !!ring-0 !p-0"
                 phx-hook="DatetimePicker"
                 data-immediately="#post-date-immediately"
@@ -252,7 +250,6 @@ end %>
                         <.input
                           field={f[:guid]}
                           value={"#{@host}#{f[:post_name].value || @post_slug}"}
-                          label={nil}
                           class="hidden"
                         /> Permanent link:
                         <span class="font-normal" id="post-permalink">
@@ -269,7 +266,6 @@ end %>
               <span class="font-medium w-32">Discussion</span>
               <.toggle_switch
                 id="comments_open_toggle"
-                label={nil}
                 enabled={true}
                 on_change={
                   JS.toggle_attribute({"value", "1", "0"}, to: "#comments_open_meta_value")
@@ -318,7 +314,6 @@ end %>
                 <.textarea
                   field={f[:post_excerpt]}
                   placeholder="Add an excerpt"
-                  label={nil}
                   rows="5"
                 >
                 </.textarea>

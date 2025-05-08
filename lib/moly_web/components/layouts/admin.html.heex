@@ -9,7 +9,7 @@
     <div id="off-canvas-menu-content" class="fixed inset-0 flex">
       <div
         id="off-canvas-menu-content-inner"
-        class="relative mr-16 flex w-full max-w-xs flex-1 lg:hidden hidden"
+        class="relative mr-16  w-full max-w-xs flex-1 lg:hidden hidden"
         phx-click-away={MolyWeb.TailwindUI.close_off_canvas_menu("off-canvas-menu")}
       >
         <div
@@ -55,7 +55,7 @@
                       {item.title}
                     </.link>
                     <div :if={
-                      is_map(item) && Map.has_key?(item, :items) && Enum.count(item.items) > 0
+                      is_non_struct_map(item) && Map.has_key?(item, :items) && Enum.count(item.items) > 0
                     }>
                       <button
                         id={ "sub-menu-#{item.icon}-button-g" }
@@ -148,7 +148,7 @@
                   <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
                   {item.title}
                 </.link>
-                <div :if={item && Map.has_key?(item, :items) && Enum.count(item.items) > 0}>
+                <div :if={Map.has_key?(item, :items) && Enum.count(item.items) > 0}>
                   <button
                     id={ "sub-menu-#{item.icon}-button" }
                     type="button"

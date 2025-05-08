@@ -79,7 +79,7 @@ defmodule MolyWeb.AdminCategoryLive.Form do
         </div>
         <div>
           <.inputs_for :let={term_taxonomy} field={f[:term_taxonomy]}>
-            <.input field={term_taxonomy[:taxonomy]} value="category" label={nil} class="hidden" />
+            <.input field={term_taxonomy[:taxonomy]} value="category"  class="hidden" />
             <.select
               field={term_taxonomy[:parent_id]}
               options={@parent_categories}

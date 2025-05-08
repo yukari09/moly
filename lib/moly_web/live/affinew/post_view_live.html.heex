@@ -12,8 +12,8 @@
       <div>
         <p class="font-bold">{Moly.Utilities.Account.user_name(@author)}</p>
         <div class="flex flex-wrap items-center text-sm text-base-content/70">
-            <time datetime={Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_data()}>
-              {Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_data()}
+            <time datetime={Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_date()}>
+              {Moly.Helper.get_in_from_keys(@post, [:source, "updated_at"]) |> Moly.Helper.format_es_date()}
             </time>
           <span class="mx-2 hidden sm:inline">•</span>
           <span>Reading time:&nbsp;&nbsp;{(Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> String.length()) / 1000 |> floor()} Min</span>

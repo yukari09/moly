@@ -4,13 +4,14 @@ defmodule Moly.Utilities do
   def cache_inc(key, amount \\ 1, opts \\ []), do: Cachex.incr!(@cache_name, key, amount, opts)
   def cache_ttl(key), do: Cachex.ttl(@cache_name, key) |> elem(1)
   def cache_exists?(key), do: Cachex.exists?(@cache_name, key) |> elem(1)
+  @spec cache_put(any(), any()) :: {:error, boolean()} | {:ok, boolean()}
   def cache_put(key, value, expire \\ 0), do: Cachex.put(@cache_name, key, value, expire: expire)
   def cache_get_or_put(key, get_cache_function \\ nil, expire \\ 0) do
     case cache_get!(key) do
       nil ->
         if is_function(get_cache_function) do
           value = apply(get_cache_function, [])
-          cache_put(key, value, expire: expire)
+          cache_put(key, value, expire)
           value
         else
           nil

@@ -353,9 +353,9 @@ defmodule Moly.Helper do
 
   def timestamp2datetime(_), do: ""
 
-  def format_es_data(nil, _), do: nil
-
-  def format_es_data(data_str, format \\ "{Mfull} {D}, {YYYY}") do
+  def format_es_date(data_str, format \\ "{Mfull} {D}, {YYYY}")
+  def format_es_date(nil, _format), do: nil
+  def format_es_date(data_str, format) do
     Timex.parse!(data_str, "{ISO:Extended:Z}")
     |> Timex.format!(format)
   end

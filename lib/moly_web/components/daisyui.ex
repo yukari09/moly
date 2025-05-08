@@ -6,7 +6,7 @@ defmodule MolyWeb.DaisyUi do
   import Moly.Utilities.Account, only: [user_avatar: 2, user_name: 2]
 
   attr(:user, Moly.Accounts.User, default: nil)
-  attr(:size, :string, default: "32")
+  attr(:size, :integer, default: 32)
   attr(:class, :string, default: nil)
 
   def avatar(%{user: nil} = assigns) do

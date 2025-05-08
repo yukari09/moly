@@ -34,7 +34,7 @@ defmodule Moly.MixProject do
   defp deps do
     [
       {:snap, "~> 0.12"},
-      {:timex, "~> 3.7"},
+      {:timex, "~> 3.7.11"},
       {:flame, "~> 0.5"},
       {:ash_rbac, "~> 0.6.1"},
       {:lucide_icons, "~> 2.0.0"},
@@ -83,7 +83,8 @@ defmodule Moly.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:dns_cluster, "~> 0.2"},
-      {:bandit, "~> 1.6.11"}
+      {:bandit, "~> 1.6.11"},
+      {:brotli, "~> 0.3.2"}
     ]
   end
 

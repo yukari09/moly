@@ -1,8 +1,6 @@
 defmodule MolyWeb.AdminUserLive.Index do
   use MolyWeb.Admin, :live_view
 
-  import Moly.Utilities.Account
-
   @per_page "10"
   @model Moly.Accounts.User
   @context %{private: %{ash_authentication?: true}}

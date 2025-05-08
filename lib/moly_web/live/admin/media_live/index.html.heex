@@ -57,7 +57,7 @@
           </.button>
         </.form>
         <.tabs_with_badges
-          id="post-image-selector-tabs"
+          id={Moly.Helper.generate_random_id()}
           tabs={[
             %{
               label: "All",
@@ -99,7 +99,7 @@
           <:menu_slot data-menu-id="actions-menu" class="w-44">
             <div class="py-1" role="none">
               <.dropdown_link
-                class={["flex items-center gap-2"]}
+                class={"flex items-center gap-2"}
                 data-action-link="select-all"
                 phx-click={
                   JS.dispatch("actions:selectAll:click")
@@ -109,7 +109,7 @@
                 <.icon name="hero-check-circle" class="size-5" /> Select All
               </.dropdown_link>
               <.dropdown_link
-                class={["flex items-center gap-2 opacity-50 pointer-events-none"]}
+                class={"flex items-center gap-2 opacity-50 pointer-events-none"}
                 data-action-link="deselect-all"
                 disabled={true}
                 phx-click={
@@ -122,7 +122,7 @@
             </div>
             <div class="py-1" role="none">
               <.dropdown_link
-                class={["flex items-center gap-2 opacity-50 pointer-events-none"]}
+                class={"flex items-center gap-2 opacity-50 pointer-events-none"}
                 data-confirm="Are you sure?"
                 data-action-link="delete-selected"
                 phx-click={
@@ -197,7 +197,7 @@
           class="relative"
           id={id}
         >
-          <% metas = attachment_metadata(media) %>
+          <%!-- <% metas = attachment_metadata(media) %> --%>
           <div
             id={"#{id}-media"}
             class="group overflow-hidden rounded-lg bg-gray-100"
@@ -312,7 +312,7 @@
           </.button>
         </.form>
         <.tabs_with_badges
-          id="post-image-selector-tabs"
+          id={Moly.Helper.generate_random_id()}
           tabs={[
             %{
               label: "All",

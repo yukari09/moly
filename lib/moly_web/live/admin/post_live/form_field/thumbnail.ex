@@ -86,7 +86,7 @@ defmodule MolyWeb.AdminPostLive.FormField.Thumbnail do
         <.button
           data-id="set-image-button"
           variant="secondary"
-          class={["w-full my-4", @cur_feature_image && "hidden"]}
+          class={"w-full my-4 #{@cur_feature_image && "hidden"}"}
           phx-click={
             JS.set_attribute({"src", ~p"/admin/media?media_type=image&modal=true"},
               to: "[data-id='iframe']"
@@ -128,7 +128,7 @@ defmodule MolyWeb.AdminPostLive.FormField.Thumbnail do
             <.button data-id="cancel-button" variant="gray" class="w-20">
               Cancel
             </.button>
-            <.button data-id="confirm-button" variant="primary" class={["w-20"]} disabled={true}>
+            <.button data-id="confirm-button" variant="primary" class={"w-20"} disabled={true}>
               Insert
             </.button>
           </div>

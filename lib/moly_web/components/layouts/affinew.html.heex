@@ -1,3 +1,4 @@
+
 <div class="drawer">
   <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content flex flex-col">
@@ -12,14 +13,14 @@
           )
         }
       >
-        <.form class="h-16" action="/results" method="get">
+        <form for={nil} class="h-16" action="/results" method="get">
           <div class="flex flex-col justify-center items-center h-16">
             <label class="input input-ghost focus-within:shadow-none focus-visible:ring-0 focus-within:outline-none focus-within:ring-0 focus-within:ring-transparent">
               <Lucideicons.search class="size-5" />
               <input type="search" name="q" placeholder="Search..." />
             </label>
           </div>
-        </.form>
+        </form>
       </div>
       <div class="navbar w-full max-w-screen-xl mx-auto px-4 gap-2 xl:gap-0 lg:px-10">
         <div class="flex-none lg:hidden">
@@ -40,7 +41,7 @@
         </div>
 
         <div class="navbar-end ml-auto w-auto">
-          <.form
+          <form
             action="/results"
             method="get"
             id="search-form"
@@ -78,7 +79,7 @@
                 class="w-5 h-5 absolute top-1/2 right-3.5 transform -translate-y-1/2 text-gray-500"
               />
             </div>
-          </.form>
+          </form>
 
           <ul class="flex items-center gap-1 xl:gap-2">
             <!-- Navbar menu content here -->

@@ -1,6 +1,6 @@
 <MolyWeb.TailwindUI.flash_group flash={@flash} id="admin-flash" />
 <div :if={@live_action == :create} phx-mounted={JS.push("initiate_editor")}>
-  <.form phx-submit="submit">
+  <.form for={@form} phx-submit="submit">
     <div>
       <div class="flex  justify-between items-center py-2 px-4 w-full box-border border-b">
         <div>
@@ -35,7 +35,7 @@
             size="xs"
             type="submit"
             phx-disable-with="Saving..."
-            class={[@invaild_form_data && "opacity-60"]}
+            class={"#{@invaild_form_data && "opacity-60"}"}
             disabled={@invaild_form_data}
           >
             Save
