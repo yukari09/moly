@@ -62,7 +62,7 @@ defmodule MolyWeb.AdminPostLive.NewOrEdit do
         {:error, form} ->
           socket
           |> assign(form: form)
-          |> put_flash(:error, "Oops, some thing wrong.")
+          |> put_flash(:error, JSON.encode!(form.errors))
       end
 
     {:noreply, socket}
