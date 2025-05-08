@@ -932,7 +932,7 @@ defmodule MolyWeb.TailwindUI do
   attr(:field, Phoenix.HTML.FormField, required: true)
   attr(:value, :any, default: nil)
   attr(:field_subfix, :string, default: nil)
-  attr(:size, :string, default: "4")
+  attr(:size, :string, default: nil)
   attr(:options, :list, required: true)
   attr(:class, :string, default: nil)
   attr(:multiple, :boolean, default: false)
