@@ -22,12 +22,9 @@ FROM ${BUILDER_IMAGE} AS builder
 
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git curl \
-    && apt-get clean && rm -f /var/lib/apt/lists/*_*
-
-
-RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash -
-
-RUN apt install -y nodejs
+  && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+  && apt-get install -y nodejs \
+  && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir
 WORKDIR /app
@@ -79,7 +76,9 @@ RUN mix release
 FROM ${RUNNER_IMAGE}
 
 RUN apt-get update -y && \
-  apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates ffmpeg \
+  apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates ffmpeg curl \
+  && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+  && apt-get install -y nodejs \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # Set the locale
