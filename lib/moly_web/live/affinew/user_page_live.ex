@@ -222,7 +222,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
             <div>
               <img
                 :if={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, "avatar")}
-                class="inline-block size-20 lg:size-24 rounded-full border-base-content/5 border-1"
+                class="inline-block size-20 lg:size-24 rounded-full border-base-content/4 border-1"
                 src={Moly.Utilities.Account.load_meta_value_by_meta_key(@user, "avatar")["128"]}
                 alt=""
               />
@@ -342,7 +342,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
             </div>
           </div>
         </div>
-        
+
     <!--start tab-->
         <div class="grow container mx-auto px-2 sm:px-6 lg:px-8">
           <div class="border-b border-gray-200 -mx-2 sm:mx-0 px-2 sm:pb-0">
@@ -381,7 +381,7 @@ defmodule MolyWeb.Affinew.UserPageLive do
               >
                 <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
               </.link>
-              
+
     <!-- Page Numbers -->
               <.link
                 :for={page <- @page_meta.page_range}

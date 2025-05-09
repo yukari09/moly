@@ -44,7 +44,7 @@
     <ul id={id} :if={type == "list" && data["style"] == "unordered"}>
       <li :for={item <- data["items"]}>{raw item["content"]}</li>
     </ul>
-    <div id={id} class={["rounded-box border border-base-content/5 bg-base-100 not-prose", data["stretched"] && "overflow-x-auto"]} :if={type == "table"}>
+    <div id={id} class={["rounded-box border border-base-content/4 bg-base-100 not-prose", data["stretched"] && "overflow-x-auto"]} :if={type == "table"}>
       <table class="table">
         <thead :if={data["withHeadings"]}>
           <tr>

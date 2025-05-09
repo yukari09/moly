@@ -1,0 +1,123 @@
+<div>
+  <MolyWeb.DaisyUi.header title="Posts" items={[{"Moly", ~p"/admin"}, {"Content", nil}, {"posts",nil}]} />
+  <div class="card shodow bg-white mt-4">
+    <div class="card-body p-0">
+      <div class="px-4 pt-6 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <label class="input input-sm">
+            <Lucideicons.search class="size-4" />
+            <input type="search" required placeholder="Search" />
+          </label>
+
+          <select class="select select-sm">
+            <option disabled selected>Pick a color</option>
+            <option>Crimson</option>
+            <option>Amber</option>
+            <option>Velvet</option>
+          </select>
+        </div>
+        <div class="flex items-center">
+          <.link class="btn btn-sm btn-primary"><Lucideicons.plus class="size-4" />Create Post</.link>
+        </div>
+      </div>
+      <div class="mt-4">
+        <MolyWeb.DaisyUi.table rows={@posts.results} class="text-sm">
+          <:col :let={row} label="Title" class="text-base-content/50">
+            <.link href={~p"/post/#{row.post_name}"} target="_blank" class="inline"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500 inline" /></.link> 
+            <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline font-medium" >
+              {row.post_title}
+            </.link>
+          </:col>
+          <:col :let={row} label="Status" class="text-base-content/50">
+            <%!-- %{draft: "accent", publish: "success", scheduled: "info", trash: "error"} |> Map.get(row.post_status) --%>
+            <span :if={row.post_status == :trash} class="text-error">{String.capitalize("#{row.post_status}")}</span>
+            <span :if={row.post_status == :publish} class="text-success">{String.capitalize("#{row.post_status}")}</span>
+            <span :if={row.post_status == :scheduled} class="text-accent">{String.capitalize("#{row.post_status}")}</span>
+            <span :if={row.post_status == :draft} class="text-info">{String.capitalize("#{row.post_status}")}</span>
+
+          </:col>
+          <:col :let={row} label="Tags" class="text-base-content/50">
+            <span
+              :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "post_tag")}
+              id={"tag-cell-#{tag.id}"}
+              class="text-sm text-base-content/80"
+            >
+              {tag.term.name}
+            </span>
+          </:col>
+          <:col :let={row} label="Category" class="text-base-content/50">
+            <span
+              :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "category")}
+              id={"tag-cell-#{tag.id}"}
+              class="text-sm text-base-content/80"
+            >
+              {tag.term.name}
+            </span>
+          </:col>
+          <:col :let={row} label="Created at" class="text-base-content/50">
+            <span class="text-sm text-base-content/80">{row.inserted_at |> Timex.format!("{Mfull} {D}, {YYYY} {h24}:{m}")}</span>
+          </:col>
+          <:col :let={row} label="" align="right">
+            <div class="flex gap-1">
+              <MolyWeb.DaisyUi.tooltip tip="Edit">
+                <.link  patch={~p"/admin/post/#{row.id}/edit"}>
+                  <Lucideicons.pen class="size-4" />
+                </.link>
+              </MolyWeb.DaisyUi.tooltip>
+              <MolyWeb.DaisyUi.tooltip tip="Reindex">
+                <.link 
+                  phx-click={JS.toggle_class("animate-spin", to: "#rebuild-index-icon-#{row.id}") |> JS.push("rebuild-index")} phx-value-id={row.id} phx-value-spin-id={"#rebuild-index-icon-#{row.id}"}>
+                  <Lucideicons.loader_circle id={"rebuild-index-icon-#{row.id}"} class="size-4" data-loaded={JS.toggle_class("animate-spin")} />
+                </.link>
+              </MolyWeb.DaisyUi.tooltip>
+              <MolyWeb.DaisyUi.tooltip tip="Draft" :if={row.post_status in [:publish, :trash]}>
+                <.link
+                  phx-click="draft"
+                  phx-value-id={row.id}
+                >
+                  <Lucideicons.book_dashed class="size-4" />
+                </.link>
+              </MolyWeb.DaisyUi.tooltip>
+              <MolyWeb.DaisyUi.tooltip tip="Publish" :if={row.post_status in [:draft]}>
+                <.link
+                  phx-click="publish"
+                  phx-value-id={row.id}
+                >
+                  <Lucideicons.book class="size-4" />
+                </.link>
+              </MolyWeb.DaisyUi.tooltip>
+
+
+              <MolyWeb.DaisyUi.tooltip tip="Delete" :if={row.post_status !== :trash}>
+                <.link
+                  phx-click="delete"
+                  data-confirm="Are you sure to delete this post forever?"
+                  phx-value-id={row.id}
+                >
+                  <Lucideicons.trash class="size-4" />
+                </.link>
+              </MolyWeb.DaisyUi.tooltip>
+
+              <MolyWeb.DaisyUi.tooltip tip="Forever" :if={row.post_status == :trash}>
+                <.link
+                  class="text-error"
+                  phx-click="delete-forever"
+                  data-confirm="Are you sure to delete this post forever?"
+                  phx-value-id={row.id}
+                >
+                  <Lucideicons.trash_2 class="size-4" />
+                </.link>
+              </MolyWeb.DaisyUi.tooltip>
+            </div>
+          </:col>
+        </MolyWeb.DaisyUi.table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+ 
+
+
+ 

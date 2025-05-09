@@ -25,7 +25,7 @@
 
 @theme {
   --font-sans: InterVariable, sans-serif;
-}
+} 
 
 button[disabled]{
     @apply opacity-50;

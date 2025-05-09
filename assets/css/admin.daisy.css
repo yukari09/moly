@@ -16,6 +16,7 @@
 
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@plugin "daisyui";
  
 
 @import "../node_modules/@yaireo/tagify/dist/tagify.css";
@@ -23,6 +24,48 @@
 @import "../node_modules/flatpickr/dist/flatpickr.min.css";
 @import "../node_modules/@splidejs/splide/dist/css/splide.min.css";
 
+@theme {
+  --font-sans: InterVariable, sans-serif;
+  --root-bg: rgb(250,251,252);
+}
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: false;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: #fff;
+  --color-base-200: #eef0f2;
+  --color-base-300: #dcdee0;
+  --color-base-content: #1e2328;
+  --color-primary: #167bff;
+  --color-primary-content: #fff;
+  --color-secondary: #9c5de8;
+  --color-secondary-content: #fff;
+  --color-accent: #00d3bb;
+  --color-accent-content: #f3fbf6;
+  --color-neutral: #1e2832;
+  --color-neutral-content: #fafcff;
+  --color-info: #14b4ff;
+  --color-info-content: #fff;
+  --color-success: #0bbf58;
+  --color-success-content: #fff;
+  --color-warning: #f5a524;
+  --color-warning-content: #150a00;
+  --color-error: #f31260;
+  --color-error-content: #fff;
+  --radius-selector: .25rem;
+  --radius-field: .25rem;
+  --radius-box: .25rem;
+  --size-selector: .25rem;
+  --size-field: .25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+ 
+ 
 button[disabled]{
     @apply opacity-50;
 }

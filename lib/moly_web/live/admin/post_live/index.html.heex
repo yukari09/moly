@@ -78,20 +78,19 @@
         <.table rows={@posts.results} class="table-auto !max-w-full">
           <:col :let={row} label="Title">
             <div>
-              <.badge variant={
-                %{draft: "gray", published: "success", scheduled: "info", trash: "error"}[
-                  row.post_status
-                ]
-              }>
-                {row.post_status}
-              </.badge>
-              <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline" >
+              <.link href={~p"/post/#{row.post_name}"} target="_blank" class="inline"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500 inline" /></.link> 
+              <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline font-medium" >
                 {row.post_title}
               </.link>
-              <.link href={~p"/post/#{row.post_name}"} target="_blank" class="inline"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500 inline" /></.link> 
             </div>
           </:col>
-          <%!-- <:col :let={row} label="Tags">
+          <:col :let={row} label="Status">
+            <span :if={row.post_status == :trash} class="text-red-500">{String.capitalize("#{row.post_status}")}</span>
+            <span :if={row.post_status == :publish} class="text-green-500">{String.capitalize("#{row.post_status}")}</span>
+            <span :if={row.post_status == :scheduled} class="text-sky-500">{String.capitalize("#{row.post_status}")}</span>
+            <span :if={row.post_status == :draft} class="text-gray-500">{String.capitalize("#{row.post_status}")}</span>
+          </:col>
+          <:col :let={row} label="Tags">
             <div class="flex flex-wrap gap-1">
               <span
                 :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "post_tag")}
@@ -100,7 +99,7 @@
                 {tag.term.name}
               </span>
             </div>
-          </:col> --%>
+          </:col>
           <:col :let={row} label="Category">
             <span
               :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "category")}

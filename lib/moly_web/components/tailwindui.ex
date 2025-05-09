@@ -331,7 +331,7 @@ defmodule MolyWeb.TailwindUI do
               "py-3.5 text-sm font-semibold text-gray-900",
               "first:pl-4 first:pr-3 first:sm:pl-0",
               "last:relative last:pr-4 last:pl-3 last:sm:pr-0",
-              "not-first:not-last:px-3",
+              "not-first:not-last:px-3 table-cell",
               col[:align] == "right" && "text-right",
               col[:align] == "center" && "text-center",
               col[:align] != "right" && col[:align] != "center" && "text-left",
@@ -356,7 +356,7 @@ defmodule MolyWeb.TailwindUI do
           <%= for col <- @col do %>
             <%= if !Map.get(col, :hidden, false) do %>
               <td class={[
-                "py-5 text-sm whitespace-nowrap",
+                "py-5 text-sm ",
                 "first:pl-4 first:pr-3 first:sm:pl-0",
                 "last:relative last:pr-4 last:pl-3 last:sm:pr-0",
                 "not-first:not-last:px-3",
