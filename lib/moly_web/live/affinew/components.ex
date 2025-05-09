@@ -307,21 +307,21 @@ defmodule MolyWeb.Affinew.Components do
     <footer class="bg-gray-900">
       <div class="mx-auto max-w-7xl overflow-hidden px-6 py-20 sm:py-24 lg:px-8">
         <nav
-          :if={Moly.Utilities.Page.website_links() != []}
+          :if={Moly.website_links() != []}
           class="-mb-6 flex flex-wrap justify-center gap-x-12 gap-y-3 text-sm/6"
           aria-label="Footer"
         >
           <a
-            :for={termmeta <- Moly.Utilities.Page.website_links()}
+            :for={termmeta <- Moly.website_links()}
             href={termmeta.meta_value}
             class="text-gray-400 hover:text-white"
           >
             {termmeta.meta_key}
           </a>
         </nav>
-        <div :if={Moly.Utilities.Page.social_links() != []} class="mt-16 flex justify-center gap-x-10">
+        <div :if={Moly.social_links() != []} class="mt-16 flex justify-center gap-x-10">
           <a
-            :for={termmeta <- Moly.Utilities.Page.social_links()}
+            :for={termmeta <- Moly.social_links()}
             :if={is_map(termmeta.term_value)}
             href={termmeta.term_value["url"]}
             class="text-gray-400 hover:text-gray-300"
@@ -329,7 +329,7 @@ defmodule MolyWeb.Affinew.Components do
             {raw(termmeta.term_value["icon"])}
           </a>
           <a
-            :for={termmeta <- Moly.Utilities.Page.social_links()}
+            :for={termmeta <- Moly.social_links()}
             :if={!is_map(termmeta.term_value)}
             href={termmeta.term_value}
             class="text-gray-400 hover:text-gray-300"
@@ -338,7 +338,7 @@ defmodule MolyWeb.Affinew.Components do
           </a>
         </div>
         <p class="mt-10 text-center text-sm/6 text-gray-400">
-          © {Timex.now() |> Timex.format!("{YYYY}")} {Moly.Utilities.Page.website_name()}, Inc. All rights reserved.
+          © {Timex.now() |> Timex.format!("{YYYY}")} {Moly.website_name()}, Inc. All rights reserved.
         </p>
       </div>
     </footer>

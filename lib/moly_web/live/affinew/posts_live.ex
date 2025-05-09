@@ -1,162 +1,186 @@
 defmodule MolyWeb.Affinew.PostsLive do
+require Logger
   use MolyWeb, :live_view
 
-  require Ash.Query
-
-  alias Moly.Contents.Notifiers.Post
-
   import MolyWeb.Affinew.Components
+  import MolyWeb.Affinew.QueryEs
+
+  @per_page 18
 
   def mount(_params, _session, socket) do
     {:ok, socket, layout: {MolyWeb.Layouts, :affinew}}
   end
 
-  def handle_params(%{"post_name" => post_name}, uri, socket) do
-    {:ok, post} =
-      Snap.Search.search(Moly.Cluster, Post.index_name(), %{
-        query: %{term: %{"post_name.keyword" => post_name}}
-      })
-
-    post = Moly.Helper.get_in_from_keys(post, [:hits, :hits, 0])
-
+  def handle_params(%{"category" => category_term_slug} = params, _uri, socket) do
     socket =
-      if is_nil(post) do
-        socket
-        |> push_navigate(to: ~p"/browse")
-      else
-        {:ok, posts} =
-          Snap.Search.search(Moly.Cluster, Post.index_name(), %{
-            query: %{
-              bool: %{
-                must: [
-                  %{term: %{post_status: "publish"}},
-                  %{term: %{post_type: "affiliate"}},
-                  %{
-                    more_like_this: %{
-                      fields: [:post_title, :post_content],
-                      like: %{
-                        _index: Post.index_name(),
-                        _id: post.id
-                      },
-                      min_term_freq: 1,
-                      max_query_terms: 12
-                    }
-                  }
-                ]
-              }
-            },
-            size: 11
-          })
-
-        socket =
-          assign(socket, post: post, posts: posts)
-          |> assign_new(:bookmark_event, fn ->
-            if socket.assigns.current_user do
-              post_id = Moly.Helper.get_in_from_keys(post, [:source, "id"])
-
-              Ash.Query.new(Moly.Accounts.UserPostAction)
-              |> Ash.Query.filter(
-                post_id == ^post_id and user_id == ^socket.assigns.current_user.id
-              )
-              |> Ash.exists?(actor: %{roles: [:user]})
-              |> if do
-                "unbookmark_post"
-              else
-                "bookmark_post"
-              end
-            else
-              "require_login"
-            end
-          end)
-          |> assign(:current_uri, uri)
-
-        page_meta(socket)
-      end
-
+      assign(:filter, %{term: %{"category.slug.keyword" => category_term_slug}})
+      |> apply_params(params)
     {:noreply, socket}
   end
 
-  def handle_event("bookmark_post", _params, socket) do
-    :timer.sleep(100)
-    current_user = socket.assigns.current_user
-    post_id = Moly.Helper.get_in_from_keys(socket.assigns.post, [:source, "id"])
-
+  def handle_params(%{"tag" => tag_term_slug} = params, _uri, socket) do
     socket =
-      if is_nil(current_user) do
-        put_flash(socket, :error, "Please login to bookmark this post")
-        |> push_navigate(to: ~p"/sign-in")
-      else
-        input = %{post: post_id, action: :bookmark}
-        user = Map.put(current_user, :roles, [:owner])
-
-        case Ash.create(Moly.Accounts.UserPostAction, input, actor: user, action: :create) do
-          {:ok, _} ->
-            assign(socket, bookmark_event: "unbookmark_post")
-
-          {:error, _} ->
-            put_flash(socket, :error, "Failed to bookmark post")
-            |> assign(bookmark_event: "bookmark_post")
-        end
-      end
-
+      assign(socket, :filter, %{term: %{"post_tag.slug.keyword" => tag_term_slug}})
+      |> apply_params(params)
     {:noreply, socket}
   end
 
-  def handle_event("unbookmark_post", _params, socket) do
-    :timer.sleep(100)
-    current_user = socket.assigns.current_user
-    post_id = Moly.Helper.get_in_from_keys(socket.assigns.post, [:source, "id"])
-
+  def handle_params(params, _uri, socket) do
     socket =
-      if is_nil(current_user) do
-        put_flash(socket, :error, "Please login to bookmark this post")
-        |> push_navigate(to: ~p"/sign-in")
-      else
-        current_user = Map.put(current_user, :roles, [:owner])
-
-        user_action =
-          Ash.Query.new(Moly.Accounts.UserPostAction)
-          |> Ash.Query.filter(post_id == ^post_id and user_id == ^current_user.id)
-          |> Ash.read_first!(actor: current_user)
-
-        case Ash.destroy(user_action, actor: current_user, action: :destroy) do
-          :ok ->
-            assign(socket, bookmark_event: "bookmark_post")
-
-          {:error, _} ->
-            assign(socket, bookmark_event: "unbookmark_post")
-            |> put_flash(:error, "There is a small problem, please try again later.")
-        end
-      end
-
+      assign(socket, :filter, %{})
+      |> apply_params(params)
     {:noreply, socket}
   end
 
-  def handle_event("require_login", _, socket) do
-    socket = put_flash(socket, :error, "Please log in first")
-    {:noreply, socket}
+  def apply_params(socket, params) do
+    filter = socket.assigns.filter
+    page = Map.get(params, "page", "1") |> String.to_integer()
+    [count, posts] = query(page, filter)
+    page_title = "#{Moly.website_name()} Blogs"
+    page_meta = Moly.Helper.pagination_meta(count, @per_page, page, 5)
+    assign(socket, count: count, posts: posts, page_title: page_title, page_meta: page_meta)
   end
 
-  defp page_meta(%{assigns: %{post: post}} = socket) do
-    media_url = featrue_image_src(post)
-    post_title = Moly.Helper.get_in_from_keys(post, [:source, "post_title"])
-    post_excerpt = Moly.Helper.get_in_from_keys(post, [:source, "post_excerpt"])
-
-    meta_tags = [
-      %{property: "og:title", content: post_title},
-      %{property: "og:description", content: post_excerpt},
-      %{property: "og:type", content: "article"},
-      %{property: "og:image", content: media_url},
-      %{name: "twitter:card", content: "summary_large_image"},
-      %{name: "twitter:title", content: post_title},
-      %{name: "twitter:description", content: post_excerpt},
-      %{name: "twitter:image", content: media_url}
+  def query(page, filter \\ %{}) when is_map(filter) and is_integer(page) do
+    must = [
+      %{term: %{"post_status.keyword" => "publish"}},
+      %{term: %{"post_type.keyword" => "post"}},
     ]
-
-    assign(socket, :meta_tags, meta_tags)
-    |> assign(
-      :page_title,
-      "#{post_title}"
-    )
+    must = if filter != %{}, do: [filter | must], else: must
+    query_map = %{
+      query: %{
+        bool: %{
+          must: must
+        }
+      },
+      sort: [
+        %{
+          updated_at: %{
+            order: "desc"
+          }
+        }
+      ],
+      size: @per_page,
+      from: (page - 1) * @per_page
+    }
+    JSON.encode!(query_map) |> Logger.info()
+    Moly.Helper.es_query_result(Moly.Cluster, Moly.Contents.Notifiers.Post.index_name(), query_map)
+    |> case do
+      nil -> [0, []]
+      r -> r
+    end
   end
+
+
+
+
+
+
+
+  # def mount(_params, _session, socket) do
+  #   industry_options =
+  #     Moly.Utilities.cache_get_or_put("#{__MODULE__}:industries", &industries/0, :timer.hours(1))
+  #     |> Enum.map(&{&1.term.slug, &1.term.name})
+
+  #   socket =
+  #     assign(
+  #       socket,
+  #       industry_options: industry_options,
+  #       commission_options: commission_options(),
+  #       cookie_duration_options: cookie_duration_options(),
+  #       payment_cycle_options: payment_cycle_options(),
+  #       sort_options: sort_options()
+  #     )
+
+  #   {:ok, socket, layout: {MolyWeb.Layouts, :affinew}}
+  # end
+
+  # def handle_params(params, _uri, socket) do
+  #   current_params =
+  #     ["page", "sort", "q", "category", "commission", "cookie-duration", "payment-cycle"]
+  #     |> Enum.reduce(%{}, fn param, a1 ->
+  #       param_value = Map.get(params, param)
+
+  #       if param_value != "" do
+  #         Map.put(a1, param, param_value)
+  #       else
+  #         Map.put(a1, param, nil)
+  #       end
+  #     end)
+
+  #   options =
+  #     Enum.reduce(current_params, %{}, fn {option, option_value}, a1 ->
+  #       if option_value not in [false, "", nil] do
+  #         case option do
+  #           "category" ->
+  #             value = to_option_value(socket.assigns.industry_options, option_value)
+  #             Map.put(a1, option, value)
+
+  #           "commission" ->
+  #             value = to_option_value(socket.assigns.commission_options, option_value)
+  #             Map.put(a1, option, value)
+
+  #           "payment-cycle" ->
+  #             value = to_option_value(socket.assigns.payment_cycle_options, option_value)
+  #             Map.put(a1, option, value)
+
+  #           "cookie-duration" ->
+  #             value = to_option_value(socket.assigns.cookie_duration_options, option_value)
+  #             Map.put(a1, option, value)
+
+  #           _ ->
+  #             a1
+  #         end
+  #       else
+  #         a1
+  #       end
+  #     end)
+
+  #   page = (current_params["page"] && String.to_integer(current_params["page"])) || 1
+
+  #   {count, posts} = list_query(current_params, @per_page)
+  #   page_meta = Moly.Helper.pagination_meta(count, @per_page, page, 5)
+
+  #   socket =
+  #     assign(socket, posts: posts, params: current_params, page_meta: page_meta, options: options)
+  #     |> page_title(count)
+
+  #   {:noreply, socket}
+  # end
+
+  # defp page_title(socket,count) do
+  #   category_name = Map.get(socket.assigns.options, "category")
+  #   canonical = [
+  #     %{
+  #       "category" => nil, "commission" => nil, "cookie-duration"=> nil,
+  #       "page"=>nil, "payment-cycle" => "novalue", "q" => nil, "sort" => nil
+  #     },
+  #     socket.assigns.params,
+  #     Map.delete(socket.assigns.params, "sort")
+  #   ]
+  #   canonical_href =
+  #     cond do
+  #       count == 0 -> ~p"/browse?#{hd(canonical)}"
+  #       count > @per_page -> ~p"/browse?#{Enum.at(canonical,1)}"
+  #       true -> ~p"/browse?#{Enum.at(canonical,2)}"
+  #     end
+  #   dt = Date.utc_today()
+  #   assign(socket,
+  #     page_title: "Browse All High Ticket #{category_name} Affiliate Programs You Must Be Know in #{dt.year}",
+  #     category_name: category_name,
+  #     canonical: canonical_href,
+  #     meta_tags: [%{
+  #       name: "description",
+  #       content: "List OF High Ticket #{category_name} Affiliate Programs You Must Be Know in #{dt.year}."
+  #     }]
+  #   )
+  # end
+
+  # defp to_option_value(options, option_value) do
+  #   Enum.find(options, &(elem(&1, 0) == option_value))
+  #   |> case do
+  #     nil -> nil
+  #     {_, label} -> label
+  #   end
+  # end
 end
