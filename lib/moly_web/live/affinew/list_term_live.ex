@@ -43,7 +43,7 @@ defmodule MolyWeb.Affinew.ListTermLive do
         "page"=>nil, "payment-cycle" => "novalue", "q" => nil, "sort" => nil
       },
       current_params,
-      %{}
+      Map.delete(current_params, "sort")
     ]
 
     canonical_href =
