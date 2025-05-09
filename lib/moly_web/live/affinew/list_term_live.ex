@@ -48,7 +48,7 @@ defmodule MolyWeb.Affinew.ListTermLive do
 
     canonical_href =
       cond do
-        count == 0 -> ~p"/browse/#{slug}?#{hd(canonical)}"
+        count == 0 -> ~p"/browse?#{hd(canonical)}"
         count > @per_page -> ~p"/affiliates/#{slug}?#{Enum.at(canonical,1)}"
         true -> ~p"/affiliates/#{slug}?#{Enum.at(canonical,2)}"
       end
