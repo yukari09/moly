@@ -2,7 +2,7 @@
 <div :if={@live_action == :create} phx-mounted={JS.push("initiate_editor")}>
   <.form for={@form} phx-submit="submit">
     <div>
-      <div class="flex  justify-between items-center py-2 px-4 w-full box-border border-b">
+      <div class="flex  justify-between items-center py-2 px-4 w-full box-border border-b border-gray-200">
         <div>
           <.link navigate={~p"/admin/pages"}>
             <img src="/images/logo.svg" class="size-6" />

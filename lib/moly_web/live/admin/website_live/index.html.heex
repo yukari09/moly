@@ -1,5 +1,5 @@
 <div>
-  <.header title="Website Environment" description="A list of all the environment of website.">
+  <.header title="Website" description="A list of all the environment of website.">
     <.button class="flex items-center gap-2" variant="primary" size="sm" phx-click="create">
       Create website env
     </.button>
@@ -42,6 +42,9 @@
           </:col>
           <:col :let={row} label="Count">
             {Enum.count(row.term_meta)}
+          </:col>
+          <:col :let={row} label="Description">
+            {Moly.Helper.get_in_from_keys(row, [:term_taxonomy, 0, :description])}
           </:col>
           <:col :let={row} label="Created at">
             {row.inserted_at |> Timex.format!("{Mfull} {D}, {YYYY} {h24}:{m}")}

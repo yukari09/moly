@@ -186,7 +186,7 @@ defmodule MolyWeb.DaisyUi do
       @lift? && "tabs-lift",
       @class
     ]} role="tablist">
-      <template :for={{tab, i} <- Enum.with_index(@tab)}>
+      <template :for={{tab, _i} <- Enum.with_index(@tab)}>
       <input
         type="radio"
         name={@name}

@@ -1,6 +1,7 @@
 defmodule MolyWeb.AdminWebsiteLive.Form do
   use MolyWeb.Admin, :live_component
 
+
   def update(%{patch_url: patch_url, id: id, current_user: user, item: item}, socket) do
     socket =
       socket
@@ -49,7 +50,7 @@ defmodule MolyWeb.AdminWebsiteLive.Form do
 
   def render(assigns) do
     ~H"""
-    <div id={@id} class="py-6">
+    <div id={@id} class="pt-8">
       <.form
         :let={f}
         for={@form}
@@ -60,13 +61,19 @@ defmodule MolyWeb.AdminWebsiteLive.Form do
       >
         <.input label="Name of Environment" field={f[:name]} show_error={false} />
         <.input label="Slug" field={f[:slug]} show_error={false} />
-        <input
-          name={f[:term_taxonomy].name<>"[0][taxonomy]"}
-          value="website"
-          class="hidden"
-          type="hidden"
-        />
-        <div class="border-b"></div>
+        <.inputs_for :let={ttf} field={f[:term_taxonomy]} >
+          <input
+            name={ttf[:taxonomy].name}
+            value="website"
+            class="hidden"
+            type="hidden"
+          />
+          <.textarea
+            field={ttf[:description]}
+            label="Description"
+          />
+        </.inputs_for>
+        <div class="border-b border-gray-200"></div>
         <.inputs_for :let={ff} field={f[:term_meta]}>
           <div class="flex items-center gap-2">
             <.input field={ff[:term_key]} placeholder="Name" show_error={false} />
@@ -85,6 +92,7 @@ defmodule MolyWeb.AdminWebsiteLive.Form do
         <.button
           variant="gray"
           size="sm"
+          class="mb-0"
           phx-target={@myself}
           type="button"
           phx-click="add-form"
@@ -107,9 +115,10 @@ defmodule MolyWeb.AdminWebsiteLive.Form do
   end
 
   defp resource_form(%{assigns: %{item: nil}} = socket) do
+    item = %Moly.Terms.Term{term_taxonomy: [%Moly.Terms.TermTaxonomy{description: nil}], term_meta: []}
     form =
       AshPhoenix.Form.for_create(Moly.Terms.Term, :create,
-        forms: [auto?: true],
+        forms: form_opts(item),
         actor: socket.assigns.current_user
       )
 
@@ -117,26 +126,26 @@ defmodule MolyWeb.AdminWebsiteLive.Form do
   end
 
   defp resource_form(%{assigns: %{item: %Moly.Terms.Term{} = item}} = socket) do
-    forms = [
-      term_taxonomy: [
-        type: :list,
-        resource: Moly.Terms.TermTaxonomy,
-        update_action: :update,
-        create_action: :create,
-        data: item.term_taxonomy
-      ],
-      term_meta: [
-        type: :list,
-        resource: Moly.Terms.TermMeta,
-        update_action: :update,
-        create_action: :create,
-        data: item.term_meta
-      ]
-    ]
-
     form =
-      AshPhoenix.Form.for_update(item, :update, forms: forms, actor: socket.assigns.current_user)
+      AshPhoenix.Form.for_update(item, :update, forms: form_opts(item), actor: socket.assigns.current_user)
 
     assign(socket, :form, form)
   end
+
+  def form_opts(item), do: [
+    term_taxonomy: [
+      type: :list,
+      resource: Moly.Terms.TermTaxonomy,
+      update_action: :update,
+      create_action: :create,
+      data: item.term_taxonomy
+    ],
+    term_meta: [
+      type: :list,
+      resource: Moly.Terms.TermMeta,
+      update_action: :update,
+      create_action: :create,
+      data: item.term_meta
+    ]
+  ]
 end

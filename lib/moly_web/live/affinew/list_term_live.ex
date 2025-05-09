@@ -37,15 +37,20 @@ defmodule MolyWeb.Affinew.ListTermLive do
       |> String.replace("-", " ")
       |> String.capitalize()
 
-    socket =
-      if count == 0 do
-        empty_map_params = %{
-          "category" => nil, "commission" => nil, "cookie-duration"=> nil,
-          "page"=>nil, "payment-cycle" => "novalue", "q" => nil, "sort" => nil
-        }
-        assign(socket, :canonical, ~p"/browse?#{empty_map_params}")
-      else
-        socket
+    canonical = [
+      %{
+        "category" => nil, "commission" => nil, "cookie-duration"=> nil,
+        "page"=>nil, "payment-cycle" => "novalue", "q" => nil, "sort" => nil
+      },
+      current_params,
+      %{}
+    ]
+
+    canonical_href =
+      cond do
+        count == 0 -> ~p"/browse/#{slug}?#{hd(canonical)}"
+        count > @per_page -> ~p"/affiliates/#{slug}?#{Enum.at(canonical,1)}"
+        true -> ~p"/affiliates/#{slug}?#{Enum.at(canonical,2)}"
       end
 
     socket =
@@ -54,7 +59,8 @@ defmodule MolyWeb.Affinew.ListTermLive do
         params: current_params,
         page_meta: page_meta,
         slug: slug,
-        keyword: keyword
+        keyword: keyword,
+        canonical: canonical_href
       )
       |> page_title()
 
@@ -62,6 +68,13 @@ defmodule MolyWeb.Affinew.ListTermLive do
   end
 
   defp page_title(socket) do
-    assign(socket, :page_title, "#{socket.assigns.keyword} High Ticket best Paying affiliate programs")
+    dt = Date.utc_today()
+    assign(socket,
+      page_title: "Find High Ticket #{socket.assigns.keyword} Affiliate Programs for Beginners (#{dt.year})",
+      meta_tags: [%{
+        name: "description",
+        content: "List OF High Ticket #{socket.assigns.keyword} Affiliate Programs for Beginners in #{dt.year}."
+      }]
+    )
   end
 end

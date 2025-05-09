@@ -71,30 +71,37 @@ defmodule MolyWeb.Affinew.ListLive do
     page_meta = Moly.Helper.pagination_meta(count, @per_page, page, 5)
 
     socket =
-      if count == 0 do
-        empty_map_params = %{
-          "category" => nil, "commission" => nil, "cookie-duration"=> nil,
-          "page"=>nil, "payment-cycle" => "novalue", "q" => nil, "sort" => nil
-        }
-        assign(socket, :canonical, ~p"/browse?#{empty_map_params}")
-      else
-        socket
-      end
-
-    socket =
       assign(socket, posts: posts, params: current_params, page_meta: page_meta, options: options)
-      |> page_title()
+      |> page_title(count)
 
     {:noreply, socket}
   end
 
-  defp page_title(socket) do
+  defp page_title(socket,count) do
     category_name = Map.get(socket.assigns.options, "category")
-    category_name = category_name && category_name<>" " || ""
+    canonical = [
+      %{
+        "category" => nil, "commission" => nil, "cookie-duration"=> nil,
+        "page"=>nil, "payment-cycle" => "novalue", "q" => nil, "sort" => nil
+      },
+      socket.assigns.params,
+      Map.delete(socket.assigns.params, "sort")
+    ]
+    canonical_href =
+      cond do
+        count == 0 -> ~p"/browse?#{hd(canonical)}"
+        count > @per_page -> ~p"/browse?#{Enum.at(canonical,1)}"
+        true -> ~p"/browse?#{Enum.at(canonical,2)}"
+      end
     dt = Date.utc_today()
     assign(socket,
-    page_title: "#{category_name}High Ticket Best Paying affiliate programs You Must Be Know in #{dt.year}",
-    category_name: category_name
+      page_title: "Browse All High Ticket #{category_name} Affiliate Programs You Must Be Know in #{dt.year}",
+      category_name: category_name,
+      canonical: canonical_href,
+      meta_tags: [%{
+        name: "description",
+        content: "List OF High Ticket #{category_name} Affiliate Programs You Must Be Know in #{dt.year}."
+      }]
     )
   end
 

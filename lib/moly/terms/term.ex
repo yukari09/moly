@@ -67,7 +67,7 @@ defmodule Moly.Terms.Term do
       require_atomic? false
       argument :term_taxonomy, {:array, :map}
       argument :term_meta, {:array, :map}
-      change manage_relationship(:term_taxonomy, :term_taxonomy, type: :create)
+      change manage_relationship(:term_taxonomy, :term_taxonomy, on_lookup: :update, on_missing: :create, on_match: :update, on_no_match: :create)
 
       change manage_relationship(:term_meta, :term_meta,
                on_lookup: :relate,
