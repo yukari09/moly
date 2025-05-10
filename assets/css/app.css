@@ -26,9 +26,9 @@
   --color-base-200: oklch(97% 0 0);
   --color-base-300: oklch(92% 0 0);
   --color-base-content: oklch(20% 0 0);
-  --color-primary: oklch(61.45% 0.1984 142.68);
+  --color-primary: #AE2CD1;
   --color-primary-content: oklch(98% 0.031 120.757);
-  --color-secondary: oklch(54% 0.245 262.881);
+  --color-secondary: #FB7579;
   --color-secondary-content: oklch(97% 0.014 254.604);
   --color-accent: oklch(62% 0.194 149.214);
   --color-accent-content: oklch(98% 0.018 155.826);
@@ -53,26 +53,10 @@
 }
 
 @theme {
-  --color-green-primary: #09442b;
-  --color-green-secondary: #005a02;
-  --color-green-light: #92e692;
-  --color-orange: #ff5000;
   --breakpoint-xs: 30rem;
   --font-sans: "Bricolage Grotesque", sans-serif;
   --default-font-optical-sizing: auto; 
   --default-font-variation-settings: "wdth" 100;
 }
-
-
-button[disabled]{
-    @apply opacity-50;
-}
-
-.while-submitting { display: none; }
-.inputs { display: block; }
-
-.phx-submit-loading .while-submitting { display: block; }
-.phx-submit-loading .inputs { display: none; }
- 
 
  

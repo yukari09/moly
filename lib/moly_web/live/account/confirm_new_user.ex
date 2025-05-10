@@ -34,13 +34,13 @@ defmodule MolyWeb.Account.ConfirmNewUser do
     ~H"""
     <div class="flex flex-col items-center justify-center h-screen">
       <div class="flex items-end gap-2">
-        <a href="/dashboards/ecommerce">
+        <a href="/">
           <img
             class="h-8"
             src="/images/logo.svg"
           />
         </a>
-        <span class="text-2xl/7 font-medium text-base-content/70">Affinew</span>
+
       </div>
       <.form
         for={@form}

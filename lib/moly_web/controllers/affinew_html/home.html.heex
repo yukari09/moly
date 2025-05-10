@@ -11,7 +11,7 @@
         </div>
         <div class="navbar-start hidden items-center gap-8 w-auto lg:flex">
           <div class="size-8 hidden lg:block">
-            <.link navigate="/"><img src={~p"/images/logo.svg"} /></.link>
+            <.link navigate="/"><img src={Moly.website_logo} /></.link>
           </div>
           <ul class="flex items-center text-sm font-medium mx-auto gap-8 ">
             <li :for={{label, patch} <- MolyWeb.Layouts.nav_categories()}>
@@ -184,7 +184,7 @@
     <div class="p-4  bg-base-200 w-80 min-h-full">
       <div class="px-4">
         <.link navigate="/" class="size-8 flex items-end gap-2 text-2xl/6 font-meidum">
-          <img src={~p"/images/logo.svg"} />Affinew
+          <img src={Moly.website_logo} />Affinew
         </.link>
       </div>
       <ul class="menu mt-4 w-full">

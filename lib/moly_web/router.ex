@@ -80,7 +80,6 @@ defmodule MolyWeb.Router do
       live("/reset", Account.ResetLive)
       live("/password-reset/:token", Account.PasswordResetLive)
     end
-
   end
 
   scope "/admin", MolyWeb do

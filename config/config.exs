@@ -78,7 +78,7 @@ config :esbuild,
   version: "0.25.1",
   moly: [
     args:
-      ~w(js/app.js js/admin.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+      ~w(js/app.js js/admin.js js/live.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
@@ -109,9 +109,6 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, JSON
-
-config :phoenix,
-  static_compressors: [Phoenix.Digester.Gzip, Moly.BrotliCompressor]
 
 config :moly, Oban,
   repo: Moly.Repo,

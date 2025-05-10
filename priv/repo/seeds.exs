@@ -36,6 +36,9 @@ defmodule Moly.Seed do
   end
 end
 
-#Insert website default data
+#Insert website config default data
 Moly.default_website_term_data()
+|> Moly.Seed.term_upsert()
+
+Moly.default_config_term_data()
 |> Moly.Seed.term_upsert()
