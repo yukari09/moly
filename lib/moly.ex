@@ -26,8 +26,7 @@ defmodule Moly do
   end
 
   def website_name() do
-    website_terms("website-name")
-    |> Moly.Helper.get_in_from_keys([0, :term_value])
+    Moly.Helper.get_in_from_keys(website_terms("website-name"), [0, :term_value]) || "Moly"
   end
 
   def social_links(), do: website_terms("social-links")

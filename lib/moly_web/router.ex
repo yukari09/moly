@@ -19,10 +19,6 @@ defmodule MolyWeb.Router do
     plug(:load_from_bearer)
   end
 
-  # pipeline :root_admin_layout do
-  #   plug(:put_root_layout, html: {MolyWeb.Layouts, :root_admin})
-  # end
-
   # scope "/", MolyWeb do
   # pipe_through(:browser)
 
@@ -106,12 +102,8 @@ defmodule MolyWeb.Router do
     end
   end
 
-  # scope "/" do
-  #   # Pipe it through your browser pipeline
-  #   pipe_through [:browser]
 
-  #   ash_admin "/admin"
-  # end
+
 
   scope "/admin", MolyWeb do
     pipe_through([:browser])

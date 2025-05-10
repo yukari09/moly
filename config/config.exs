@@ -78,7 +78,7 @@ config :esbuild,
   version: "0.25.1",
   moly: [
     args:
-      ~w(js/app.js js/admin.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+      ~w(js/app.js js/admin.js js/article.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
@@ -99,7 +99,15 @@ config :tailwind,
       --output=../priv/static/assets/admin.css
     ),
     cd: Path.expand("../assets", __DIR__)
+  ],
+  article: [
+    args: ~w(
+      --input=css/article.css
+      --output=../priv/static/assets/article.css
+    ),
+    cd: Path.expand("../assets", __DIR__)
   ]
+
 
 # Configures Elixir's Logger
 config :logger, :console,
