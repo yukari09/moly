@@ -81,29 +81,7 @@ defmodule MolyWeb.Router do
       live("/password-reset/:token", Account.PasswordResetLive)
     end
 
-    ash_authentication_live_session :authenticated_routes,
-      on_mount: {MolyWeb.LiveUserAuth, :live_user_required} do
-      live("/affiliate/submit", Affinew.SubmitLive)
-      live("/user/verify-email", Affinew.VerifyEmailLive)
-    end
-
-    ash_authentication_live_session :authenticated_maybe_routes,
-      on_mount: {MolyWeb.LiveUserAuth, :live_user_optional} do
-      live("/results", Affinew.ListResultsLive)
-      live("/browse", Affinew.ListLive)
-      live("/affiliates/:slug", Affinew.ListTermLive)
-      live("/affiliate/:post_name", Affinew.ViewLive)
-      live("/user/@:username", Affinew.UserPageLive)
-      live("/under-construction", Affinew.UnderConstructionLive)
-      live("/posts", Affinew.PostsLive)
-      live("/posts/:category", Affinew.PostsLive)
-      live("/posts/tag/:tag", Affinew.PostsLive)
-      live("/post/:post_name", Affinew.PostViewLive)
-    end
   end
-
-
-
 
   scope "/admin", MolyWeb do
     pipe_through([:browser])
