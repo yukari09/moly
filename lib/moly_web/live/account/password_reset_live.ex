@@ -10,7 +10,7 @@ defmodule MolyWeb.Account.PasswordResetLive do
     action = auth_path(socket, :password_reset_with_password, "/auth", strategy, :reset)
     sitekey = Application.get_env(:moly, :cf_website_secret)
     form = generate_form(token)
-    {:ok, assign(socket, form: form,action: action, trigger_submit: false, sitekey: sitekey)}
+    {:ok, assign(socket, form: form,action: action, trigger_submit: false, sitekey: sitekey, scripts: [~p"/assets/live.js"])}
   end
 
   def handle_event("save", %{"user" => params, "cf-turnstile-response"=>cf_turnstile_response}, socket) when cf_turnstile_response not in [nil, "", false] do

@@ -14,7 +14,16 @@ defmodule MolyWeb.Account.SignInLive do
     dev_mod = Map.get(params, "dev_mod", false)
     sitekey = dev_mod && "1x00000000000000000000AA" || Application.get_env(:moly, :cf_website_secret)
     socket =
-      assign(socket, form: form, strategy: strategy, subject_name: subject_name, action: action, auth_routes_prefix: auth_routes_prefix, trigger_action: trigger_action, sitekey: sitekey, dev_mod: dev_mod)
+      assign(socket,
+      form: form,
+      strategy: strategy,
+      subject_name: subject_name,
+      action: action,
+      auth_routes_prefix: auth_routes_prefix,
+      trigger_action: trigger_action,
+      sitekey: sitekey, dev_mod: dev_mod,
+      scripts: [~p"/assets/live.js"]
+    )
     {:ok, socket}
   end
 

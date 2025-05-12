@@ -70,11 +70,12 @@ defmodule Moly.Terms.Term do
       change manage_relationship(:term_taxonomy, :term_taxonomy, on_lookup: :update, on_missing: :create, on_match: :update, on_no_match: :create)
 
       change manage_relationship(:term_meta, :term_meta,
-               on_lookup: :relate,
-               on_match: :ignore,
-               on_no_match: :create,
-               on_missing: :destroy
-             )
+        on_lookup: :relate,
+        on_match: :update,
+        on_no_match: :create,
+        on_missing: :destroy,
+        use_identities: [:term_key_value_with_id]
+      )
     end
 
     destroy :destroy do

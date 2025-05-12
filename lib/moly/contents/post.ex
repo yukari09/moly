@@ -263,7 +263,6 @@ defmodule Moly.Contents.Post do
       validations(
         one_of: [
           :post,
-          :affiliate,
           :page,
           :attachment,
           :revision,
@@ -361,17 +360,6 @@ defmodule Moly.Contents.Post do
       filter expr(term_taxonomy.taxonomy == "post_tag")
     end
 
-    # only for affiliate
-    has_many :affiliate_categories, Moly.Terms.Term do
-      manual Moly.Contents.Relations.PostCategories
-      filter expr(term_taxonomy.taxonomy == "affiliate_category")
-    end
-
-    # only for affiliate
-    has_many :affiliate_tags, Moly.Terms.Term do
-      manual Moly.Contents.Relations.PostTags
-      filter expr(term_taxonomy.taxonomy == "affiliate_tag")
-    end
   end
 
   calculations do

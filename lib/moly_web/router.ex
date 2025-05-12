@@ -49,11 +49,6 @@ defmodule MolyWeb.Router do
   scope "/", MolyWeb do
     pipe_through(:browser)
 
-    get("/", AffinewController, :home)
-
-    get("/page/:post_name", PageController, :page)
-    get("/sitemaps/:site_map_file", PageController, :sitemaps)
-
     confirm_route(
       Moly.Accounts.User,
       :confirm_new_user,
@@ -82,6 +77,13 @@ defmodule MolyWeb.Router do
     end
   end
 
+  scope "/", MolyWeb do
+    pipe_through([:browser])
+    get("/sitemaps/:site_map_file", SitemapController, :show)
+    get("/", PageController, :home)
+    live("/website/register-initial-user", Website.RegisterInitialUser)
+  end
+
   scope "/admin", MolyWeb do
     pipe_through([:browser])
 
@@ -99,15 +101,15 @@ defmodule MolyWeb.Router do
       live("/categories", AdminCategoryLive.Index, :index)
       live("/tags", AdminTagLive.Index, :index)
       live("/comments", AdminCommentLive.Index, :index)
-      live("/affiliates", AdminAffiliateLive.Index, :index)
-      live("/affiliate/categories", AdminAffiliateLive.Categories.Index, :index)
-      live("/affiliate/tags", AdminAffiliateLive.Tags.Index, :index)
+
 
       live("/pages", AdminPageLive.Index, :index)
       live("/page/create", AdminPageLive.Create, :create)
       live("/page/preview", AdminPageLive.Create, :preview)
 
       live("/website", AdminWebsiteLive.Index, :index)
+      live("/website/basic", AdminWebsiteLive.Basic)
+      live("/website/appearance", AdminWebsiteLive.Appearance)
     end
   end
 

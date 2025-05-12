@@ -27,16 +27,10 @@
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
-    <%= if Application.get_env(:moly, :env, :prod) !== :dev  do %>
-      <script defer data-domain="affinew.com" src="https://analytics.karian.one/js/script.js">
-      </script>
-      <script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8834563225975418"
-        crossorigin="anonymous"
-      >
-      </script>
-    <% end %>
+    <!--Extra Assigns-->
+    <link :for={stylesheet <- (assigns[:stylesheets] || [])} rel="stylesheet" href={stylesheet} />
+    <script defer :for={script <- (assigns[:scripts] || [])} type="text/javascript" src={script}>
+    </script>
   </head>
   <body class="min-h-[100vh]">
     {@inner_content}

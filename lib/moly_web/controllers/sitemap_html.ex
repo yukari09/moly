@@ -1,4 +1,4 @@
-defmodule MolyWeb.AffinewHTML do
+defmodule MolyWeb.SitemapHTML do
   @moduledoc """
   This module contains pages rendered by PageController.
 
@@ -6,5 +6,5 @@ defmodule MolyWeb.AffinewHTML do
   """
   use MolyWeb, :html
 
-  embed_templates("affinew_html/*")
+  embed_templates("sitemap_html/*")
 end

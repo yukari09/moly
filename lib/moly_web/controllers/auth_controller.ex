@@ -4,7 +4,7 @@ defmodule MolyWeb.AuthController do
 
 
   def success(conn, activity, user, _token) do
-    return_to = get_session(conn, :return_to) || ~p"/browse"
+    return_to = get_session(conn, :return_to) || ~p"/"
 
     message =
       case activity do

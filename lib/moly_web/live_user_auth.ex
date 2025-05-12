@@ -23,8 +23,6 @@ defmodule MolyWeb.LiveUserAuth do
     end
   end
 
-  def on_mount(:live_admin_required, _params, _session, socket), do: check_roles(socket)
-
   def on_mount(:live_no_user, _params, _session, socket) do
     if socket.assigns[:current_user] do
       {:halt, redirect(socket, to: ~p"/")}
@@ -32,6 +30,8 @@ defmodule MolyWeb.LiveUserAuth do
       {:cont, assign(socket, :current_user, nil)}
     end
   end
+
+  def on_mount(:live_admin_required, _params, _session, socket), do: check_roles(socket)
 
   defp check_roles(%{assigns: %{current_user: %{roles: roles, status: :active}}} = socket) do
     if Enum.member?(roles, :admin) do

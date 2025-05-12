@@ -24,7 +24,7 @@ defmodule Moly do
 
   def default_website_term_data() do
     [
-      %{name: "WebSite Status", slug: "website-status", term_taxonomy: [%{taxonomy: "website", description: "Current status of this website, pending, maintain, running"}], term_meta: [%{term_key: "name", term_value: "pending"}]},
+      %{name: "WebSite Status", slug: "website-status", term_taxonomy: [%{taxonomy: "website", description: "Current status of this website, offline, pending, maintain, online"}], term_meta: [%{term_key: "name", term_value: "pending"}]},
       %{name: "WebSite Name", slug: "website-name", term_taxonomy: [%{taxonomy: "website", description: "The name of this website."}], term_meta: [%{term_key: "name", term_value: @website_name}]},
       %{name: "WebSite Title", slug: "website-title", term_taxonomy: [%{taxonomy: "website", description: "The title of this website."}], term_meta: [%{term_key: "name", term_value: @website_title}]},
       %{name: "WebSite Logo", slug: "website-logo", term_taxonomy: [%{taxonomy: "website", description: "The logo url of this website."}], term_meta: [%{term_key: "name", term_value: @website_logo}]},
@@ -98,6 +98,7 @@ defmodule Moly do
     ]
   end
 
+  def website_status(), do: website_terms("website-status", true) || "offline"
   def website_logo(), do: website_terms("website-logo", true) || @website_logo
   def website_favicon(), do: website_terms("website-favicon", true) || @website_favicon
   def website_name(), do: website_terms("website-name", true) || @website_name

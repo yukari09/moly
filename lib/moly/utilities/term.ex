@@ -3,6 +3,15 @@ defmodule Moly.Utilities.Term do
 
   alias Moly.Terms.Term
 
+   @actor %{roles: [:user]}
+
+  def get_terms_data_by_slug(slugs) when is_list(slugs) do
+    Ash.Query.new(Term)
+    |> Ash.Query.filter(slug in ^slugs)
+    |> Ash.Query.load([:term_taxonomy, :term_meta])
+    |> Ash.read!(actor: @actor)
+  end
+
   def icon(%Term{} = term), do: term_meta_by_term_key_first_term_value(term, :icon)
 
   def term_meta_by_term_key(%Term{term_meta: term_meta}, term_key) when is_list(term_meta) do

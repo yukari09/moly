@@ -95,6 +95,15 @@ defmodule MolyWeb.TailwindUI do
     )
   end
 
+  attr(:name, :string, required: true)
+  attr(:class, :string, default: nil)
+
+  def icon(%{name: "hero-" <> _} = assigns) do
+    ~H"""
+    <span class={[@name, @class]} />
+    """
+  end
+
   @doc """
   Dropdown menu.
   """
@@ -1257,12 +1266,12 @@ defmodule MolyWeb.TailwindUI do
       {@rest}
     >
       <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-        <MolyWeb.CoreComponents.icon
+        <.icon
           :if={@kind == :info}
           name="hero-information-circle-mini"
           class="h-4 w-4"
         />
-        <MolyWeb.CoreComponents.icon
+        <.icon
           :if={@kind == :error}
           name="hero-exclamation-circle-mini"
           class="h-4 w-4"
@@ -1271,7 +1280,7 @@ defmodule MolyWeb.TailwindUI do
       </p>
       <p class="mt-2 text-sm leading-5">{msg}</p>
       <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
-        <MolyWeb.CoreComponents.icon
+        <.icon
           name="hero-x-mark-solid"
           class="h-5 w-5 opacity-40 group-hover:opacity-70"
         />
@@ -1304,7 +1313,7 @@ defmodule MolyWeb.TailwindUI do
         hidden
       >
         {gettext("Attempting to reconnect")}
-        <MolyWeb.CoreComponents.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+        <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
 
       <.flash
@@ -1316,7 +1325,7 @@ defmodule MolyWeb.TailwindUI do
         hidden
       >
         {gettext("Hang in there while we get back on track")}
-        <MolyWeb.CoreComponents.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+        <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
     </div>
     """
@@ -1393,113 +1402,153 @@ defmodule MolyWeb.TailwindUI do
   attr(:page_meta, :map, required: true)
   attr(:current_url, :string, required: true)
   attr(:rest, :global)
-
   def pagination(assigns) do
     ~H"""
-    <div
-      class={["flex items-center justify-between border-t border-gray-200 bg-white  py-3", @class]}
-      {@rest}
-    >
-      <div class="flex flex-1 justify-between sm:hidden">
+      <nav
+        :if={@page_meta.total_pages > 1}
+        class="flex items-center justify-center space-x-2 mt-4"
+      >
         <.link
           :if={@page_meta.prev}
           patch={generate_page_url(@current_url, @page_meta.prev)}
-          class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100"
         >
-          Previous
+          <Lucideicons.arrow_left class="w-4 h-4 md:w-5 md:h-5" />
         </.link>
+        <.link
+          :for={page <- @page_meta.page_range}
+          navigate={generate_page_url(@current_url, page)}
+          class={[
+            "px-3 py-2 border-b-2 hover:border-base-content hover:text-base-content",
+            (page == @page_meta.current_page && "border-base-content text-base-content") ||
+              "border-white text-base-content/60"
+          ]}
+        >
+          {page}
+        </.link>
+
         <.link
           :if={@page_meta.next}
           patch={generate_page_url(@current_url, @page_meta.next)}
-          class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          class="rounded-full  p-2 bg-gray-50 hover:bg-gray-100"
         >
-          Next
+          <Lucideicons.arrow_right class="w-4 h-4 md:w-5 md:h-5" />
         </.link>
-      </div>
-      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-        <div>
-          <p class="text-sm text-gray-700">
-            Showing <span class="font-medium">{@page_meta.start_row}</span>
-            to <span class="font-medium">{@page_meta.end_row}</span>
-            of <span class="font-medium">{@page_meta.total}</span>
-            results
-          </p>
-        </div>
-        <div>
-          <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-            <.link
-              patch={@page_meta.prev && generate_page_url(@current_url, @page_meta.prev)}
-              class={[
-                "relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0",
-                !@page_meta.prev && "pointer-events-none opacity-50"
-              ]}
-            >
-              <span class="sr-only">Previous</span>
-              <svg
-                class="size-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-                data-slot="icon"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06Z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </.link>
-
-            <.link
-              :for={page <- @page_meta.page_range}
-              patch={generate_page_url(@current_url, page)}
-              aria-current={page == @page_meta.current_page && "page"}
-              class={[
-                "relative inline-flex items-center px-4 py-2 text-sm font-semibold",
-                page == @page_meta.current_page &&
-                  "z-10 bg-gray-800 text-white focus:z-20  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
-                page != @page_meta.current_page &&
-                  "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-              ]}
-            >
-              {page}
-            </.link>
-
-            <span
-              :if={@page_meta.ellipsis}
-              class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0"
-            >
-              ...
-            </span>
-
-            <.link
-              patch={@page_meta.next && generate_page_url(@current_url, @page_meta.next)}
-              class={[
-                "relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0",
-                !@page_meta.next && "pointer-events-none opacity-50"
-              ]}
-            >
-              <span class="sr-only">Next</span>
-              <svg
-                class="size-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-                data-slot="icon"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </.link>
-          </nav>
-        </div>
-      </div>
-    </div>
+      </nav>
     """
   end
+
+  # attr(:class, :string, default: nil)
+  # attr(:page_meta, :map, required: true)
+  # attr(:current_url, :string, required: true)
+  # attr(:rest, :global)
+
+  # def pagination(assigns) do
+  #   ~H"""
+  #   <div
+  #     class={["flex items-center justify-between border-t border-gray-200 bg-white  py-3", @class]}
+  #     {@rest}
+  #   >
+  #     <div class="flex flex-1 justify-between sm:hidden">
+  #       <.link
+  #         :if={@page_meta.prev}
+  #         patch={generate_page_url(@current_url, @page_meta.prev)}
+  #         class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+  #       >
+  #         Previous
+  #       </.link>
+  #       <.link
+  #         :if={@page_meta.next}
+  #         patch={generate_page_url(@current_url, @page_meta.next)}
+  #         class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+  #       >
+  #         Next
+  #       </.link>
+  #     </div>
+  #     <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+  #       <div>
+  #         <p class="text-sm text-gray-700">
+  #           Showing <span class="font-medium">{@page_meta.start_row}</span>
+  #           to <span class="font-medium">{@page_meta.end_row}</span>
+  #           of <span class="font-medium">{@page_meta.total}</span>
+  #           results
+  #         </p>
+  #       </div>
+  #       <div>
+  #         <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+  #           <.link
+  #             patch={@page_meta.prev && generate_page_url(@current_url, @page_meta.prev)}
+  #             class={[
+  #               "relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0",
+  #               !@page_meta.prev && "pointer-events-none opacity-50"
+  #             ]}
+  #           >
+  #             <span class="sr-only">Previous</span>
+  #             <svg
+  #               class="size-5"
+  #               viewBox="0 0 20 20"
+  #               fill="currentColor"
+  #               aria-hidden="true"
+  #               data-slot="icon"
+  #             >
+  #               <path
+  #                 fill-rule="evenodd"
+  #                 d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06Z"
+  #                 clip-rule="evenodd"
+  #               />
+  #             </svg>
+  #           </.link>
+
+  #           <.link
+  #             :for={page <- @page_meta.page_range}
+  #             patch={generate_page_url(@current_url, page)}
+  #             aria-current={page == @page_meta.current_page && "page"}
+  #             class={[
+  #               "relative inline-flex items-center px-4 py-2 text-sm font-semibold",
+  #               page == @page_meta.current_page &&
+  #                 "z-10 bg-gray-800 text-white focus:z-20  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600",
+  #               page != @page_meta.current_page &&
+  #                 "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+  #             ]}
+  #           >
+  #             {page}
+  #           </.link>
+
+  #           <span
+  #             :if={@page_meta.ellipsis}
+  #             class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0"
+  #           >
+  #             ...
+  #           </span>
+
+  #           <.link
+  #             patch={@page_meta.next && generate_page_url(@current_url, @page_meta.next)}
+  #             class={[
+  #               "relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0",
+  #               !@page_meta.next && "pointer-events-none opacity-50"
+  #             ]}
+  #           >
+  #             <span class="sr-only">Next</span>
+  #             <svg
+  #               class="size-5"
+  #               viewBox="0 0 20 20"
+  #               fill="currentColor"
+  #               aria-hidden="true"
+  #               data-slot="icon"
+  #             >
+  #               <path
+  #                 fill-rule="evenodd"
+  #                 d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+  #                 clip-rule="evenodd"
+  #               />
+  #             </svg>
+  #           </.link>
+  #         </nav>
+  #       </div>
+  #     </div>
+  #   </div>
+  #   """
+  # end
 
   def no_results(assigns) do
     ~H"""

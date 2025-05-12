@@ -24,7 +24,7 @@ defmodule MolyWeb.Account.ConfirmNewUser do
         context: %{strategy: strategy, private: %{ash_authentication?: true}}
       )
 
-    socket = assign(socket, form: form, subject_name: subject_name, auth_routes_prefix: auth_routes_prefix, strategy: strategy, confirm: confirm, sitekey: sitekey)
+    socket = assign(socket, form: form, subject_name: subject_name, auth_routes_prefix: auth_routes_prefix, strategy: strategy, confirm: confirm, sitekey: sitekey, scripts: [~p"/assets/live.js"])
 
     {:ok, socket}
   end
@@ -37,7 +37,7 @@ defmodule MolyWeb.Account.ConfirmNewUser do
         <a href="/">
           <img
             class="h-8"
-            src="/images/logo.svg"
+            src={Moly.website_logo}
           />
         </a>
 

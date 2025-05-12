@@ -85,7 +85,7 @@ defmodule MolyWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import MolyWeb.CoreComponents, only: [icon: 1]
+      # import MolyWeb.CoreComponents, only: [icon: 1]
 
       import MolyWeb.Gettext
 

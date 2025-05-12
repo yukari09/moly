@@ -35,7 +35,7 @@
 
         <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
           <div class="flex h-16 shrink-0 items-center">
-            <img class="h-8 w-auto" src="/images/logo.svg" alt="Moly" />
+            <img class="h-8 w-auto" src={Moly.website_logo} alt="Moly" />
           </div>
           <nav class="flex flex-1 flex-col">
             <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -51,7 +51,7 @@
                           "hover:bg-gray-50 text-gray-500"
                       ]}
                     >
-                      <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
+                      <MolyWeb.TailwindUI.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
                       {item.title}
                     </.link>
                     <div :if={
@@ -75,7 +75,7 @@
                           |> JS.toggle_attribute({"aria-expanded", "false", "true"})
                         }
                       >
-                        <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
+                        <MolyWeb.TailwindUI.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
                         {item.title}
                         <Lucideicons.chevron_right
                           id={ "sub-menu-#{item.icon}-icon-g" }
@@ -129,7 +129,7 @@
   <div class="hidden lg:fixed lg:inset-y-0 lg:z-auto lg:flex lg:w-72 lg:flex-col">
     <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
       <div class="flex h-16 shrink-0 items-center">
-        <.link patch={~p"/"}><img class="h-8 w-auto" src="/images/logo.svg" alt="Moly" /></.link>
+        <.link patch={~p"/"}><img class="h-8 w-auto" src={Moly.website_logo} alt="Moly" /></.link>
       </div>
       <nav class="flex flex-1 flex-col">
         <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -145,7 +145,7 @@
                       "hover:bg-gray-50 text-gray-500"
                   ]}
                 >
-                  <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
+                  <MolyWeb.TailwindUI.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
                   {item.title}
                 </.link>
                 <div :if={Map.has_key?(item, :items) && Enum.count(item.items) > 0}>
@@ -166,7 +166,7 @@
                       |> JS.toggle_attribute({"aria-expanded", "false", "true"})
                     }
                   >
-                    <.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
+                    <MolyWeb.TailwindUI.icon name={item.icon} class="size-6 shrink-0 text-gray-400" />
                     {item.title}
                     <Lucideicons.chevron_right
                       id={ "sub-menu-#{item.icon}-icon" }
@@ -290,17 +290,16 @@
             </svg>
           </button>
           
-<!-- Separator -->
+          <!-- Separator -->
           <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" aria-hidden="true"></div>
 
           <MolyWeb.TailwindUI.dropdown id="user-menu">
             <:button_slot>
-              <span class="sr-only">Open user menu</span>
-              <img
-                class="size-8 rounded-full bg-gray-50"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                alt=""
-              />
+              <MolyWeb.TailwindUI.avatar size="sm">
+                <MolyWeb.TailwindUI.avatar_fallback initials={Moly.Utilities.Account.user_name(@current_user, 2) |> String.upcase()}>
+                  <MolyWeb.TailwindUI.avatar_image src={Moly.Utilities.Account.user_avatar(@current_user, "64")} alt={Moly.Utilities.Account.user_name(@current_user)} />
+                </MolyWeb.TailwindUI.avatar_fallback>
+              </MolyWeb.TailwindUI.avatar>
             </:button_slot>
 
             <:menu_slot>

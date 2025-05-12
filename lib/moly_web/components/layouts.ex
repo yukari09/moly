@@ -87,40 +87,42 @@ defmodule MolyWeb.Layouts do
         ]
       },
       %{
-        title: "Affiliate",
-        icon: "hero-briefcase",
-        items: [
-          %{
-            title: "All affiliates",
-            url: ~p"/admin/affiliates",
-            view: [MolyWeb.AdminAffiliateLive.Index],
-            show: true
-          },
-          %{
-            title: "Create new affiliate",
-            url: ~p"/affiliate/submit",
-            view: [MolyWeb.AdminAffiliateLive.Create],
-            show: true
-          },
-          %{
-            title: "Categories",
-            url: ~p"/admin/affiliate/categories",
-            view: [MolyWeb.AdminAffiliateLive.Categories.Index],
-            show: true
-          },
-          %{
-            title: "Tags",
-            url: ~p"/admin/affiliate/tags",
-            view: [MolyWeb.AdminAffiliateLive.Tags.Index],
-            show: true
-          }
-        ]
-      },
-      %{
         title: "WebSite",
         icon: "hero-globe-alt",
-        url: ~p"/admin/website",
-        view: [MolyWeb.AdminWebsiteLive.Index]
+        # url: ~p"/admin/website",
+        items: [
+          %{
+            title: "Basic",
+            url: ~p"/admin/website/basic",
+            view: [MolyWeb.AdminWebsiteLive.Basic],
+            show: true
+          },
+          %{
+            title: "Appearance",
+            url: ~p"/admin/website/appearance",
+            view: [MolyWeb.AdminWebsiteLive.Appearance],
+            show: true
+          },
+          %{
+            title: "Mailer",
+            url: ~p"/admin/website/mailer",
+            view: [MolyWeb.AdminWebsiteLive.Mailer],
+            show: true
+          },
+          %{
+            title: "Auth",
+            url: ~p"/admin/website/auth",
+            view: [MolyWeb.AdminWebsiteLive.Auth],
+            show: true
+          },
+          %{
+            title: "Services",
+            url: ~p"/admin/website/create",
+            view: [MolyWeb.AdminWebsiteLive.Services],
+            show: true
+          },
+        ]
+        # view: [MolyWeb.AdminWebsiteLive.Index]
       }
     ]
   end

@@ -13,7 +13,7 @@ defmodule MolyWeb.Account.SignUpLive do
     trigger_action = false
     sitekey = Application.get_env(:moly, :cf_website_secret)
     socket =
-      assign(socket, form: form, strategy: strategy, subject_name: subject_name, action: action, auth_routes_prefix: auth_routes_prefix, trigger_action: trigger_action, sitekey: sitekey)
+      assign(socket, form: form, strategy: strategy, subject_name: subject_name, action: action, auth_routes_prefix: auth_routes_prefix, trigger_action: trigger_action, sitekey: sitekey, scripts: [~p"/assets/live.js"])
     {:ok, socket}
   end
 

@@ -1,61 +1,88 @@
 <div>
   <.header
-    title="Users"
-    description="A list of all the users in your account including their name, title, email and role."
+    title="Pages"
+    description="A list of all the pages."
   >
-    <.button class="flex items-center gap-2" phx-click="new">
-      <%!-- <.icon name="hero-user-plus-solid" class="size-5" /> --%> Add User
+    <.button
+      class="flex items-center gap-2"
+      phx-click="new"
+      variant="primary"
+      size="sm"
+    >
+      Create Page
     </.button>
   </.header>
 
-  <.form class="mt-8" for={nil} phx-change="search" phx-submit="search" phx-debounce="300">
-    <div class="flex items-center rounded-md bg-white pl-3 outline outline-1 -outline-offset-1 outline-gray-300 has-[input:focus-within]:outline has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-gray-600">
-      <Lucideicons.search class="size-4 text-gray-400" />
-      <input
-        type="text"
+  <div
+    id="post-top-nav"
+    class={["flex items-center justify-between bg-white py-2 sm:py-0  mt-12 border-b border-gray-200"]}
+  >
+    <.tabs_with_badges
+      id={Moly.Helper.generate_random_id()}
+      tabs={[
+        %{
+          label: "All",
+          value: "all",
+          href: ~p"/admin/users?#{%{@params | page: 1, status: nil}}",
+          badge: @status_count.all
+        },
+        %{
+          label: "Inactive",
+          value: "inactive",
+          href: ~p"/admin/users?#{%{@params | page: 1, status: :inactive}}",
+          badge: @status_count.inactive
+        },
+        %{
+          label: "Active",
+          value: "active",
+          href: ~p"/admin/users?#{%{@params | page: 1, status: :active}}",
+          badge: @status_count.active
+        }
+      ]}
+      current_tab={@params.status}
+      inner_class="border-none"
+    />
+    <.form
+      for={nil}
+      class="hidden sm:block"
+      phx-save="search"
+      phx-key="enter"
+      phx-keydown="search"
+    >
+      <.search_input
+        id="user-search-text-input"
         name="q"
-        id="users-search-input"
-        autocomplete="off"
-        class="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6"
-        placeholder="Search"
+        value={@params.q}
+        phx-debounce="300"
+        aria-label="Search"
+        phx-update="ignore"
       />
-    </div>
-  </.form>
-  <div :if={@users.results != []} class="mt-8 flow-root">
+    </.form>
+  </div>
+
+  <div :if={@users.results != []} class="mt-4 flow-root p-4 border border-gray-200  rounded-md">
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-        <.table rows={@users.results} class="divide-y divide-gray-300">
-          <:col :let={row} label="Name">
-            <div class="flex items-center">
-              <div class="size-11 shrink-0">
-                <Moly.Utilities.Account.avatar_html user={row} size={32} />
-              </div>
-              <div class="ml-4">
-                <div class="font-medium text-gray-900">{row.email}</div>
-                <div class="mt-1 text-gray-500">{row.email}</div>
-              </div>
-            </div>
+        <.table rows={@users.results} class="table-auto">
+          <:col :let={row} label="Avatar">
+            <.avatar size="md">
+              <.avatar_fallback initials={Moly.Utilities.Account.user_name(@current_user, 2) |> String.upcase()}>
+                <.avatar_image src={Moly.Utilities.Account.user_avatar(@current_user, "64")} alt={Moly.Utilities.Account.user_name(@current_user)} />
+              </.avatar_fallback>
+            </.avatar>
           </:col>
-
+          <:col :let={row} label="Email">
+            {row.email}
+          </:col>
           <:col :let={row} label="Status">
-            <.badge
-              variant={%{active: "success", inactive: "warning", deleted: "error"}[row.status]}
-              label={row.status}
-            >
-              {row.status}
-            </.badge>
+            {row.status}
+          </:col>
+          <:col :let={row} label="Comfirmed At">
+            {Timex.format!(row.confirmed_at,"{0D}, {Mshort} {YYYY} {h24}:{0m}")}
           </:col>
 
-          <:col :let={row} label="Roles">
-            {row.roles |> Enum.join(", ")}
-          </:col>
-
-          <:col :let={row} label="Created At">
-            {row.inserted_at |> Timex.format!("{Mfull} {D}, {YYYY} {h24}:{m}")}
-          </:col>
-
-          <:col :let={row} label="Actions">
-            <div class="flex items-center gap-2 max-w-[60px]">
+          <:col :let={row} label="Actions" align="right">
+            <div class="flex items-center gap-2 justify-end">
               <.tooltip :if={row.status == :inactive} text="Activate" size="xs">
                 <.link
                   phx-click="activate"
@@ -68,7 +95,7 @@
                   <.icon name="hero-key" class="size-4 text-gray-700" />
                 </.link>
               </.tooltip>
-              <.tooltip :if={row.status == :active} text="Ban" size="xs">
+              <.tooltip :if={row.status == :active && row.id != @current_user.id} text="Ban" size="xs">
                 <.link
                   phx-click="inactivate"
                   phx-value-id={row.id}
@@ -80,7 +107,7 @@
                   <Lucideicons.ban class="size-4 text-gray-700" />
                 </.link>
               </.tooltip>
-              <.tooltip :if={row.status != :deleted} text="Delete" size="xs">
+              <.tooltip :if={row.status != :deleted && row.id != @current_user.id} text="Delete" size="xs">
                 <.link
                   phx-click="delete"
                   phx-value-id={row.id}
@@ -98,15 +125,22 @@
       </div>
     </div>
   </div>
-
-  <.pagination current_url={generate_live_url(@params)} page_meta={@page_meta} />
+  <.pagination
+    :if={@page_meta.total_pages > 1}
+    current_url={live_url(@params)}
+    page_meta={@page_meta}
+    class="border-none"
+  />
+  <div :if={@users.results == []} class="mt-24 max-w-sm mx-auto">
+    <.no_results />
+  </div>
 </div>
 
 <.modal
   :if={@live_action in [:new, :edit, :validate]}
   show={@live_action in [:new, :edit, :validate]}
   id="user-form-modal"
-  on_cancel={JS.patch(generate_live_url(@params))}
+  on_cancel={JS.patch(live_url(@params))}
   inner_class="sm:max-w-xl"
 >
   <.header size="md" title="Create new user" />
@@ -155,7 +189,7 @@
     </div>
     <div class="flex gap-2 mt-6 justify-end">
       <.button type="submit" form={@form} phx-disable-with="Saving...">Save</.button>
-      <.button variant="outline" phx-click={JS.patch(generate_live_url(@params))}>Cancel</.button>
+      <.button variant="outline" phx-click={JS.patch(live_url(@params))}>Cancel</.button>
     </div>
   </.form>
 </.modal>

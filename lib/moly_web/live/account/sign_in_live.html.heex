@@ -1,4 +1,4 @@
-<MolyWeb.Affinew.Components.flash_group flash={@flash} id="app-flash" class="mt-10" />
+<MolyWeb.MolyComponents.flash_group flash={@flash} id="app-flash" class="mt-10" />
 <div id="sign-in-form" class="grid grid-cols-12 overflow-auto h-screen">
   <div class="relative hidden  lg:col-span-7 lg:block xl:col-span-8 2xl:col-span-9 dark:bg-[#14181c]">
     <div class={["absolute inset-0 flex items-center justify-center !bg-cover"]} style={"background: url('#{Moly.website_auth_background}')"}></div>
@@ -13,8 +13,8 @@
           />
         </a>
       </div>
-      <h3 class="mt-8 text-center lg:text-left text-xl font-semibold md:mt-8 lg:mt-16">Sign in to your account</h3>
-      <h3 class="text-base-content/60 mt-2 text-center lg:text-left  text-sm">
+      <h3 class="mt-8 text-center text-xl font-semibold md:mt-16 lg:mt-24">Sign in to your account</h3>
+      <h3 class="text-base-content/60 mt-2 text-center   text-sm">
         Effortless Access, Secure Connection.
       </h3>
       <.form :let={f} for={@form}  phx-submit="sign-in" action={@action} method="POST" phx-trigger-action={@trigger_action} class="mt-6 md:mt-10">

@@ -6,7 +6,7 @@ defmodule MolyWeb.Account.ResetLive do
   def mount(_params, _session, socket) do
     form = generate_form()
     sitekey = Application.get_env(:moly, :cf_website_secret)
-    {:ok, assign(socket, form: form, sitekey: sitekey)}
+    {:ok, assign(socket, form: form, sitekey: sitekey, scripts: [~p"/assets/live.js"])}
   end
 
   def handle_event("reset", %{"form" => params, "cf-turnstile-response"=>cf_turnstile_response}, socket) when cf_turnstile_response not in [nil, "", false] do

@@ -1,6 +1,8 @@
 defmodule MolyWeb.AdminUserLive.Index do
   use MolyWeb.Admin, :live_view
 
+  require Ash.Query
+
   @per_page "10"
   @model Moly.Accounts.User
   @context %{private: %{ash_authentication?: true}}
@@ -52,7 +54,7 @@ defmodule MolyWeb.AdminUserLive.Index do
       {:ok, user} ->
         socket
         |> put_flash(:info, "Saved user for #{user.email}!")
-        |> push_patch(to: generate_live_url(%{socket.assigns.params | page: 1}), replace: true)
+        |> push_patch(to: live_url(%{socket.assigns.params | page: 1}), replace: true)
         |> assign(:live_action, :index)
 
       {:error, form} ->
@@ -67,7 +69,7 @@ defmodule MolyWeb.AdminUserLive.Index do
     |> Ash.update!(%{status: :active}, action: :update_user_status, context: @context)
 
     socket
-    |> push_navigate(to: generate_live_url(socket.assigns.params))
+    |> push_navigate(to: live_url(socket.assigns.params))
   end
 
   defp handle_action(socket, :inactivate, %{"id" => id}) do
@@ -75,7 +77,7 @@ defmodule MolyWeb.AdminUserLive.Index do
     |> Ash.update!(%{status: :inactive}, action: :update_user_status, context: @context)
 
     socket
-    |> push_navigate(to: generate_live_url(socket.assigns.params))
+    |> push_navigate(to: live_url(socket.assigns.params))
   end
 
   defp handle_action(socket, :delete, %{"id" => id}) do
@@ -83,7 +85,7 @@ defmodule MolyWeb.AdminUserLive.Index do
     |> Ash.update!(%{status: :deleted}, action: :update_user_status, context: @context)
 
     socket
-    |> push_navigate(to: generate_live_url(socket.assigns.params))
+    |> push_navigate(to: live_url(socket.assigns.params))
   end
 
   defp get_list_by_params(socket, params) do
@@ -96,6 +98,9 @@ defmodule MolyWeb.AdminUserLive.Index do
     per_page =
       Map.get(params, "per_page", @per_page)
       |> String.to_integer()
+
+    account_status = Map.get(params, "status")
+    account_status = account_status in ["",nil,false] && "all" || account_status
 
     q =
       Map.get(params, "q", "")
@@ -121,21 +126,36 @@ defmodule MolyWeb.AdminUserLive.Index do
         |> Ash.Query.filter(expr(contains(email, ^q)))
       end
 
+    data = if account_status == "all", do: data, else: Ash.Query.filter(data, status == ^String.to_atom(account_status))
+
     data =
       data
+      |> Ash.Query.load([:user_meta])
       |> Ash.read!(opts)
-      |> Ash.load!([:user_meta])
+
+    status_count = Enum.reduce([:all, :inactive, :active], %{}, fn status,acc ->
+      q = Ash.Query.new(@model)
+      q =
+        if status == :all do
+          q
+        else
+          Ash.Query.filter(q, status == ^status)
+        end
+      c = Ash.count!(q, context: @context)
+      Map.put(acc, status, c)
+    end)
 
     socket =
       socket
       |> assign(:users, data)
+      |> assign(:status_count, status_count)
       |> assign(:page_meta, pagination_meta(data.count, per_page, page, 9))
-      |> assign(:params, %{page: page, per_page: per_page, q: q})
+      |> assign(:params, %{page: page, per_page: per_page, q: q, status: account_status})
 
     socket
   end
 
-  defp generate_live_url(query_params) when is_map(query_params) do
+  defp live_url(query_params) when is_map(query_params) do
     ~p"/admin/users?#{query_params}"
   end
 end
