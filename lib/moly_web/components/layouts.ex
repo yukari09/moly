@@ -10,7 +10,11 @@ defmodule MolyWeb.Layouts do
   """
   use MolyWeb, :html
 
+  require Ash.Query
+
   embed_templates("layouts/*")
+
+  @navbar_item_cache_key "Moly:Layouts:Cache:Data:Navbar:Items"
 
   def admin_items() do
     [
@@ -102,25 +106,7 @@ defmodule MolyWeb.Layouts do
             url: ~p"/admin/website/appearance",
             view: [MolyWeb.AdminWebsiteLive.Appearance],
             show: true
-          },
-          %{
-            title: "Mailer",
-            url: ~p"/admin/website/mailer",
-            view: [MolyWeb.AdminWebsiteLive.Mailer],
-            show: true
-          },
-          %{
-            title: "Auth",
-            url: ~p"/admin/website/auth",
-            view: [MolyWeb.AdminWebsiteLive.Auth],
-            show: true
-          },
-          %{
-            title: "Services",
-            url: ~p"/admin/website/create",
-            view: [MolyWeb.AdminWebsiteLive.Services],
-            show: true
-          },
+          }
         ]
         # view: [MolyWeb.AdminWebsiteLive.Index]
       }
@@ -152,23 +138,17 @@ defmodule MolyWeb.Layouts do
     socket.view in item_views
   end
 
-  def nav_categories() do
-    [
-      {"Browse", MolyWeb.Affinew.Links.programs()},
-      {"AI & Tech", MolyWeb.Affinew.Links.term("ai-technology")},
-      {"Financial", MolyWeb.Affinew.Links.term("financial-insurance")},
-      {"SaaS", MolyWeb.Affinew.Links.term("saas-solutions")}
-    ]
-
-    # [
-    #   {"Browse", MolyWeb.Affinew.Links.programs()},
-    #   {"Categories", MolyWeb.Affinew.Links.under_construction()},
-    #   {"News", MolyWeb.Affinew.Links.under_construction()},
-    #   {"Resources", MolyWeb.Affinew.Links.under_construction()}
-    # ]
+  def navbar_item() do
+    show_in_navbar_term = fn ->
+      Ash.Query.new(Moly.Terms.Term)
+      |> Ash.Query.filter(term_meta.term_value in ["1", "true", "on"] and term_meta.term_key == "show_in_navbar")
+      |> Ash.Query.load([:term_taxonomy, :term_meta])
+      |> Ash.Query.sort(name: :asc)
+      |> Ash.read!(actor: %{roles: [:user]})
+    end
+    Moly.Utilities.cache_get_or_put(@navbar_item_cache_key, show_in_navbar_term, :timer.hours(2))
   end
 
-  def asset_name(assigns), do: assigns[:asset_name] || "app"
-  def asset_js_url(assigns), do: ~p"/assets" <> "/#{asset_name(assigns)}.js"
-  def asset_css_url(assigns), do: ~p"/assets" <> "/#{asset_name(assigns)}.css"
+  def delete_navbar_item_cache(), do: Moly.Utilities.cache_exists?(@navbar_item_cache_key)
+
 end

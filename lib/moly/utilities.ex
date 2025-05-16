@@ -1,5 +1,6 @@
 defmodule Moly.Utilities do
   @cache_name :cache
+  def cache_del(key), do: Cachex.del(@cache_name, key)
   def cache_get!(key), do: Cachex.get!(@cache_name, key)
   def cache_inc(key, amount \\ 1, opts \\ []), do: Cachex.incr!(@cache_name, key, amount, opts)
   def cache_ttl(key), do: Cachex.ttl(@cache_name, key) |> elem(1)
@@ -19,4 +20,5 @@ defmodule Moly.Utilities do
       fetched_value -> fetched_value
     end
   end
+  def hash_str_id(str), do: Regex.replace(~r/\[|\]/, str, "-")
 end

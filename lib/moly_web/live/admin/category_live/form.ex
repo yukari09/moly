@@ -42,6 +42,9 @@ defmodule MolyWeb.AdminCategoryLive.Form do
         {:noreply, socket}
 
       {:error, form} ->
+        socket =
+          assign(socket, :form, form)
+          |> put_flash(:error, "Error: #{JSON.encode!(form.errors)}")
         {:noreply, assign(socket, :form, form)}
     end
   end
@@ -72,7 +75,7 @@ defmodule MolyWeb.AdminCategoryLive.Form do
             field={f[:slug]}
             label="Slug"
             phx-debounce="blur"
-            value={f[:name].value}
+            value={f[:slug].value}
             autocomplete="off"
             help_text="Input a slug"
           />
@@ -86,10 +89,20 @@ defmodule MolyWeb.AdminCategoryLive.Form do
               label="Parent Category"
               prompt="Select a parent category(option)"
             />
+            <div class="mt-4">
+            <.textarea field={term_taxonomy[:description]} placeholder="option" label={"Keyword"}/>
+            </div>
           </.inputs_for>
         </div>
-        <div class="flex justify-end">
-          <.button type="button" variant="outline" phx-click={JS.patch(@patch_url)}>Cancel</.button>
+        <div>
+          <.inputs_for :let={ff} field={f[:term_meta]}>
+            <.checkbox field={ff[:fake]} label={"Show in navbar?"} name="" checked={ff[:term_value].value == "1"} phx-update="ignore" phx-click={JS.toggle_attribute({"value", "1", "0"}, to: "##{ff[:term_value].id}")}/>
+            <.input field={ff[:term_key]} value="show_in_navbar" container_class="hidden" show_error={false}/>
+            <.input field={ff[:term_value]} container_class="hidden" value={ff[:term_value].value || "0"} show_error={false}/>
+          </.inputs_for>
+        </div>
+        <div class="flex justify-end gap-2">
+          <.button type="button" variant="gray" phx-click={JS.patch(@patch_url)}>Cancel</.button>
           <.button type="submit" form={f} phx-disable-with="Saving...">Save</.button>
         </div>
       </.form>

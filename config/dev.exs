@@ -119,4 +119,4 @@ config :moly, Moly.Cluster,
   json_library: JSON,
   http_client_adapter:
     {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]},
-  prefix: :affinew
+  prefix: :moly

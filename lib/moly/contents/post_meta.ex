@@ -77,7 +77,6 @@ defmodule Moly.Contents.PostMeta do
   end
 
   identities do
-    identity :meta_key_with_post_id, [:meta_key, :post_id]
   end
 
   defp remove_attachment(_changeset, postmeta, _context) do

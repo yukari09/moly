@@ -62,10 +62,9 @@ defmodule MolyWeb.AdminPostLive.NewOrEdit do
           |> push_navigate(to: ~p"/admin/posts")
 
         {:error, form} ->
-          Logger.error("Error saving post: #{inspect(form)}")
           socket
           |> assign(form: form)
-          |> put_flash(:error, "Oops, some thing wrong.")
+          |> put_flash(:error, "Oops, some thing wrong: #{JSON.encode!(form.errors)}")
       end
 
     {:noreply, socket}

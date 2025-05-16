@@ -26,7 +26,7 @@ defmodule Moly.Terms.TermMeta do
       accept [:term_key, :term_value]
       primary? true
       upsert? true
-      upsert_identity :term_key_value
+      upsert_identity :term_key_value_with_id
     end
 
     update :update do
@@ -69,7 +69,6 @@ defmodule Moly.Terms.TermMeta do
   end
 
   identities do
-    identity :term_key_value, [:term_key, :term_value]
     identity :term_key_value_with_id, [:term_id, :term_key, :term_value]
   end
 end

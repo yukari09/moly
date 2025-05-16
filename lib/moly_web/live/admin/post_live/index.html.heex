@@ -94,7 +94,7 @@
             <div class="flex flex-wrap gap-1">
               <span
                 :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "post_tag")}
-                id={"tag-cell-#{tag.id}"}
+                id={Moly.Helper.generate_random_id()}
               >
                 {tag.term.name}
               </span>
@@ -103,7 +103,7 @@
           <:col :let={row} label="Category">
             <span
               :for={tag <- Moly.Utilities.Post.term_taxonomy_filter(row, "category")}
-              id={"tag-cell-#{tag.id}"}
+              id={Moly.Helper.generate_random_id()}
             >
               {tag.term.name}
             </span>
@@ -120,7 +120,7 @@
               <.tooltip text="Reindex" direction="top" size="xs">
                 <.link 
                   class="text-gray-500" phx-click={JS.toggle_class("animate-spin", to: "#rebuild-index-icon-#{row.id}") |> JS.push("rebuild-index")} phx-value-id={row.id} phx-value-spin-id={"#rebuild-index-icon-#{row.id}"}>
-                  <Lucideicons.loader_circle id={"rebuild-index-icon-#{row.id}"} class="size-4" data-loaded={JS.toggle_class("animate-spin")} />
+                  <Lucideicons.loader_circle id={"rebuild-index-icon-#{row.id}"} class="size-4 transition-all" data-loaded={JS.toggle_class("animate-spin")} />
                 </.link>
               </.tooltip>
 

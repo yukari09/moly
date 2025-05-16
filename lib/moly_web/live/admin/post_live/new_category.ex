@@ -71,7 +71,7 @@ defmodule MolyWeb.AdminPostLive.NewCategory do
           field={f[:slug]}
           label="Slug"
           phx-debounce="blur"
-          value={f[:name].value}
+          value={f[:slug].value}
           autocomplete="off"
           help_text="Input a slug"
         />

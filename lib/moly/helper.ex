@@ -31,10 +31,6 @@ defmodule Moly.Helper do
     put_object(filename, body, bucket_prefix)
   end
 
-  # def put_object(%Phoenix.LiveView.UploadEntry{} = upload_entry, body_or_path, bucket_prefix \\ "") do
-  #   entry_filename(upload_entry)
-  #   |> put_object(body_or_path, bucket_prefix)
-  # end
 
   def put_object(filename_or_entry, body_or_path, bucket_prefix \\ "")
       when is_map(filename_or_entry) or is_binary(filename_or_entry) do
@@ -95,30 +91,12 @@ defmodule Moly.Helper do
     {:ok, %{uploader: "S3", key: key, url: url}, socket}
   end
 
-  # def image_resize(filename, width \\ nil, height \\ nil) do
-  #   new_img =
-  #     Imgproxy.new("s3://#{s3_path(filename)}")
-  #     |> Imgproxy.set_extension("webp")
-
-  #   o =
-  #     case [width, height] do
-  #       [nil, nil] ->
-  #         new_img
-
-  #       [_, _] ->
-  #         Imgproxy.resize(new_img, width, height, type: "fill")
-  #     end
-
-  #   to_string(o)
-  # end
-
-  # defp s3_path(filename), do: load_s3_config(:bucket) |> Path.join(filename)
 
   @doc """
     [imagor](https://github.com/cshum/imagor)
   """
-  def image_resize(filename, width \\ nil, height \\ nil) do
-    opts = ["smart", "filters:format(webp)"]
+  def image_resize(filename, width \\ nil, height \\ nil, format \\ "webp") do
+    opts = ["smart", "filters:format(#{format})"]
     opts =
       if width && height do
         ["#{width}x#{height}" | opts]
@@ -426,19 +404,6 @@ defmodule Moly.Helper do
         :error
     end
   end
-
-  def es_query_result(cluster, index_name, query) do
-    case Snap.Search.search(cluster, index_name, query) do
-      {:ok, %{hits: %{total: %{"value" => total}, hits: hits}}} ->
-        case hits do
-          [] -> nil
-          result -> [total, result]
-        end
-      _ ->
-        nil
-    end
-  end
-
 
   def pagination_meta(total, page_size, page, show_item)
       when is_integer(total) and is_integer(page_size) and is_integer(page) and

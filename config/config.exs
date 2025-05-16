@@ -75,7 +75,7 @@ config :moly, Moly.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.25.1",
+  version: "0.25.4",
   moly: [
     args:
       ~w(js/app.js js/admin.js js/live.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
@@ -101,7 +101,6 @@ config :tailwind,
     cd: Path.expand("../assets", __DIR__)
   ]
 
-
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
@@ -115,10 +114,9 @@ config :moly, Oban,
   queues: [mailers: 20, periodic: 10],
   plugins: [
     {Oban.Plugins.Cron,
-      crontab: [
-        {"@daily", Moly.Affinew.Workers.Sitemap}
-      ]
-    }
+     crontab: [
+       {"@daily", Moly.Affinew.Workers.Sitemap}
+     ]}
   ]
 
 config :moly, :env, config_env()

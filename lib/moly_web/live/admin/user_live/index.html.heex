@@ -64,11 +64,10 @@
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
         <.table rows={@users.results} class="table-auto">
-          <:col :let={row} label="Avatar">
+          <:col :let={_row} label="Avatar">x
             <.avatar size="md">
-              <.avatar_fallback initials={Moly.Utilities.Account.user_name(@current_user, 2) |> String.upcase()}>
-                <.avatar_image src={Moly.Utilities.Account.user_avatar(@current_user, "64")} alt={Moly.Utilities.Account.user_name(@current_user)} />
-              </.avatar_fallback>
+              <.avatar_fallback initials={Moly.Utilities.Account.user_name(@current_user, 2) |> String.upcase()} />
+              <.avatar_image src={Moly.Utilities.Account.user_avatar(@current_user, "64")} alt={Moly.Utilities.Account.user_name(@current_user)} />
             </.avatar>
           </:col>
           <:col :let={row} label="Email">

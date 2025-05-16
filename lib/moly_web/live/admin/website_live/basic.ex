@@ -1,8 +1,6 @@
 defmodule MolyWeb.AdminWebsiteLive.Basic do
   use MolyWeb.Admin, :live_view
 
-  @actor %{roles: [:admin]}
-
   def mount(_params, _session, socket) do
     socket = prepare(socket)
     {:ok, socket}
@@ -25,21 +23,21 @@ defmodule MolyWeb.AdminWebsiteLive.Basic do
   def render(assigns) do
     ~H"""
       <.header
-        title="WebSite Basic"
+        title="Basic"
         size="md"
         description="Basic website setting."
       />
       <div class="space-y-4 divide-y divide-gray-100 my-8">
         <div :for={{_, form} <- @forms} class="py-4">
           <.form :let={f} for={form} phx-submit="save">
-            <h3>{f[:name].value}</h3>
-            <div class="mt-2">
+            <h3 class="font-medium">{f[:name].value}</h3>
+            <div class="mt-4">
               <input class="hidden" type="hidden"  name={f[:name].name} value={f[:name].value}/>
               <input class="hidden" type="hidden"  name={f[:slug].name} value={f[:slug].value}/>
               <input class="hidden" type="hidden"  name={f[:id].name} value={f[:id].value}/>
               <.inputs_for :let={ff} field={f[:term_meta]}>
-                <.input :if={f[:slug].value  in ["website-name", "website-title", "website-blog-list-title"]} field={ff[:term_value]} class="max-w-sm"/>
-                <.textarea :if={f[:slug].value not in ["website-name", "website-title", "website-blog-list-title"]} field={ff[:term_value]} class="max-w-sm"/>
+                <.input :if={f[:slug].value  in ["website-name", "website-title", "website-blog-list-title"]} field={ff[:term_value]} class="max-w-md"/>
+                <.textarea rows={5} :if={f[:slug].value not in ["website-name", "website-title", "website-blog-list-title"]} field={ff[:term_value]} class="max-w-md"/>
                 <input type="hidden" name={ff[:term_key].name} value={ff[:term_key].value} />
               </.inputs_for>
               <p class="mt-2 text-xs text-gray-500">{f[:term_taxonomy].value |> Moly.Helper.get_in_from_keys([0, :source, :data, :description])}</p>

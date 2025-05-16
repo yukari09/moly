@@ -276,3 +276,10 @@ const selectedMediaCount = () => {
     return document.querySelectorAll(selectedMediaSelector).length
 }
 //----End Admin Media Page Script----//
+window.addEventListener("app:modal-show-body-width", () => {
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+  document.body.style.paddingRight = `${scrollbarWidth}px`;
+})
+window.addEventListener("app:modal-hide-body-width", () => {
+  document.body.style.paddingRight = `${0}px`;
+})

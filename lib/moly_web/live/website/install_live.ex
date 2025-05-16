@@ -15,13 +15,12 @@ alias Hex.API.User
     [has_user, web_status] = [has_user?(), Moly.website_status]
 
     socket =
-      if web_status != "pending" || has_user do
-        push_navigate(socket, to: ~p"/")
+      if web_status == "pending" && !has_user do
+        prepate_intiation(socket)
       else
-        socket
+        push_navigate(socket, to: ~p"/")
       end
 
-    socket = prepate_intiation(socket)
     {:ok, socket, layout: false, temporary_assigns: [scripts: [~p"/assets/live.js"]]}
   end
 
@@ -67,7 +66,7 @@ alias Hex.API.User
   end
 
   defp prepate_intiation(socket) do
-    initiation_data = Moly.default_config_term_data() ++ Moly.default_website_term_data()
+    initiation_data = Moly.default_website_term_data()
     slugs = Enum.map(initiation_data, &(&1.slug))
     existed_data = existed_terms_data_by_slug(slugs)
     total_data = Enum.count(initiation_data)
@@ -78,13 +77,15 @@ alias Hex.API.User
       term_upsert(initiation_data)
     end
 
+    Moly.Contents.PostEs.create()
+
     form = AshPhoenix.Form.for_create(User, :create_manually, form: [auto?: true])
 
     assign(socket, :form, form)
   end
 
   defp has_user?() do
-    count = Ash.Query.new(User) |> Ash.count!()
+    count = Ash.Query.new(User) |> Ash.count!(context: @context)
     count > 0
   end
 

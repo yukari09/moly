@@ -4,9 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title suffix={assigns[:page_suffix] || " · Affinew"}>
-      {assigns[:page_title] || "Find high ticket best paying affiliate programss"}
+    <.live_title suffix={assigns[:page_suffix] || " · #{Moly.website_name}"}>
+      {assigns[:page_title] || Moly.website_title}
     </.live_title>
+    <link rel="icon" type="image/x-icon" href={Moly.website_favicon}>
+    <meta name="description" content={assigns[:page_description] || Moly.website_description} />
     <%= if assigns[:meta_tags] do %>
       <meta
         :for={tag_attrs <- assigns[:meta_tags]}

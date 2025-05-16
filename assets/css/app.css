@@ -22,13 +22,13 @@
   default: true;
   prefersdark: false;
   color-scheme: "light";
-  --color-base-100: oklch(0.985 0.002 247.839);
-  --color-base-200: oklch(97% 0 0);
+  --color-base-100: #ffffff;
+  --color-base-200: #F9F9F9;
   --color-base-300: oklch(92% 0 0);
-  --color-base-content: oklch(20% 0 0);
-  --color-primary: #e64aa8;
+  --color-base-content: #0c0c0c;
+  --color-primary: #00AEEF;
   --color-primary-content: oklch(98% 0.031 120.757);
-  --color-secondary: #fe935d;
+  --color-secondary: #00335A;
   --color-secondary-content: oklch(97% 0.014 254.604);
   --color-accent: oklch(62% 0.194 149.214);
   --color-accent-content: oklch(98% 0.018 155.826);
@@ -55,8 +55,10 @@
 @theme {
   --breakpoint-xs: 30rem;
   --font-sans: "Bricolage Grotesque", sans-serif;
-  --default-font-optical-sizing: auto; 
-  --default-font-variation-settings: "wdth" 100;
 }
 
- 
+body{
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 20;
+}

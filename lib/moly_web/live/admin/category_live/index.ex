@@ -23,19 +23,20 @@ defmodule MolyWeb.AdminCategoryLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    get_category_by_id(id, socket.assigns.current_user)
+    Moly.Utilities.Term.get_term_by_id(id)
     |> Ash.destroy!(actor: socket.assigns.current_user)
 
     {:noreply, push_patch(socket, to: live_url(socket.assigns.params))}
   end
 
   def handle_event("create", _, socket) do
-    socket = socket |> assign(:form, category_to_form(nil, nil))
+    form = category_to_form(nil)
+    socket = socket |> assign(:form, form)
     {:noreply, socket}
   end
 
   def handle_event("edit", %{"id" => id}, socket) do
-    form = category_to_form(id, socket.assigns.current_user)
+    form = category_to_form(id)
     socket = socket |> assign(:form, form)
     {:noreply, socket}
   end
@@ -69,7 +70,7 @@ defmodule MolyWeb.AdminCategoryLive.Index do
     query =
       @model
       |> Ash.Query.filter(term_taxonomy.taxonomy == "category")
-      |> Ash.Query.load(term_taxonomy: :parent)
+      |> Ash.Query.load([term_taxonomy: :parent])
 
     query =
       if is_nil(q) do
@@ -94,27 +95,39 @@ defmodule MolyWeb.AdminCategoryLive.Index do
     ~p"/admin/categories?#{query_params}"
   end
 
-  def get_category_by_id(id, current_user) do
-    Ash.get!(Moly.Terms.Term, id, actor: current_user)
-    |> Ash.load!([:term_taxonomy], actor: current_user)
-  end
 
-  defp category_to_form(nil, _) do
+
+  defp category_to_form(nil) do
     AshPhoenix.Form.for_create(Moly.Terms.Term, :create,
       forms: [
         term_taxonomy: [
           type: :list,
           data: [%Moly.Terms.TermTaxonomy{taxonomy: "category"}],
           resource: Moly.Terms.TermTaxonomy,
-          update_action: :create
+          update_action: :update,
+          create_action: :create,
+        ],
+        term_meta: [
+          type: :list,
+          data: [%Moly.Terms.TermMeta{term_key: "show_in_navbar", term_value: "0"}],
+          resource: Moly.Terms.TermMeta,
+          update_action: :update,
+          create_action: :create,
         ]
       ]
     )
     |> to_form()
   end
 
-  defp category_to_form(categoires_id, current_user) do
-    term = get_category_by_id(categoires_id, current_user)
+  defp category_to_form(categoires_id) do
+    term = Moly.Utilities.Term.get_term_by_id(categoires_id)
+
+    term =
+      if term.term_meta == [] do
+        Map.put(term, :term_meta, [%Moly.Terms.TermMeta{term_key: "show_in_navbar", term_value: "0"}])
+      else
+        term
+      end
 
     AshPhoenix.Form.for_update(term, :update,
       forms: [
@@ -122,7 +135,15 @@ defmodule MolyWeb.AdminCategoryLive.Index do
           type: :list,
           data: term.term_taxonomy,
           resource: Moly.Terms.TermTaxonomy,
-          update_action: :update
+          update_action: :update,
+          create_action: :create,
+        ],
+        term_meta: [
+          type: :list,
+          data: term.term_meta,
+          resource: Moly.Terms.TermMeta,
+          update_action: :update,
+          create_action: :create,
         ]
       ]
     )

@@ -827,6 +827,7 @@ defmodule MolyWeb.TailwindUI do
         {"ease-out duration-300", "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
          "opacity-100 translate-y-0 sm:scale-100"}
     )
+    |> JS.dispatch("app:modal-show-body-width", to: "body")
     |> JS.add_class("overflow-hidden", to: "body")
   end
 
@@ -845,6 +846,7 @@ defmodule MolyWeb.TailwindUI do
          "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
     )
     |> JS.hide(to: "##{id}", transition: {"block", "block", "hidden"})
+    |> JS.dispatch("app:modal-hide-body-width", to: "body")
     |> JS.remove_class("overflow-hidden", to: "body")
   end
 
@@ -1330,6 +1332,7 @@ defmodule MolyWeb.TailwindUI do
     </div>
     """
   end
+
 
   attr(:id, :string, required: true)
   attr(:label, :string, default: nil)

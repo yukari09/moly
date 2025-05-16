@@ -153,11 +153,11 @@ defmodule Moly.Contents.Post do
       argument :tags, {:array, :map}
 
       change manage_relationship(:post_meta, :post_meta,
-               on_no_match: :create,
-               on_match: :update,
-               on_lookup: :relate,
-               on_missing: :destroy
-             )
+        on_no_match: :create,
+        on_match: :update,
+        on_lookup: :relate,
+        on_missing: :destroy
+      )
 
       change relate_actor(:author)
 

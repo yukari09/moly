@@ -9,27 +9,18 @@ defmodule MolyWeb.DaisyUi do
   attr(:size, :integer, default: 32)
   attr(:class, :string, default: nil)
 
-  def avatar(%{user: nil} = assigns) do
-    ~H"""
-    <div class="avatar avatar-placeholder">
-      <div class="bg-neutral text-neutral-content w-12 rounded-full">
-        <span></span>
-      </div>
-    </div>
-    """
-  end
-
   def avatar(%{size: size, user: user} = assigns) do
-    assigns = assign(assigns, :user_avatar_src, user_avatar(user, "#{size}"))
+    size_class =  Map.get(%{"16" => "size-6", "32" => "size-8", "64" => "size-12"}, "#{size}")
+    assigns = assign(assigns, user_avatar_src: user_avatar(user, "#{size}"), size_class: size_class)
 
     ~H"""
     <div :if={@user_avatar_src} class="avatar">
-      <div class={["rounded-full size-full", @class]}>
+      <div class={["rounded-full", @size_class, @class]}>
         <img src={@user_avatar_src} />
       </div>
     </div>
-    <div :if={!@user_avatar_src} class="avatar avatar-placeholder size-full cursor-pointer">
-      <div class="bg-neutral text-neutral-content rounded-full ">
+    <div :if={!@user_avatar_src} class="avatar avatar-placeholder cursor-pointer">
+      <div class={["bg-neutral text-neutral-content rounded-full", @size_class]}>
         <span class="uppercase">{user_name(@user, 1)}</span>
       </div>
     </div>

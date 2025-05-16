@@ -5,6 +5,11 @@ defmodule Moly.Utilities.Term do
 
    @actor %{roles: [:user]}
 
+  def get_term_by_id(id) do
+    Ash.get!(Moly.Terms.Term, id, actor: @actor)
+    |> Ash.load!([:term_taxonomy, :term_meta], actor: @actor)
+  end
+
   def get_terms_data_by_slug(slugs) when is_list(slugs) do
     Ash.Query.new(Term)
     |> Ash.Query.filter(slug in ^slugs)

@@ -9,6 +9,7 @@ defmodule Moly do
 
   require Ash.Query
 
+  require Logger
   alias Moly.Terms.TermMeta
 
 
@@ -19,8 +20,7 @@ defmodule Moly do
   @website_description "A Moly powered WebSite"
   @website_auth_background "/images/auth-background-bg.webp"
 
-  def website_cache_key, do: "moly:website:cache:data:params"
-  def config_cache_key, do: "moly:config:cache:data:params"
+  @cache_key_pattern "moly:{{slug_or_name}}:cached:term:data"
 
   def default_website_term_data() do
     [
@@ -33,121 +33,96 @@ defmodule Moly do
       %{name: "WebSite Auth Background", slug: "website-auth-background", term_taxonomy: [%{taxonomy: "website", description: "The auth page background image url."}], term_meta: [%{term_key: "name", term_value: @website_auth_background}]},
       %{name: "WebSite Social Links", slug: "website-social-links", term_taxonomy: [%{taxonomy: "website", description: "Social links."}], term_meta: []},
       %{name: "WebSite Blog List Title", slug: "website-blog-list-title", term_taxonomy: [%{taxonomy: "website", description: "WebSite Blog List Title."}], term_meta: [%{term_key: "name", term_value: "WebSite Blog List Title"}]},
-      %{name: "WebSite Blog List Description", slug: "website-blog-list-description", term_taxonomy: [%{taxonomy: "website", description: "WebSite Blog List Description."}], term_meta: [%{term_key: "name", term_value: "WebSite Blog List Description"}]}
+      %{name: "WebSite Blog List Description", slug: "website-blog-list-description", term_taxonomy: [%{taxonomy: "website", description: "WebSite Blog List Description."}], term_meta: [%{term_key: "name", term_value: "WebSite Blog List Description"}]},
+
+      %{name: "WebSite Footer Column1", slug: "website-footer-column-1", term_taxonomy: [%{taxonomy: "website", description: "Footer Column1"}], term_meta: []},
+      %{name: "WebSite Footer Column2", slug: "website-footer-column-2", term_taxonomy: [%{taxonomy: "website", description: "Footer Column2"}], term_meta: []},
+      %{name: "WebSite Footer Column3", slug: "website-footer-column-3", term_taxonomy: [%{taxonomy: "website", description: "Footer Column3"}], term_meta: []},
+      %{name: "WebSite Footer Column4", slug: "website-footer-column-4", term_taxonomy: [%{taxonomy: "website", description: "Footer Column4"}], term_meta: []},
+
+      %{name: "WebSite Footer Column1 Keyword", slug: "website-footer-column-1-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column1 Keyword"}], term_meta: []},
+      %{name: "WebSite Footer Column2 Keyword", slug: "website-footer-column-2-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column2 Keyword"}], term_meta: []},
+      %{name: "WebSite Footer Column3 Keyword", slug: "website-footer-column-3-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column3 Keyword"}], term_meta: []},
+      %{name: "WebSite Footer Column4 Keyword", slug: "website-footer-column-4-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column4 Keyword"}], term_meta: []},
     ]
   end
 
-  def default_config_term_data() do
-    [
-      %{
-        name: "Config Mailer",
-        slug: "config-mailer",
-        term_taxonomy: [%{taxonomy: "config", description: "Mailer Config, supported Adapters are: Swoosh.Adapters.Local, Resend.Swoosh.Adapter, Swoosh.Adapters.Brevo, Swoosh.Adapters.SMTP"}],
-        term_meta: [
-          %{term_key: "adapter", term_value: "0"},
-          %{term_key: "address", term_value: "0"},
-          %{term_key: "host", term_value: "0"},
-          %{term_key: "encryption", term_value: "0"},
-          %{term_key: "port", term_value: "0"},
-          %{term_key: "username", term_value: "0"},
-          %{term_key: "password/api_key", term_value: "0"}
-        ]
-      },
-      %{
-        name: "Config Auth Google",
-        slug: "config-auth-google",
-        term_taxonomy: [%{taxonomy: "config", description: "Google Auth Config"}],
-        term_meta: [
-          %{term_key: "google_oauth2_client_id", term_value: "0"},
-          %{term_key: "google_oauth2_redirect_uri", term_value: "0"},
-          %{term_key: "google_oauth2_client_secret", term_value: "0"},
-        ]
-      },
-      %{
-        name: "Config Imagor",
-        slug: "config-imagor",
-        term_taxonomy: [%{taxonomy: "config", description: "Google Auth Config"}],
-        term_meta: [
-          %{term_key: "imagor_endpoint", term_value: "0"},
-          %{term_key: "imagor_secret", term_value: "0"}
-        ]
-      },
-      %{
-        name: "Config Cloudflare Turnstile",
-        slug: "config-cloudflare-turnstile",
-        term_taxonomy: [%{taxonomy: "config", description: "Cloudflare Turnstile Config"}],
-        term_meta: [
-          %{term_key: "imagor_endpoint", term_value: "0"},
-          %{term_key: "imagor_secret", term_value: "0"}
-        ]
-      },
-      %{
-        name: "Config Object Storage",
-        slug: "config-object-storage",
-        term_taxonomy: [%{taxonomy: "config", description: "Object Storage Config"}],
-        term_meta: [
-          %{term_key: "scheme", term_value: "0"},
-          %{term_key: "host", term_value: "0"},
-          %{term_key: "port", term_value: "0"},
-          %{term_key: "bucket", term_value: "0"},
-          %{term_key: "region", term_value: "0"},
-          %{term_key: "access_key_id", term_value: "0"},
-          %{term_key: "secret_access_key", term_value: "0"},
-        ]
-      },
-    ]
+  def website_status(), do: website_term("website-status", true, "offline")
+  def website_logo(), do: website_term("website-logo", true, @website_logo)
+  def website_favicon(), do: website_term("website-favicon", true, @website_favicon)
+  def website_title(), do: website_term("website-title", true,  @website_title)
+  def website_name(), do: website_term("website-name", true, @website_name)
+  def website_auth_background(), do: website_term("website-auth-background", true, @website_auth_background)
+  def website_description(), do: website_term("website-description", true, @website_description)
+  def social_links(), do: website_term("social-links")
+  def website_links(), do: website_term("website-links")
+  def website_blog_list_title(), do: website_term("website-blog-list-title", true)
+  def website_blog_list_description(), do: website_term("website-blog-list-description", true)
+  def website_footer_column(level), do: website_term("website-footer-column-#{level}")
+  def website_footer_column_keyword(level), do: website_term("website-footer-column-#{level}-keyword", true)
+
+  def delete_website_cache(), do: cache_key("website") |> Moly.Utilities.cache_del()
+
+  defp website_term(slug, first_term_value \\ false, default \\ nil) do
+    get_terms_by_taxonomy("website", [term_slug: slug, first_term_value: first_term_value, default: default])
   end
 
-  def website_status(), do: website_terms("website-status", true) || "offline"
-  def website_logo(), do: website_terms("website-logo", true) || @website_logo
-  def website_favicon(), do: website_terms("website-favicon", true) || @website_favicon
-  def website_name(), do: website_terms("website-name", true) || @website_name
-  def website_auth_background(), do: website_terms("website-auth-background", true) || @website_auth_background
-  def website_description(), do: website_terms("website-description", true) || @website_description
-  def social_links(), do: website_terms("social-links")
-  def website_links(), do: website_terms("website-links")
+  @doc """
+  Get terms by taxonomy
+  taxonomy:
+  - website
+  - config
+  - notification
+  - system
+  - application
+  - node
+  opts:
+  - data_from_chace: using data from cache if true
+  - term_slug: filter data by term slug
+  - first_term_value: return first term_meta.term_value if true
+  """
+  def get_terms_by_taxonomy(taxonomy, opts \\ []) do
+    fetch_term_by_taxonomy_fun = fn taxonomy ->
+      Ash.Query.filter(Moly.Terms.Term, term_taxonomy.taxonomy == ^taxonomy)
+      |> Ash.Query.load([:term_meta])
+      |> Ash.read!(actor: %{roles: [:user]})
+      |> Enum.reduce(%{}, fn %{term_meta: term_meta, slug: slug}, acc ->
+        parase_term_meta_result =
+          Enum.reduce(term_meta, [], fn x, acc ->
+            y = parse_term_meta(x)
+            [y | acc]
+          end)
 
-  def config_google(), do: config_terms("config-auth-google")
+        Map.put(acc, slug, parase_term_meta_result)
+      end)
+    end
 
-  def website_terms(term_slug \\ nil, first_term_value \\ false) do
-    all_website_terms =
-      Moly.Utilities.cache_get_or_put(
-        website_cache_key(),
-        &get_all_terms_by_taxonomy/0,
-        :timer.hours(1)
-      )
+    default = opts[:default]
+    term_slug = opts[:term_slug]
+    data_from_cache = if opts[:data_from_chace] == nil, do: true, else: opts[:data_from_chace]
+    first_term_value = if opts[:first_term_value] == nil, do: true, else: opts[:first_term_value]
 
-    result = if term_slug, do: Map.get(all_website_terms, term_slug, []), else: all_website_terms
-    if first_term_value, do: Moly.Helper.get_in_from_keys(result, [0, :term_value]), else: result
+    term_data =
+      if data_from_cache do
+        key = cache_key(taxonomy)
+        Moly.Utilities.cache_get_or_put(key, fn -> fetch_term_by_taxonomy_fun.(taxonomy) end, :timer.hours(1))
+      else
+        fetch_term_by_taxonomy_fun.(taxonomy)
+      end
+
+    if term_slug do
+      filtered_term = Map.get(term_data, term_slug)
+      if first_term_value do
+        Moly.Helper.get_in_from_keys(filtered_term, [0, :term_value]) || default
+      else
+        filtered_term
+      end
+    else
+      term_data
+    end
   end
 
-  def config_terms(term_slug \\ nil, first_term_value \\ false) do
-    all_config_terms =
-      Moly.Utilities.cache_get_or_put(
-        website_cache_key(),
-        &get_all_terms_by_taxonomy/0,
-        :timer.hours(1)
-      )
-
-    result = if term_slug, do: Map.get(all_config_terms, term_slug, []), else: all_config_terms
-    if first_term_value, do: Moly.Helper.get_in_from_keys(result, [0, :term_value]), else: result
-  end
-
-  # website,config,notification,system,application,node are reserved typies.
-  defp get_all_terms_by_taxonomy(taxonomy \\ "website") do
-    Ash.Query.filter(Moly.Terms.Term, term_taxonomy.taxonomy == ^taxonomy)
-    |> Ash.Query.load([:term_meta])
-    |> Ash.read!(actor: %{roles: [:user]})
-    |> Enum.reduce(%{}, fn %{term_meta: term_meta, slug: slug}, acc ->
-      parase_term_meta_result =
-        Enum.reduce(term_meta, [], fn x, acc ->
-          y = parse_term_meta(x)
-          [y | acc]
-        end)
-
-      Map.put(acc, slug, parase_term_meta_result)
-    end)
-  end
+  defp cache_key(name), do: String.replace(@cache_key_pattern, "{{slug_or_name}}", name)
 
   defp parse_term_meta(%TermMeta{term_key: term_key, term_value: term_value}) do
     case JSON.decode(term_value) do

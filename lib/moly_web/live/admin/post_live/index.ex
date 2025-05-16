@@ -35,7 +35,7 @@ defmodule MolyWeb.AdminPostLive.Index do
   end
 
   def handle_event("rebuild-index", %{"id" => id, "spin-id" => spin_id}, socket) do
-    Moly.Contents.Notifiers.Post.build_post_document(id)
+    Moly.Contents.PostEs.build_document_index_by_id(id)
 
     socket =
       socket
