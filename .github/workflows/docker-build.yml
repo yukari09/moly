@@ -2,9 +2,9 @@ name: Build and Push Docker Images
 
 on:
   push:
-    branches: [ affinew ]
+    branches: [ main-phx-1.17.20 ]
   pull_request:
-    branches: [ affinew ]
+    branches: [ main-phx-1.17.20 ]
 
 jobs:
   build-and-push:
