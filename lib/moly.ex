@@ -47,7 +47,7 @@ defmodule Moly do
     ]
   end
 
-  def website_status(), do: website_term("website-status", true, "offline")
+  def website_status(), do: website_term("website-status", true, nil)
   def website_logo(), do: website_term("website-logo", true, @website_logo)
   def website_favicon(), do: website_term("website-favicon", true, @website_favicon)
   def website_title(), do: website_term("website-title", true,  @website_title)

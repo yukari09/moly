@@ -15,7 +15,7 @@ alias Hex.API.User
     [has_user, web_status] = [has_user?(), Moly.website_status]
 
     socket =
-      if web_status == "pending" && !has_user do
+      if web_status in ["pending", nil] && !has_user do
         prepate_intiation(socket)
       else
         push_navigate(socket, to: ~p"/")
