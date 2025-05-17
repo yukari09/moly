@@ -106,7 +106,7 @@ defmodule MolyWeb.PageHtml.Components do
         </table>
       </div>
       <% end %>
-      <p class="flex flex-wrap items-center text-sm text-base-content/80 gap-2">
+      <p class="flex flex-wrap items-center text-sm text-base-content/80 gap-2 !my-6">
         <span class="mr-2">Tags:</span>
         <.link class="badge badge-ghost"  :for={tag <- Moly.Helper.get_in_from_keys(@post, [:source, "post_tag"])}>{tag["name"]}</.link>
       </p>

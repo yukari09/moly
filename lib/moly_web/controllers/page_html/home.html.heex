@@ -14,11 +14,11 @@
   <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row">
     <MolyWeb.PageHtml.Components.post_card 
         data={data}
-        content_class="space-y-6 mt-6 px-8"
+        content_class="px-4 mt-4 space-y-4  lg:space-y-6 lg:mt-6 lg:px-8"
         class="md:w-[50%] lg:w-[55%]"
         decoding="async"
         fetchpriority="high"
-        image_class="w-full"
+        image_class="w-full 3/2"
     >
         <:title_slot>
           <h1 class="font-medium text-xl lg:text-[44px] lg:leading-13 line-clamp-3 capitalize tracking-tight">{Moly.Helper.get_in_from_keys(data, [:source, "post_title"])}</h1>
@@ -27,14 +27,14 @@
           <p class="line-clamp-5 font-light text-base-content/50">{Moly.Helper.get_in_from_keys(data, [:source, "post_excerpt"])}</p>
         </:excerpt_slot>
         <:read_more_slot>
-          <div class="mt-8">
+          <div class="mt-4 md:mt-8">
           <.link navigate={~p"/post/#{Moly.Helper.get_in_from_keys(data, [:source, "post_name"])}"} class="text-primary font-medium">READ MORE »</.link>
           </div>
         </:read_more_slot>
     </MolyWeb.PageHtml.Components.post_card>
     <!--Header Right-->
     <div class="md:w-[50%] lg:w-[45%]">
-      <div class="xl:px-24 xl:py-12 p-8">
+      <div class="p-4 xl:px-24 xl:py-12 xl:p-8">
         <div class="divider divider-end text-primary w-24 text-sm font-medium !gap-1 hidden md:flex">Latest Post</div>
         <div class="py-4 lg:py-8 space-y-8">
             <MolyWeb.PageHtml.Components.post_card 
@@ -44,7 +44,7 @@
                 class="flex items-start gap-4"
                 decoding="async"
                 fetchpriority="high"
-                image_class="rounded-md"
+                image_class="rounded-md aspect-3/2"
                 image_link_class="!w-1/3"
             >
                 <:title_slot>
@@ -84,7 +84,7 @@
         class="flex items-start gap-1 lg:gap-4 flex-row-reverse"
         decoding="async"
         fetchpriority="high"
-        image_class="rounded-md"
+        image_class="rounded-md aspect-3/2"
         image_link_class="!w-1/3 xl:!w-1/2"
     >
         <:title_slot>
@@ -120,7 +120,7 @@
         class=""
         decoding="async"
         fetchpriority="high"
-        image_class="rounded-md"
+        image_class="rounded-md aspect-3/2"
     >
         <:title_slot>
             <h3 class="font-medium lg:text-[24px] lg:leading-[32px] line-clamp-3 capitalize tracking-tight">{Moly.Helper.get_in_from_keys(data, [:source, "post_title"])}</h3>
