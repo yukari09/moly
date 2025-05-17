@@ -63,7 +63,7 @@ defmodule MolyWeb.PageHtml.Components do
     ~H"""
     <div id={@id || Moly.Helper.generate_random_id()} class={@class}>
       <.link class={["block", @image_link_class]} navigate={@navigate}>
-        <.responsive_image_es class={@image_class} data={@data} fetchpriority={@fetchpriority} decoding={@decoding}/>
+        <.responsive_image_es class={@image_class} data={@data} fetchpriority={@fetchpriority} decoding={@decoding} alt={Moly.Helper.get_in_from_keys(@data, [:source, "post_title"])}/>
       </.link>
       <div class={[@content_class]}>
         <.link :if={@title_slot != []} class="block" navigate={@navigate}>{render_slot(@title_slot)}</.link>
