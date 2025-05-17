@@ -115,7 +115,7 @@ config :moly, Oban,
   plugins: [
     {Oban.Plugins.Cron,
      crontab: [
-       {"@daily", Moly.Affinew.Workers.Sitemap}
+       {"@daily", Moly.Contents.Workers.Sitemap}
      ]}
   ]
 
