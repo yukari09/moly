@@ -1,7 +1,7 @@
 defmodule Moly.Contents.PostEs do
   use Moly.EsIndex,
     name: "post",
-    mapping_file: "#{Application.app_dir(:moly, "priv")}/mapping/post.json"
+    mapping_file: "priv/mapping/post.json"
 
   require Ash.Query
   require Logger

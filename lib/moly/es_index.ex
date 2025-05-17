@@ -9,7 +9,11 @@ defmodule Moly.EsIndex do
         |> Enum.join("-")
       end
       def create do
-        mapping_json = Path.absname(@mapping_file) |> File.read!() |> JSON.decode!()
+        mapping_json =
+          Application.app_dir(:moly)
+          |> Path.join(@mapping_file)
+          |> File.read!()
+          |> JSON.decode!()
         Moly.Cluster |> Snap.Indexes.create(index_name(), mapping_json)
       end
       def delete_index, do: Moly.Cluster |> Snap.Indexes.delete(index_name())
