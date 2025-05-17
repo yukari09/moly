@@ -44,6 +44,8 @@ defmodule Moly do
       %{name: "WebSite Footer Column2 Keyword", slug: "website-footer-column-2-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column2 Keyword"}], term_meta: []},
       %{name: "WebSite Footer Column3 Keyword", slug: "website-footer-column-3-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column3 Keyword"}], term_meta: []},
       %{name: "WebSite Footer Column4 Keyword", slug: "website-footer-column-4-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column4 Keyword"}], term_meta: []},
+
+      %{name: "WebSite Scripts", slug: "website-scripts", term_taxonomy: [%{taxonomy: "website", description: "Extra website scripts"}], term_meta: []},
     ]
   end
 
@@ -60,6 +62,8 @@ defmodule Moly do
   def website_blog_list_description(), do: website_term("website-blog-list-description", true)
   def website_footer_column(level), do: website_term("website-footer-column-#{level}")
   def website_footer_column_keyword(level), do: website_term("website-footer-column-#{level}-keyword", true)
+
+  def website_scripts(), do: website_term("website-scripts", true, [])
 
   def delete_website_cache(), do: cache_key("website") |> Moly.Utilities.cache_del()
 

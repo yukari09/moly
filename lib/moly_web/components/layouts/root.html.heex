@@ -30,8 +30,7 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
     <!--Extra Assigns-->
-    <link :for={stylesheet <- (assigns[:stylesheets] || [])} rel="stylesheet" href={stylesheet} />
-    <script defer :for={script <- (assigns[:scripts] || [])} type="text/javascript" src={script}>
+    <script defer :for={%{term_value: script} <- Moly.website_scripts()} type="text/javascript" src={script}>
     </script>
   </head>
   <body class="min-h-[100vh]">
