@@ -30,9 +30,7 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
     <!--Extra Assigns-->
-    <%= for %{term_value: assign} <- Moly.website_assigns() do %>
-    {raw assign}
-    <% end %>
+    
   </head>
   <body class="min-h-[100vh]">
     {@inner_content}

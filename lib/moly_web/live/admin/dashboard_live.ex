@@ -15,8 +15,7 @@ defmodule MolyWeb.AdminDashboardLive do
     <div class="flex mt-4 gap-4">
       <div class="w-2/3"></div>
       <div class="w-1/3">
-        <.card>
-          <:header>Server</:header>
+        <.card header="WebSite">
           <.link phx-click="clean-website-cache" class="text-sm">Clean Website Cache</.link>
         </.card>
       </div>

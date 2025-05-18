@@ -80,9 +80,11 @@ defmodule MolyWeb.Router do
   scope "/", MolyWeb do
     pipe_through([:browser])
     get("/sitemaps/:site_map_file", SitemapController, :show)
-    get("/", PageController, :home)
-    get("/posts/:category_slug", PageController, :category)
-    get("/post/:post_name", PageController, :view)
+    get("/", PostController, :home)
+    get("/posts/:category_slug", PostController, :category)
+    get("/post/:post_name", PostController, :view)
+
+    post("/upload-image", PageController, :upload_image)
 
     live("/website/register-initial-user", Website.RegisterInitialUser)
   end

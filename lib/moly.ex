@@ -121,10 +121,10 @@ defmodule Moly do
       if first_term_value do
         Moly.Helper.get_in_from_keys(filtered_term, [0, :term_value]) || default
       else
-        filtered_term
+        filtered_term || default
       end
     else
-      term_data
+      term_data || default
     end
   end
 

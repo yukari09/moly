@@ -5,9 +5,12 @@ import EditorJS from '@editorjs/editorjs'
 import Header from "@editorjs/header"
 import List from '@editorjs/list'
 import Quote from '@editorjs/quote'
+import ImageTool from '@editorjs/image'
 import flatpickr from "flatpickr"
 import { DateTime } from "luxon"
 import Tagify from '@yaireo/tagify'
+
+let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 
 const get_document_el = (key) => {
   return document.querySelector(`[data-id="${key}"]`);
@@ -429,6 +432,18 @@ export const Editor = {
             captionPlaceholder: 'Quote\'s author'
           },
         },
+        image: {
+          class: ImageTool,
+          config: {
+            endpoints: {
+              byFile: '/upload-image', // Your backend file uploader endpoint
+              byUrl: '/fetch-url', // Your endpoint that provides uploading by Url
+            },
+            additionalRequestHeaders: {
+              "x-csrf-token": csrfToken
+            }
+          }
+        }
       },
       data: initialContent,
       onChange:  (api, event) => {
