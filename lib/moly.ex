@@ -63,13 +63,15 @@ defmodule Moly do
   def website_footer_column(level), do: website_term("website-footer-column-#{level}")
   def website_footer_column_keyword(level), do: website_term("website-footer-column-#{level}-keyword", true)
 
-  def website_assigns(), do: website_term("website-assigns", true, [])
+  def website_assigns(), do: website_term("website-assigns", false, [])
 
   def delete_website_cache(), do: cache_key("website") |> Moly.Utilities.cache_del()
 
   defp website_term(slug, first_term_value \\ false, default \\ nil) do
     get_terms_by_taxonomy("website", [term_slug: slug, first_term_value: first_term_value, default: default])
   end
+
+  def clean_website_cache(), do: cache_key("website") |> Moly.Utilities.cache_del()
 
   @doc """
   Get terms by taxonomy

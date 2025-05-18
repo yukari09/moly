@@ -1441,6 +1441,21 @@ defmodule MolyWeb.TailwindUI do
     """
   end
 
+  slot :header
+  slot :inner_block
+  def card(assigns) do
+    ~H"""
+    <div class="divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow-sm">
+      <div :if={@header} class="px-4 py-5 sm:px-6">
+        {render_slot(@header)}
+      </div>
+      <div class="px-4 py-5 sm:p-6">
+        {render_slot(@inner_block)}
+      </div>
+    </div>
+    """
+  end
+
   # attr(:class, :string, default: nil)
   # attr(:page_meta, :map, required: true)
   # attr(:current_url, :string, required: true)
