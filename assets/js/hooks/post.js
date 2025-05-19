@@ -6,6 +6,7 @@ import Header from "@editorjs/header"
 import List from '@editorjs/list'
 import Quote from '@editorjs/quote'
 import ImageTool from '@editorjs/image'
+// import LinkTool from '@editorjs/link'
 import flatpickr from "flatpickr"
 import { DateTime } from "luxon"
 import Tagify from '@yaireo/tagify'
@@ -423,7 +424,13 @@ export const Editor = {
           class: Header,
           inlineToolbar: true
         },
-        list: List,
+        list: {
+          class: EditorjsList,
+          inlineToolbar: true,
+          config: {
+            defaultStyle: 'unordered'
+          },
+        },
         quote: {
           class: Quote,
           inlineToolbar: true,
