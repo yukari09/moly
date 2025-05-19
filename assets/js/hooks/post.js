@@ -425,7 +425,7 @@ export const Editor = {
           inlineToolbar: true
         },
         list: {
-          class: EditorjsList,
+          class: List,
           inlineToolbar: true,
           config: {
             defaultStyle: 'unordered'
