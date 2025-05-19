@@ -1,7 +1,7 @@
 <% data = hd(@posts) %>
-<% data2 = Enum.slice(@posts, 1..4) %>
+<% data2 = Enum.slice(@posts, 1..5) %>
 <% data3 = 
-  Enum.slice(@posts, 5..59) 
+  Enum.slice(@posts, 6..59) 
   |> Enum.group_by(&({
       Moly.Helper.get_in_from_keys(&1, [:source, "category", 0, "name"]), 
       Moly.Helper.get_in_from_keys(&1, [:source, "category", 0, "slug"]),
@@ -44,7 +44,7 @@
                 class="flex items-start gap-4"
                 decoding="async"
                 fetchpriority="high"
-                image_class="rounded-md aspect-3/2"
+                image_class="rounded-md aspect-3/2 object-cover"
                 image_link_class="!w-1/3"
             >
                 <:title_slot>
@@ -84,7 +84,7 @@
         class="flex items-start gap-1 lg:gap-4 flex-row-reverse"
         decoding="async"
         fetchpriority="high"
-        image_class="rounded-md aspect-3/2"
+        image_class="rounded-md aspect-3/2 object-cover"
         image_link_class="!w-1/3 xl:!w-1/2"
     >
         <:title_slot>
@@ -120,7 +120,7 @@
         class=""
         decoding="async"
         fetchpriority="high"
-        image_class="rounded-md aspect-3/2"
+        image_class="rounded-md aspect-3/2 object-cover"
     >
         <:title_slot>
             <h3 class="font-medium lg:text-[24px] lg:leading-[32px] line-clamp-3 capitalize tracking-tight">{Moly.Helper.get_in_from_keys(data, [:source, "post_title"])}</h3>

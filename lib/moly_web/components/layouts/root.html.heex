@@ -7,7 +7,8 @@
     <.live_title suffix={assigns[:page_suffix] || " · #{Moly.website_name}"}>
       {assigns[:page_title] || Moly.website_title}
     </.live_title>
-    <link rel="icon" type="image/x-icon" href={Moly.website_favicon}>
+    <link rel="icon" type="image/png" href={Moly.website_favicon}>
+    <link rel="shortcut icon" href={Moly.website_favicon} type="image/png">
     <meta name="description" content={assigns[:page_description] || Moly.website_description} />
     <%= if assigns[:meta_tags] do %>
       <meta
@@ -30,7 +31,9 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
     <!--Extra Assigns-->
-    
+    <%= for %{term_value: assign} <- Moly.website_assigns() do %>
+    {raw assign}
+    <% end %>
   </head>
   <body class="min-h-[100vh]">
     {@inner_content}

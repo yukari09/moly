@@ -72,7 +72,7 @@ defmodule MolyWeb.AdminPostLive.FormField.PostCategories do
     <div id={@id}>
       <button
         type="button"
-        class="hover:bg-gray-50 border flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700 rounded-bl-none rounded-br-none"
+        class="hover:bg-gray-50 border flex items-center justify-between w-full text-left border-gray-100  p-2 gap-x-3 text-sm/6 font-semibold text-gray-700 rounded-tl-md rounded-tr-md"
         aria-controls="sub-menu-1"
         aria-expanded="false"
         phx-click={MolyWeb.AdminPostLive.SideBar.accordion("#sub-menu-2-icon", "#sub-menu-2")}
@@ -82,7 +82,7 @@ defmodule MolyWeb.AdminPostLive.FormField.PostCategories do
       <div class="space-y-2" id="sub-menu-2">
         <div
           id="term-taxonomy-category"
-          class="space-y-1 max-h-[180px] overflow-y-scroll border  px-4 py-2.5 rounded-sm border-t-0 rounded-br-md rounded-bl-md"
+          class="space-y-1 max-h-[180px] overflow-y-scroll border  px-4 py-2.5 border-gray-200 border-t-0 rounded-br-md rounded-bl-md"
         >
           <div>
             <.link

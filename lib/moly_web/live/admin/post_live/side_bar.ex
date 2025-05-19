@@ -133,7 +133,7 @@ defmodule MolyWeb.AdminPostLive.SideBar do
             <div>
               <button
                 type="button"
-                class="hover:bg-gray-50 border flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700 rounded-bl-none rounded-br-none"
+                class="hover:bg-gray-50 border border-gray-200 flex items-center justify-between w-full text-left rounded-md p-2 gap-x-3 text-sm/6 font-semibold text-gray-700 rounded-bl-none rounded-br-none"
                 aria-controls="sub-menu-3"
                 aria-expanded="false"
                 phx-click={accordion("#sub-menu-3-icon", "#sub-menu-3")}
@@ -141,7 +141,7 @@ defmodule MolyWeb.AdminPostLive.SideBar do
                 Tags <Lucideicons.chevron_up class="w-4 h-4" id="sub-menu-3-icon" />
               </button>
               <div
-                class="space-y-1  border px-4 py-2.5 rounded-sm border-t-0 rounded-br-md rounded-bl-md"
+                class="space-y-1  border border-gray-200 px-4 py-2.5  !border-t-0 rounded-br-md rounded-bl-md"
                 id="sub-menu-3"
               >
                 <div id="tagify-input-container" class="mt-2" phx-update="ignore">

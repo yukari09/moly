@@ -3,10 +3,9 @@ import CodeTool from '@editorjs/code'
 import Embed from '@editorjs/embed'
 import EditorJS from '@editorjs/editorjs'
 import Header from "@editorjs/header"
+import MolyImage from "./moly_image"
 import List from '@editorjs/list'
 import Quote from '@editorjs/quote'
-import ImageTool from '@editorjs/image'
-// import LinkTool from '@editorjs/link'
 import flatpickr from "flatpickr"
 import { DateTime } from "luxon"
 import Tagify from '@yaireo/tagify'
@@ -424,6 +423,13 @@ export const Editor = {
           class: Header,
           inlineToolbar: true
         },
+        image_moly: {
+          class: MolyImage,
+          inlineToolbar: true,
+          config: {
+            modal: "#editor-media-modal"
+          }
+        },
         list: {
           class: List,
           inlineToolbar: true,
@@ -439,18 +445,18 @@ export const Editor = {
             captionPlaceholder: 'Quote\'s author'
           },
         },
-        image: {
-          class: ImageTool,
-          config: {
-            endpoints: {
-              byFile: '/upload-image', // Your backend file uploader endpoint
-              byUrl: '/fetch-url', // Your endpoint that provides uploading by Url
-            },
-            additionalRequestHeaders: {
-              "x-csrf-token": csrfToken
-            }
-          }
-        }
+        // image: {
+        //   class: ImageTool,
+        //   config: {
+        //     endpoints: {
+        //       byFile: '/upload-image', // Your backend file uploader endpoint
+        //       byUrl: '/fetch-url', // Your endpoint that provides uploading by Url
+        //     },
+        //     additionalRequestHeaders: {
+        //       "x-csrf-token": csrfToken
+        //     }
+        //   }
+        // }
       },
       data: initialContent,
       onChange:  (api, event) => {
