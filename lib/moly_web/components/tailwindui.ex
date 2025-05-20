@@ -1443,6 +1443,7 @@ defmodule MolyWeb.TailwindUI do
 
   attr :header, :string, default: nil
   slot :inner_block
+  slot :footer
   def card(assigns) do
     ~H"""
     <div class="divide-y divide-gray-100 overflow-hidden rounded-lg bg-white shadow-sm">
@@ -1451,6 +1452,9 @@ defmodule MolyWeb.TailwindUI do
       </div>
       <div class="px-4 py-5 sm:p-6">
         {render_slot(@inner_block)}
+      </div>
+      <div :if={Enum.count(@footer) > 0} class="p-4">
+        {render_slot(@footer)}
       </div>
     </div>
     """

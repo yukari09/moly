@@ -30,41 +30,41 @@ defmodule MolyWeb.AdminDashboardLive do
         <.card header="WebSite">
           <.link phx-click={
             JS.push("clean-website-cache")
-          } class="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700">
+          } class="flex items-center gap-2 text-sm hover:text-gray-500">
             <Lucideicons.loader_circle id="clean-website-cache-loader-circle" class="size-4 animate-spin hidden phx-click-loading:block" />
             <Lucideicons.eraser id="clean-website-cache-loader-eraser" class="size-4 block phx-click-loading:hidden" />
             Clean Website Cache
           </.link>
         </.card>
 
-        <.card header="Services">
+        <.card header="Email Service">
           <ul class="text-sm divide-y divide-gray-200">
             <li class="space-y-2">
               <%!-- <div class="font-medium flex items-center gap-2">Email</div> --%>
-              <div class="text-gray-500">
+              <div class="">
                 <ul class="space-y-4">
                   <li :if={is_binary(value) || is_atom(value)} class="flex items-center gap-2" :for={{key, value} <- Application.get_env(:moly, Moly.Mailer)}>
-                    <span class="font-medium capitalize w-24">{key}:</span>
+                    <span class="capitalize w-24 font-medium">{key}</span>
                     <span>{JSON.encode!(value)}</span>
                   </li>
                   <li class="flex items-center gap-2">
-                    <span class="font-medium capitalize  w-24">Team Name:</span>
+                    <span class="capitalize  w-24 font-medium">Team Name</span>
                     <span>{Application.get_env(:moly, :team_name)}</span>
                   </li>
                   <li class="flex items-center gap-2">
-                    <span class="font-medium capitalize w-24">Support:</span>
+                    <span class="capitalize w-24 font-medium">Support</span>
                     <span>{Application.get_env(:moly, :support_email)}</span>
-                  </li>
-                  <li>
-                    <.button size="xs" variant="gray" phx-click="test-email">
-                      <Lucideicons.loader_circle id="clean-website-cache-loader-circle" class="size-3 animate-spin hidden phx-click-loading:block" />
-                      <span class="inline phx-click-loading:hidden">Test Email</span>
-                    </.button>
                   </li>
                 </ul>
               </div>
             </li>
           </ul>
+          <:footer>
+          <.button size="sm" variant="gray" phx-click="test-email">
+            <Lucideicons.loader_circle id="clean-website-cache-loader-circle-email" class="size-3 animate-spin hidden phx-click-loading:block" />
+            <span class="inline phx-click-loading:hidden">Send Test Email</span>
+          </.button>
+          </:footer>
         </.card>
       </div>
     </div>
