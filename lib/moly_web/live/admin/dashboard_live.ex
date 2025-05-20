@@ -43,16 +43,16 @@ defmodule MolyWeb.AdminDashboardLive do
               <%!-- <div class="font-medium flex items-center gap-2">Email</div> --%>
               <div class="text-gray-500">
                 <ul class="space-y-4">
-                  <li class="flex items-center gap-2" :for={{key, value} <- Application.get_env(:moly, Moly.Mailer)}>
-                    <span class="font-medium capitalize">{key}:</span>
-                    <span>{value}</span>
+                  <li :if={is_binary(value) || is_atom(value)} class="flex items-center gap-2" :for={{key, value} <- Application.get_env(:moly, Moly.Mailer)}>
+                    <span class="font-medium capitalize w-24">{key}:</span>
+                    <span>{JSON.encode!(value)}</span>
                   </li>
                   <li class="flex items-center gap-2">
-                    <span class="font-medium capitalize">Team Name:</span>
+                    <span class="font-medium capitalize  w-24">Team Name:</span>
                     <span>{Application.get_env(:moly, :team_name)}</span>
                   </li>
                   <li class="flex items-center gap-2">
-                    <span class="font-medium capitalize">Support Email:</span>
+                    <span class="font-medium capitalize w-24">Support:</span>
                     <span>{Application.get_env(:moly, :support_email)}</span>
                   </li>
                   <li>
