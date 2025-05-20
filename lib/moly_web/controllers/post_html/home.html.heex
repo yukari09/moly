@@ -27,8 +27,8 @@
           <p class="line-clamp-5 font-light text-base-content/50">{Moly.Helper.get_in_from_keys(data, [:source, "post_excerpt"])}</p>
         </:excerpt_slot>
         <:read_more_slot>
-          <div class="mt-4 md:mt-8">
-          <.link navigate={~p"/post/#{Moly.Helper.get_in_from_keys(data, [:source, "post_name"])}"} class="text-primary font-medium">READ MORE »</.link>
+          <div class="mt-4 md:mt-8 text-primary font-medium">
+          READ MORE »
           </div>
         </:read_more_slot>
     </MolyWeb.PageHtml.Components.post_card>
@@ -48,14 +48,14 @@
                 image_link_class="!w-1/3"
             >
                 <:title_slot>
-                  <h2 class="font-medium lg:text-xl leading-[26px] line-clamp-3 capitalize tracking-tight text-base-content">{Moly.Helper.get_in_from_keys(data, [:source, "post_title"])}</h2>
+                  <h2 class="font-medium lg:text-xl leading-[26px] line-clamp-2 capitalize tracking-tight text-base-content">{Moly.Helper.get_in_from_keys(data, [:source, "post_title"])}</h2>
                 </:title_slot>
                 <:excerpt_slot>
                     <p class="text-[15px] font-light text-base-content/50 hidden lg:line-clamp-2">{Moly.Helper.get_in_from_keys(data, [:source, "post_excerpt"])}</p>
                 </:excerpt_slot>
                 <:read_more_slot>
-                    <div>
-                    <.link class="text-primary/60 font-medium text-sm">READ MORE »</.link>
+                    <div class="text-primary/60 font-medium text-sm">
+                    READ MORE »
                     </div>
                 </:read_more_slot>
             </MolyWeb.PageHtml.Components.post_card>

@@ -24,6 +24,7 @@ defmodule Moly do
 
   def default_website_term_data() do
     [
+      %{name: "WebSite Theme", slug: "website-theme", term_taxonomy: [%{taxonomy: "website", description: "DaisyUI theme"}], term_meta: [%{term_key: "name", term_value: "light"}]},
       %{name: "WebSite Status", slug: "website-status", term_taxonomy: [%{taxonomy: "website", description: "Current status of this website, offline, pending, maintain, online"}], term_meta: [%{term_key: "name", term_value: "pending"}]},
       %{name: "WebSite Name", slug: "website-name", term_taxonomy: [%{taxonomy: "website", description: "The name of this website."}], term_meta: [%{term_key: "name", term_value: @website_name}]},
       %{name: "WebSite Title", slug: "website-title", term_taxonomy: [%{taxonomy: "website", description: "The title of this website."}], term_meta: [%{term_key: "name", term_value: @website_title}]},
@@ -49,6 +50,7 @@ defmodule Moly do
     ]
   end
 
+  def website_theme(), do: website_term("website-theme", true, "light")
   def website_status(), do: website_term("website-status", true, nil)
   def website_logo(), do: website_term("website-logo", true, @website_logo)
   def website_favicon(), do: website_term("website-favicon", true, @website_favicon)
