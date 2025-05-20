@@ -113,9 +113,15 @@ if config_env() == :prod do
   #   adapter: Swoosh.Adapters.Brevo,
   #   api_key: System.fetch_env!("BREVO_API_KEY")
 
+  # config :moly, Moly.Mailer,
+  #   adapter: Resend.Swoosh.Adapter,
+  #   api_key: System.fetch_env!("RESEND_API_KEY")
+
   config :moly, Moly.Mailer,
-    adapter: Resend.Swoosh.Adapter,
-    api_key: System.fetch_env!("RESEND_API_KEY")
+    adapter: Swoosh.Adapters.Mua,
+    relay: "mail.karian.one",
+    port: 25,
+    auth: [username: System.get_env("EMAIL_ADDRESS"), password: System.get_env("EMAIL_PASSWORD")]
 
   #
   # For this example you need include a HTTP client required by Swoosh API client.
@@ -136,8 +142,8 @@ if config_env() == :prod do
     email_group: System.get_env("EMAIL_GROUP"),
     cf_website_secret: System.get_env("CF_WEBSITE_SECRET"),
     cf_app_secret: System.get_env("CF_APP_SECRET"),
-    team_name: "Affinew",
-    support_email: "support@affinew.com"
+    team_name: System.get_env("TEAM_NAME"),
+    support_email: System.get_env("Support_EMAIL")
 
   config :ex_aws,
     region: System.get_env("AWS_REGION"),

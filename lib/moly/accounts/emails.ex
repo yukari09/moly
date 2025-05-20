@@ -94,6 +94,26 @@ defmodule Moly.Accounts.Emails do
     """)
   end
 
+  def deliver_email_for_test(email, _url) do
+    deliver(email, "Test Email – Please Ignore", """
+      <p>Hi,</p>
+      <p>
+        This is a test email sent to verify whether this email address is active and capable of receiving messages.
+      </p>
+      <p>
+        No action is required on your part. You can safely ignore this message.
+      </p>
+      <p>
+        Thank you and have a great day!
+      </p>
+      <p style="margin-top: 30px;">
+        Best regards,<br>
+        <strong>#{Application.get_env(:moly, :team_name)}</strong><br>
+        <a href="mailto:#{Application.get_env(:moly, :support_email)}">#{Application.get_env(:moly, :support_email)}</a>
+      </p>
+    """)
+  end
+
   # For simplicity, this module simply logs messages to the terminal.
   # You should replace it by a proper email or notification tool, such as:
   #

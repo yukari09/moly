@@ -1445,9 +1445,9 @@ defmodule MolyWeb.TailwindUI do
   slot :inner_block
   def card(assigns) do
     ~H"""
-    <div class="divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow-sm">
-      <div :if={@header} class="px-4 py-5 sm:px-6">
-        <h2 class="text-bold">{@header}</h2>
+    <div class="divide-y divide-gray-100 overflow-hidden rounded-lg bg-white shadow-sm">
+      <div :if={@header} class="p-4">
+        <h2 class="font-medium">{@header}</h2>
       </div>
       <div class="px-4 py-5 sm:p-6">
         {render_slot(@inner_block)}
