@@ -14,8 +14,8 @@
       </div>
       <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1">
-          <li class="focus-visible:bg-transparent px-2"><.link class="font-bold uppercase text-[13px] hover:bg-transparent hover:text-primary" navigate={~p"/"}>Home</.link></li>
-          <li class="focus-visible:bg-transparent px-2" :for={item <- navbar_item()}><.link class="font-bold uppercase text-[13px] hover:bg-transparent hover:text-primary" navigate={~p"/posts/#{item.slug}"}>{item.name}</.link></li>
+          <li class="focus-visible:bg-transparent"><.link class="font-bold uppercase text-[13px] hover:bg-transparent hover:text-primary" navigate={~p"/"}>Home</.link></li>
+          <li class="focus-visible:bg-transparent" :for={item <- navbar_item()}><.link class="font-bold uppercase text-[13px] hover:bg-transparent hover:text-primary" navigate={~p"/posts/#{item.slug}"}>{item.name}</.link></li>
         </ul>
       </div>
       <div class="navbar-end">

@@ -42,10 +42,11 @@ defmodule MolyWeb.AdminDashboardLive do
             <li class="space-y-2">
               <%!-- <div class="font-medium flex items-center gap-2">Email</div> --%>
               <div class="">
-                <ul class="space-y-4">
+                <ul class="space-y-2">
                   <li :if={is_binary(value) || is_atom(value)} class="flex items-center gap-2" :for={{key, value} <- Application.get_env(:moly, Moly.Mailer)}>
                     <span class="capitalize w-24 font-medium">{key}</span>
-                    <span>{JSON.encode!(value)}</span>
+                    <span :if={key != :password}>{value}</span>
+                    <span :if={key == :password}>******</span>
                   </li>
                   <li class="flex items-center gap-2">
                     <span class="capitalize  w-24 font-medium">Team Name</span>
