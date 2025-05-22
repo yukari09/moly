@@ -260,6 +260,41 @@
   --noise: 0;
 }
 
+@plugin "daisyui/theme" {
+  name: "gray";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: #ffffff;
+  --color-base-200: #F9F9F9;
+  --color-base-300: oklch(92% 0 0);
+  --color-base-content: #0c0c0c;
+  --color-primary: #111827;
+  --color-primary-content: oklch(98% 0.031 120.757);
+  --color-secondary: #60a5fa;
+  --color-secondary-content: oklch(97% 0.014 254.604);
+  --color-accent: oklch(62% 0.194 149.214);
+  --color-accent-content: oklch(98% 0.018 155.826);
+  --color-neutral: oklch(26% 0 0);
+  --color-neutral-content: oklch(98% 0 0);
+  --color-info: oklch(73.12% 0.1586 237.93);
+  --color-info-content: oklch(100% 0 0);
+  --color-success: oklch(70.38% 0.1931 149.73);
+  --color-success-content: oklch(100% 0 0);
+  --color-warning: oklch(85% 0.199 91.936);
+  --color-warning-content: oklch(100% 0 0);
+  --color-error: oklch(61.92% 0.2419 11.33);
+  --color-error-content: oklch(100% 0 0);
+  --radius-selector: 0rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
 @theme {
   --breakpoint-xs: 30rem;
   --font-sans: "Bricolage Grotesque", sans-serif;

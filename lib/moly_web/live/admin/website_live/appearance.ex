@@ -72,7 +72,7 @@ alias MolyWeb.DaisyUi
             <.inputs_for :let={term_meta} field={f[:term_meta]}>
               <input type="hidden" name={term_meta[:term_key].name} value="name" />
               <div class="md:max-w-2/3">
-                <.select field={term_meta[:term_value]} label="Theme" options={%{"light" => "Light", "purple" => "Purple", "red" => "Red", "green" => "Green", "orange" => "Orange", "yellow" => "Yellow", "cyan" => "Cyan"}} />
+                <.select field={term_meta[:term_value]} label="Theme" options={%{"light" => "Light", "purple" => "Purple", "red" => "Red", "green" => "Green", "orange" => "Orange", "yellow" => "Yellow", "cyan" => "Cyan", "gray" => "Gray"}} />
                 <p class="text-sm mt-2 text-gray-500">DaisyUi theme definite on app.css</p>
               </div>
             </.inputs_for>
