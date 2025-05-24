@@ -1,0 +1,271 @@
+  <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-red-600 rounded-full mb-6 animate-pulse-slow">
+                <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+            </div>
+            <h1 class="text-5xl font-bold text-white mb-4 tracking-tight">
+                YouTube Thumbnail 
+                <span class="bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-transparent">Grabber</span>
+            </h1>
+            <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                輕鬆獲取任何 YouTube 影片的高品質縮圖，支援多種解析度下載
+            </p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto">
+            <!-- Input Section -->
+            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 mb-8 border border-white/20 shadow-2xl">
+                <div class="mb-6">
+                    <label for="videoUrl" class="block text-lg font-semibold text-white mb-3">
+                        YouTube 影片網址
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="videoUrl" 
+                            placeholder="貼上 YouTube 影片連結... (例如: https://www.youtube.com/watch?v=VIDEO_ID)"
+                            class="w-full px-4 py-4 text-lg rounded-xl border border-gray-300 focus:ring-4 focus:ring-red-500/50 focus:border-red-500 transition-all duration-300 bg-white/90 backdrop-blur-sm placeholder-gray-500"
+                        >
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <button 
+                    onclick="extractThumbnails()" 
+                    class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl focus:ring-4 focus:ring-red-500/50 text-lg"
+                >
+                    <span class="flex items-center justify-center">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        獲取縮圖
+                    </span>
+                </button>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results" class="hidden">
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-2xl">
+                    <h2 class="text-3xl font-bold text-white mb-6 flex items-center">
+                        <svg class="w-8 h-8 mr-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        縮圖預覽
+                    </h2>
+                    
+                    <div id="videoInfo" class="mb-8 p-6 bg-white/5 rounded-xl border border-white/10">
+                        <!-- Video info will be inserted here -->
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Thumbnail options will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="hidden bg-red-500/20 backdrop-blur-lg border border-red-500/50 text-red-100 px-6 py-4 rounded-xl mb-6">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span id="errorText"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="max-w-6xl mx-auto mt-16">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center p-6 bg-white/5 backdrop-blur-lg rounded-xl border border-white/10">
+                    <div class="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">快速提取</h3>
+                    <p class="text-gray-300">瞬間獲取 YouTube 影片縮圖，無需等待</p>
+                </div>
+                
+                <div class="text-center p-6 bg-white/5 backdrop-blur-lg rounded-xl border border-white/10">
+                    <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">高品質</h3>
+                    <p class="text-gray-300">支援最高 1920x1080 解析度下載</p>
+                </div>
+                
+                <div class="text-center p-6 bg-white/5 backdrop-blur-lg rounded-xl border border-white/10">
+                    <div class="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">安全無憂</h3>
+                    <p class="text-gray-300">完全免費使用，不儲存任何個人資料</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function extractVideoId(url) {
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+                /youtube\.com\/watch\?.*v=([^&\n?#]+)/
+            ];
+            
+            for (let pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) return match[1];
+            }
+            return null;
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                errorDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        function extractThumbnails() {
+            const urlInput = document.getElementById('videoUrl');
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                showError('請輸入 YouTube 影片網址');
+                return;
+            }
+            
+            const videoId = extractVideoId(url);
+            if (!videoId) {
+                showError('請輸入有效的 YouTube 影片網址');
+                return;
+            }
+            
+            // Hide error message
+            document.getElementById('errorMessage').classList.add('hidden');
+            
+            // Show results
+            displayThumbnails(videoId);
+        }
+
+        function displayThumbnails(videoId) {
+            const resultsDiv = document.getElementById('results');
+            const videoInfoDiv = document.getElementById('videoInfo');
+            
+            // Video info section
+            videoInfoDiv.innerHTML = `
+                <div class="flex items-center space-x-4">
+                    <div class="w-24 h-16 bg-gray-700 rounded-lg overflow-hidden">
+                        <img src="https://img.youtube.com/vi/${videoId}/default.jpg" 
+                             alt="影片縮圖" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <p class="text-white font-semibold">影片 ID: ${videoId}</p>
+                        <p class="text-gray-300 text-sm">點擊下方縮圖進行下載</p>
+                    </div>
+                </div>
+            `;
+            
+            const thumbnailOptions = [
+                { 
+                    name: '預設縮圖', 
+                    url: `https://img.youtube.com/vi/${videoId}/default.jpg`,
+                    size: '120×90',
+                    quality: '低'
+                },
+                { 
+                    name: '中等品質', 
+                    url: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+                    size: '320×180',
+                    quality: '中'
+                },
+                { 
+                    name: '高品質', 
+                    url: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                    size: '480×360',
+                    quality: '高'
+                },
+                { 
+                    name: '標準清晰度', 
+                    url: `https://img.youtube.com/vi/${videoId}/sddefault.jpg`,
+                    size: '640×480',
+                    quality: '高'
+                },
+                { 
+                    name: '最高品質', 
+                    url: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                    size: '1920×1080',
+                    quality: '最高'
+                }
+            ];
+            
+            const thumbnailsGrid = resultsDiv.querySelector('.grid');
+            thumbnailsGrid.innerHTML = thumbnailOptions.map(option => `
+                <div class="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
+                    <div class="aspect-video bg-gray-800 rounded-lg overflow-hidden mb-4 group-hover:scale-105 transition-transform duration-300">
+                        <img src="${option.url}" 
+                             alt="${option.name}" 
+                             class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                             onclick="downloadThumbnail('${option.url}', '${videoId}_${option.name}.jpg')"
+                             onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-gray-400\\'>圖片載入失敗</div>'">
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-white font-semibold mb-2">${option.name}</h3>
+                        <div class="flex justify-between text-sm text-gray-300 mb-3">
+                            <span>尺寸: ${option.size}</span>
+                            <span class="px-2 py-1 rounded-full text-xs ${
+                                option.quality === '最高' ? 'bg-green-500/20 text-green-300' :
+                                option.quality === '高' ? 'bg-blue-500/20 text-blue-300' :
+                                option.quality === '中' ? 'bg-yellow-500/20 text-yellow-300' :
+                                'bg-gray-500/20 text-gray-300'
+                            }">${option.quality}品質</span>
+                        </div>
+                        <button onclick="downloadThumbnail('${option.url}', '${videoId}_${option.name}.jpg')" 
+                                class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            下載
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            resultsDiv.classList.remove('hidden');
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function downloadThumbnail(url, filename) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Allow Enter key to trigger extraction
+        document.getElementById('videoUrl').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                extractThumbnails();
+            }
+        });
+    </script>

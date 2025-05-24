@@ -87,6 +87,8 @@ defmodule MolyWeb.Router do
     post("/upload-image", PageController, :upload_image)
 
     live("/website/register-initial-user", Website.RegisterInitialUser)
+    #for youtubechannelhub
+    get("/youtube-thumbnail-grabber", YoutubeChannelHub.PageController, :index)
   end
 
   scope "/admin", MolyWeb do

@@ -1,5 +1,5 @@
 defmodule MolyWeb.Website.RegisterInitialUser do
-alias Hex.API.User
+
   use MolyWeb, :live_view
 
   require Logger
