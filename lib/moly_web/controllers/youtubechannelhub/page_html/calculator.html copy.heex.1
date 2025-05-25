@@ -1,0 +1,454 @@
+<div x-data="{
+  channelUrl: '',
+  dailyViews: 30000,
+  cpm: 5,
+  
+  // Channel data (mock data for demo)
+  channelData: {
+    subscribers: 0,
+    totalViews: 0,
+    country: '',
+    creationDate: '',
+    monthlyEarnings: 0,
+    sponsorshipPrice: 0
+  },
+  
+  // Computed properties
+  get viewsPerMonth() {
+    return this.dailyViews * 30;
+  },
+  
+  get viewsPerYear() {
+    return this.dailyViews * 365;
+  },
+  
+  get dailyEarnings() {
+    return (this.dailyViews * this.cpm / 1000).toFixed(2);
+  },
+  
+  get monthlyEarnings() {
+    return (this.viewsPerMonth * this.cpm / 1000).toFixed(0);
+  },
+  
+  get yearlyEarnings() {
+    return (this.viewsPerYear * this.cpm / 1000).toFixed(0);
+  },
+  
+  // Format numbers with commas
+  formatNumber(num) {
+    return new Intl.NumberFormat().format(num);
+  },
+  
+  // Simulate channel data fetch
+  async fetchChannelData() {
+    if (!this.channelUrl) return;
+    
+    // Mock data - in real implementation, this would call YouTube API
+    this.channelData = {
+      subscribers: Math.floor(Math.random() * 1000000) + 10000,
+      totalViews: Math.floor(Math.random() * 50000000) + 1000000,
+      country: 'United States',
+      creationDate: '2020-03-15',
+      monthlyEarnings: Math.floor(Math.random() * 5000) + 500,
+      sponsorshipPrice: Math.floor(Math.random() * 2000) + 200
+    };
+  }
+}">
+
+<!-- Hero Section -->
+<div class="hero bg-primary text-primary-content min-h-screen">
+  <div class="hero-content text-center">
+    <div class="max-w-md">
+      <div class="avatar">
+        <div class="w-24 rounded-full bg-primary-content text-primary">
+          <div class="flex items-center justify-center h-full">
+            <i class="fab fa-youtube text-4xl"></i>
+          </div>
+        </div>
+      </div>
+      <h1 class="text-5xl font-bold">YouTube Money Calculator</h1>
+      <p class="py-6">Calculate your potential YouTube earnings with real-time analytics and industry-standard metrics.</p>
+      <a href="#calculator" class="btn btn-secondary btn-lg">Start Calculating</a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Calculator Section -->
+<div id="calculator" class="container mx-auto px-4 py-16 max-w-7xl">
+  
+  <!-- Section Header -->
+  <div class="text-center mb-12">
+    <h2 class="text-4xl font-bold mb-4">Revenue Calculator</h2>
+    <p class="text-xl text-base-content/70">Enter your channel metrics for precise earnings projections</p>
+  </div>
+  
+  <!-- Calculator Grid -->
+  <div class="grid lg:grid-cols-3 gap-8">
+  
+    <!-- Left Column - Input Controls -->
+    <div class="space-y-6">
+      
+      <!-- Channel Analysis Card - Primary Input -->
+      <div class="card bg-base-100 shadow-xl border-l-4 border-l-error">
+        <div class="card-body">
+          <h3 class="card-title text-lg">
+            <i class="fab fa-youtube text-error text-xl"></i>
+            Channel Analysis
+          </h3>
+          
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">YouTube Channel URL</span>
+            </label>
+            <div class="join">
+              <input 
+                type="text" 
+                x-model="channelUrl"
+                placeholder="https://youtube.com/@your-channel"
+                class="input input-bordered join-item flex-1" 
+              />
+              <button 
+                @click="fetchChannelData()"
+                class="btn btn-primary join-item">
+                <i class="fas fa-search"></i>
+                Analyze
+              </button>
+            </div>
+          </div>
+          
+          <!-- Channel Stats Display -->
+          <div x-show="channelData.subscribers > 0" x-transition>
+            <div class="divider">Channel Statistics</div>
+            
+            <div class="stats stats-vertical shadow">
+              <div class="stat">
+                <div class="stat-title">Subscribers</div>
+                <div class="stat-value text-primary" x-text="formatNumber(channelData.subscribers)"></div>
+              </div>
+              
+              <div class="stat">
+                <div class="stat-title">Total Views</div>
+                <div class="stat-value text-secondary" x-text="formatNumber(channelData.totalViews)"></div>
+              </div>
+              
+              <div class="stat">
+                <div class="stat-title">Monthly Revenue</div>
+                <div class="stat-value text-accent">$<span x-text="formatNumber(channelData.monthlyEarnings)"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Metrics Card - Secondary Input -->
+      <div class="card bg-base-100 shadow-lg border border-info/20">
+        <div class="card-body">
+          <h3 class="card-title text-base">
+            <i class="fas fa-chart-line text-info"></i>
+            Performance Metrics
+          </h3>
+          
+          <!-- Daily Views Control -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Daily Views</span>
+              <span class="badge badge-primary badge-lg" x-text="formatNumber(dailyViews)"></span>
+            </label>
+            <input 
+              type="range" 
+              x-model="dailyViews"
+              min="0" 
+              max="150000" 
+              step="1000"
+              class="range range-primary" 
+            />
+            <div class="w-full flex justify-between text-xs px-2">
+              <span>0</span>
+              <span>37.5K</span>
+              <span>75K</span>
+              <span>112.5K</span>
+              <span>150K</span>
+            </div>
+          </div>
+
+          <!-- CPM Control -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">CPM (Cost Per Mille)</span>
+              <span class="badge badge-secondary badge-lg">$<span x-text="cpm"></span></span>
+            </label>
+            <input 
+              type="range" 
+              x-model="cpm"
+              min="0" 
+              max="20" 
+              step="0.1"
+              class="range range-secondary" 
+            />
+            <div class="w-full flex justify-between text-xs px-2">
+              <span>$0</span>
+              <span>$5</span>
+              <span>$10</span>
+              <span>$15</span>
+              <span>$20</span>
+            </div>
+          </div>
+
+          <!-- Quick Metrics -->
+          <div class="stats stats-vertical shadow bg-base-200">
+            <div class="stat">
+              <div class="stat-title">Monthly Views</div>
+              <div class="stat-value text-info" x-text="formatNumber(viewsPerMonth)"></div>
+            </div>
+            <div class="stat">
+              <div class="stat-title">Yearly Views</div>
+              <div class="stat-value text-warning" x-text="formatNumber(viewsPerYear)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Column - Earnings Dashboard -->
+    <div class="space-y-6">
+      
+      <!-- Monthly Revenue - Most Important (Largest) -->
+      <div class="card bg-primary text-primary-content shadow-2xl">
+        <div class="card-body text-center py-12">
+          <div class="stat-figure text-primary-content mb-4">
+            <i class="fas fa-calendar-alt text-4xl opacity-80"></i>
+          </div>
+          <h3 class="text-lg font-medium opacity-90 mb-2">Monthly Revenue</h3>
+          <div class="text-6xl font-black mb-2">$<span x-text="monthlyEarnings"></span></div>
+          <p class="text-sm opacity-75">Primary income projection</p>
+        </div>
+      </div>
+
+      <!-- Daily & Annual Revenue - Secondary Importance -->
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Daily Earnings -->
+        <div class="card bg-success text-success-content shadow-lg">
+          <div class="card-body text-center py-8">
+            <div class="stat-figure text-success-content mb-3">
+              <i class="fas fa-calendar-day text-2xl opacity-80"></i>
+            </div>
+            <h4 class="text-sm font-medium opacity-90 mb-1">Daily</h4>
+            <div class="text-3xl font-bold mb-1">$<span x-text="dailyEarnings"></span></div>
+            <p class="text-xs opacity-75">Per day</p>
+          </div>
+        </div>
+
+        <!-- Yearly Earnings -->
+        <div class="card bg-warning text-warning-content shadow-lg">
+          <div class="card-body text-center py-8">
+            <div class="stat-figure text-warning-content mb-3">
+              <i class="fas fa-calendar text-2xl opacity-80"></i>
+            </div>
+            <h4 class="text-sm font-medium opacity-90 mb-1">Annual</h4>
+            <div class="text-3xl font-bold mb-1">$<span x-text="yearlyEarnings"></span></div>
+            <p class="text-xs opacity-75">Per year</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue Breakdown - Tertiary Information -->
+      <div class="card bg-base-100 shadow-md border border-base-300">
+        <div class="card-body py-6">
+          <h4 class="card-title text-base mb-4">
+            <i class="fas fa-chart-pie text-info text-sm"></i>
+            Revenue Breakdown
+          </h4>
+          
+          <div class="space-y-3">
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-base-content/70">Revenue per view</span>
+              <span class="font-semibold">$<span x-text="(cpm/1000).toFixed(4)"></span></span>
+            </div>
+            
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-base-content/70">Views needed for $100</span>
+              <span class="font-semibold" x-text="formatNumber(Math.ceil(100000/cpm))"></span>
+            </div>
+            
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-base-content/70">Days to reach $1,000</span>
+              <span class="font-semibold" x-text="Math.ceil(1000/dailyEarnings)"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column - Additional Information -->
+    <div class="space-y-6">
+      
+      <!-- Top Countries CPM - Reference Data -->
+      <div class="card bg-accent/5 shadow-md border border-accent/20">
+        <div class="card-body py-5">
+          <h3 class="card-title text-base">
+            <i class="fas fa-globe text-accent text-sm"></i>
+            Top CPM Countries
+          </h3>
+          <p class="text-xs text-base-content/60 mb-3">2025 Market Data</p>
+          
+          <div class="space-y-1.5">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">🇺🇸</span>
+                <span class="text-xs text-base-content/80">USA</span>
+              </div>
+              <span class="badge badge-success badge-sm">$10.26</span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">🇦🇺</span>
+                <span class="text-xs text-base-content/80">Australia</span>
+              </div>
+              <span class="badge badge-success badge-sm">$7.67</span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">🇳🇴</span>
+                <span class="text-xs text-base-content/80">Norway</span>
+              </div>
+              <span class="badge badge-success badge-sm">$7.03</span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">🇨🇭</span>
+                <span class="text-xs text-base-content/80">Switzerland</span>
+              </div>
+              <span class="badge badge-success badge-sm">$6.89</span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">🇬🇧</span>
+                <span class="text-xs text-base-content/80">UK</span>
+              </div>
+              <span class="badge badge-success badge-sm">$6.53</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Insights - Supporting Data -->
+      <div class="card bg-base-200/50 shadow-sm border border-base-300">
+        <div class="card-body py-4">
+          <h3 class="card-title text-sm">
+            <i class="fas fa-chart-bar text-neutral text-xs"></i>
+            Key Insights
+          </h3>
+          
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-base-content/70">Revenue/view</span>
+              <span class="badge badge-outline badge-xs">$<span x-text="(cpm/1000).toFixed(4)"></span></span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-base-content/70">Views for $100</span>
+              <span class="badge badge-outline badge-xs" x-text="formatNumber(Math.ceil(100000/cpm))"></span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-base-content/70">Days to $1000</span>
+              <span class="badge badge-outline badge-xs" x-text="Math.ceil(1000/dailyEarnings)"></span>
+            </div>
+            
+            <div class="divider text-xs my-2">Growth Potential</div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-base-content/70">2x Growth</span>
+              <span class="badge badge-info badge-xs">$<span x-text="(dailyEarnings * 2).toFixed(2)"></span>/day</span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-base-content/70">10x Growth</span>
+              <span class="badge badge-warning badge-xs">$<span x-text="(dailyEarnings * 10).toFixed(0)"></span>/day</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ Section -->
+<div class="bg-base-200 py-16">
+  <div class="container mx-auto px-4 max-w-4xl">
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+      <p class="text-xl text-base-content/70">Everything you need to know about YouTube monetization</p>
+    </div>
+    
+    <div class="space-y-4">
+      <div class="collapse collapse-arrow bg-base-100">
+        <input type="radio" name="faq-accordion" checked="checked" /> 
+        <div class="collapse-title text-xl font-medium">
+          What is CPM and how does it affect earnings?
+        </div>
+        <div class="collapse-content"> 
+          <p>CPM (Cost Per Mille) represents the amount advertisers pay for 1,000 ad impressions. Higher CPM rates directly correlate with increased revenue per view, varying significantly based on audience location, content category, and advertiser demand.</p>
+        </div>
+      </div>
+      
+      <div class="collapse collapse-arrow bg-base-100">
+        <input type="radio" name="faq-accordion" /> 
+        <div class="collapse-title text-xl font-medium">
+          How accurate are these revenue estimates?
+        </div>
+        <div class="collapse-content"> 
+          <p>Our estimates are based on industry averages and can vary by ±30-50%. Actual earnings depend on audience demographics, watch time, engagement rates, content category, and seasonal advertising trends.</p>
+        </div>
+      </div>
+      
+      <div class="collapse collapse-arrow bg-base-100">
+        <input type="radio" name="faq-accordion" /> 
+        <div class="collapse-title text-xl font-medium">
+          What factors influence YouTube monetization?
+        </div>
+        <div class="collapse-content"> 
+          <p>Key factors include audience geographic location, content niche, video length, engagement rates, subscriber count, upload consistency, seasonal trends, and adherence to ad-friendly content guidelines.</p>
+        </div>
+      </div>
+      
+      <div class="collapse collapse-arrow bg-base-100">
+        <input type="radio" name="faq-accordion" /> 
+        <div class="collapse-title text-xl font-medium">
+          When do YouTube creators receive payments?
+        </div>
+        <div class="collapse-content"> 
+          <p>YouTube processes payments monthly between the 21st-26th, provided creators have reached the $100 minimum payment threshold and completed all required tax information and verification steps.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- YouTube Income Strategy 2025 -->
+<div class="hero bg-neutral text-neutral-content">
+  <div class="hero-content text-center">
+    <div class="max-w-md">
+      <div class="avatar">
+        <div class="w-16 rounded-full bg-neutral-content text-neutral">
+          <div class="flex items-center justify-center h-full">
+            <i class="fas fa-rocket text-2xl"></i>
+          </div>
+        </div>
+      </div>
+      <h2 class="text-3xl font-bold">YouTube Income Strategy 2025</h2>
+      <p class="py-6">Comprehensive guide covering algorithm optimization, content strategies, audience building, and revenue diversification techniques for maximum YouTube success in 2025.</p>
+      <button class="btn btn-primary" disabled>
+        <i class="fas fa-bell"></i>
+        Notify When Available
+      </button>
+      <p class="text-sm mt-2 opacity-70">Coming soon - Join our waitlist for early access</p>
+    </div>
+  </div>
+</div>
+
+</div>

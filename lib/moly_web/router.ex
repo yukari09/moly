@@ -89,6 +89,7 @@ defmodule MolyWeb.Router do
     live("/website/register-initial-user", Website.RegisterInitialUser)
     #for youtubechannelhub
     get("/youtube-thumbnail-grabber", YoutubeChannelHub.PageController, :index)
+    get("/youtube-income-estimator-pro", YoutubeChannelHub.PageController, :calculator)
   end
 
   scope "/admin", MolyWeb do
