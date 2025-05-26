@@ -3,7 +3,7 @@ import CodeTool from '@editorjs/code'
 import Embed from '@editorjs/embed'
 import EditorJS from '@editorjs/editorjs'
 import Header from "@editorjs/header"
-import MolyImage from "./moly_image"
+import ImageTool from '@editorjs/image'
 import List from '@editorjs/list'
 import Quote from '@editorjs/quote'
 import flatpickr from "flatpickr"
@@ -423,11 +423,16 @@ export const Editor = {
           class: Header,
           inlineToolbar: true
         },
-        image_moly: {
-          class: MolyImage,
-          inlineToolbar: true,
+        image: {
+          class: ImageTool,
           config: {
-            modal: "#editor-media-modal"
+            additionalRequestHeaders: {
+              "x-csrf-token": csrfToken
+            },
+            endpoints: {
+              byFile: '/upload-file', // Your backend file uploader endpoint
+              byUrl: '/fetch-url', // Your endpoint that provides uploading by Url
+            }
           }
         },
         list: {

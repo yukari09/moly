@@ -5,6 +5,7 @@ defmodule Moly.Helper do
 
   require Logger
 
+  @doc false
   def get_object(filename) do
     bucket = load_s3_config(:bucket)
 
@@ -32,6 +33,7 @@ defmodule Moly.Helper do
   end
 
 
+  @doc false
   def put_object(filename_or_entry, body_or_path, bucket_prefix \\ "")
       when is_map(filename_or_entry) or is_binary(filename_or_entry) do
     filename =
@@ -63,6 +65,7 @@ defmodule Moly.Helper do
     end)
   end
 
+  @doc false
   def remove_object(nil), do: nil
   def remove_object(filename) do
     bucket = load_s3_config(:bucket)
@@ -77,6 +80,7 @@ defmodule Moly.Helper do
     end)
   end
 
+  @doc false
   def presign_upload(%Phoenix.LiveView.UploadEntry{} = upload_entry, socket) do
     config = load_s3_config()
     bucket = Map.get(config, :bucket)
@@ -90,7 +94,6 @@ defmodule Moly.Helper do
 
     {:ok, %{uploader: "S3", key: key, url: url}, socket}
   end
-
 
   @doc """
     [imagor](https://github.com/cshum/imagor)
@@ -106,6 +109,7 @@ defmodule Moly.Helper do
     image_src(filename, opts)
   end
 
+  @doc false
   def image_src(filename, opts) do
     with {:ok, addr} = Application.fetch_env(:moly, :imagor_endpoint),
          {:ok, secret} = Application.fetch_env(:moly, :imagor_secret) do
@@ -116,8 +120,7 @@ defmodule Moly.Helper do
     end
   end
 
-
-
+  @doc false
   defp hash(path, secret) do
     hash =
       :crypto.mac(:hmac, :sha, secret, path)
@@ -132,6 +135,39 @@ defmodule Moly.Helper do
   def s3_file_with_domain(filename),
     do: "#{load_s3_config(:domain_scheme)}://#{load_s3_config(:domain)}/#{filename}"
 
+  @doc """
+  Create a type of media post by entry(Phoenix.LiveView.UploadEntry)
+  """
+  def create_media_post_by_entry(entry, file_path, actor) do
+    case upload_entry_information(entry, file_path) do
+      %{mime_type: mime_type, file: file, filename: filename, filesize: filesize} = meta_data ->
+        client_name_with_extension = Moly.Helper.extract_filename_without_extension(entry.client_name)
+
+        metas =
+          [
+            %{meta_key: :attached_file, meta_value: filename},
+            %{meta_key: :attachment_filesize, meta_value: "#{filesize}"},
+            %{meta_key: :attachment_metadata, meta_value: JSON.encode!(meta_data)},
+            %{meta_key: :attachment_image_alt, meta_value: client_name_with_extension},
+            %{meta_key: :attachment_image_caption, meta_value: client_name_with_extension}
+          ]
+
+        attrs = %{
+          post_title: client_name_with_extension,
+          post_mime_type: mime_type,
+          guid: file,
+          post_content: "",
+          metas: metas
+        }
+
+        {:ok, _media} = Moly.Contents.create_media(attrs, actor: actor)
+
+        attrs
+      :error -> :error
+    end
+  end
+
+  @doc false
   def upload_entry_information(
         %Phoenix.LiveView.UploadEntry{client_type: mime_type} = entry,
         file_path
@@ -162,6 +198,7 @@ defmodule Moly.Helper do
     end
   end
 
+  @doc false
   def entry_information("image" <> _, width, height, _, filename) do
     original_ratio = width / height
 
@@ -190,10 +227,12 @@ defmodule Moly.Helper do
     %{file: image_resize(filename), sizes: sizes}
   end
 
+  @doc false
   def entry_information("video" <> _, _, _, duration, filename) do
     %{file: s3_file_with_domain(filename), duration: duration}
   end
 
+  @doc false
   def ffprobe(media_path) do
     FLAME.call(Moly.SamplePool, fn ->
       case System.cmd(
@@ -206,11 +245,13 @@ defmodule Moly.Helper do
     end)
   end
 
+  @doc false
   defp entry_filename(%Phoenix.LiveView.UploadEntry{} = upload_entry) do
     [upload_entry.client_type, upload_entry.uuid <> Path.extname(upload_entry.client_name)]
     |> Path.join()
   end
 
+  @doc false
   defp load_s3_config(key \\ nil) do
     config = ExAws.Config.new(:s3)
     (key && Map.get(config, key)) || config
@@ -241,6 +282,7 @@ defmodule Moly.Helper do
     |> List.to_string()
   end
 
+  @doc false
   def get_youtube_id(url) do
     pattern =
       ~r/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([\w-]{11})/
@@ -251,6 +293,7 @@ defmodule Moly.Helper do
     end
   end
 
+  @doc false
   def extract_filename_without_extension(filename) do
     filename
     |> Path.basename()
@@ -259,6 +302,7 @@ defmodule Moly.Helper do
     |> Enum.join(".")
   end
 
+  @doc false
   def format_duration(duration) when is_binary(duration) do
     case String.contains?(duration, ".") do
       true ->
@@ -272,11 +316,14 @@ defmodule Moly.Helper do
     end
   end
 
+  @doc false
   def format_duration(_), do: 0
 
+  @doc false
   def is_video_mime_type(mime_type), do: String.contains?(mime_type, "video")
   def is_image_mime_type(mime_type), do: String.contains?(mime_type, "image")
 
+  @doc false
   def convert_map(map) do
     map
     |> Enum.map(fn
@@ -323,14 +370,17 @@ defmodule Moly.Helper do
     ago
   end
 
+  @doc false
   def timestamp2datetime(timestamp) when is_float(timestamp) do
     trunc(timestamp)
     |> Timex.from_unix()
     |> Timex.format!("{h24}:{0m}  {D},{Mshort} {YYYY}")
   end
 
+  @doc false
   def timestamp2datetime(_), do: ""
 
+  @doc false
   def format_es_date(data_str, format \\ "{Mfull} {D}, {YYYY}")
   def format_es_date(nil, _format), do: nil
   def format_es_date(data_str, format) do
@@ -338,6 +388,7 @@ defmodule Moly.Helper do
     |> Timex.format!(format)
   end
 
+  @doc false
   def get_in_from_keys(map_or_list, keys, default \\ nil) do
     Enum.reduce_while(keys, map_or_list, fn key, acc ->
       value =
@@ -352,6 +403,7 @@ defmodule Moly.Helper do
     end)
   end
 
+  @doc false
   def is_url?(str) do
     regex =
       ~r/^(https?|ftp):\/\/([a-z0-9-]+\.)+[a-z]{2,6}(:\d+)?(\/[^\s]*)?(\?[^\s]*)?(#[^\s]*)?$/i
@@ -359,8 +411,10 @@ defmodule Moly.Helper do
     Regex.match?(regex, str)
   end
 
+  @doc false
   def bits_to_readable(bits) when is_binary(bits), do: bits_to_readable(String.to_integer(bits))
 
+  @doc false
   def bits_to_readable(bits) when is_integer(bits) do
     cond do
       bits >= 1_000_000_000 -> "#{div(bits, 1_000_000_000)} GB"
@@ -370,8 +424,10 @@ defmodule Moly.Helper do
     end
   end
 
+  @doc false
   def bits_to_readable(nil), do: 0
 
+  @doc false
   def format_to_int(string, decimal_places) when is_binary(string) do
     case Float.parse(string) do
       {float_value, _} -> format_to_int(float_value, decimal_places)
@@ -379,9 +435,11 @@ defmodule Moly.Helper do
     end
   end
 
+  @doc false
   def format_to_int(float_string, decimal_places) when is_float(float_string),
     do: :erlang.float_to_binary(float_string, decimals: decimal_places)
 
+  @doc false
   def validate_cf(token, dev_mod \\ false) do
     secret_key = dev_mod && "1x0000000000000000000000000000000AA" || Application.get_env(:moly, :cf_app_secret)
     url = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
@@ -405,6 +463,7 @@ defmodule Moly.Helper do
     end
   end
 
+  @doc false
   def pagination_meta(total, page_size, page, show_item)
       when is_integer(total) and is_integer(page_size) and is_integer(page) and
              is_integer(show_item) do
@@ -434,6 +493,16 @@ defmodule Moly.Helper do
       end_row: end_row,
       total: total,
       total_pages: total_pages
+    }
+  end
+
+  @doc false
+  def plug_upload_to_phoenix_liveview_upload_entry(%Plug.Upload{path: path, content_type: content_type, filename: filename}) do
+    %Phoenix.LiveView.UploadEntry{
+      client_name: filename,
+      client_type: content_type,
+      uuid: Ash.UUID.generate(),
+      client_size: File.stat!(path).size
     }
   end
 end

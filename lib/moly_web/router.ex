@@ -84,7 +84,7 @@ defmodule MolyWeb.Router do
     get("/posts/:category_slug", PostController, :category)
     get("/post/:post_name", PostController, :view)
 
-    post("/upload-image", PageController, :upload_image)
+    post("/upload-file", PageController, :upload_file)
 
     live("/website/register-initial-user", Website.RegisterInitialUser)
     #for youtubechannelhub
