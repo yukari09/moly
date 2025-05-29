@@ -84,7 +84,8 @@ defmodule Moly.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:dns_cluster, "~> 0.2"},
-      {:bandit, "~> 1.6.11"}
+      {:bandit, "~> 1.6.11"},
+      {:req, "~> 0.5.0"}
     ]
   end
 

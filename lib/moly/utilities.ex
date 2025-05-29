@@ -20,5 +20,25 @@ defmodule Moly.Utilities do
       fetched_value -> fetched_value
     end
   end
+  @doc """
+  This function is used to hash a string to a short id.
+  It replaces all [ and ] with -
+  Example:
+  "Hello [World]" -> "Hello-World"
+  "Hello [World] [Test]" -> "Hello-World-Test"
+  "Hello [World] [Test] [Test2]" -> "Hello-World-Test-Test2"
+  "Hello [World] [Test] [Test2] [Test3]" -> "Hello-World-Test-Test2-Test3"
+  """
   def hash_str_id(str), do: Regex.replace(~r/\[|\]/, str, "-")
+
+  @doc """
+  tag_strategy_name -> Tag Strategy Value
+  """
+  def key_to_name(key) do
+    String.replace(key, "_", " ")
+    |> String.split(" ")
+    |> Enum.map(&String.capitalize/1)
+    |> Enum.join(" ")
+  end
+
 end

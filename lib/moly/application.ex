@@ -14,7 +14,17 @@ defmodule Moly.Application do
       {Oban, Application.fetch_env!(:moly, Oban)},
       {Phoenix.PubSub, name: Moly.PubSub},
       # Start the Finch HTTP client for sending emails
-      {Finch, name: Moly.Finch},
+      {Finch, name: Moly.Finch, pools: %{
+        :default => [
+          size: 50,
+          count: 10,
+          conn_opts: [
+            transport_opts: [
+              timeout: 300_000
+            ]
+          ]
+        ]
+      }},
       # Start a worker by calling: Moly.Worker.start_link(arg)
       # {Moly.Worker, arg},
       # Start to serve requests, typically the last entry

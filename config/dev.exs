@@ -99,7 +99,8 @@ config :moly,
   cf_app_secret: "1x0000000000000000000000000000000AA",
   team_name: "Moly",
   support_email: "support@moly.com",
-  env: :dev
+  env: :dev,
+  openrouter_api_key: "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"
 
 config :ex_aws,
   region: "us-east-1",

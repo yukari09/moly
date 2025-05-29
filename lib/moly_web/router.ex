@@ -84,12 +84,21 @@ defmodule MolyWeb.Router do
     get("/posts/:category_slug", PostController, :category)
     get("/post/:post_name", PostController, :view)
 
+    post("/page/cf-validation", PageController, :cf_validation)
     post("/upload-file", PageController, :upload_file)
 
     live("/website/register-initial-user", Website.RegisterInitialUser)
-    #for youtubechannelhub
+
+
+  end
+
+  #for youtubechannelhub
+  scope "/", MolyWeb do
+    pipe_through([:browser])
     get("/youtube-thumbnail-grabber", YoutubeChannelHub.PageController, :index)
     get("/youtube-income-estimator-pro", YoutubeChannelHub.PageController, :calculator)
+    get("/youtube-tag-generator", YoutubeChannelHub.PageController, :tag_generator)
+    post("/youtube-tag-generator-result", YoutubeChannelHub.PageController, :tag_generator_result)
   end
 
   scope "/admin", MolyWeb do

@@ -1,0 +1,246 @@
+<%
+reviews = [
+  %{
+    username: "Sophia Carter",
+    date: "2024-09-15",
+    rating: 5,
+    avatar: ~p"/images/avatar.png",
+    description: "TubeTagPilot has revolutionized my YouTube strategy! The tags are incredibly effective, and my video views have skyrocketed. Highly recommend!",
+  },
+  %{
+    username: "Ethan Bennett",
+    date: "2025-05-22",
+    rating: 4,
+    avatar: ~p"/images/avatar.png",
+    description: "Great tool for generating tags quickly. The suggestions are relevant, and it saves me a lot of time. Could use a few more customization options.",
+  },
+  %{
+    username: "Olivia Hayes",
+    date: "2023-11-05",
+    rating: 5,
+    avatar: ~p"/images/avatar.png",
+    description: "I love how easy it is to use TubeTagPilot. The AI is smart, and the results are fantastic. My videos are now reaching a wider audience.",
+  }
+]
+%>
+
+
+<!-- HERO -->
+<section class="bg-white min-h-screen flex flex-col justify-center">
+  <div class="max-w-4xl mx-auto px-4 py-8 md:px-6 md:py-16 text-center">
+      <h1 
+        class="text-5xl font-extrabold mb-8 text-[var(--secondary-text-color)]"
+      >TubeTagPilot YouTube Tag Generator</h1>
+      <p class="text-gray-600 mb-8">
+          A free tool that allows you to easily generate SEO optimized YouTube tags/keywords from the title of your video, for content creators, bloggers, and digital marketers.
+      </p>
+      <div
+        x-bind:key="$store.sharedData.componentKey"
+        x-data="{
+          placeholder: $store.sharedData.placeholder,
+          load_cf_turnstile_script: function() {
+            if(window.turnstile == undefined){
+              const script = document.createElement('script');
+              script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+              script.async = true;
+              script.defer = true;
+              document.body.appendChild(script);
+            }else{
+              window.turnstile.reset('#turnstile-wrapper');
+              document.getElementById('turnstile-wrapper').classList.toggle('hidden');
+            }
+          },
+          removePlaceholder: function() {
+            if ($store.sharedData.query_text.length == 0) {
+              this.$el.placeholder = '';
+            }
+          },
+          addPlaceholder: function() {
+            if ($store.sharedData.query_text.length == 0) {
+              this.$el.placeholder = this.placeholder;
+            } else {
+              this.$el.placeholder = '';
+            }
+          },
+          autoResize: function() {
+            this.$el.style.height = 'auto';
+            this.$el.style.height = this.$el.scrollHeight + 'px';
+          },
+          init() {
+            window.executeTurnstile = async (token) => {
+              result_modal.showModal();
+              let youtube_tag_generator = document.querySelector('textarea[name=\'form[youtube_tag_generator]\']').value;
+              if(youtube_tag_generator.length > 280){
+                youtube_tag_generator = youtube_tag_generator.substring(0, 280)
+              }
+              const validation_result = await fetch('/youtube-tag-generator-result', {
+                method: 'POST',
+                body: JSON.stringify({
+                  cfToken: token,
+                  text: youtube_tag_generator,
+                }),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-csrf-token': window.csrfToken,
+                }
+              }).then(response => response.text()).then(data => {
+                $store.sharedData.resultHtml = data;
+              });
+            }
+          }
+        }"
+        class="rounded-lg py-2 border-2 transition-all border-base-300 focus-within:border-[var(--primary-color)] my-8 md:my-16"
+      >
+          <div class="px-4 gap-2">
+              <textarea 
+                  id="form-textarea"
+                  class="py-4 text-lg outline-none border-none text-lg resize-none min-h-32 w-full"
+                  x-bind:placeholder="placeholder"
+                  name="form[youtube_tag_generator]"
+                  x-init="$nextTick(() => {
+                    autoResize();
+                  })"
+                  x-on:input="autoResize()"
+                  x-on:focus="removePlaceholder()"
+                  x-on:blur="addPlaceholder()"
+                  x-bind:readonly="$store.sharedData.isLoading"
+                  x-model="$store.sharedData.query_text"
+                  x-bind:class="$store.sharedData.isLoading ? 'opacity-50 pointer-events-none' : ''"
+                  rows="1"
+              ></textarea>
+              <div class="border-t border-base-content/10  w-full flex items-center gap-2 pt-4">
+                <button 
+                  type="button" 
+                  x-bind:disabled="$store.sharedData.isLoading || $store.sharedData.query_text.length == 0" 
+                  x-on:click="$store.sharedData.isLoading = true; load_cf_turnstile_script(); " 
+                  style="height: 67px;" 
+                  x-bind:class="($store.sharedData.isLoading || $store.sharedData.query_text.length == 0) ? 'bg-gray-300 pointer-events-none' : 'bg-[var(--primary-color)]'"
+                  class="px-4 py-4 rounded-lg font-bold flex items-center gap-1"
+                >
+                  <Lucideicons.sparkle class="size-5" /> Generate Tags
+                </button>
+                <div 
+                  id="turnstile-wrapper"
+                  class="cf-turnstile h-[67px] overflow-hidden" 
+                  data-sitekey={Application.get_env(:moly, :cf_website_secret)}
+                  data-callback="executeTurnstile"
+                ></div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+<!-- WHY TAGGENIUS -->
+<section class="max-w-6xl mx-auto px-4 py-8 md:px-6 md:py-16">
+  <MolyWeb.HtmlComponents.header class="" header_txt="Why TubeTagPilot?"  sub_header_txt="TubeTagPilot is best tools for generating Youtbe Tags, Here's why"/>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <MolyWeb.HtmlComponents.card title="SEO Optimized Tags" description="Our AI generates tags that are optimized for youtube search engines, helping your videos rank higher.">
+      <:header>
+        <Lucideicons.search  class="size-5 text-base-content/50" />
+      </:header>
+    </MolyWeb.HtmlComponents.card>
+    <MolyWeb.HtmlComponents.card title="Save Time" description="Stop wasting time on manual tag research. TubeTagPilot generates tags in seconds.">
+      <:header>
+        <Lucideicons.clock class="size-5 text-base-content/50" />
+      </:header>
+    </MolyWeb.HtmlComponents.card>
+    <MolyWeb.HtmlComponents.card title="AI Powered" description="AI-powered YouTube tag generator that saves time and boosts visibility — no manual work required.">
+      <:header>
+        <Lucideicons.sparkles class="size-5 text-base-content/50" />
+      </:header>
+    </MolyWeb.HtmlComponents.card>
+  </div>
+</section>
+
+<!-- WHY CHOOSE US -->
+<section class="bg-white">
+  <div class="max-w-6xl mx-auto px-4 py-8 md:px-6 md:py-16">
+    <MolyWeb.HtmlComponents.header class="" header_txt="Why Choose Us?"  sub_header_txt="We are the best YouTube tag generator, Here's why"/>   
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <MolyWeb.HtmlComponents.card title="Advanced AI Algorithms" description="Our tool employs cutting-edge AI algorithms to generate highly relevant and effective tags, ensuring your content reaches the right audience.">
+        <:header>
+          <Lucideicons.sparkles class="size-5 text-base-content/50" />
+        </:header>
+      </MolyWeb.HtmlComponents.card>
+      <MolyWeb.HtmlComponents.card title="User-Centric Design" description="We prioritize user experience, offering an intuitiveface that simplifies the tag generation process for both beginners and experts.">
+        <:header>
+          <Lucideicons.paint_bucket class="size-5 text-base-content/50" />
+        </:header>
+      </MolyWeb.HtmlComponents.card>
+      <MolyWeb.HtmlComponents.card title="Secure and Reliable" description="Your data security is our top priority. TubeTagPilot provides a secure and reliable platform, safeguarding your information while delivering exceptional results.">
+        <:header>
+          <Lucideicons.shield_check class="size-5 text-base-content/50" />
+        </:header>
+      </MolyWeb.HtmlComponents.card>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="max-w-6xl mx-auto px-4 py-8 md:px-6 md:py-16">
+  <MolyWeb.HtmlComponents.header class="" header_txt="What Our Users Say"  sub_header_txt="What Our Users Say"/>
+  <div class="space-y-8">
+    <MolyWeb.HtmlComponents.review :for={review <- reviews} username={review.username} avatar={review.avatar} date={review.date} rating={review.rating} description={review.description} />
+  </div>
+</section>
+
+
+
+<dialog id="result_modal" class="modal">
+  <div class="modal-box w-11/12 max-w-5xl py-0 h-screen overflow-y-hidden px-0 rounded-none">
+    <div class="absolute top-0 bg-white w-full p-4 border-b border-base-300">
+      <div class="flex justify-between items-center">
+        <h3 class="text-2xl font-medium">Tag Generator Suggestions</h3>
+        <form method="dialog" x-data="{}">
+          <button class="btn btn-sm btn-ghost btn-circle" x-on:click="$store.sharedData.resetForm()">
+            <Lucideicons.x class="size-6 text-base-content/60" />
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="h-full px-4 pt-20 pb-4" x-data="{}">
+      <div id="result_html" class="w-full h-full overflow-y-auto" x-show="$store.sharedData.resultHtml != ''" x-html="$store.sharedData.resultHtml"></div>
+      <div x-show="$store.sharedData.resultHtml == ''" class="space-y-4 h-full">
+        <div class="flex w-full flex-col gap-4">
+          <div class="skeleton h-32 w-full"></div>
+          <div class="skeleton h-4 w-28"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-full"></div>
+        </div>
+        <div class="flex w-full flex-col gap-4">
+          <div class="skeleton h-32 w-full"></div>
+          <div class="skeleton h-4 w-28"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-full"></div>
+        </div>
+        <div class="flex w-full flex-col gap-4">
+          <div class="skeleton h-32 w-full"></div>
+          <div class="skeleton h-4 w-28"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-full"></div>
+        </div>
+      </div>
+    </div>
+    <%!-- <div class="modal-action absolute bottom-0 bg-white w-full px-4 py-2 border-t border-base-content/10">
+      <form method="dialog" x-data="{}">
+        <button class="btn" x-on:click="$store.sharedData.resetForm()">Close</button>
+      </form>
+    </div> --%>
+  </div>
+</dialog>
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.store('sharedData', {
+      placeholder: 'Enter your video title here or short description, max 280 characters.',
+      resultHtml: '',
+      isLoading: false,
+      query_text: '',
+      resetForm: function() {
+        this.resultHtml = '';
+        this.isLoading = false;
+        document.getElementById('turnstile-wrapper').classList.toggle("hidden");
+      }
+    });
+  });
+</script>

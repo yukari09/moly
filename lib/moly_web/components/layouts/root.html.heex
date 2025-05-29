@@ -37,6 +37,9 @@
     <%= for %{term_value: assign} <- Moly.website_assigns() do %>
     {raw assign}
     <% end %>
+    <%= if assigns[:style] do %>
+      {raw assigns[:style]}
+    <% end %>
   </head>
   <body>
     {@inner_content}
