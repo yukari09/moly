@@ -313,10 +313,10 @@ defmodule MolyWeb.Affinew.Components do
         >
           <a
             :for={termmeta <- Moly.website_links()}
-            href={termmeta.meta_value}
+            href={termmeta.term_value}
             class="text-gray-400 hover:text-white"
           >
-            {termmeta.meta_key}
+            {termmeta.term_key}
           </a>
         </nav>
         <div :if={Moly.social_links() != []} class="mt-16 flex justify-center gap-x-10">
