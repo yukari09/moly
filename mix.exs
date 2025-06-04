@@ -38,9 +38,7 @@ defmodule Moly.MixProject do
       {:flame, "~> 0.5"},
       {:ash_rbac, "~> 0.6.1"},
       {:lucide_icons, "~> 2.0.0"},
-      {:earmark, "~> 1.4.47"},
-      {:imgproxy, "~> 3.0.2"},
-      {:ash_authentication_phoenix, "~> 2.6"},
+      {:ash_authentication_phoenix, "~> 2.7"},
       {:ash_authentication, "~> 4.7"},
       {:bcrypt_elixir, "~> 3.2"},
       {:picosat_elixir, "~> 0.2"},
@@ -48,13 +46,12 @@ defmodule Moly.MixProject do
       {:ash_phoenix, "~> 2.2"},
       {:ash, "~> 3.5"},
       {:cachex, "~> 4.0"},
-      {:ex_aws, "~> 2.0"},
-      {:ex_aws_s3, "~> 2.0"},
+      {:ex_aws, "~> 2.5"},
+      {:ex_aws_s3, "~> 2.5"},
       {:poison, "~> 3.0"},
       {:hackney, "~> 1.20"},
       {:sweet_xml, "~> 0.7"},
-      # {:resend, "~> 0.4.0"},
-      {:gen_smtp, "~> 1.1"},
+      {:gen_smtp, "~> 1.3"},
       {:oban, "~> 2.19"},
       {:slugify, "~> 1.3"},
       {:sitemapper, "~> 0.9"},
@@ -82,10 +79,9 @@ defmodule Moly.MixProject do
       {:finch, "~> 0.19"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 0.26"},
       {:dns_cluster, "~> 0.2"},
-      {:bandit, "~> 1.6.11"},
-      {:req, "~> 0.5.0"}
+      {:bandit, "~> 1.6.11"}
     ]
   end
 

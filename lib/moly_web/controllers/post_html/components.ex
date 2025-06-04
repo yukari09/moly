@@ -34,6 +34,7 @@ defmodule MolyWeb.PageHtml.Components do
     """
   end
 
+
   attr :id, :string, default: nil
   attr :class, :string, default: nil
   attr :data, :map, required: true
@@ -85,6 +86,23 @@ defmodule MolyWeb.PageHtml.Components do
       <h4 id={id} :if={type == "header" && data["level"] == 4}>{data["text"]}</h4>
       <h5 id={id} :if={type == "header" && data["level"] == 5}>{data["text"]}</h5>
       <p id={id}  :if={type == "paragraph"}>{raw data["text"]}</p>
+      <p id={id} :if={type == "image"}>
+        <img
+          class="rounded-box border border-base-content/4 bg-base-100 not-prose w-full"
+          alt={Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}
+          srcset = {
+            Enum.map(Moly.Helper.get_in_from_keys(data, ["file", "additional", "sizes"]), fn {_, %{"width" => width, "file" => file}} ->
+              "#{file} #{width}w"
+            end)
+            |> Enum.join(",")
+          }
+          style={"aspect-ratio: #{data["file"]["additional"]["width"]} / #{data["file"]["additional"]["height"]}"}
+          sizes="(min-width: 1024px) 800px, 100vw"
+          fetchpriority="high"
+          decoding="async"
+          loading="lazy"
+        />
+      </p>
       <ol id={id} :if={type == "list" && data["style"] == "ordered"}>
         <li :for={item <- data["items"]}>{raw item["content"]}</li>
       </ol>

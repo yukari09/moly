@@ -51,6 +51,7 @@ defmodule MolyWeb.PostController do
         [_, [post | _]] -> post
       end
 
+
     relative =
       Moly.Helper.get_in_from_keys(post, [:source, "id"])
       |> Moly.Contents.PostEs.relative_posts(6)

@@ -130,6 +130,7 @@ defmodule Moly.Contents.Post do
 
       change manage_relationship(:post_meta, :post_meta, type: :create)
       change relate_actor(:author)
+      change &Moly.Contents.Changes.PostMeta.change_post_name/2
 
       change after_action(&Moly.Contents.Changes.PostCategoryTag.term_relationships/3)
     end
@@ -158,6 +159,8 @@ defmodule Moly.Contents.Post do
         on_lookup: :relate,
         on_missing: :destroy
       )
+
+      change &Moly.Contents.Changes.PostMeta.change_post_name/2
 
       change relate_actor(:author)
 

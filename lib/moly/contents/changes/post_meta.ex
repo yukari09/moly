@@ -22,7 +22,8 @@ defmodule Moly.Contents.Changes.PostMeta do
   end
 
   def change_post_name(changeset, _) do
-    hash = Moly.Helper.generate_random_str()
+    title = Ash.Changeset.get_attribute(changeset, :post_title)
+    hash = title && Slug.slugify(title) || Moly.Helper.generate_random_str()
     Ash.Changeset.force_change_attribute(changeset, :post_name, hash)
   end
 

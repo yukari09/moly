@@ -140,7 +140,6 @@ defmodule MolyWeb.AdminPageLive.Create do
             post_status: :draft,
             post_content: form_data.content,
             post_type: :page,
-            post_name: Moly.Helper.generate_random_str(),
             post_date: DateTime.utc_now(),
             post_meta: [%{meta_key: :page_layout, meta_value: form_data.layout != "false"}]
           }

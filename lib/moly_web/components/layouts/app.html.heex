@@ -35,7 +35,7 @@
         <div :for={level <- 1..3} :if={Moly.website_footer_column(level) != []}>
           <div class="font-medium">{Moly.website_footer_column_keyword(level)}</div>
           <ol class="space-y-2 lg:space-y-4 lg:mt-6 mt-2">
-            <li :for={%{term_key: label, term_value: value} <- Moly.website_footer_column(level)}>
+            <li :for={%{term_key: label, term_value: value} <- (Moly.website_footer_column(level) || [])}>
               <a href={value} target="_blank" class="text-sm">{label}</a>
             </li>
           </ol>
