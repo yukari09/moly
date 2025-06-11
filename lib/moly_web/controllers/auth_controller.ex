@@ -2,7 +2,6 @@ defmodule MolyWeb.AuthController do
   use MolyWeb, :controller
   use AshAuthentication.Phoenix.Controller
 
-
   def success(conn, activity, user, _token) do
     return_to = get_session(conn, :return_to) || ~p"/"
 
