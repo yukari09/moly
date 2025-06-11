@@ -54,22 +54,27 @@
       current_tab={@params.post_status}
       inner_class="border-none"
     />
-    <.form
-      for={nil}
-      class="hidden sm:block"
-      phx-save="search"
-      phx-key="enter"
-      phx-keydown="search"
-    >
-      <.search_input
-        id="image-search-text-input"
-        name="q"
-        value={@params.q}
-        phx-debounce="300"
-        aria-label="Search"
-        phx-update="ignore"
-      />
-    </.form>
+    <div class="flex items-center gap-2">
+      <.form
+        for={nil}
+        class="hidden sm:block"
+        phx-save="search"
+        phx-key="enter"
+        phx-keydown="search"
+      >
+        <.search_input
+          id="image-search-text-input"
+          name="q"
+          value={@params.q}
+          phx-debounce="300"
+          aria-label="Search"
+          phx-update="ignore"
+        />
+      </.form>
+      <.button phx-click={JS.exec("phx-click", to: ".rebuild-index-btn")}>
+        <Lucideicons.loader_circle class="size-4" />
+      </.button>
+    </div>
   </div>
 
   <div :if={@posts.results != []} class="mt-4 flow-root p-4 border border-gray-200  rounded-md">
@@ -119,7 +124,7 @@
 
               <.tooltip text="Reindex" direction="top" size="xs">
                 <.link 
-                  class="text-gray-500" phx-click={JS.toggle_class("animate-spin", to: "#rebuild-index-icon-#{row.id}") |> JS.push("rebuild-index")} phx-value-id={row.id} phx-value-spin-id={"#rebuild-index-icon-#{row.id}"}>
+                  class="text-gray-500 rebuild-index-btn" phx-click={JS.toggle_class("animate-spin", to: "#rebuild-index-icon-#{row.id}") |> JS.push("rebuild-index")} phx-value-id={row.id} phx-value-spin-id={"#rebuild-index-icon-#{row.id}"}>
                   <Lucideicons.loader_circle id={"rebuild-index-icon-#{row.id}"} class="size-4 transition-all" data-loaded={JS.toggle_class("animate-spin")} />
                 </.link>
               </.tooltip>

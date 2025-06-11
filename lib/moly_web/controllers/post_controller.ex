@@ -34,7 +34,7 @@ defmodule MolyWeb.PostController do
         [_, items] -> items
       end
 
-    category_name = hd(posts) |> Moly.Helper.get_in_from_keys([:source, "category", 0, "name"])
+    category_name = hd(posts) |> Moly.Helper.get_in_from_keys([:source, "category", 0, "description"])
 
     page_meta = Moly.Helper.pagination_meta(count, per_page, page, 3)
     page_title = "#{category_name} #{Moly.website_blog_list_title()}"
