@@ -8,44 +8,16 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: macos-latest # 这是一个 ARM64 runner (macOS 14+)
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # --- 关键：使用 docker/setup-buildx-action 附带的 BuildKit Daemon ---
-      # 这个 Action 不仅设置 Buildx CLI，它还会启动一个 BuildKit Daemon，
-      # 这个 Daemon 是在 Docker 环境中运行的，它可以处理多平台构筑。
-      # 在 macOS 上，为了让 docker daemon 可用，通常会依赖 Runner 预装的轻量级虚拟化工具
-      # 或其他能够提供 docker socket 的机制。
-      # 经过查找，最可靠的方法是确保 Docker CLI 可用，然后让 Buildx 使用它。
-      # GitHub Actions 的 macOS Runner 似乎会提供一个基本的 Docker CLI 和 Daemon 接口，
-      # 但它可能不是完整的 Docker Desktop。
-
-      # 在 GitHub Actions 的 macOS Runner 上，最直接且推荐的方式是：
-      # 1. 确保 Docker CLI 可用（通常是 Runner 环境的一部分，或通过 setup-buildx-action 间接提供）
-      # 2. 使用 docker/setup-qemu-action 和 docker/setup-buildx-action
-      #    这些 Actions 会在可用的 Docker Daemon 上设置 BuildKit 实例和 QEMU
-      
-      # 注：如果你的 Runner 仍然报告 `docker` 命令找不到，
-      # 那么可能是 Runner 镜像本身的问题，或者需要一个明确的 `brew install docker` 来提供 CLI
-      # 但通常 `docker/setup-buildx-action` 会确保必要的环境可用。
-      # 鉴于 `macos-latest` 现在是 ARM64，QEMU 的作用将是确保 Buildx 可以在 ARM64 Native 环境下
-      # 构筑 `linux/arm64`，并处理可能的兼容性细节。
-
-      # 验证 Docker CLI 可用性（可选但推荐）
-      - name: Verify Docker CLI (Pre-check)
-        run: docker --version || { echo "Docker CLI not found. This indicates a deeper issue with the runner image."; exit 1; }
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-        # 即使在 ARM64 macOS 上构筑 ARM64 Linux 镜像，QEMU 在 Buildx 的多平台构筑中
-        # 仍然扮演了确保兼容性和可靠性的角色。它不再是 CPU 模拟的瓶頸。
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        # 这个 Action 会确保 BuildKit Daemon 启动并设置为默认构筑器。
-        # 它是实现高效 Docker 构筑和缓存的关键。
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -66,10 +38,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          # 明确指定 platforms: linux/arm64
-          # 在 ARM64 macos-latest runner 上，结合 Buildx 和 QEMU，
-          # 这将利用原生能力高效构筑。
-          platforms: linux/arm64 
+          platforms: linux/arm64
           push: ${{ github.event_name == 'push' }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
