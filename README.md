@@ -16,21 +16,3 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
-
-
-ffmpeg
-
-terms
-slug countries
-slug industries
-
-term_taxonomy
-
-docker login -u yukari
-dckr_pat_XCtN0rMXd2itn6DuQVieeOsvFCU
-
-
-post 
-post helper
-account helper
-es helper
