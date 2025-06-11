@@ -1,6 +1,15 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
 jobs:
   build-and-push:
-    runs-on: macos-latest
+    # runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -10,15 +19,21 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          # Enable GHA cache backend
-          buildx-flags: --cache-to type=gha,mode=max --cache-from type=gha
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Cache Docker layers for arm64
+        id: cache-arm64
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache-arm64
+          key: ${{ runner.os }}-docker-arm64-${{ hashFiles('Dockerfile') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-arm64-
 
       - name: Build and Push Docker images
         uses: docker/build-push-action@v6
@@ -28,9 +43,7 @@ jobs:
           push: ${{ github.event_name == 'push' }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
-          # When using type=gha, you don't need to specify cache-from/to here
-          # as it's handled by buildx-flags in setup-buildx-action
-          # cache-from: |
-          #   type=local,src=/tmp/.buildx-cache-arm64
-          # cache-to: |
-          #   type=local,dest=/tmp/.buildx-cache-arm64,mode=max,platform=linux/arm64
+          cache-from: |
+            type=local,src=/tmp/.buildx-cache-arm64
+          cache-to: |
+            type=local,dest=/tmp/.buildx-cache-arm64,mode=max,platform=linux/arm64
