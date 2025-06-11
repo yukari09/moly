@@ -8,53 +8,44 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: macos-latest # 这是 ARM64 runner
+    runs-on: macos-latest # 这是一个 ARM64 runner (macOS 14+)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # --- 关键步骤：确保 Docker Daemon 可用 ---
-      # Colima 是 macOS 上一个轻量级的 Docker 替代品，它能提供一个运行中的 Docker Daemon
-      # macos-latest runner 可能已经预装 Colima 或可通过 brew 安装
-      - name: Setup Docker using Colima on macOS ARM64
-        run: |
-          echo "Checking for Colima..."
-          if ! command -v colima &> /dev/null
-          then
-              echo "Colima not found. Installing via Homebrew..."
-              brew install colima
-              if [ $? -ne 0 ]; then
-                echo "Failed to install Colima. Please check Homebrew or runner environment."
-                exit 1
-              fi
-          fi
-          
-          echo "Starting Colima with ARM64 Linux VM..."
-          # colima start --arch arm64 --vm-type vz 是在 Apple Silicon 上启动 ARM64 Linux VM 的推荐方式
-          # --runtime docker 确保它设置为 docker runtime
-          colima start --cpu 4 --memory 8 --arch arm64 --vm-type vz --runtime docker
-          if [ $? -ne 0 ]; then
-            echo "Failed to start Colima. Check colima logs for details."
-            colima status
-            colima logs
-            exit 1
-          fi
-          
-          # 切换 Docker CLI 上下文到 Colima
-          docker context use colima
-          echo "Docker context switched to Colima."
-          
-          # 验证 Docker 环境
-          docker info | grep -E 'OS/Arch:|Server Version:'
-          docker build --help # 确保 build 命令可用
-        shell: bash
+      # --- 关键：使用 docker/setup-buildx-action 附带的 BuildKit Daemon ---
+      # 这个 Action 不仅设置 Buildx CLI，它还会启动一个 BuildKit Daemon，
+      # 这个 Daemon 是在 Docker 环境中运行的，它可以处理多平台构筑。
+      # 在 macOS 上，为了让 docker daemon 可用，通常会依赖 Runner 预装的轻量级虚拟化工具
+      # 或其他能够提供 docker socket 的机制。
+      # 经过查找，最可靠的方法是确保 Docker CLI 可用，然后让 Buildx 使用它。
+      # GitHub Actions 的 macOS Runner 似乎会提供一个基本的 Docker CLI 和 Daemon 接口，
+      # 但它可能不是完整的 Docker Desktop。
 
-      # --- 依然推荐使用 Buildx ---
-      # 即使是原生架构，Buildx 仍能提供更好的缓存和构建性能
-      # 尤其是在 CI/CD 场景下，其缓存层管理非常有用，可以显著减少构建时间
+      # 在 GitHub Actions 的 macOS Runner 上，最直接且推荐的方式是：
+      # 1. 确保 Docker CLI 可用（通常是 Runner 环境的一部分，或通过 setup-buildx-action 间接提供）
+      # 2. 使用 docker/setup-qemu-action 和 docker/setup-buildx-action
+      #    这些 Actions 会在可用的 Docker Daemon 上设置 BuildKit 实例和 QEMU
+      
+      # 注：如果你的 Runner 仍然报告 `docker` 命令找不到，
+      # 那么可能是 Runner 镜像本身的问题，或者需要一个明确的 `brew install docker` 来提供 CLI
+      # 但通常 `docker/setup-buildx-action` 会确保必要的环境可用。
+      # 鉴于 `macos-latest` 现在是 ARM64，QEMU 的作用将是确保 Buildx 可以在 ARM64 Native 环境下
+      # 构筑 `linux/arm64`，并处理可能的兼容性细节。
+
+      # 验证 Docker CLI 可用性（可选但推荐）
+      - name: Verify Docker CLI (Pre-check)
+        run: docker --version || { echo "Docker CLI not found. This indicates a deeper issue with the runner image."; exit 1; }
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        # 即使在 ARM64 macOS 上构筑 ARM64 Linux 镜像，QEMU 在 Buildx 的多平台构筑中
+        # 仍然扮演了确保兼容性和可靠性的角色。它不再是 CPU 模拟的瓶頸。
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        # 使用 Buildx 默认的 builder，它会基于 Colima 提供的 Docker Daemon
+        # 这个 Action 会确保 BuildKit Daemon 启动并设置为默认构筑器。
+        # 它是实现高效 Docker 构筑和缓存的关键。
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -62,13 +53,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # --- 优化后的 Docker 缓存 ---
-      # 结合 Buildx 的缓存功能，可以在 Buildx 的构建器中直接使用缓存
       - name: Cache Docker layers for arm64
         id: cache-arm64
         uses: actions/cache@v4
         with:
-          path: /tmp/.buildx-cache-arm64 # Buildx 默认的缓存路径
+          path: /tmp/.buildx-cache-arm64
           key: ${{ runner.os }}-docker-arm64-${{ hashFiles('Dockerfile') }}
           restore-keys: |
             ${{ runner.os }}-docker-arm64-
@@ -77,13 +66,13 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          # 明确指定 platforms: linux/arm64，这将利用原生 ARM64 环境，
-          # Buildx 在此时会直接使用 Colima 提供的 ARM64 Linux VM 进行构建，无需 QEMU 模擬。
+          # 明确指定 platforms: linux/arm64
+          # 在 ARM64 macos-latest runner 上，结合 Buildx 和 QEMU，
+          # 这将利用原生能力高效构筑。
           platforms: linux/arm64 
           push: ${{ github.event_name == 'push' }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
-          # Buildx 的缓存 from/to 路径
           cache-from: |
             type=local,src=/tmp/.buildx-cache-arm64
           cache-to: |
