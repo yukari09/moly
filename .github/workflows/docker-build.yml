@@ -13,23 +13,48 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # --- 关键修改：使用 docker/setup-docker@v3 替代旧的 action ---
-      - name: Setup Docker
-        uses: docker/setup-docker@v3 # 使用官方推荐的 Docker 设置 Action
-        # docker/setup-docker@v3 通常不需要额外的 with 参数
-        # 它会根据 runner 自动设置合适的 Docker 版本和环境。
-        # 如果需要特定版本，可以使用 with: version: '24.0.0' 或 'latest'，
-        # 但通常默认行为在 macOS ARM64 上运行良好。
-
-      - name: Verify Docker installation
+      # --- 关键步骤：确保 Docker Daemon 可用 ---
+      # Colima 是 macOS 上一个轻量级的 Docker 替代品，它能提供一个运行中的 Docker Daemon
+      # macos-latest runner 可能已经预装 Colima 或可通过 brew 安装
+      - name: Setup Docker using Colima on macOS ARM64
         run: |
-          docker --version
-          docker info
+          echo "Checking for Colima..."
+          if ! command -v colima &> /dev/null
+          then
+              echo "Colima not found. Installing via Homebrew..."
+              brew install colima
+              if [ $? -ne 0 ]; then
+                echo "Failed to install Colima. Please check Homebrew or runner environment."
+                exit 1
+              fi
+          fi
+          
+          echo "Starting Colima with ARM64 Linux VM..."
+          # colima start --arch arm64 --vm-type vz 是在 Apple Silicon 上启动 ARM64 Linux VM 的推荐方式
+          # --runtime docker 确保它设置为 docker runtime
+          colima start --cpu 4 --memory 8 --arch arm64 --vm-type vz --runtime docker
+          if [ $? -ne 0 ]; then
+            echo "Failed to start Colima. Check colima logs for details."
+            colima status
+            colima logs
+            exit 1
+          fi
+          
+          # 切换 Docker CLI 上下文到 Colima
+          docker context use colima
+          echo "Docker context switched to Colima."
+          
+          # 验证 Docker 环境
+          docker info | grep -E 'OS/Arch:|Server Version:'
+          docker build --help # 确保 build 命令可用
+        shell: bash
 
-      # 移除 Set up QEMU (因为 macos-latest 是 ARM64，构筑 linux/arm64 不需要模拟)
-      # 但要确保 Buildx 依然启用，因为它提供了更好的构建能力。
+      # --- 依然推荐使用 Buildx ---
+      # 即使是原生架构，Buildx 仍能提供更好的缓存和构建性能
+      # 尤其是在 CI/CD 场景下，其缓存层管理非常有用，可以显著减少构建时间
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        # 使用 Buildx 默认的 builder，它会基于 Colima 提供的 Docker Daemon
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -37,11 +62,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # --- 优化后的 Docker 缓存 ---
+      # 结合 Buildx 的缓存功能，可以在 Buildx 的构建器中直接使用缓存
       - name: Cache Docker layers for arm64
         id: cache-arm64
         uses: actions/cache@v4
         with:
-          path: /tmp/.buildx-cache-arm64
+          path: /tmp/.buildx-cache-arm64 # Buildx 默认的缓存路径
           key: ${{ runner.os }}-docker-arm64-${{ hashFiles('Dockerfile') }}
           restore-keys: |
             ${{ runner.os }}-docker-arm64-
@@ -50,10 +77,13 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/arm64
+          # 明确指定 platforms: linux/arm64，这将利用原生 ARM64 环境，
+          # Buildx 在此时会直接使用 Colima 提供的 ARM64 Linux VM 进行构建，无需 QEMU 模擬。
+          platforms: linux/arm64 
           push: ${{ github.event_name == 'push' }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/moly:${{ github.ref_name }}
+          # Buildx 的缓存 from/to 路径
           cache-from: |
             type=local,src=/tmp/.buildx-cache-arm64
           cache-to: |
