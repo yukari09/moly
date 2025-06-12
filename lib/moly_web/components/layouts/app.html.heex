@@ -32,11 +32,24 @@
           <div><img class="w-auto max-h-8" src={Moly.website_logo} /></div>
           <p class="mt-4 line-clamp-6 font-light text-sm">{Moly.website_description}</p>
         </div>
-        <div :for={level <- 1..3} :if={Moly.website_footer_column(level) != []}>
+        <div :for={level <- 1..2} :if={Moly.website_footer_column(level) != []}>
           <div class="font-medium">{Moly.website_footer_column_keyword(level)}</div>
           <ol class="space-y-2 lg:space-y-4 lg:mt-6 mt-2">
             <li :for={%{term_key: label, term_value: value} <- (Moly.website_footer_column(level) || [])}>
               <a href={value} target="_blank" class="text-sm">{label}</a>
+            </li>
+          </ol>
+        </div>
+        <div>
+          <div class="font-medium">Company</div>
+          <ol class="space-y-2 lg:space-y-4 lg:mt-6 mt-2">
+            <li :for={{link, label} <- [
+              {~p"/about", "About Us"},
+              {~p"/contact", "Contact Us"},
+              {~p"/privacy-policy", "Privacy Policy"},
+              {~p"/terms-of-service", "Terms of Service"}
+            ]}>
+              <a href={link} target="_blank" class="text-sm">{label}</a>
             </li>
           </ol>
         </div>

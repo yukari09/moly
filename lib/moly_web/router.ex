@@ -90,6 +90,10 @@ defmodule MolyWeb.Router do
     live("/website/register-initial-user", Website.RegisterInitialUser)
 
 
+    get("/about", PageController, :about)
+    get("/contact", PageController, :contact)
+    get("/privacy-policy", PageController, :privacy_policy)
+    get("/terms-of-service", PageController, :terms_of_service)
   end
 
   #for youtubechannelhub

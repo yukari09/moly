@@ -38,13 +38,9 @@ defmodule Moly do
 
       %{name: "WebSite Footer Column1", slug: "website-footer-column-1", term_taxonomy: [%{taxonomy: "website", description: "Footer Column1"}], term_meta: []},
       %{name: "WebSite Footer Column2", slug: "website-footer-column-2", term_taxonomy: [%{taxonomy: "website", description: "Footer Column2"}], term_meta: []},
-      %{name: "WebSite Footer Column3", slug: "website-footer-column-3", term_taxonomy: [%{taxonomy: "website", description: "Footer Column3"}], term_meta: []},
-      %{name: "WebSite Footer Column4", slug: "website-footer-column-4", term_taxonomy: [%{taxonomy: "website", description: "Footer Column4"}], term_meta: []},
 
       %{name: "WebSite Footer Column1 Keyword", slug: "website-footer-column-1-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column1 Keyword"}], term_meta: []},
       %{name: "WebSite Footer Column2 Keyword", slug: "website-footer-column-2-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column2 Keyword"}], term_meta: []},
-      %{name: "WebSite Footer Column3 Keyword", slug: "website-footer-column-3-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column3 Keyword"}], term_meta: []},
-      %{name: "WebSite Footer Column4 Keyword", slug: "website-footer-column-4-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column4 Keyword"}], term_meta: []},
 
       %{name: "WebSite Assigns", slug: "website-assigns", term_taxonomy: [%{taxonomy: "website", description: "Extra website assigns"}], term_meta: []},
     ]
