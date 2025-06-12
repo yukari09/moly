@@ -39,8 +39,6 @@ defmodule Moly do
       %{name: "WebSite Footer Column1", slug: "website-footer-column-1", term_taxonomy: [%{taxonomy: "website", description: "Footer Column1"}], term_meta: []},
       %{name: "WebSite Footer Column2", slug: "website-footer-column-2", term_taxonomy: [%{taxonomy: "website", description: "Footer Column2"}], term_meta: []},
 
-      %{name: "WebSite Footer Column1 Keyword", slug: "website-footer-column-1-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column1 Keyword"}], term_meta: []},
-      %{name: "WebSite Footer Column2 Keyword", slug: "website-footer-column-2-keyword", term_taxonomy: [%{taxonomy: "website", description: "Footer Column2 Keyword"}], term_meta: []},
 
       %{name: "WebSite Assigns", slug: "website-assigns", term_taxonomy: [%{taxonomy: "website", description: "Extra website assigns"}], term_meta: []},
     ]
@@ -59,7 +57,21 @@ defmodule Moly do
   def website_blog_list_title(), do: website_term("website-blog-list-title", true)
   def website_blog_list_description(), do: website_term("website-blog-list-description", true)
   def website_footer_column(level), do: website_term("website-footer-column-#{level}")
-  def website_footer_column_keyword(level), do: website_term("website-footer-column-#{level}-keyword", true)
+  def website_footer_column_keyword(level) do
+    key = "website-footer-column-#{level}"
+    value_fun = fn ->
+      Ash.Query.filter(Moly.Terms.Term, term_taxonomy.taxonomy == "website")
+      |> Ash.Query.load([:term_taxonomy])
+      |> Ash.read!(actor: %{roles: [:user]})
+      |> Enum.find(fn term -> term.slug == key end)
+      |> case do
+        nil -> false
+        %{term_taxonomy: term_taxonomy} ->
+          Moly.Helper.get_in_from_keys(term_taxonomy, [0, :description])
+      end
+    end
+    Moly.Utilities.cache_get_or_put("website:#{key}:keyword", value_fun, :timer.hours(1))
+  end
 
   def website_assigns(), do: website_term("website-assigns", false, [])
 
@@ -81,7 +93,7 @@ defmodule Moly do
   - application
   - node
   opts:
-  - data_from_chace: using data from cache if true
+  - data_from_cache: using data from cache if true
   - term_slug: filter data by term slug
   - first_term_value: return first term_meta.term_value if true
   """
