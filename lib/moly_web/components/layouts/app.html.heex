@@ -27,16 +27,16 @@
     {@inner_content}
 
     <div class="bg-secondary">
-      <div class="max-w-[1440px] mx-auto lg:p-24 p-12 grid grid-cols-1 lg:grid-cols-4 lg:gap-4 gap-12 text-base-300">
+      <div class="max-w-[1440px] mx-auto lg:p-24 p-12 grid grid-cols-1 lg:grid-cols-4 lg:gap-12 text-base-300">
         <div>
           <div><img class="w-auto max-h-8" src={Moly.website_logo} /></div>
-          <p class="mt-4 line-clamp-6 font-light text-sm">{Moly.website_description}</p>
+          <p class="mt-4 line-clamp-6 font-light">{Moly.website_description}</p>
         </div>
-        <div :for={level <- 1..2} :if={Moly.website_footer_column(level) != []}>
+        <div :for={level <- 1..2} :if={Moly.website_footer_column(level) not in [[],false,nil]}>
           <div class="font-medium">{Moly.website_footer_column_keyword(level)}</div>
           <ol class="space-y-2 lg:space-y-4 lg:mt-6 mt-2">
             <li :for={%{term_key: label, term_value: value} <- (Moly.website_footer_column(level) || [])}>
-              <a href={value} target="_blank" class="text-sm">{label}</a>
+              <a href={value} target="_blank">{label}</a>
             </li>
           </ol>
         </div>
@@ -49,7 +49,7 @@
               {~p"/privacy-policy", "Privacy Policy"},
               {~p"/terms-of-service", "Terms of Service"}
             ]}>
-              <a href={link} target="_blank" class="text-sm">{label}</a>
+              <a href={link} target="_blank">{label}</a>
             </li>
           </ol>
         </div>
