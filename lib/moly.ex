@@ -38,6 +38,7 @@ defmodule Moly do
 
       %{name: "WebSite Footer Column1", slug: "website-footer-column-1", term_taxonomy: [%{taxonomy: "website", description: "Footer Column1"}], term_meta: []},
       %{name: "WebSite Footer Column2", slug: "website-footer-column-2", term_taxonomy: [%{taxonomy: "website", description: "Footer Column2"}], term_meta: []},
+      %{name: "WebSite Footer Column3", slug: "website-footer-column-3", term_taxonomy: [%{taxonomy: "website", description: "Footer Column3"}], term_meta: []},
 
 
       %{name: "WebSite Assigns", slug: "website-assigns", term_taxonomy: [%{taxonomy: "website", description: "Extra website assigns"}], term_meta: []},
