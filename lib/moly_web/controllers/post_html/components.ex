@@ -126,7 +126,7 @@ defmodule MolyWeb.PageHtml.Components do
       <% end %>
       <p class="flex flex-wrap items-center text-sm text-base-content/80 gap-2 !my-6">
         <span class="mr-2">Tags:</span>
-        <.link class="badge badge-ghost"  :for={tag <- Moly.Helper.get_in_from_keys(@post, [:source, "post_tag"])}>{tag["name"]}</.link>
+        <.link navigate={~p"/tags/#{tag["slug"]}"} class="badge badge-ghost"  :for={tag <- Moly.Helper.get_in_from_keys(@post, [:source, "post_tag"])}>{tag["name"]}</.link>
       </p>
     </article>
     """
@@ -134,13 +134,24 @@ defmodule MolyWeb.PageHtml.Components do
 
   attr :id, :string, default: nil
   attr :class, :string, default: nil
-  attr :category_slug, :string, required: true
+  attr :category_slug, :string, required: false
+  attr :tag_slug, :string, required: false
   def pagination(assigns) do
+    category_slug = Moly.Helper.get_in_from_keys(assigns, [:category_slug])
+    tag_slug = Moly.Helper.get_in_from_keys(assigns, [:tag_slug])
+    for_url = fn page ->
+      if category_slug do
+        ~p"/posts/#{category_slug}?page=#{page}"
+      else
+        ~p"/tags/#{tag_slug}?page=#{page}"
+      end
+    end
+    assigns = assign(assigns, for_url: for_url)
     ~H"""
     <nav id={@id || Moly.Helper.generate_random_id()} class={[@class, "flex gap-4 justify-center"]}>
-      <.link class={["font-semibold", !@page_meta.prev && "opacity-50 pointer-events-none"]} navigate={@page_meta.prev && ~p"/posts/#{@category_slug}?page=#{@page_meta.prev}"}>« Previous</.link>
-      <.link class={["font-semibold", page == @page_meta.current_page && "text-primary"]} :for={page <- @page_meta.page_range} href={~p"/posts/#{@category_slug}?page=#{page}"}>{page}</.link>
-      <.link class={["font-semibold", !@page_meta.next && "opacity-50 pointer-events-none"]} navigate={@page_meta.next && ~p"/posts/#{@category_slug}?page=#{@page_meta.next}"}>Next »</.link>
+      <.link class={["font-semibold", !@page_meta.prev && "opacity-50 pointer-events-none"]} navigate={@page_meta.prev && for_url.(@page_meta.prev)}>« Previous</.link>
+      <.link class={["font-semibold", page == @page_meta.current_page && "text-primary"]} :for={page <- @page_meta.page_range} href={for_url.(page)}>{page}</.link>
+      <.link class={["font-semibold", !@page_meta.next && "opacity-50 pointer-events-none"]} navigate={@page_meta.next && for_url.(@page_meta.next)}>Next »</.link>
     </nav>
     """
   end

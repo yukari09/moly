@@ -171,7 +171,7 @@ defmodule Moly.Contents.PostEs do
       Enum.group_by(
         post.term_taxonomy,
         fn %{taxonomy: taxonomy} -> taxonomy end,
-        fn %{term: %{name: name, slug: slug}, description: description} -> %{name: name, slug: slug, description: description} end
+        fn %{term: %{name: name, slug: slug}, count: count, description: description} -> %{name: name, slug: slug, description: description, count: count} end
       )
       |> Enum.reduce(%{}, fn {key, value}, a1 ->
         key = String.to_atom(key)

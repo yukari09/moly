@@ -278,6 +278,9 @@
                             }
                         }
                     },
+                    "count": {
+                        "type": "integer"
+                    },
                     "slug": {
                         "type": "text",
                         "fields": {
@@ -419,6 +422,9 @@
                                 "ignore_above": 256
                             }
                         }
+                    },
+                    "count": {
+                        "type": "integer"
                     },
                     "description": {
                         "type": "text",

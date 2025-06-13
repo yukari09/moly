@@ -81,8 +81,10 @@ defmodule MolyWeb.Router do
     pipe_through([:browser])
     get("/sitemaps/:site_map_file", SitemapController, :show)
     get("/", PostController, :home)
-    get("/posts/:category_slug", PostController, :category)
     get("/post/:post_name", PostController, :view)
+
+    get("/posts/:category_slug", PostController, :category)
+    get("/tags/:tag_slug", PostController, :tag)
 
     post("/page/cf-validation", PageController, :cf_validation)
     post("/upload-file", PageController, :upload_file)
