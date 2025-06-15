@@ -27,6 +27,7 @@
     />
     <!--Assigns-->
     <link :if={assigns[:canonical]} rel="canonical" href={assigns[:canonical]} />
+    <link :if={!assigns[:canonical]} rel="canonical" href={Phoenix.Controller.current_url(@conn)} />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
