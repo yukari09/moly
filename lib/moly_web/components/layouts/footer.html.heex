@@ -1,0 +1,71 @@
+<!--
+<div class="bg-no-repeat bg-center" style="background-image: url('/images/header_XL_3_2.png'); background-size: cover;  background-position: center;">
+    <div class="max-w-[1440px] mx-auto lg:p-24 p-12 grid grid-cols-1 lg:grid-cols-4 lg:gap-8 text-[#431e33]">
+      <div>
+        <div><img class="w-auto max-h-8" src={Moly.website_logo} /></div>
+        <p class="mt-4 line-clamp-6 font-light">{Moly.website_description}</p>
+      </div>
+      <div :for={level <- 1..3} :if={Moly.website_footer_column(level) not in [[],false,nil]}>
+        <div class="font-medium">{Moly.website_footer_column_keyword(level)}</div>
+        <ol class="space-y-2 lg:space-y-4 lg:mt-6 mt-2">
+          <li :for={%{term_key: label, term_value: value} <- (Moly.website_footer_column(level) || [])}>
+            <a href={value} target="_blank">{label}</a>
+          </li>
+        </ol>
+      </div>
+      <div>
+        <div class="font-medium">Company</div>
+        <ol class="space-y-2 lg:space-y-4 lg:mt-6 mt-2">
+          <li :for={{link, label} <- [
+            {~p"/about", "About Us"},
+            {~p"/contact", "Contact Us"},
+            {~p"/privacy-policy", "Privacy Policy"},
+            {~p"/terms-of-service", "Terms of Service"}
+          ]}>
+            <a href={link} target="_blank">{label}</a>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div> 
+-->
+
+
+
+<div class="relative">
+  <div>
+    <img phx-track-static src={~p"/images/header_XL_3_2.png"} class="w-full object-cover" />
+  </div>
+
+  <div class="absolute inset-0 mt-36">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 lg:gap-8 text-[#431e33]">
+      <div>
+        <div><img class="w-auto max-h-8" src={Moly.website_logo} /></div>
+        <p class="mt-4 line-clamp-6 font-light">{Moly.website_description}</p>
+      </div>
+      <div :for={level <- 1..3} :if={Moly.website_footer_column(level) not in [[],false,nil]}>
+        <div class="font-medium">{Moly.website_footer_column_keyword(level)}</div>
+        <ol class="space-y-2 lg:space-y-4 lg:mt-6 mt-2">
+          <li :for={%{term_key: label, term_value: value} <- (Moly.website_footer_column(level) || [])}>
+            <a href={value} target="_blank">{label}</a>
+          </li>
+        </ol>
+      </div>
+      <div>
+        <div class="font-medium">Company</div>
+        <ol class="space-y-2 lg:space-y-4 lg:mt-6 mt-2">
+          <li :for={{link, label} <- [
+            {~p"/about", "About Us"},
+            {~p"/contact", "Contact Us"},
+            {~p"/privacy-policy", "Privacy Policy"},
+            {~p"/terms-of-service", "Terms of Service"}
+          ]}>
+            <a href={link} target="_blank">{label}</a>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+</div>
+
