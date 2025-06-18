@@ -1,10 +1,10 @@
 <div class="drawer">
-  <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
+  <input id="page-drawer-3" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content flex flex-col">
     <!-- Navbar -->
-    <div class="navbar bg-[#fff9ef] max-w-[1440px] lg:px-8 lg:h-24">
+    <div class={["navbar lg:px-8 lg:h-24 mx-auto bg-[#fff9ef]"]}>
       <div class="navbar-start flex-none lg:hidden">
-        <label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost">
+        <label for="page-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost ">
           <Lucideicons.menu class="size-6" />
         </label>
         <.link navigate="/"><img class="h-6 w-auto" src={Moly.website_logo} /></.link>
@@ -14,8 +14,22 @@
       </div>
       <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1">
-          <li class="focus-visible:bg-transparent"><.link class="font-bold uppercase text-[13px] hover:bg-transparent hover:text-[#fd776c]" navigate={~p"/"}>Home</.link></li>
-          <li class="focus-visible:bg-transparent" :for={item <- navbar_item()}><.link class="font-bold uppercase text-[13px] hover:bg-transparent hover:text-[#fd776c]" navigate={~p"/posts/#{item.slug}"}>{item.name}</.link></li>
+          <li class="focus-visible:bg-transparent">
+            <.link class={[
+              "font-bold text-[#431e33] uppercase text-[13px] hover:bg-transparent hover:text-[#fd776c]",
+              @conn.request_path == "/" && "text-[#fd776c]"
+            ]} navigate={~p"/"}>
+              Home
+            </.link>
+          </li>
+          <li class="focus-visible:bg-transparent" :for={item <- navbar_item()}>
+            <.link class={[
+              "font-bold text-[#431e33] uppercase text-[13px] hover:bg-transparent hover:text-[#fd776c]",
+              String.contains?(@conn.request_path, "/@#{item.slug}") && "text-[#fd776c]"
+            ]} navigate={~p"/@#{item.slug}"}>
+              {item.name}
+            </.link>
+          </li>
         </ul>
       </div>
       <div class="navbar-end">
@@ -28,10 +42,10 @@
     <.footer />   
   </div>
   <div class="drawer-side">
-    <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
+    <label for="page-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
     <ul class="menu bg-base-200 min-h-full w-80 p-4">
       <!-- Sidebar content here -->
-      <li :for={item <- navbar_item()}><.link navigate={~p"/posts/#{item.slug}"} class="uppercase">{item.name}</.link></li>
+      <li :for={item <- navbar_item()}><.link navigate={~p"/#{item.slug}"} class="uppercase">{item.name}</.link></li>
     </ul>
   </div>
 </div>

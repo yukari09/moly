@@ -4,11 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title suffix={assigns[:page_suffix] || " · #{Moly.website_name}"}>
-      {assigns[:page_title] || Moly.website_title}
-    </.live_title>
-    <link rel="icon" type="image/png" href={Moly.website_favicon}>
-    <link rel="shortcut icon" href={Moly.website_favicon} type="image/png">
+    <.live_title suffix={assigns[:page_suffix] || " | #{Moly.website_name}"}>{assigns[:page_title] || Moly.website_title}</.live_title>
     <meta name="description" content={assigns[:page_description] || Moly.website_description} />
     <%= if assigns[:meta_tags] do %>
       <meta

@@ -1,4 +1,4 @@
-defmodule MolyWeb.PostHTML do
+defmodule MolyWeb.ColoringPagesHTML do
   @moduledoc """
   This module contains pages rendered by PageController.
 
@@ -6,5 +6,5 @@ defmodule MolyWeb.PostHTML do
   """
   use MolyWeb, :html
 
-  embed_templates("post_html/*")
+  embed_templates("coloring_pages_html/*")
 end

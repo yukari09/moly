@@ -1,16 +1,32 @@
-defmodule MolyWeb.PostController do
+defmodule MolyWeb.ColoringPagesController do
   use MolyWeb, :controller
 
   def home(conn, _params) do
-    [_count, posts] =
-      Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", per_page: 60, sort: "-updated_at")
-      |> case do
-        nil -> [0, []]
-        [count, items] ->
-          items = Enum.filter(items, &(Moly.Helper.get_in_from_keys(&1, [:source, "thumbnail_id", "attached_file"])))
-          [count, items]
-      end
-    render(conn, :home, posts: posts)
+    %{"top_tags" => %{buckets: buckets}} = Moly.Contents.PostEs.query_top_tags(20)
+    top_tag_slugs = Enum.map(buckets, &(&1["key"]))
+
+    posts_by_tags =
+      Task.async_stream(top_tag_slugs, fn(tag_slug) ->
+        result = Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", per_page: 6, sort: "-updated_at", tags: [tag_slug])
+        case result do
+          nil -> []
+          [_, items] -> items
+        end
+      end,
+      max_concurrency: System.schedulers_online(),
+      timeout: :timer.seconds(10))
+      |> Enum.group_by(
+        fn {:ok, [hd | _]} ->
+          [
+            Moly.Helper.get_in_from_keys(hd, [:source, "post_tag", 0, "slug"]),
+            Moly.Helper.get_in_from_keys(hd, [:source, "post_tag", 0, "name"]),
+            Moly.Helper.get_in_from_keys(hd, [:source, "post_tag", 0, "count"]),
+          ]
+        end,
+        fn {:ok, [hd | _]} -> hd end
+      )
+
+    render(conn, :home, posts_by_tags: posts_by_tags)
   end
 
   def tag(conn, %{"tag_slug" => tag_slug} = params) do
@@ -38,10 +54,9 @@ defmodule MolyWeb.PostController do
     tag_name = hd(posts) |> Moly.Helper.get_in_from_keys([:source, "post_tag", 0, "name"])
 
     page_meta = Moly.Helper.pagination_meta(count, per_page, page, 3)
-    page_title = "#{tag_name} #{Moly.website_blog_list_title()}"
-    page_description = "#{tag_name} #{Moly.website_blog_list_description()}"
+    page_title = tag_description = "#{tag_name} #{Moly.website_blog_list_title()}"
 
-    render(conn, :tags, posts: posts, relative: relative, page_meta: page_meta, tag_slug: tag_slug, page_title: page_title, page_description: page_description, tag_name: tag_name)
+    render(conn, :category, posts: posts, relative: relative, page_meta: page_meta, tag_slug: tag_slug, page_title: page_title, page_description: tag_description, category_description: tag_description, category_name: tag_name)
   end
 
   def category(conn, %{"category_slug" => category_slug} = params) do
@@ -65,13 +80,12 @@ defmodule MolyWeb.PostController do
         [_, items] -> items
       end
 
-    category_name = hd(posts) |> Moly.Helper.get_in_from_keys([:source, "category", 0, "description"])
+    category_name = hd(posts) |> Moly.Helper.get_in_from_keys([:source, "category", 0, "name"])
+    category_description = hd(posts) |> Moly.Helper.get_in_from_keys([:source, "category", 0, "description"])
 
     page_meta = Moly.Helper.pagination_meta(count, per_page, page, 3)
-    page_title = "#{category_name} #{Moly.website_blog_list_title()}"
-    page_description = "#{category_name} #{Moly.website_blog_list_description()}"
 
-    render(conn, :category, posts: posts, relative: relative, page_meta: page_meta, category_slug: category_slug, page_title: page_title, page_description: page_description)
+    render(conn, :category, posts: posts, relative: relative, page_meta: page_meta, category_slug: category_slug, category_name: category_name, page_title: category_name, page_description: category_description)
   end
 
   def view(conn, %{"post_name" => post_name}) do

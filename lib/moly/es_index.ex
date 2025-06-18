@@ -42,6 +42,15 @@ defmodule Moly.EsIndex do
             nil
         end
       end
+
+      def es_query_aggregation(query) do
+        case Snap.Search.search(Moly.Cluster, index_name(), query) do
+          {:ok, %{aggregations: aggregations}} ->
+            aggregations
+          _ ->
+            nil
+        end
+      end
     end
   end
 end

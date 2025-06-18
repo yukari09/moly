@@ -8,6 +8,23 @@ defmodule Moly.Contents.PostEs do
 
   @actor %{roles: [:user]}
 
+  def query_top_tags(size \\ 10) do
+    query = %{
+      size: 0,
+      aggs: %{
+        top_tags: %{
+          terms: %{
+            field: "post_tag.slug.keyword",
+            size: size,
+            order: %{_count: "desc"}
+          }
+        }
+      }
+    }
+    es_query_aggregation(query)
+  end
+
+
   @doc """
   Query data from elasticsearch
 

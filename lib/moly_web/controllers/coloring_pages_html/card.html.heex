@@ -1,0 +1,27 @@
+<div class="rounded-2xl border-base-300 border relative" :for={post <- @posts}>
+    <.link navigate={~p"/.#{Moly.Helper.get_in_from_keys(post, [:source, "post_name"])}"}>
+        <MolyWeb.PageHtml.Components.responsive_image_es 
+        data={post} 
+        srcset= {[
+            {2343, 1656},
+            {2048, 1448},
+            {1536, 1086},
+            {1024, 724},
+            {768, 543},
+            {300, 212}
+        ]}
+        sizes= "
+        (max-width: 768px) 100vw,
+        (max-width: 1024px) 70vw,
+        (max-width: 1536px) 50vw,
+        40vw
+    "
+        alt={Moly.Helper.get_in_from_keys(post, [:source, "post_title"])}
+        class="object-cover rounded-2xl aspect-[1/1.4142]"
+        />
+    </.link>
+    <div class="absolute top-2 right-2">
+        <button class="btn btn-ghost btn-circle bg-[#0d5b5f] outline-none border-none"><Lucideicons.printer class= "size-5 text-[#fff9ef]"/></button>
+        <button class="btn btn-ghost btn-circle bg-[#fd776c] outline-none border-none"><Lucideicons.download class="size-5 text-[#fff9ef]"/></button>
+    </div>
+</div>

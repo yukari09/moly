@@ -141,7 +141,7 @@ defmodule MolyWeb.Layouts do
   def navbar_item() do
     show_in_navbar_term = fn ->
       Ash.Query.new(Moly.Terms.Term)
-      |> Ash.Query.filter(term_meta.term_value in ["1", "true", "on"] and term_meta.term_key == "show_in_navbar")
+      |> Ash.Query.filter(term_meta.term_value in ["1", "true", "on"] and term_meta.term_key == "show_in_navbar" and term_taxonomy.count > 0)
       |> Ash.Query.load([:term_taxonomy, :term_meta])
       |> Ash.Query.sort(name: :asc)
       |> Ash.read!(actor: %{roles: [:user]})
