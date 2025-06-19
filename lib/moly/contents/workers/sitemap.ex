@@ -27,7 +27,7 @@ defmodule Moly.Contents.Workers.Sitemap do
     Ash.stream!(query, actor: %{roles: [:user]})
     |> Stream.map(fn post ->
       %Sitemapper.URL{
-        loc: url(~p"/post/#{post.post_name}"),
+        loc: url(~p"/.#{post.post_name}"),
         changefreq: :daily,
         lastmod: post.updated_at
       }

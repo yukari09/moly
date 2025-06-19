@@ -93,6 +93,8 @@ defmodule MolyWeb.Router do
     post("/page/cf-validation", PageController, :cf_validation)
     post("/upload-file", PageController, :upload_file)
 
+    get("/download-file", PageController, :download_file)
+
     live("/website/register-initial-user", Website.RegisterInitialUser)
 
 

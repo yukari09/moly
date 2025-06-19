@@ -109,7 +109,16 @@ defmodule MolyWeb.ColoringPagesController do
     page_description = "#{Moly.Helper.get_in_from_keys(post, [:source, "post_excerpt"])}"
     page_meta = page_meta(post)
 
-    render(conn, :view, post: post, relative: relative, page_title: page_title, page_description: page_description, meta_tags: page_meta)
+    ld_json = ld_json(conn, post) |> JSON.encode!()
+
+    render(conn, :view,
+      post: post,
+      relative: relative,
+      page_title: page_title,
+      page_description: page_description,
+      meta_tags: page_meta,
+      ld_json: ld_json
+    )
   end
 
 
@@ -127,5 +136,37 @@ defmodule MolyWeb.ColoringPagesController do
       %{name: "twitter:image", content: media_url},
       %{name: "description", content: post_excerpt},
     ]
+  end
+
+  defp ld_json(conn, post) do
+    %{
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "mainEntityOfPage": %{
+        "@type": "WebPage",
+        "@id": current_url(conn)
+      },
+      headline: Moly.Helper.get_in_from_keys(post, [:source, "post_title"]),
+      image: [
+        Moly.Helper.get_in_from_keys(post, [:source, "thumbnail_id", "attachment_metadata", "file"])
+      ],
+      datePublished: Moly.Helper.get_in_from_keys(post, [:source, "inserted_at"]),
+      dateModified: Moly.Helper.get_in_from_keys(post, [:source, "updated_at"]),
+      author: %{
+        "@type": "Person",
+        name: "Coloring Pages for Kids"
+      },
+      publisher: %{
+        "@type": "Organization",
+        name: "Coloring Pages for Kids",
+        logo: %{
+          "@type": "ImageObject",
+          url: url(~p"/images/logo.webp"),
+          width: 850,
+          height: 200
+        }
+      },
+      description: Moly.Helper.get_in_from_keys(post, [:source, "post_excerpt"])
+    }
   end
 end

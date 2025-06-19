@@ -14,11 +14,12 @@
         content={tag_attrs[:content]}
       />
     <% end %>
+    <link rel="icon" href={~p"/favicon.ico"} type="image/x-icon">
     <!--Google Fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
       rel="stylesheet"
     />
     <!--Assigns-->
@@ -37,6 +38,8 @@
     <%= if assigns[:style] do %>
       {raw assigns[:style]}
     <% end %>
+    <!--application/ld+json-->
+    <%= if assigns[:ld_json] do %>{raw "<script type='application/ld+json'>#{assigns[:ld_json]}</script>"}<% end %>
   </head>
   <body>
     {@inner_content}

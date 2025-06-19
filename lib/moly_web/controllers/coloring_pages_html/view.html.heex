@@ -52,9 +52,15 @@
             </li>
           </ul>
         </div>
-        <div class="flex items-center gap-2 mt-8 md:mt-12">
-          <button class="btn bg-[#0d5b5f] btn-sm md:btn-md outline-none border-none text-[#fff9ef]"><Lucideicons.printer class= "size-5"/>Print</button>
-          <button class="btn bg-[#fd776c] btn-sm md:btn-md outline-none border-none text-[#fff9ef]"><Lucideicons.download class="size-5"/>Download</button>
+        <div class="flex items-center gap-2 mt-8 md:mt-12" x-data="{}">
+          <button
+            @click={"printImage('#{Moly.Helper.get_in_from_keys(@post, [:source, "thumbnail_id", "attachment_metadata", "file"])}', '#{Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}')"}
+            class="btn bg-[#0d5b5f] btn-sm md:btn-md outline-none border-none text-[#fff9ef]"
+          ><Lucideicons.printer class= "size-4 md:size-5"/>Print</button>
+          <button 
+            @click={"window.location.href = '/download-file?url=#{Moly.Helper.get_in_from_keys(@post, [:source, "thumbnail_id", "attachment_metadata", "file"])}&filename=#{Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}.webp'"}
+            class="btn bg-[#fd776c] btn-sm md:btn-md outline-none border-none text-[#fff9ef]"
+            ><Lucideicons.download class="size-4 md:size-5"/>Download</button>
         </div>
       </div>
     </div>
@@ -80,5 +86,3 @@
   </div>
 
 </div>
-
-
