@@ -75,8 +75,16 @@ defmodule MolyWeb.ColoringPagesController do
         [_, items] -> items
       end
 
-    category_name = hd(posts) |> Moly.Helper.get_in_from_keys([:source, "category", 0, "name"])
-    category_description = hd(posts) |> Moly.Helper.get_in_from_keys([:source, "category", 0, "description"])
+    belong_post_category =
+      hd(posts)
+      |> Moly.Helper.get_in_from_keys([:source, "category"])
+      |> Enum.filter(fn %{"slug" => slug} ->
+        slug == category_slug
+      end)
+      |> hd()
+
+    category_name = belong_post_category["name"]
+    category_description = belong_post_category["description"]
 
     page_meta = Moly.Helper.pagination_meta(count, per_page, page, 3)
 
