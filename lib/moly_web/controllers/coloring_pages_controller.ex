@@ -2,29 +2,24 @@ defmodule MolyWeb.ColoringPagesController do
   use MolyWeb, :controller
 
   def home(conn, _params) do
-    %{"top_tags" => %{buckets: buckets}} = Moly.Contents.PostEs.query_top_tags(20)
-    top_tag_slugs = Enum.map(buckets, &(&1["key"]))
+    [_, posts] = Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", per_page: 300, sort: "-updated_at")
+
+
+    Enum.reduce(posts, [], fn post, acc ->
+      [Moly.Helper.get_in_from_keys(post, [:source, "post_tag"]) | acc]
+    end)
+    |> List.flatten()
+    |> Enum.uniq_by(&(&1["slug"]))
+
 
     posts_by_tags =
-      Task.async_stream(top_tag_slugs, fn(tag_slug) ->
-        result = Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", per_page: 6, sort: "-updated_at", tags: [tag_slug])
-        case result do
-          nil -> []
-          [_, items] -> items
-        end
-      end,
-      max_concurrency: System.schedulers_online(),
-      timeout: :timer.seconds(10))
-      |> Enum.group_by(
-        fn {:ok, [hd | _]} ->
-          [
-            Moly.Helper.get_in_from_keys(hd, [:source, "post_tag", 0, "slug"]),
-            Moly.Helper.get_in_from_keys(hd, [:source, "post_tag", 0, "name"]),
-            Moly.Helper.get_in_from_keys(hd, [:source, "post_tag", 0, "count"]),
-          ]
-        end,
-        fn {:ok, [hd | _]} -> hd end
-      )
+      Enum.group_by(posts, fn post ->
+        [
+          Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "slug"]),
+          Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "name"]),
+          Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "count"]),
+        ]
+      end)
 
     render(conn, :home, posts_by_tags: posts_by_tags)
   end

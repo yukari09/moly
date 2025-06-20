@@ -1,4 +1,4 @@
-<div class="rounded-2xl border-base-300 border relative" :for={post <- @posts} x-data="{}">
+<div class="rounded-2xl border-base-300 border relative" :for={post <- Enum.take(@posts, 6)} x-data="{}">
     <.link navigate={~p"/.#{Moly.Helper.get_in_from_keys(post, [:source, "post_name"])}"}>
         <MolyWeb.PageHtml.Components.responsive_image_es 
         data={post} 
@@ -17,7 +17,8 @@
         40vw
     "
         alt={Moly.Helper.get_in_from_keys(post, [:source, "post_title"])}
-        class="object-cover rounded-2xl aspect-[1/1.4142]"
+        class="object-cover rounded-2xl w-full"
+        style="aspect-ratio: 210/297;"
         />
     </.link>
     <div class="absolute top-2 right-2">
