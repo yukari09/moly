@@ -1,0 +1,15 @@
+<img 
+    id={Moly.Helper.generate_random_id()} 
+    loading={"lazy"}
+    srcset={
+        Moly.Helper.get_in_from_keys(@post, [:source, "thumbnail_id", "attachment_metadata", "sizes"])
+        |> Enum.map(fn {_, %{"width" => w, "height" => h, "file" => f}} ->
+        "#{f} #{w}w"
+        end)
+        |> Enum.join(",")
+    }
+    sizes= "(max-width: 768px) 100vw, (max-width: 1024px) 70vw, (max-width: 1536px) 50vw, 40vw"
+    alt={Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}
+    class="object-cover rounded-2xl max-w-sm w-full"
+    style="aspect-ratio: 210/297;"
+/>
