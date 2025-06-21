@@ -2,7 +2,7 @@ defmodule MolyWeb.ColoringPagesController do
   use MolyWeb, :controller
 
   def home(conn, _params) do
-    [_, posts] = Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", per_page: 300, sort: "-updated_at")
+    [_, posts] = Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", per_page: 500, sort: "-updated_at")
 
 
     Enum.reduce(posts, [], fn post, acc ->
@@ -20,6 +20,8 @@ defmodule MolyWeb.ColoringPagesController do
           Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "count"]),
         ]
       end)
+      |> Enum.sort_by(fn {_, posts} -> posts |> length() end, :desc)
+      |> Enum.take(20)
 
     render(conn, :home, posts_by_tags: posts_by_tags)
   end
@@ -46,7 +48,12 @@ defmodule MolyWeb.ColoringPagesController do
       end
 
 
-    tag_name = hd(posts) |> Moly.Helper.get_in_from_keys([:source, "post_tag", 0, "name"])
+    tag_name =
+      hd(posts)
+      |> Moly.Helper.get_in_from_keys([:source, "post_tag"])
+      |> Enum.filter(fn %{"slug" => slug} -> slug == tag_slug end)
+      |> hd()
+      |> Moly.Helper.get_in_from_keys([:source, "post_tag", 0, "name"])
 
     page_meta = Moly.Helper.pagination_meta(count, per_page, page, 3)
     page_title = tag_description = "#{tag_name} #{Moly.website_blog_list_title()}"
