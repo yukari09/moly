@@ -26,7 +26,7 @@ defmodule MolyWeb.ColoringPagesController do
 
   def tag(conn, %{"tag_slug" => tag_slug} = params) do
     page = Map.get(params, "page", "1") |> String.to_integer()
-    per_page = Map.get(params, "per_page", "10") |> String.to_integer()
+    per_page = Map.get(params, "per_page", "12") |> String.to_integer()
 
     [count, posts] =
       Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", page: page, per_page: per_page, sort: "-updated_at", tags: [tag_slug])
@@ -53,7 +53,7 @@ defmodule MolyWeb.ColoringPagesController do
       |> hd()
       |> Moly.Helper.get_in_from_keys([:source, "post_tag", 0, "name"])
 
-    page_meta = Moly.Helper.pagination_meta(count, per_page, page, 3)
+    page_meta = Moly.Helper.pagination_meta(count, per_page, page, 5)
     page_title = tag_description = "#{tag_name} #{Moly.website_blog_list_title()}"
 
     render(conn, :category, posts: posts, relative: relative, page_meta: page_meta, tag_slug: tag_slug, page_title: page_title, page_description: tag_description, category_description: tag_description, category_name: tag_name)
@@ -61,7 +61,7 @@ defmodule MolyWeb.ColoringPagesController do
 
   def browse(conn, params) do
     page = Map.get(params, "page", "1") |> String.to_integer()
-    per_page = Map.get(params, "per_page", "10") |> String.to_integer()
+    per_page = Map.get(params, "per_page", "12") |> String.to_integer()
 
     [count, posts] =
       Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", page: page, per_page: per_page, sort: "-updated_at")
@@ -80,7 +80,7 @@ defmodule MolyWeb.ColoringPagesController do
         [_, items] -> items
       end
 
-    page_meta = Moly.Helper.pagination_meta(count, per_page, page, 3)
+    page_meta = Moly.Helper.pagination_meta(count, per_page, page, 5)
     page_title = Moly.website_blog_list_title()
     page_description = Moly.website_blog_list_description()
 
@@ -89,7 +89,7 @@ defmodule MolyWeb.ColoringPagesController do
 
   def category(conn, %{"category_slug" => category_slug} = params) do
     page = Map.get(params, "page", "1") |> String.to_integer()
-    per_page = Map.get(params, "per_page", "10") |> String.to_integer()
+    per_page = Map.get(params, "per_page", "12") |> String.to_integer()
 
     [count, posts] =
       Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", page: page, per_page: per_page, sort: "-updated_at", categories: [category_slug])
@@ -119,7 +119,7 @@ defmodule MolyWeb.ColoringPagesController do
     category_name = belong_post_category["name"]
     category_description = belong_post_category["description"]
 
-    page_meta = Moly.Helper.pagination_meta(count, per_page, page, 3)
+    page_meta = Moly.Helper.pagination_meta(count, per_page, page, 5)
 
     render(conn, :category, posts: posts, relative: relative, page_meta: page_meta, category_slug: category_slug, category_name: category_name, page_title: category_name, page_description: category_description)
   end
