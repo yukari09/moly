@@ -1,7 +1,10 @@
 <div class="mt-12" :if={@page_meta.total_pages > 1}>
     <ul class="flex items-center gap-2 justify-center">
     <li :for={i <- @page_meta.page_range}>
-        <.link class="btn btn-circle btn-lg bg-[#fd776c] text-[#fff9ef]">{i}</.link>
+        <.link 
+          navigate={@conn.request_path <> "?page=#{i}"} 
+          class={["btn btn-circle btn-lg", if(i == @page_meta.current_page, do: "bg-[#fd776c] text-[#fff9ef]")]}
+        >{i}</.link>
     </li>
     </ul>
 </div>
