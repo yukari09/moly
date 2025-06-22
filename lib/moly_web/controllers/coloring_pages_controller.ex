@@ -18,7 +18,7 @@ defmodule MolyWeb.ColoringPagesController do
           Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "count"]),
         ]
       end)
-      |> Enum.sort_by(fn {_, posts} -> posts |> Enum.count() end, :desc)
+      |> Enum.filter(fn {_, posts} -> posts |> Enum.count() > 6 end)
       |> Enum.take(20)
 
     render(conn, :home, posts_by_tags: posts_by_tags)

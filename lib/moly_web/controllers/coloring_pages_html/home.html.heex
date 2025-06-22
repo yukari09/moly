@@ -126,10 +126,6 @@
   </div>
 </div>
 
-
-
- 
-
 <div class="max-w-7xl mx-auto w-full my-12 lg:my-32  px-4 lg:px-0" x-data="{current_i: '0'}">
     <div class="flex items-top justify-between gap-8">
       <ul class="hidden lg:block bg-[#fff9ef] py-12 px-4 rounded-4xl w-64 flex-shrink-0 space-y-2">
@@ -153,7 +149,7 @@
     </div>
       </div>
       <div id={"post-tag-#{i}"}  :for={{{_, items}, i} <- Enum.with_index(@posts_by_tags)} x-data={"{i: #{i}}" } class="grid grid-cols-2 sm:grid-cols-3 gap-4" x-bind:class="current_i == i? 'block' : 'hidden'">
-        <.card posts={items} />
+        <.card posts={Enum.take(items, 6)} />
       </div>        
       </div>
     </div>
