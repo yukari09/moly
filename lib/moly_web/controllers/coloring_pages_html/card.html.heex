@@ -1,6 +1,6 @@
-<div class="rounded-2xl border-base-300 border relative" :for={post <- Enum.take(@posts, 6)} x-data="{}">
+<div class="rounded-2xl border-base-300 border relative w-full" :for={post <- Enum.take(@posts, 6)} x-data="{}">
     <.link navigate={~p"/.#{Moly.Helper.get_in_from_keys(post, [:source, "post_name"])}"}>
-        <.image post={post} />
+        <.image post={post}/>
     </.link>
     <div class="absolute top-2 right-2">
         <button 

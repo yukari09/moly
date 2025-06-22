@@ -9,8 +9,6 @@ defmodule MolyWeb.ColoringPagesController do
       [Moly.Helper.get_in_from_keys(post, [:source, "post_tag"]) | acc]
     end)
     |> List.flatten()
-    |> Enum.uniq_by(&(&1["slug"]))
-
 
     posts_by_tags =
       Enum.group_by(posts, fn post ->
@@ -20,7 +18,7 @@ defmodule MolyWeb.ColoringPagesController do
           Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "count"]),
         ]
       end)
-      |> Enum.sort_by(fn {_, posts} -> posts |> length() end, :desc)
+      |> Enum.sort_by(fn {_, posts} -> posts |> Enum.count() end, :desc)
       |> Enum.take(20)
 
     render(conn, :home, posts_by_tags: posts_by_tags)
