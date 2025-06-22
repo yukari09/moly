@@ -83,7 +83,7 @@ defmodule MolyWeb.Router do
 
 
     get("/", ColoringPagesController, :home)
-
+    get("/browse", ColoringPagesController, :browse)
     get("/@:category_slug", ColoringPagesController, :category)
     get("/-:tag_slug", ColoringPagesController, :tag)
     get("/.:post_name", ColoringPagesController, :view)
@@ -104,14 +104,6 @@ defmodule MolyWeb.Router do
     get("/terms-of-service", PageController, :terms_of_service)
   end
 
-  #for youtubechannelhub
-  scope "/", MolyWeb do
-    pipe_through([:browser])
-    get("/youtube-thumbnail-grabber", YoutubeChannelHub.PageController, :index)
-    get("/youtube-income-estimator-pro", YoutubeChannelHub.PageController, :calculator)
-    get("/youtube-tag-generator", YoutubeChannelHub.PageController, :tag_generator)
-    post("/youtube-tag-generator-result", YoutubeChannelHub.PageController, :tag_generator_result)
-  end
 
   scope "/admin", MolyWeb do
     pipe_through([:browser])
