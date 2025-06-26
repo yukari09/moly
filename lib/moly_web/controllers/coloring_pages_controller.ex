@@ -51,7 +51,7 @@ defmodule MolyWeb.ColoringPagesController do
       |> Moly.Helper.get_in_from_keys([:source, "post_tag"])
       |> Enum.filter(fn %{"slug" => slug} -> slug == tag_slug end)
       |> hd()
-      |> Moly.Helper.get_in_from_keys([:source, "post_tag", 0, "name"])
+      |> Moly.Helper.get_in_from_keys(["name"])
 
     page_meta = Moly.Helper.pagination_meta(count, per_page, page, 5)
     page_title = tag_description = "#{tag_name} #{Moly.website_blog_list_title()}"
