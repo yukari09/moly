@@ -41,6 +41,8 @@
     <%= if assigns[:style] do %>
       {raw assigns[:style]}
     <% end %>
+    <!--application/ld+json-->
+    <%= if assigns[:ld_json] do %>{raw "<script type='application/ld+json'>#{assigns[:ld_json]}</script>"}<% end %>
   </head>
   <body>
     {@inner_content}
