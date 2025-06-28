@@ -145,7 +145,7 @@
           A World of Coloring Fun – Animals, Holidays, Dinosaurs & More!
         </p>
         </div>
-        <.link :for={{{[slug, _, _], _}, i} <- Enum.with_index(@posts_by_tags)} id={"link-browse-more-#{i}"} x-data={"{i: #{i}}" } href={~p"/-#{slug}"} class="btn btn-primary btn-sm md:btn-md bg-[#fd776c] outline-none border-none rounded-full" x-bind:class="current_i == i ? 'flex' : 'hidden'">Browse More</.link>
+        <.link :for={{{%{"slug" => slug}, _}, i} <- Enum.with_index(@posts_by_tags)} id={"link-browse-more-#{i}"} x-data={"{i: #{i}}" } href={~p"/-#{slug}"} class="btn btn-primary btn-sm md:btn-md bg-[#fd776c] outline-none border-none rounded-full" x-bind:class="current_i == i ? 'flex' : 'hidden'">Browse More</.link>
     </div>
       </div>
       <div id={"post-tag-#{i}"}  :for={{{_, items}, i} <- Enum.with_index(@posts_by_tags)} x-data={"{i: #{i}}" } class="grid grid-cols-2 sm:grid-cols-3 gap-4" x-bind:class="current_i == i? 'block' : 'hidden'">

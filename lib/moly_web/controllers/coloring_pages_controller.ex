@@ -2,16 +2,18 @@ defmodule MolyWeb.ColoringPagesController do
   use MolyWeb, :controller
 
   def home(conn, _params) do
-    # Fetch the top 20 tags based on post count
-    %{"top_tags" => %{buckets: buckets}} = Moly.Contents.PostEs.query_top_tags(20, 6)
+    # Fetch the top 18 tags based on post count
+    %{"top_tags" => %{buckets: buckets}} = Moly.Contents.PostEs.query_top_tags(18, 6)
+
     posts_by_tags =
-      Enum.reduce(buckets, %{}, fn %{"key" => tag_slug, "top_docs" => %{"hits" => %{"hits" => posts}}}, acc ->
+      Enum.reduce(buckets, %{}, fn %{"doc_count" => doc_count, "key" => tag_slug, "top_docs" => %{"hits" => %{"hits" => posts}}}, acc ->
         posts = Enum.map(posts, & %{source: &1["_source"]})
         key =
           hd(posts)
           |> Moly.Helper.get_in_from_keys([:source, "post_tag"])
           |> Enum.filter(fn %{"slug" => slug} -> slug == tag_slug end)
           |> hd()
+          |> Map.put("count", doc_count)
         Map.put(acc, key, posts)
       end)
 
