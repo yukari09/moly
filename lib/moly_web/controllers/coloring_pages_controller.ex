@@ -2,30 +2,20 @@ defmodule MolyWeb.ColoringPagesController do
   use MolyWeb, :controller
 
   def home(conn, _params) do
-    [_, posts] = Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", per_page: 500, sort: "-updated_at")
-
-
-    Enum.reduce(posts, [], fn post, acc ->
-      [Moly.Helper.get_in_from_keys(post, [:source, "post_tag"]) | acc]
-    end)
-    |> List.flatten()
-
-    # posts_by_tags =
-    #   Enum.group_by(posts, fn post ->
-    #     [
-    #       Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "slug"]),
-    #       Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "name"]),
-    #       Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "count"]),
-    #     ]
-    #   end)
-    #   |> Enum.filter(fn {_, posts} -> posts |> Enum.count() > 6 end)
-    #   |> Enum.take(20)
-
+    # Fetch the top 20 tags based on post count
+    %{"top_tags" => %{buckets: buckets}} = Moly.Contents.PostEs.query_top_tags(20, 6)
     posts_by_tags =
-      Enum.group_by(posts, fn post ->
-        Moly.Helper.get_in_from_keys(post, [:source, "post_tag"])
+      Enum.reduce(buckets, %{}, fn %{"key" => tag_slug, "top_docs" => %{"hits" => %{"hits" => posts}}}, acc ->
+        posts = Enum.map(posts, & %{source: &1["_source"]})
+        key =
+          hd(posts)
+          |> Moly.Helper.get_in_from_keys([:source, "post_tag"])
+          |> Enum.filter(fn %{"slug" => slug} -> slug == tag_slug end)
+          |> hd()
+        Map.put(acc, key, posts)
       end)
-      |> Enum.filter(fn {_, posts} -> Enum.count(posts) >= 6 end)
+
+    IO.inspect(posts_by_tags, label: "Posts by Tags")
 
     assigns = [
       posts_by_tags: posts_by_tags,
