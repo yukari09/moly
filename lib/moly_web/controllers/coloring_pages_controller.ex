@@ -10,16 +10,22 @@ defmodule MolyWeb.ColoringPagesController do
     end)
     |> List.flatten()
 
+    # posts_by_tags =
+    #   Enum.group_by(posts, fn post ->
+    #     [
+    #       Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "slug"]),
+    #       Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "name"]),
+    #       Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "count"]),
+    #     ]
+    #   end)
+    #   |> Enum.filter(fn {_, posts} -> posts |> Enum.count() > 6 end)
+    #   |> Enum.take(20)
+
     posts_by_tags =
       Enum.group_by(posts, fn post ->
-        [
-          Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "slug"]),
-          Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "name"]),
-          Moly.Helper.get_in_from_keys(post, [:source, "post_tag", 0, "count"]),
-        ]
+        Moly.Helper.get_in_from_keys(post, [:source, "post_tag"])
       end)
-      |> Enum.filter(fn {_, posts} -> posts |> Enum.count() > 6 end)
-      |> Enum.take(20)
+      |> Enum.filter(fn {_, posts} -> Enum.count(posts) >= 6 end)
 
     render(conn, :home, posts_by_tags: posts_by_tags)
   end

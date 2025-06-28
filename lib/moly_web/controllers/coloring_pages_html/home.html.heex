@@ -14,7 +14,6 @@
   </div>
 </div>
 
-
 <div class="mt-16 md:mt-32 max-w-7xl mx-auto">
   <div class="text-center">
     <h2 class="text-[#431e33] text-lg sm:text-2xl md:text-4xl font-semibold">Featured Categories</h2>
@@ -129,7 +128,7 @@
 <div class="max-w-7xl mx-auto w-full my-12 lg:my-32  px-4 lg:px-0" x-data="{current_i: '0'}">
     <div class="flex items-top justify-between gap-8">
       <ul class="hidden lg:block bg-[#fff9ef] py-12 px-4 rounded-4xl w-64 flex-shrink-0 space-y-2">
-        <li :for={{{[slug, name, count], _}, i} <- Enum.with_index(@posts_by_tags)} x-data={"{i: #{i}}"}>
+        <li :for={{{[%{"slug" => slug, "name" => name, "count" => count} | _], _}, i} <- Enum.with_index(@posts_by_tags)} x-data={"{i: #{i}}"}>
           <.link class="px-4 rounded-2xl py-3 capitalize flex items-center justify-between hover:bg-[#fd776c] hover:text-[#fafafa] group" x-bind:class="current_i == i ? 'bg-[#fd776c] text-[#fafafa]' : 'text-[#431e33]'" x-on:click="current_i = i" @click.prevent>
             <span>{name}</span>
             <span class="px-2 py-1 text-xs group-hover:bg-[#fafafa] group-hover:text-[#431e33] group-hover:rounded-full" x-bind:class="current_i == i ? 'bg-[#fafafa] text-[#431e33] rounded-full' : 'bg-[#fafafa] text-[#431e33] rounded-full'">{count}</span>
