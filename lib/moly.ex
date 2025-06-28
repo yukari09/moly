@@ -36,6 +36,7 @@ defmodule Moly do
       %{name: "WebSite Blog List Title", slug: "website-blog-list-title", term_taxonomy: [%{taxonomy: "website", description: "WebSite Blog List Title."}], term_meta: [%{term_key: "name", term_value: "WebSite Blog List Title"}]},
       %{name: "WebSite Blog List Description", slug: "website-blog-list-description", term_taxonomy: [%{taxonomy: "website", description: "WebSite Blog List Description."}], term_meta: [%{term_key: "name", term_value: "WebSite Blog List Description"}]},
 
+      %{name: "WebSite Footer Description", slug: "website-footer-description", term_taxonomy: [%{taxonomy: "website", description: "Footer Description"}], term_meta: []},
       %{name: "WebSite Footer Column1", slug: "website-footer-column-1", term_taxonomy: [%{taxonomy: "website", description: "Footer Column1"}], term_meta: []},
       %{name: "WebSite Footer Column2", slug: "website-footer-column-2", term_taxonomy: [%{taxonomy: "website", description: "Footer Column2"}], term_meta: []},
       %{name: "WebSite Footer Column3", slug: "website-footer-column-3", term_taxonomy: [%{taxonomy: "website", description: "Footer Column3"}], term_meta: []},
@@ -57,6 +58,8 @@ defmodule Moly do
   def website_links(), do: website_term("website-links")
   def website_blog_list_title(), do: website_term("website-blog-list-title", true)
   def website_blog_list_description(), do: website_term("website-blog-list-description", true)
+
+  def website_footer_description(), do: website_term("website-footer-description", true)
   def website_footer_column(level), do: website_term("website-footer-column-#{level}")
   def website_footer_column_keyword(level) do
     key = "website-footer-column-#{level}"
