@@ -15,8 +15,6 @@ defmodule MolyWeb.ColoringPagesController do
         Map.put(acc, key, posts)
       end)
 
-    IO.inspect(posts_by_tags, label: "Posts by Tags")
-
     assigns = [
       posts_by_tags: posts_by_tags,
       ld_json: home_ld_json(conn) |> JSON.encode!()
