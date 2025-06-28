@@ -27,7 +27,12 @@ defmodule MolyWeb.ColoringPagesController do
       end)
       |> Enum.filter(fn {_, posts} -> Enum.count(posts) >= 6 end)
 
-    render(conn, :home, posts_by_tags: posts_by_tags)
+    assigns = [
+      posts_by_tags: posts_by_tags,
+      ld_json: home_ld_json(conn) |> JSON.encode!()
+    ]
+
+    render(conn, :home, assigns)
   end
 
   def tag(conn, %{"tag_slug" => tag_slug} = params) do
@@ -151,7 +156,7 @@ defmodule MolyWeb.ColoringPagesController do
     page_description = "#{Moly.Helper.get_in_from_keys(post, [:source, "post_excerpt"])}"
     page_meta = page_meta(post)
 
-    ld_json = ld_json(conn, post) |> JSON.encode!()
+    ld_json = view_ld_json(conn, post) |> JSON.encode!()
 
     render(conn, :view,
       post: post,
@@ -180,7 +185,18 @@ defmodule MolyWeb.ColoringPagesController do
     ]
   end
 
-  defp ld_json(conn, post) do
+  defp home_ld_json(conn) do
+    %{
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Kid Coloring Page",
+      description: "Free printable coloring pages for kids",
+      url: "https://kidcoloringpage.com"
+    }
+  end
+
+
+  defp view_ld_json(conn, post) do
     %{
       "@context": "https://schema.org",
       "@type": "BlogPosting",
