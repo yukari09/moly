@@ -5,7 +5,8 @@ defmodule Moly.Contents.Post do
     authorizers: [Ash.Policy.Authorizer],
     extensions: [AshRbac],
     data_layer: AshPostgres.DataLayer,
-    notifiers: [Moly.Contents.Notifiers.Post]
+    notifiers: [Moly.Contents.Notifiers.Post],
+    extensions: [AshJsonApi.Resource]
 
   require Ash.Query
 
@@ -391,6 +392,9 @@ defmodule Moly.Contents.Post do
     identity :unique_post_name, [:post_name]
   end
 
+  json_api do
+    type "post"
+  end
 
 end
 

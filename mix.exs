@@ -55,6 +55,8 @@ defmodule Moly.MixProject do
       {:oban, "~> 2.19"},
       {:slugify, "~> 1.3"},
       {:sitemapper, "~> 0.9"},
+      {:tidewave, "~> 0.1", only: :dev},
+      {:ash_json_api, "~> 1.0"},
       # ====================
       {:phoenix, "~> 1.7.20"},
       {:phoenix_ecto, "~> 4.5"},
