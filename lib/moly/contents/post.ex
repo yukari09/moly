@@ -3,7 +3,7 @@ defmodule Moly.Contents.Post do
     otp_app: :moly,
     domain: Moly.Contents,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshRbac],
+    extensions: [AshRbac, AshGraphql.Resource],
     data_layer: AshPostgres.DataLayer,
     notifiers: [Moly.Contents.Notifiers.Post]
 
@@ -391,6 +391,9 @@ defmodule Moly.Contents.Post do
     identity :unique_post_name, [:post_name]
   end
 
+  graphql do
+    type :post
+  end
 
 end
 

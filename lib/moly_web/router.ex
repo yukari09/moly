@@ -14,9 +14,29 @@ defmodule MolyWeb.Router do
     plug(MolyWeb.Plugs.GeoBlocking, deny_countries: [])
   end
 
-  pipeline :api do
-    plug(:accepts, ["json"])
-    plug(:load_from_bearer)
+  # pipeline :api do
+  #   plug(:accepts, ["json"])
+  # end
+
+  pipeline :graphql do
+    plug :load_from_bearer
+    plug :set_actor, :user
+    plug AshGraphql.Plug
+  end
+
+  scope "/gql" do
+    pipe_through [:graphql]
+
+    if Application.compile_env(:moly, :dev_routes) do
+      forward "/playground",
+              Absinthe.Plug.GraphiQL,
+              schema: Moly.GraphqlSchema,
+              interface: :playground
+    end
+
+    forward "/",
+      Absinthe.Plug,
+      schema: Moly.GraphqlSchema
   end
 
   # scope "/", MolyWeb do
@@ -134,11 +154,6 @@ defmodule MolyWeb.Router do
     end
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", MolyWeb do
-  #   pipe_through :api
-  # end
-
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:moly, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
@@ -154,5 +169,12 @@ defmodule MolyWeb.Router do
       live_dashboard("/dashboard", metrics: MolyWeb.Telemetry)
       forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
+  end
+
+  defp set_actor(%{assigns: %{current_user: current_user}} = conn, _opts) do
+    Ash.PlugHelpers.set_actor(conn, current_user)
+  end
+  defp set_actor(conn, _opts) do
+    Ash.PlugHelpers.set_actor(conn, %{roles: [:guest]})
   end
 end

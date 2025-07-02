@@ -160,9 +160,8 @@ defmodule Moly.Helper do
           metas: metas
         }
 
-        {:ok, _media} = Moly.Contents.create_media(attrs, actor: actor)
-
-        attrs
+        {:ok, media} = Moly.Contents.create_media(attrs, actor: actor)
+        {:ok, attrs, media}
       :error -> :error
     end
   end
@@ -499,7 +498,7 @@ defmodule Moly.Helper do
   @doc false
   def plug_upload_to_phoenix_liveview_upload_entry(%Plug.Upload{path: path, content_type: content_type, filename: filename}) do
     %Phoenix.LiveView.UploadEntry{
-      client_name: filename,
+      client_name: Ash.UUID.generate() <> Path.extname(filename),
       client_type: content_type,
       uuid: Ash.UUID.generate(),
       client_size: File.stat!(path).size

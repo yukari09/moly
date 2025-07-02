@@ -119,6 +119,8 @@ config :moly, Oban,
      ]}
   ]
 
+config :ash_graphql, :policies, show_policy_breakdowns?: true
+
 config :moly, :env, config_env()
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

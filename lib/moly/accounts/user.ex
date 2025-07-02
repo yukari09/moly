@@ -3,7 +3,7 @@ defmodule Moly.Accounts.User do
     otp_app: :moly,
     domain: Moly.Accounts,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshAuthentication],
+    extensions: [AshAuthentication, AshGraphql.Resource],
     data_layer: AshPostgres.DataLayer
 
   require Ash.Query
@@ -20,6 +20,7 @@ defmodule Moly.Accounts.User do
         identity_field(:email)
         sign_in_token_lifetime(3600*24*30)
         require_confirmed_with :confirmed_at
+        session_identifier :jti
         resettable do
           sender(Moly.Accounts.User.Senders.SendPasswordResetEmail)
         end
@@ -335,67 +336,6 @@ defmodule Moly.Accounts.User do
       change AshAuthentication.GenerateTokenChange
     end
 
-    # update :resend_confirmation do
-    #   description "Resend email to user."
-    #   require_atomic? false
-
-    #   argument :updated_at, :datetime do
-    #     allow_nil? false
-    #   end
-
-    #   change after_action(fn changeset, user, context ->
-    #            claims = %{"act" => "confirm"}
-
-    #            token =
-    #              Moly.Accounts.Token
-    #              |> Ash.Query.filter(
-    #                subject == ^"user?id=#{user.id}" and purpose == "confirm_new_user" and
-    #                  expires_at > now()
-    #              )
-    #              |> Ash.Query.limit(1)
-    #              |> Ash.read_one(context: %{private: %{ash_authentication?: true}})
-    #              |> case do
-    #                {:ok, nil} ->
-    #                  {:ok, strategy} =
-    #                    AshAuthentication.Info.strategy(Moly.Accounts.User, :confirm_new_user)
-
-    #                  {:ok, token, _} =
-    #                    AshAuthentication.Jwt.token_for_user(user, claims,
-    #                      token_lifetime: strategy.token_lifetime
-    #                    )
-
-    #                  Ash.create(
-    #                    Moly.Accounts.Token,
-    #                    %{
-    #                      extra_data: %{email: user.email},
-    #                      purpose: "confirm_new_user",
-    #                      token: token
-    #                    },
-    #                    action: :store_token,
-    #                    context: %{private: %{ash_authentication?: true}}
-    #                  )
-
-    #                  token
-
-    #                {:ok, user_token} ->
-    #                  claims =
-    #                    Map.merge(claims, %{"jti" => user_token.jti, "sub" => user_token.subject})
-
-    #                  {:ok, strategy} =
-    #                    AshAuthentication.Info.strategy(Moly.Accounts.User, :confirm_new_user)
-
-    #                  {:ok, token, _} =
-    #                    AshAuthentication.Jwt.token_for_user(user, claims,
-    #                      token_lifetime: strategy.token_lifetime
-    #                    )
-
-    #                  token
-    #              end
-
-    #            Moly.Accounts.User.Senders.SendNewUserConfirmationEmail.send(user, token, nil)
-    #            {:ok, user}
-    #          end)
-    # end
 
     update :update_user_status do
       description "Update the status of a user to active"
@@ -473,6 +413,11 @@ defmodule Moly.Accounts.User do
   identities do
     identity :unique_email, [:email]
   end
+
+  graphql do
+    type :user
+  end
+
 
   defp register_relation_user_meta(email_or_user_info) do
     [name, username, avatar] =

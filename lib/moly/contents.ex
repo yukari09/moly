@@ -1,5 +1,8 @@
 defmodule Moly.Contents do
-  use Ash.Domain
+  use Ash.Domain,
+    extensions: [
+      AshGraphql.Domain
+    ]
 
   resources do
     resource Moly.Contents.Post do
@@ -8,6 +11,15 @@ defmodule Moly.Contents do
 
     resource Moly.Contents.PostMeta do
       define :create_meta, action: :create
+    end
+  end
+
+  graphql do
+    queries do
+      # list Moly.Contents.Post, :list_posts, :read
+    end
+    mutations do
+      create Moly.Contents.Post, :create_post, :create_post
     end
   end
 end

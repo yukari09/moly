@@ -7,7 +7,7 @@ defmodule MolyWeb.PageController do
       |> Moly.Helper.create_media_post_by_entry(file.path, conn.assigns.current_user)
       |> case do
         :error -> %{success: 0}
-        media_attrs ->
+        {:ok, media_attrs, _media_post} ->
           image_infor =
             Enum.find(media_attrs.metas, &(&1.meta_key == :attachment_metadata))
             |> Map.get(:meta_value)
