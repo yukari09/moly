@@ -4,14 +4,21 @@ defmodule MolyWeb.AdminDashboardLive do
 
   @impl true
   def handle_event("clean-website-cache", _unsigned_params, socket) do
-    :timer.sleep(200)
+    :timer.sleep(3000)
     Moly.clean_website_cache()
     {:noreply, socket}
   end
 
   @impl true
+  def handle_event("generate-website-map", _unsigned_params, socket) do
+    :timer.sleep(3000)
+    Moly.Contents.Workers.Sitemap.generate_sitemap()
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("test-email", _unsigned_params, socket) do
-    :timer.sleep(200)
+    :timer.sleep(3000)
     email = socket.assigns.current_user.email
     url = ~p"/"
     %{deliver_type: "deliver_email_for_test", deliver_args: [email, url]}
@@ -28,13 +35,22 @@ defmodule MolyWeb.AdminDashboardLive do
       <div class="w-2/3"></div>
       <div class="w-1/3 space-y-4">
         <.card header="WebSite">
-          <.link phx-click={
-            JS.push("clean-website-cache")
-          } class="flex items-center gap-2 text-sm hover:text-gray-500">
-            <Lucideicons.loader_circle id="clean-website-cache-loader-circle" class="size-4 animate-spin hidden phx-click-loading:block" />
-            <Lucideicons.eraser id="clean-website-cache-loader-eraser" class="size-4 block phx-click-loading:hidden" />
-            Clean Website Cache
-          </.link>
+          <div class="flex flex-col gap-4">
+            <.link phx-click={
+              JS.push("clean-website-cache")
+            } class="flex items-center gap-2 text-sm hover:text-gray-500">
+              <Lucideicons.loader_circle id="clean-website-cache-loader-circle" class="size-4 animate-spin hidden phx-click-loading:block" />
+              <Lucideicons.eraser id="clean-website-cache-loader-eraser" class="size-4 block phx-click-loading:hidden" />
+              Clean Website Cache
+            </.link>
+            <.link phx-click={
+              JS.push("generate-website-map")
+            } class="flex items-center gap-2 text-sm hover:text-gray-500">
+              <Lucideicons.loader_circle id="generate-website-map-loader-circle" class="size-4 animate-spin hidden phx-click-loading:block" />
+              <Lucideicons.network id="generate-website-map-loader-eraser" class="size-4 block phx-click-loading:hidden" />
+              Generate Website Map
+            </.link>
+          </div>
         </.card>
 
         <.card header="Email Service">
