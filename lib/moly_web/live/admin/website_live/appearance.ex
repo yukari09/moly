@@ -1,5 +1,5 @@
 defmodule MolyWeb.AdminWebsiteLive.Appearance do
-alias MolyWeb.DaisyUi
+# alias MolyWeb.DaisyUi
   use MolyWeb.Admin, :live_view
 
   def mount(_params, _session, socket) do

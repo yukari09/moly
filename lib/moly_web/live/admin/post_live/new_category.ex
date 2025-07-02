@@ -1,7 +1,8 @@
 defmodule MolyWeb.AdminPostLive.NewCategory do
   use MolyWeb.Admin, :live_view
 
-  def mount(_params, %{"user" => "user?id=" <> user_id}, socket) do
+  def mount(_params, %{"user" => user}, socket) do
+    user_id = Regex.run(~r/(?<=\?id=).+/, user) |> List.first()
     current_user =
       Ash.get!(Moly.Accounts.User, user_id, context: %{private: %{ash_authentication?: true}})
 

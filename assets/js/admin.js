@@ -18,7 +18,7 @@
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
+import {Socket, LongPoll} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import Hooks from "./hooks.admin"
@@ -27,6 +27,7 @@ import Uploaders from "./uploaders"
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 3000,
+  transport: LongPoll,
   params: {_csrf_token: csrfToken},
   hooks: Hooks,
   uploaders: Uploaders,
@@ -38,7 +39,6 @@ let liveSocket = new LiveSocket("/live", Socket, {
     }
   }
 })
-
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)",barThickness: 1.25})

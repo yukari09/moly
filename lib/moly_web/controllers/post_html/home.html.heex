@@ -169,7 +169,7 @@
       </div>
     </div>
     <div class="lg:w-[30%] mt-8 lg:mt-0">
-      <div class="bg-primary/6 p-8 lg:p-12 rounded-md" :for={{{name, slug, keyword}, items} <- Enum.slice(data3, 4..4)}>
+      <div class="bg-primary/6 p-8 lg:p-12 rounded-md" :for={{{name, _slug, keyword}, items} <- Enum.slice(data3, 4..4)}>
         <h4 class="font-medium text-xl">{name}</h4>
         <div class="mt-4 space-y-8">
           <MolyWeb.PageHtml.Components.post_card 
