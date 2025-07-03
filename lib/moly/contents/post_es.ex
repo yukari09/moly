@@ -9,6 +9,42 @@ defmodule Moly.Contents.PostEs do
   @actor %{roles: [:user]}
 
   @doc """
+  Query top tags from elasticsearch
+  %{"top_tags" => %Snap.Aggregation{buckets: [%{"doc_count" => 1, "key" => "google-i-o-2025"}, %{"doc_count" => 1, "key" => "litchi"}], doc_count: nil, doc_count_error_upper_bound: 0, interval: nil, sum_other_doc_count: 0, value: nil}}
+  """
+  def query_top_tags(size \\ 10, fetch_size \\ 10) do
+    query = %{
+      size: 0,
+      query: %{
+        bool: %{
+          filter: [
+            %{ term: %{"post_status.keyword" => "publish"} },
+            %{ term: %{"post_type.keyword" => "post"} }
+          ]
+        }
+      },
+      aggs: %{
+        top_tags: %{
+          terms: %{
+            field: "post_tag.slug.keyword",
+            size: size,
+            order: %{_count: "desc"}
+          },
+          aggs: %{
+            top_docs: %{
+              top_hits: %{
+                size: fetch_size
+              }
+            }
+          }
+        }
+      }
+    }
+    es_query_aggregation(query)
+  end
+
+
+  @doc """
   Query data from elasticsearch
 
   opts:
