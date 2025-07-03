@@ -3,7 +3,7 @@ defmodule Moly.Terms.Term do
     otp_app: :moly,
     domain: Moly.Terms,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshRbac],
+    extensions: [AshRbac, AshGraphql.Resource],
     data_layer: AshPostgres.DataLayer
 
   require Ash.Query
@@ -104,15 +104,18 @@ defmodule Moly.Terms.Term do
 
     attribute :name, :string do
       allow_nil? false
+      public? true
     end
 
     attribute :slug, :string do
       allow_nil? false
+      public? true
     end
 
     attribute :term_group, :integer do
       allow_nil? false
       default 0
+      public? true
     end
 
     timestamps()
@@ -121,6 +124,10 @@ defmodule Moly.Terms.Term do
   relationships do
     has_many :term_taxonomy, Moly.Terms.TermTaxonomy
     has_many :term_meta, Moly.Terms.TermMeta
+  end
+
+  graphql do
+    type :term
   end
 
   identities do
