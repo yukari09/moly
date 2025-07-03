@@ -15,6 +15,14 @@ defmodule Moly.Contents.PostEs do
   def query_top_tags(size \\ 10, fetch_size \\ 10) do
     query = %{
       size: 0,
+      query: %{
+        bool: %{
+          filter: [
+            %{ term: %{"post_status.keyword" => "publish"} },
+            %{ term: %{"post_type.keyword" => "post"} }
+          ]
+        }
+      },
       aggs: %{
         top_tags: %{
           terms: %{
