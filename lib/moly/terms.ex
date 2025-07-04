@@ -1,5 +1,8 @@
 defmodule Moly.Terms do
-  use Ash.Domain
+  use Ash.Domain,
+    extensions: [
+      AshGraphql.Domain
+    ]
 
   resources do
     resource Moly.Terms.Term do
@@ -14,4 +17,12 @@ defmodule Moly.Terms do
       define :read_term_taxonomy, action: :read, args: [:taxonomy_name, :parent]
     end
   end
+
+  graphql do
+    queries do
+      list Moly.Terms.Term, :list_terms, :read, paginate_with: :keyset, relay?: true
+    end
+  end
+
+
 end

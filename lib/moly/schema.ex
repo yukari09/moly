@@ -5,7 +5,7 @@ defmodule Moly.GraphqlSchema do
 
   # Add your domains here
   use AshGraphql,
-    domains: [Moly.Contents, Moly.Accounts]
+    domains: [Moly.Contents, Moly.Accounts, Moly.Terms]
 
   query do
     # Custom absinthe queries can be placed here
