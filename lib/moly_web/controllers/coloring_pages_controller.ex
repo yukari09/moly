@@ -3,9 +3,10 @@ defmodule MolyWeb.ColoringPagesController do
 
   def home(conn, _params) do
     # Fetch the top 18 tags based on post count
-    %{"top_tags" => %{buckets: buckets}} = Moly.Contents.PostEs.query_top_tags(18, 6)
-
     posts_by_tags =
+      Moly.Utilities.cache_get_or_put("#{__MODULE__}:home", fn ->
+        %{"top_tags" => %{buckets: buckets}} = Moly.Contents.PostEs.query_top_tags(18, 6)
+
       Enum.reduce(buckets, %{}, fn %{"doc_count" => doc_count, "key" => tag_slug, "top_docs" => %{"hits" => %{"hits" => posts}}}, acc ->
         posts = Enum.map(posts, & %{source: &1["_source"]})
         key =
@@ -16,6 +17,7 @@ defmodule MolyWeb.ColoringPagesController do
           |> Map.put("count", doc_count)
         Map.put(acc, key, posts)
       end)
+    end, :timer.minutes(5))
 
     assigns = [
       posts_by_tags: posts_by_tags,
@@ -25,137 +27,118 @@ defmodule MolyWeb.ColoringPagesController do
     render(conn, :home, assigns)
   end
 
-  def tag(conn, %{"tag_slug" => tag_slug} = params) do
-    page = Map.get(params, "page", "1") |> String.to_integer()
-    per_page = Map.get(params, "per_page", "12") |> String.to_integer()
-
-    [count, posts] =
-      Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", page: page, per_page: per_page, sort: "-updated_at", tags: [tag_slug])
-      |> case do
-        nil -> [0, []]
-        [count, items] ->
-          [count, items]
-      end
-
-    posts_id = Enum.map(posts, &(&1.source["id"]))
-
-    relative =
-      Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", page: 1, per_page: 6, sort: "-updated_at", tags: [tag_slug], exclude_id: posts_id)
-      |> case do
-        nil -> []
-        [_, items] -> items
-      end
-
-
-    tag_name =
-      hd(posts)
-      |> Moly.Helper.get_in_from_keys([:source, "post_tag"])
-      |> Enum.filter(fn %{"slug" => slug} -> slug == tag_slug end)
-      |> hd()
-      |> Moly.Helper.get_in_from_keys(["name"])
-
-    page_meta = Moly.Helper.pagination_meta(count, per_page, page, 5)
-    page_title = tag_description = "#{tag_name} #{Moly.website_blog_list_title()}"
-
-    render(conn, :category, posts: posts, relative: relative, page_meta: page_meta, tag_slug: tag_slug, page_title: page_title, page_description: tag_description, category_description: tag_description, category_name: tag_name)
+  def list(conn, params) do
+    assigns = _list(params)
+    render(conn, :category, assigns)
   end
 
-  def browse(conn, params) do
+
+  defp _list(params) do
     page = Map.get(params, "page", "1") |> String.to_integer()
     per_page = Map.get(params, "per_page", "12") |> String.to_integer()
 
-    [count, posts] =
-      Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", page: page, per_page: per_page, sort: "-updated_at")
-      |> case do
-        nil -> [0, []]
-        [count, items] ->
-          [count, items]
+    [identity, identity_value] = case params do
+      %{"tag_slug" => tag_slug} -> [:tag_slug, tag_slug]
+      %{"category_slug" => category_slug} -> [:category_slug, category_slug]
+      _ -> [:browse, nil]
+    end
+
+    key = "#{__MODULE__}:#{identity}:#{page}:#{per_page}"
+
+    Moly.Utilities.cache_get_or_put(key, fn ->
+      default_opts = [post_type: "post", post_status: "publish", page: page, per_page: per_page, sort: "-updated_at"]
+      filter_opts = case identity do
+        :tag_slug -> [tags: [identity_value]]
+        :category_slug -> [categories: [identity_value]]
+        _ -> []
       end
+      opts = default_opts ++ filter_opts
+      [count, posts] =
+        Moly.Contents.PostEs.query(opts)
+        |> case do
+          nil -> [0, []]
+          [count, items] ->
+            [count, items]
+        end
 
-    posts_id = Enum.map(posts, &(&1.source["id"]))
+      posts_id = Enum.map(posts, &(&1.source["id"]))
 
-    relative =
-      Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", page: 1, per_page: 6, sort: "-updated_at", exclude_id: posts_id)
-      |> case do
-        nil -> []
-        [_, items] -> items
-      end
+      relative =
+        Moly.Contents.PostEs.query(opts ++ [exclude_id: posts_id])
+        |> case do
+          nil -> []
+          [_, items] -> items
+        end
 
-    page_meta = Moly.Helper.pagination_meta(count, per_page, page, 5)
-    page_title = Moly.website_blog_list_title()
-    page_description = Moly.website_blog_list_description()
+      [category_name, page_title, page_description, category_description] =
+        case identity do
+          :tag_slug ->
+            tag_name =
+              hd(posts)
+              |> Moly.Helper.get_in_from_keys([:source, "post_tag"])
+              |> Enum.filter(fn %{"slug" => slug} -> slug == identity_value end)
+              |> hd()
+              |> Moly.Helper.get_in_from_keys(["name"])
 
-    render(conn, :category, posts: posts, relative: relative, page_meta: page_meta, category_name: page_title, page_title: page_title, page_description: page_description)
-  end
+            page_title = "#{tag_name} #{Moly.website_blog_list_title()}"
+            [tag_name, page_title, page_title, page_title]
+          :category_slug ->
+            belong_post_category =
+              hd(posts)
+              |> Moly.Helper.get_in_from_keys([:source, "category"])
+              |> Enum.filter(fn %{"slug" => slug} ->
+                slug == identity_value
+              end)
+              |> hd()
 
-  def category(conn, %{"category_slug" => category_slug} = params) do
-    page = Map.get(params, "page", "1") |> String.to_integer()
-    per_page = Map.get(params, "per_page", "12") |> String.to_integer()
+            category_name = belong_post_category["name"]
+            category_description = belong_post_category["description"]
+            [category_name, category_name, category_description, category_description]
+          :browse ->
+            page_title = Moly.website_blog_list_title()
+            page_description = Moly.website_blog_list_description()
+            [page_title, page_title, page_description, page_description]
+        end
 
-    [count, posts] =
-      Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", page: page, per_page: per_page, sort: "-updated_at", categories: [category_slug])
-      |> case do
-        nil -> [0, []]
-        [count, items] ->
-          [count, items]
-      end
-
-    posts_id = Enum.map(posts, &(&1.source["id"]))
-
-    relative =
-      Moly.Contents.PostEs.query(post_type: "post", post_status: "publish", page: 1, per_page: 6, sort: "-updated_at", categories: [category_slug], exclude_id: posts_id)
-      |> case do
-        nil -> []
-        [_, items] -> items
-      end
-
-    belong_post_category =
-      hd(posts)
-      |> Moly.Helper.get_in_from_keys([:source, "category"])
-      |> Enum.filter(fn %{"slug" => slug} ->
-        slug == category_slug
-      end)
-      |> hd()
-
-    category_name = belong_post_category["name"]
-    category_description = belong_post_category["description"]
-
-    page_meta = Moly.Helper.pagination_meta(count, per_page, page, 5)
-
-    render(conn, :category, posts: posts, relative: relative, page_meta: page_meta, category_slug: category_slug, category_name: category_name, page_title: category_name, page_description: category_description)
+      page_meta = Moly.Helper.pagination_meta(count, per_page, page, 5)
+      [posts: posts, relative: relative, page_meta: page_meta, page_title: page_title, category_description: category_description, category_name: category_name, page_description: page_description]
+    end, :timer.minutes(5))
   end
 
   def view(conn, %{"post_name" => post_name}) do
-    post =
-      Moly.Contents.PostEs.query_document_by_post_name(post_name)
-      |> case do
-        nil -> nil
-        [_, [post | _]] -> post
-      end
+    key  = "#{__MODULE__}:#{post_name}"
+    assigns = Moly.Utilities.cache_get_or_put(key, fn ->
+      post =
+        Moly.Contents.PostEs.query_document_by_post_name(post_name)
+        |> case do
+          nil -> nil
+          [_, [post | _]] -> post
+        end
 
+      relative =
+        Moly.Helper.get_in_from_keys(post, [:source, "id"])
+        |> Moly.Contents.PostEs.relative_posts(6)
+        |> case do
+          nil -> []
+          [_, posts] -> posts
+        end
 
-    relative =
-      Moly.Helper.get_in_from_keys(post, [:source, "id"])
-      |> Moly.Contents.PostEs.relative_posts(6)
-      |> case do
-        nil -> []
-        [_, posts] -> posts
-      end
+      page_title = "#{Moly.Helper.get_in_from_keys(post, [:source, "post_title"])}"
+      page_description = "#{Moly.Helper.get_in_from_keys(post, [:source, "post_excerpt"])}"
+      page_meta = page_meta(post)
 
-    page_title = "#{Moly.Helper.get_in_from_keys(post, [:source, "post_title"])}"
-    page_description = "#{Moly.Helper.get_in_from_keys(post, [:source, "post_excerpt"])}"
-    page_meta = page_meta(post)
+      ld_json = view_ld_json(conn, post) |> JSON.encode!()
+      [
+        post: post,
+        relative: relative,
+        page_title: page_title,
+        page_description: page_description,
+        meta_tags: page_meta,
+        ld_json: ld_json
+      ]
+    end, :timer.minutes(5))
 
-    ld_json = view_ld_json(conn, post) |> JSON.encode!()
-
-    render(conn, :view,
-      post: post,
-      relative: relative,
-      page_title: page_title,
-      page_description: page_description,
-      meta_tags: page_meta,
-      ld_json: ld_json
-    )
+    render(conn, :view, assigns)
   end
 
 
@@ -175,7 +158,7 @@ defmodule MolyWeb.ColoringPagesController do
     ]
   end
 
-  defp home_ld_json(conn) do
+  defp home_ld_json(_conn) do
     %{
       "@context": "https://schema.org",
       "@type": "WebSite",

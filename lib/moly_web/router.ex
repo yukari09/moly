@@ -103,9 +103,9 @@ defmodule MolyWeb.Router do
 
 
     get("/", ColoringPagesController, :home)
-    get("/browse", ColoringPagesController, :browse)
-    get("/@:category_slug", ColoringPagesController, :category)
-    get("/-:tag_slug", ColoringPagesController, :tag)
+    get("/browse", ColoringPagesController, :list)
+    get("/@:category_slug", ColoringPagesController, :list)
+    get("/-:tag_slug", ColoringPagesController, :list)
     get("/.:post_name", ColoringPagesController, :view)
 
 
