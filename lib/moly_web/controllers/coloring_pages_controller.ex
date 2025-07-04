@@ -43,7 +43,7 @@ defmodule MolyWeb.ColoringPagesController do
       _ -> [:browse, nil]
     end
 
-    key = "#{__MODULE__}:#{identity}:#{page}:#{per_page}"
+    key = "#{__MODULE__}:#{identity}#{identity_value}:#{page}:#{per_page}"
 
     Moly.Utilities.cache_get_or_put(key, fn ->
       default_opts = [post_type: "post", post_status: "publish", page: page, per_page: per_page, sort: "-updated_at"]
