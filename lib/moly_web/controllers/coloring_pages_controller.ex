@@ -17,7 +17,7 @@ defmodule MolyWeb.ColoringPagesController do
           |> Map.put("count", doc_count)
         Map.put(acc, key, posts)
       end)
-    end, :timer.minutes(5))
+    end, :timer.hours(2))
 
     assigns = [
       posts_by_tags: posts_by_tags,
@@ -102,7 +102,7 @@ defmodule MolyWeb.ColoringPagesController do
 
       page_meta = Moly.Helper.pagination_meta(count, per_page, page, 5)
       [posts: posts, relative: relative, page_meta: page_meta, page_title: page_title, category_description: category_description, category_name: category_name, page_description: page_description]
-    end, :timer.minutes(5))
+    end, :timer.hours(2))
   end
 
   def view(conn, %{"post_name" => post_name}) do
@@ -136,7 +136,7 @@ defmodule MolyWeb.ColoringPagesController do
         meta_tags: page_meta,
         ld_json: ld_json
       ]
-    end, :timer.minutes(5))
+    end, :timer.hours(24))
 
     render(conn, :view, assigns)
   end
