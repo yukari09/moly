@@ -20,7 +20,7 @@ defmodule MolyWeb.Router do
 
   pipeline :graphql do
     plug :load_from_bearer
-    # plug :set_actor, :user
+    plug :set_actor, :user
     plug AshGraphql.Plug
   end
 
