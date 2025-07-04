@@ -6,7 +6,7 @@ defmodule Moly.Contents.PostEs do
   require Ash.Query
   require Logger
 
-  @actor %{roles: [:admin]}
+  @actor %{roles: [:user]}
 
   @doc """
   Query top tags from elasticsearch
