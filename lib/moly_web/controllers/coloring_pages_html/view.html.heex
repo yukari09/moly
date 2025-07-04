@@ -63,7 +63,7 @@
     <.link navigate={~p"/-#{tag["slug"]}"} class="btn btn-outline btn-sm md:btn-md btn-primary btn-soft bg-inherit hover:border-[#fd776c] hover:outline-[#fd776c] text-[#fd776c]"  :for={tag <- Moly.Helper.get_in_from_keys(@post, [:source, "post_tag"])}>{tag["name"]}</.link>
   </p>
 
-  <div class="grid grid-cols-4 gap-4">
+  <div class="grid md:grid-cols-3 xl:grid-cols-4 grid-cols-2 gap-4">
     <.card posts={@relative} />
   </div>
 
