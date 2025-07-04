@@ -13,7 +13,7 @@ defmodule Moly.Terms.TermTaxonomy do
 
   rbac do
     role :user do
-      fields([:read])
+      fields([:taxonomy, :description, :count])
       actions([:read])
     end
 
