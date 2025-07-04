@@ -20,7 +20,7 @@ defmodule Moly.Terms do
 
   graphql do
     queries do
-      list Moly.Terms.Term, :list_terms, :read
+      list Moly.Terms.Term, :list_terms, :read, paginate_with: :keyset, relay?: true
     end
   end
 

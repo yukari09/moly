@@ -122,7 +122,7 @@ defmodule Moly.Terms.Term do
   end
 
   relationships do
-    has_many :term_taxonomy, Moly.Terms.TermTaxonomy
+    has_many :term_taxonomy, Moly.Terms.TermTaxonomy, public?: true
     has_many :term_meta, Moly.Terms.TermMeta
   end
 

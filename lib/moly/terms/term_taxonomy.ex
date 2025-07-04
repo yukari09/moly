@@ -3,7 +3,7 @@ defmodule Moly.Terms.TermTaxonomy do
     otp_app: :moly,
     domain: Moly.Terms,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshRbac],
+    extensions: [AshRbac, AshGraphql.Resource],
     data_layer: AshPostgres.DataLayer
 
   postgres do
@@ -119,5 +119,9 @@ defmodule Moly.Terms.TermTaxonomy do
 
   identities do
     identity :taxonomy_term_id, [:term_id, :taxonomy]
+  end
+
+  graphql do
+    type :term_taxonomy
   end
 end
