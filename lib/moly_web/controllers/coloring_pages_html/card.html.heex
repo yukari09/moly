@@ -3,13 +3,16 @@
         <.image post={post}/>
     </.link>
     <div class="absolute top-2 right-2">
-        <button 
-          @click={"printImage('#{Moly.Helper.get_in_from_keys(post, [:source, "thumbnail_id", "attachment_metadata", "file"])}', '#{Moly.Helper.get_in_from_keys(post, [:source, "post_title"])}')"}
-          class="btn btn-ghost btn-sm md:btn-md btn-circle bg-[#0d5b5f] outline-none border-none"
-          ><Lucideicons.printer class= "size-4 md:size-5 text-[#fff9ef]"/></button>
-        <button 
-          @click={"window.location.href = '/download-file?url=#{Moly.Helper.get_in_from_keys(post, [:source, "thumbnail_id", "attachment_metadata", "file"])}&filename=#{Moly.Helper.get_in_from_keys(post, [:source, "post_title"])}.webp'"}
-          class="btn btn-ghost btn-sm md:btn-md btn-circle bg-[#fd776c] outline-none border-none"
-        ><Lucideicons.download class="size-4 md:size-5  text-[#fff9ef]"/></button>
+      <% raw_file = Moly.Helper.get_in_from_keys(post, [:source, "thumbnail_id", "attachment_metadata", "file"]) |> URI.encode()  %>
+      <% raw_file_title = Moly.Helper.get_in_from_keys(post, [:source, "post_title"]) %>>
+      <% download_url = "#{raw_file}&filename=#{raw_file_title}.webp" %>
+      <button 
+        @click={"printImage('#{raw_file}', '#{raw_file_title}')"}
+        class="btn btn-ghost btn-sm md:btn-md btn-circle bg-[#0d5b5f] outline-none border-none"
+        ><Lucideicons.printer class= "size-4 md:size-5 text-[#fff9ef]"/></button>
+      <button 
+        @click={"window.location.href = '/download-file?url=#{download_url}.webp'"}
+        class="btn btn-ghost btn-sm md:btn-md btn-circle bg-[#fd776c] outline-none border-none"
+      ><Lucideicons.download class="size-4 md:size-5  text-[#fff9ef]"/></button>
     </div>
 </div>
