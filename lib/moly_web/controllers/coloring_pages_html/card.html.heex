@@ -4,7 +4,7 @@
     </.link>
     <div class="absolute top-2 right-2">
       <% raw_file = Moly.Helper.get_in_from_keys(post, [:source, "thumbnail_id", "attachment_metadata", "file"]) |> URI.encode()  %>
-      <% raw_file_title = Moly.Helper.get_in_from_keys(post, [:source, "post_title"]) %>>
+      <% raw_file_title = Moly.Helper.get_in_from_keys(post, [:source, "post_title"]) %>
       <% download_url = "#{raw_file}&filename=#{raw_file_title}.webp" %>
       <button 
         @click={"printImage('#{raw_file}', '#{raw_file_title}')"}
