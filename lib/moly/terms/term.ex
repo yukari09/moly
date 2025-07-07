@@ -15,7 +15,7 @@ defmodule Moly.Terms.Term do
 
   rbac do
     role :user do
-      fields([:read])
+      fields([:name, :slug, :term_group])
       actions([:read])
     end
 

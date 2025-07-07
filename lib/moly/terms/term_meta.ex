@@ -13,6 +13,7 @@ defmodule Moly.Terms.TermMeta do
 
   rbac do
     role :user do
+      fields([:term_key, :term_value])
       actions([:read])
     end
 

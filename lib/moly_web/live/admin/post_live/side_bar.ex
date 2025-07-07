@@ -49,15 +49,6 @@ defmodule MolyWeb.AdminPostLive.SideBar do
                 form={@form}
               />
             </li>
-            <li>
-              <.live_component
-                id="form-field-post-name"
-                module={MolyWeb.AdminPostLive.FormField.PostName}
-                form={@form}
-                post_slug={@post_slug}
-                host={@host}
-              />
-            </li>
             <li class="flex items-center">
               <span class="font-medium w-32">Discussion</span>
               <.toggle_switch
