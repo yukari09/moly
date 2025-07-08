@@ -82,11 +82,17 @@
       <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8 via-0">
         <.table rows={@posts.results} class="table-auto !max-w-full">
           <:col :let={row} label="Title">
-            <div>
-              <.link href={~p"/post/#{row.post_name}"} target="_blank" class="inline"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500 inline" /></.link> 
-              <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline font-medium" >
-                {row.post_title}
-              </.link>
+            <div class="flex gap-2">
+              <img 
+                class="h-20"
+                src={Moly.Utilities.MetaValue.post_feature_image(row, "thumbnail_id", ["medium","thumbnail"])}
+              />
+              <div>
+                <.link href={~p"/post/#{row.post_name}"} target="_blank" class="inline"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500 inline" /></.link> 
+                <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline font-medium" >
+                  {row.post_title}
+                </.link>
+              </div>
             </div>
           </:col>
           <:col :let={row} label="Status">
