@@ -29,7 +29,7 @@
             <li>It may be a broken or outdated link</li>
           </ol>
           <div class="mt-8 mb-8 lg:mb-0">
-            <.link id="go-back-link" class="btn btn-neutral w-full md:btn-wide">Go back</.link>
+            <.link id="go-back-link" data-back={@conn.assigns[:redirect_to]} class="btn btn-neutral w-full md:btn-wide">Go back</.link>
           </div>
         </div>
       </div>
@@ -37,6 +37,9 @@
   </body>
 
   <script>
-    document.querySelector("#go-back-link").addEventListener("click", () => {window.history.back()})
+    document.querySelector("#go-back-link").addEventListener("click", (e) => {
+      if(e.target.dataset["back"] != ""){window.location.href = e.target.dataset["back"];return;}
+      window.history.back()
+    })
   </script>
 </html>

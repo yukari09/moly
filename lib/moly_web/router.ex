@@ -108,8 +108,6 @@ defmodule MolyWeb.Router do
     get("/-:tag_slug", ColoringPagesController, :list)
     get("/.:post_name", ColoringPagesController, :view)
 
-
-
     post("/page/cf-validation", PageController, :cf_validation)
     post("/upload-file", PageController, :upload_file)
 
@@ -122,6 +120,8 @@ defmodule MolyWeb.Router do
     get("/contact", PageController, :contact)
     get("/privacy-policy", PageController, :privacy_policy)
     get("/terms-of-service", PageController, :terms_of_service)
+
+    get("/:fixed_slug", ColoringPagesController, :fixed_slug)
   end
 
 

@@ -3,13 +3,13 @@ defmodule Moly.Utilities.MetaValue do
   def format_meta_value(nil), do: nil
   def format_meta_value(%{meta_value: nil}), do: nil
 
-  def format_meta_value(%{meta_key: :avatar, meta_value: meta_value}),
+  def format_meta_value(%{meta_key: "avatar", meta_value: meta_value}),
     do: JSON.decode!(meta_value)
 
-  def format_meta_value(%{meta_key: :banner, meta_value: meta_value}),
+  def format_meta_value(%{meta_key: "banner", meta_value: meta_value}),
     do: JSON.decode!(meta_value)
 
-  def format_meta_value(%{meta_key: :attachment_metadata, meta_value: meta_value}),
+  def format_meta_value(%{meta_key: "attachment_metadata", meta_value: meta_value}),
     do: JSON.decode!(meta_value)
 
   def format_meta_value(%{meta_value: meta_value}), do: meta_value
@@ -22,13 +22,13 @@ defmodule Moly.Utilities.MetaValue do
   def format_meta_value(Moly.Contents.Post, _), do: nil
 
   def filter_meta_by_key(%{post_meta: post_meta}, meta_key)
-      when is_list(post_meta) and is_atom(meta_key) do
+      when is_list(post_meta) and is_binary(meta_key) do
     Enum.filter(post_meta, &(&1.meta_key == meta_key))
   end
 
   def filter_meta_by_key(_, _), do: []
 
-  def filter_meta_by_key_first(post, meta_key) when is_atom(meta_key) do
+  def filter_meta_by_key_first(post, meta_key) when is_binary(meta_key) do
     filter_meta_by_key(post, meta_key)
     |> List.first()
   end
@@ -44,7 +44,7 @@ defmodule Moly.Utilities.MetaValue do
         end
       end)
 
-    filter_meta_by_key(%{post_meta: children}, :attachment_metadata)
+    filter_meta_by_key(%{post_meta: children}, "attachment_metadata")
     |> Enum.map(fn post_meta ->
       new_meta_value = format_meta_value(post_meta)
 

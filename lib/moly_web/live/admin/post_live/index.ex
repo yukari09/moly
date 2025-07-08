@@ -101,7 +101,7 @@ defmodule MolyWeb.AdminPostLive.Index do
 
     data =
       Ash.Query.filter(data, post_type == :post)
-      |> Ash.Query.load([:post_meta, term_taxonomy: :term])
+      |> Ash.Query.load([post_meta: [:children], term_taxonomy: :term])
       |> Ash.read!(opts)
 
 

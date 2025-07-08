@@ -28,8 +28,19 @@ defmodule MolyWeb.ColoringPagesController do
   end
 
   def list(conn, params) do
-    assigns = _list(params)
-    render(conn, :category, assigns)
+    try do
+      assigns = _list(params)
+      render(conn, :category, assigns)
+    rescue
+      _ ->
+        [ref | _] = get_req_header(conn, "referer")
+
+        put_status(conn, 404)
+        |> put_layout(false)
+        |> put_view(MolyWeb.ErrorHTML)
+        |> render("404.html", redirect_to: ref || "/")
+        |> halt()
+    end
   end
 
 
@@ -124,7 +135,6 @@ defmodule MolyWeb.ColoringPagesController do
         end
 
       page_title = "#{Moly.Helper.get_in_from_keys(post, [:source, "post_title"])}"
-      page_description = "#{Moly.Helper.get_in_from_keys(post, [:source, "post_excerpt"])}"
       page_meta = page_meta(post)
 
       ld_json = view_ld_json(conn, post) |> JSON.encode!()
@@ -132,13 +142,16 @@ defmodule MolyWeb.ColoringPagesController do
         post: post,
         relative: relative,
         page_title: page_title,
-        page_description: page_description,
         meta_tags: page_meta,
         ld_json: ld_json
       ]
     end, :timer.hours(24))
 
     render(conn, :view, assigns)
+  end
+
+  def fixed_slug(conn, %{"fixed_slug" => fixed_slug}) do
+    redirect(conn, to: "/@#{fixed_slug}")
   end
 
 
