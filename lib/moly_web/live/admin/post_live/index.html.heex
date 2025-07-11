@@ -88,7 +88,7 @@
                 src={Moly.Utilities.MetaValue.post_feature_image(row, "thumbnail_id", ["medium","thumbnail"])}
               />
               <div>
-                <.link href={~p"/post/#{row.post_name}"} target="_blank" class="inline"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500 inline" /></.link> 
+                <.link href={~p"/.#{row.post_name}"} target="_blank" class="inline"><Lucideicons.square_arrow_out_up_right class="size-4 text-gray-500 inline" /></.link> 
                 <.link patch={~p"/admin/post/#{row.id}/edit"} class="hover:underline font-medium" >
                   {row.post_title}
                 </.link>

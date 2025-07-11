@@ -1424,7 +1424,7 @@ defmodule MolyWeb.TailwindUI do
           class={[
             "px-3 py-2 border-b-2 hover:border-base-content hover:text-base-content",
             (page == @page_meta.current_page && "border-base-content text-base-content") ||
-              "border-white text-base-content/60"
+              "border-white text-[#431e33]"
           ]}
         >
           {page}

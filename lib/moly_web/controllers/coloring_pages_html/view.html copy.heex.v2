@@ -1,0 +1,26 @@
+<div class="bg-[url('/images/single-bg.webp')] bg-cover min-h-20 bg-bottom"></div>
+
+<div class="max-w-7xl mx-auto px-4 lg:px-8">
+  <div class="py-12 border-base-content/10 border-b grid grid-cols-4 xl:gap-12">
+    <div class="col-span-3">
+      <MolyWeb.PageHtml.Components.article post={@post} class="cols-span-3 !text-[#5c526b] !font-light" />
+    </div>
+    <div>
+      <p class="flex flex-wrap items-center text-sm text-base-content/80 gap-2">
+        <.link navigate={~p"/-#{tag["slug"]}"} class="btn btn-outline btn-sm md:btn-md btn-primary btn-soft bg-inherit hover:border-[#fd776c] hover:outline-[#fd776c] text-[#fd776c]"  :for={tag <- Moly.Helper.get_in_from_keys(@post, [:source, "post_tag"])}>{tag["name"]}</.link>
+      </p>
+    </div>
+  </div>
+
+  <div class="text-center mt-20">
+    <h2 class="text-[#FFA500] text-lg sm:text-2xl md:text-4xl font-semibold">Other similar coloring pages for kids</h2>
+    <p class="text-[#431e33] my-2 sm:my-4 md:my-8 text-xs sm:text-sm md:text-base w-4/5 mx-auto">
+      More Coloring Pages You’ll Love
+    </p>
+  </div>
+
+  <div class="grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 grid-cols-2 gap-4 mb-20">
+    <.card posts={@relative} />
+  </div>
+
+</div>

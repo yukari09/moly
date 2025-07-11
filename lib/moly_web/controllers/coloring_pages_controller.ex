@@ -46,7 +46,7 @@ defmodule MolyWeb.ColoringPagesController do
 
   defp _list(params) do
     page = Map.get(params, "page", "1") |> String.to_integer()
-    per_page = Map.get(params, "per_page", "12") |> String.to_integer()
+    per_page = Map.get(params, "per_page", "20") |> String.to_integer()
 
     [identity, identity_value] = case params do
       %{"tag_slug" => tag_slug} -> [:tag_slug, tag_slug]
@@ -70,15 +70,6 @@ defmodule MolyWeb.ColoringPagesController do
           nil -> [0, []]
           [count, items] ->
             [count, items]
-        end
-
-      posts_id = Enum.map(posts, &(&1.source["id"]))
-
-      relative =
-        Moly.Contents.PostEs.query(opts ++ [exclude_id: posts_id])
-        |> case do
-          nil -> []
-          [_, items] -> items
         end
 
       [category_name, page_title, page_description, category_description] =
@@ -112,7 +103,7 @@ defmodule MolyWeb.ColoringPagesController do
         end
 
       page_meta = Moly.Helper.pagination_meta(count, per_page, page, 5)
-      [posts: posts, relative: relative, page_meta: page_meta, page_title: page_title, category_description: category_description, category_name: category_name, page_description: page_description]
+      [posts: posts, page_meta: page_meta, page_title: page_title, category_description: category_description, category_name: category_name, page_description: page_description]
     end, :timer.hours(2))
   end
 
@@ -128,7 +119,7 @@ defmodule MolyWeb.ColoringPagesController do
 
       relative =
         Moly.Helper.get_in_from_keys(post, [:source, "id"])
-        |> Moly.Contents.PostEs.relative_posts(6)
+        |> Moly.Contents.PostEs.relative_posts(20)
         |> case do
           nil -> []
           [_, posts] -> posts

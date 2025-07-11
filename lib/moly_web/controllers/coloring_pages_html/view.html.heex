@@ -7,7 +7,7 @@
         <.link :if={Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "slug"])} class="pr-2" navigate={~p"/@#{Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "slug"])}"}>{Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "name"])}</.link>
         <MolyWeb.PageHtml.Components.datetime_es data={@post} />
       </div>
-      <article class="text-[#431e33]/60 line-clamp-6  text-sm md:text-base">
+      <article class="text-[#431e33]/60 line-clamp-3  text-sm md:text-base">
         <%= for %{"data" => data, "id" => id, "type" => type} <- Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> JSON.decode! |> Moly.Helper.get_in_from_keys(["blocks"]) do %>
         <p id={id}  :if={type == "paragraph"}>{raw data["text"]}</p>
         <%= end %>

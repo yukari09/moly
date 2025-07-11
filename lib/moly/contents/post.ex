@@ -127,6 +127,7 @@ defmodule Moly.Contents.Post do
       argument :post_meta, {:array, :map}
       argument :categories, {:array, :uuid}
       argument :tags, {:array, :map}
+      argument :post_parent, :uuid
 
       change manage_relationship(:post_meta, :post_meta, type: :create)
       change relate_actor(:author)

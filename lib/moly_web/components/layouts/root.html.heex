@@ -17,12 +17,9 @@
     <link rel="icon" type="image/png" href={Moly.website_favicon}>
     <link rel="shortcut icon" href={Moly.website_favicon} type="image/png">
     <!--Google Fonts-->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Bubblegum+Sans&family=Fredoka:wght@300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Luckiest+Guy&family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
     <!--Assigns-->
     <link :if={assigns[:canonical]} rel="canonical" href={assigns[:canonical]} />
     <link :if={!assigns[:canonical]} rel="canonical" href={Phoenix.Controller.current_url(@conn)} />
