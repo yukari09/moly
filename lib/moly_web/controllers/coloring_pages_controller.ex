@@ -109,8 +109,6 @@ defmodule MolyWeb.ColoringPagesController do
 
   def view(conn, %{"post_name" => post_name}) do
     key  = "#{__MODULE__}:#{post_name}"
-    stories_post_key = "#{key}:stories"
-    relative_post_key = "#{key}:relative"
 
     assigns = Moly.Utilities.cache_get_or_put(key, fn ->
       post =
@@ -122,16 +120,16 @@ defmodule MolyWeb.ColoringPagesController do
 
       relative =
         Moly.Helper.get_in_from_keys(post, [:source, "id"])
-        |> Moly.Contents.PostEs.relative_posts(20)
+        |> Moly.Contents.PostEs.relative_posts(12)
         |> case do
           nil -> []
           [_, posts] -> posts
         end
 
-      stories_meta_value = Moly.Helper.get_in_from_keys(post, [:source, "story_uuid"])
+      story_uuid = Moly.Helper.get_in_from_keys(post, [:source, "story_uuid"])
       stories_post =
-        if stories_meta_value do
-          case Moly.Contents.PostEs.query_document_by_post_meta("story_uuid", stories_meta_value) do
+        if story_uuid do
+          case Moly.Contents.PostEs.query_document_by_post_meta("story_uuid", story_uuid, [post.id], 0, 5) do
             nil ->[]
             [_, posts] -> posts
           end
@@ -216,7 +214,7 @@ defmodule MolyWeb.ColoringPagesController do
           height: 200
         }
       },
-      description: Moly.Helper.get_in_from_keys(post, [:source, "post_excerpt"])
+      description: Moly.Helper.get_in_from_keys(post, [:source, "post_content"])
     }
   end
 end

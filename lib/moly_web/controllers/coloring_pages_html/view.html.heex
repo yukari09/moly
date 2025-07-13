@@ -49,7 +49,7 @@
   </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 lg:px-8 pt-16 border-y border-base-content/5">
+<div class="max-w-7xl mx-auto px-4 lg:px-8 pt-16">
   <div class="grid grid-cols-4 gap-36">
     <div class="col-span-3 space-y-20">
       <div :if={Moly.Helper.get_in_from_keys(@post, [:source, "story_content"])}>
@@ -76,7 +76,9 @@
         <div><img phx-track-static src={~p"/images/color-pen.webp"}/></div>
       </div>
     </div>
-    <div class="col-span-1">{@stories_post}</div>
+    <div class="col-span-1 space-y-4">
+      <.card posts={@stories_post}/>
+    </div>
   </div>
   <p class="flex flex-wrap items-center text-sm text-base-content/80 gap-2 py-16">
     <.link navigate={~p"/-#{tag["slug"]}"} class="btn btn-outline btn-sm md:btn-md btn-primary btn-soft bg-inherit hover:border-[#fd776c] hover:outline-[#fd776c] text-[#fd776c]"  :for={tag <- Moly.Helper.get_in_from_keys(@post, [:source, "post_tag"])}>{tag["name"]}</.link>
@@ -91,7 +93,7 @@
       More Coloring Pages You’ll Love
     </p>
   </div>
-  <div class="grid md:grid-cols-3 xl:grid-cols-4 grid-cols-2 gap-4">
+  <div class="grid sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4">
     <.card posts={@relative} />
   </div>
 </div>
