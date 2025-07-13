@@ -76,132 +76,132 @@ defmodule MolyWeb.PageHtml.Components do
     """
   end
 
-  attr :class, :string, default: nil
-  attr :post, :map, required: true
-  def article(assigns) do
-    ~H"""
-    <article class={[
-      "prose prose-sm sm:prose lg:prose-lg !max-w-none bricolage-grotesque-4 mx-auto break-words",
-      @class
-    ]}>
-      <h1 class="!text-[#8C4B4C] text-lg sm:text-xl md:text-3xl xl:text-5xl tracking-tight">{Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}</h1>
+  # attr :class, :string, default: nil
+  # attr :post, :map, required: true
+  # def article(assigns) do
+  #   ~H"""
+  #   <article class={[
+  #     "prose prose-sm sm:prose lg:prose-lg !max-w-none bricolage-grotesque-4 mx-auto break-words",
+  #     @class
+  #   ]}>
+  #     <h1 class="!text-[#8C4B4C] text-lg sm:text-xl md:text-3xl xl:text-5xl tracking-tight">{Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}</h1>
 
 
 
-      <div class="flex items-center divide-x my-4 divide-base-content/50 leading-3 gap-2 text-base-content/50  text-xs md:text-sm">
-        <.link :if={Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "slug"])} class="pr-2" navigate={~p"/@#{Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "slug"])}"}>{Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "name"])}</.link>
-        <MolyWeb.PageHtml.Components.datetime_es data={@post} />
-      </div>
+  #     <div class="flex items-center divide-x my-4 divide-base-content/50 leading-3 gap-2 text-base-content/50  text-xs md:text-sm">
+  #       <.link :if={Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "slug"])} class="pr-2" navigate={~p"/@#{Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "slug"])}"}>{Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "name"])}</.link>
+  #       <MolyWeb.PageHtml.Components.datetime_es data={@post} />
+  #     </div>
 
 
-      <div class="grid grid-cols-3 gap-4">
-        <img
-          class="object-cover w-full max-w-xs"
-          style={"aspect-ratio: 210/297;"}
-          src="http://localhost:8000/v4Fcn5jLtfsw2Nkf6GVZsD37cnM=/1024x576/smart/filters:format(webp)/image/webp/c1952c3f-6224-41fe-9d67-b31c4d5fed43.webp"
-        />
-        <img
-          class="object-cover w-full max-w-xs"
-          style={"aspect-ratio: 210/297;"}
-          src="http://localhost:8000/v4Fcn5jLtfsw2Nkf6GVZsD37cnM=/1024x576/smart/filters:format(webp)/image/webp/c1952c3f-6224-41fe-9d67-b31c4d5fed43.webp"
-        />
-        <img
-          class="object-cover w-full max-w-xs"
-          style={"aspect-ratio: 210/297;"}
-          src="http://localhost:8000/v4Fcn5jLtfsw2Nkf6GVZsD37cnM=/1024x576/smart/filters:format(webp)/image/webp/c1952c3f-6224-41fe-9d67-b31c4d5fed43.webp"
-        />
-      </div>
+  #     <div class="grid grid-cols-3 gap-4">
+  #       <img
+  #         class="object-cover w-full max-w-xs"
+  #         style={"aspect-ratio: 210/297;"}
+  #         src="http://localhost:8000/v4Fcn5jLtfsw2Nkf6GVZsD37cnM=/1024x576/smart/filters:format(webp)/image/webp/c1952c3f-6224-41fe-9d67-b31c4d5fed43.webp"
+  #       />
+  #       <img
+  #         class="object-cover w-full max-w-xs"
+  #         style={"aspect-ratio: 210/297;"}
+  #         src="http://localhost:8000/v4Fcn5jLtfsw2Nkf6GVZsD37cnM=/1024x576/smart/filters:format(webp)/image/webp/c1952c3f-6224-41fe-9d67-b31c4d5fed43.webp"
+  #       />
+  #       <img
+  #         class="object-cover w-full max-w-xs"
+  #         style={"aspect-ratio: 210/297;"}
+  #         src="http://localhost:8000/v4Fcn5jLtfsw2Nkf6GVZsD37cnM=/1024x576/smart/filters:format(webp)/image/webp/c1952c3f-6224-41fe-9d67-b31c4d5fed43.webp"
+  #       />
+  #     </div>
 
-      <p>
-        <ul class="space-y-2 text-[#431e33] !p-0 !list-none">
+  #     <p>
+  #       <ul class="space-y-2 text-[#431e33] !p-0 !list-none">
 
-          <li>
-            <div class="flex items-center  justify-between">
-              <div class="flex items-center gap-2">
-                <img src="/images/color_tip.png" class="size-20" />
+  #         <li>
+  #           <div class="flex items-center  justify-between">
+  #             <div class="flex items-center gap-2">
+  #               <img src="/images/color_tip.png" class="size-20" />
 
-                <ul class="flex items-center gap-2 !list-none !p-0">
-                  <li>
-                    <button class="btn btn-xs bg-[#431e33] btn-circle"></button>
-                    <span class="text-xs font-medium" style="color:#431e33">#431e33</span>
-                  </li>
-                  <li>
-                    <button class="btn btn-xs bg-[#6A5ACD] btn-circle"></button>
-                    <span class="text-xs font-medium" style="color:#431e33">#6A5ACD</span>
-                  </li>
-                  <li>
-                    <button class="btn btn-xs bg-[#00BCD4] btn-circle"></button>
-                    <span class="text-xs font-medium" style="color:#00BCD4">#00BCD4</span>
-                  </li>
-                  <li>
-                    <button class="btn btn-xs bg-[#FF8C69] btn-circle"></button>
-                    <span class="text-xs font-medium" style="color:#FF8C69">#FF8C69</span>
-                  </li>
-                </ul>
-              </div>
-              <button
-                class="btn bg-[#0d5b5f] btn-xs md:btn-md outline-none border-none text-[#fff9ef]"
-              ><Lucideicons.download class= "size-4 md:size-5"/>Download All</button>
-            </div>
-          </li>
-        </ul>
-      </p>
+  #               <ul class="flex items-center gap-2 !list-none !p-0">
+  #                 <li>
+  #                   <button class="btn btn-xs bg-[#431e33] btn-circle"></button>
+  #                   <span class="text-xs font-medium" style="color:#431e33">#431e33</span>
+  #                 </li>
+  #                 <li>
+  #                   <button class="btn btn-xs bg-[#6A5ACD] btn-circle"></button>
+  #                   <span class="text-xs font-medium" style="color:#431e33">#6A5ACD</span>
+  #                 </li>
+  #                 <li>
+  #                   <button class="btn btn-xs bg-[#00BCD4] btn-circle"></button>
+  #                   <span class="text-xs font-medium" style="color:#00BCD4">#00BCD4</span>
+  #                 </li>
+  #                 <li>
+  #                   <button class="btn btn-xs bg-[#FF8C69] btn-circle"></button>
+  #                   <span class="text-xs font-medium" style="color:#FF8C69">#FF8C69</span>
+  #                 </li>
+  #               </ul>
+  #             </div>
+  #             <button
+  #               class="btn bg-[#0d5b5f] btn-xs md:btn-md outline-none border-none text-[#fff9ef]"
+  #             ><Lucideicons.download class= "size-4 md:size-5"/>Download All</button>
+  #           </div>
+  #         </li>
+  #       </ul>
+  #     </p>
 
-      <%= for %{"data" => data, "id" => id, "type" => type} <- Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> JSON.decode! |> Moly.Helper.get_in_from_keys(["blocks"]) do %>
-      <h2 id={id} :if={type == "header" && data["level"] == 2} style="color: #0E5B5F;" class="font-medium">
-        <img phx-track-static :if={data["text"] == "What Kind of Pens are Suitable for This Painting?"} src={~p"/images/color-pen.webp"} class="w-full object-cover" style="aspect-ratio: 8/1" />
-        <img phx-track-static :if={data["text"] == "Suitable Paper for This Painting"} src={"/images/post-paper.webp"} class="w-full object-cover" style="aspect-ratio: 8/1" />
-        <img phx-track-static :if={data["text"] == "Expert Opinion/Suggestions for This Image"} src={"/images/cute-girl.webp"} class="w-full object-cover" style="aspect-ratio: 8/1" />
-        <div>{data["text"]}</div>
-      </h2>
-      <h3 id={id} :if={type == "header" && data["level"] == 3} style="color: #FD8075;" class="font-medium">
-        {data["text"]}
-      </h3>
-      <h4 id={id} :if={type == "header" && data["level"] == 4} style="color: #6DB9E8;" class="font-medium">
-        {data["text"]}
-      </h4>
-      <p id={id}  :if={type == "paragraph"} class="!font-thin">{raw data["text"]}</p>
-      <p id={id} :if={type == "image"}>
-        <img
-          class="rounded-box border border-base-content/4 bg-base-100 not-prose w-full"
-          alt={Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}
-          srcset = {
-            Enum.map(Moly.Helper.get_in_from_keys(data, ["file", "additional", "sizes"]), fn {_, %{"width" => width, "file" => file}} ->
-              "#{file} #{width}w"
-            end)
-            |> Enum.join(",")
-          }
-          style={"aspect-ratio: #{data["file"]["additional"]["width"]} / #{data["file"]["additional"]["height"]}"}
-          sizes="(min-width: 1024px) 800px, 100vw"
-          fetchpriority="high"
-          decoding="async"
-          loading="lazy"
-        />
-      </p>
-      <ol id={id} :if={type == "list" && data["style"] == "ordered"}>
-        <li :for={item <- data["items"]}>{raw item["content"]}</li>
-      </ol>
-      <ul id={id} :if={type == "list" && data["style"] == "unordered"}>
-        <li :for={item <- data["items"]}>{raw item["content"]}</li>
-      </ul>
-      <div id={id} class={["rounded-box border border-base-content/4 bg-base-100 not-prose", data["stretched"] && "overflow-x-auto"]} :if={type == "table"}>
-        <table class="table">
-          <thead :if={data["withHeadings"]}>
-            <tr>
-              <th :for={cell <- hd(data["content"])}>{raw cell}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr :for={{row, i} <- Enum.with_index(data["content"])}>
-              <td :if={!data["withHeadings"] || i > 0} :for={cell <- row}>{raw cell}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <% end %>
-    </article>
-    """
-  end
+  #     <%= for %{"data" => data, "id" => id, "type" => type} <- Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> JSON.decode! |> Moly.Helper.get_in_from_keys(["blocks"]) do %>
+  #     <h2 id={id} :if={type == "header" && data["level"] == 2} style="color: #0E5B5F;" class="font-medium">
+  #       <img phx-track-static :if={data["text"] == "What Kind of Pens are Suitable for This Painting?"} src={~p"/images/color-pen.webp"} class="w-full object-cover" style="aspect-ratio: 8/1" />
+  #       <img phx-track-static :if={data["text"] == "Suitable Paper for This Painting"} src={"/images/post-paper.webp"} class="w-full object-cover" style="aspect-ratio: 8/1" />
+  #       <img phx-track-static :if={data["text"] == "Expert Opinion/Suggestions for This Image"} src={"/images/cute-girl.webp"} class="w-full object-cover" style="aspect-ratio: 8/1" />
+  #       <div>{data["text"]}</div>
+  #     </h2>
+  #     <h3 id={id} :if={type == "header" && data["level"] == 3} style="color: #FD8075;" class="font-medium">
+  #       {data["text"]}
+  #     </h3>
+  #     <h4 id={id} :if={type == "header" && data["level"] == 4} style="color: #6DB9E8;" class="font-medium">
+  #       {data["text"]}
+  #     </h4>
+  #     <p id={id}  :if={type == "paragraph"} class="!font-thin">{raw data["text"]}</p>
+  #     <p id={id} :if={type == "image"}>
+  #       <img
+  #         class="rounded-box border border-base-content/4 bg-base-100 not-prose w-full"
+  #         alt={Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}
+  #         srcset = {
+  #           Enum.map(Moly.Helper.get_in_from_keys(data, ["file", "additional", "sizes"]), fn {_, %{"width" => width, "file" => file}} ->
+  #             "#{file} #{width}w"
+  #           end)
+  #           |> Enum.join(",")
+  #         }
+  #         style={"aspect-ratio: #{data["file"]["additional"]["width"]} / #{data["file"]["additional"]["height"]}"}
+  #         sizes="(min-width: 1024px) 800px, 100vw"
+  #         fetchpriority="high"
+  #         decoding="async"
+  #         loading="lazy"
+  #       />
+  #     </p>
+  #     <ol id={id} :if={type == "list" && data["style"] == "ordered"}>
+  #       <li :for={item <- data["items"]}>{raw item["content"]}</li>
+  #     </ol>
+  #     <ul id={id} :if={type == "list" && data["style"] == "unordered"}>
+  #       <li :for={item <- data["items"]}>{raw item["content"]}</li>
+  #     </ul>
+  #     <div id={id} class={["rounded-box border border-base-content/4 bg-base-100 not-prose", data["stretched"] && "overflow-x-auto"]} :if={type == "table"}>
+  #       <table class="table">
+  #         <thead :if={data["withHeadings"]}>
+  #           <tr>
+  #             <th :for={cell <- hd(data["content"])}>{raw cell}</th>
+  #           </tr>
+  #         </thead>
+  #         <tbody>
+  #           <tr :for={{row, i} <- Enum.with_index(data["content"])}>
+  #             <td :if={!data["withHeadings"] || i > 0} :for={cell <- row}>{raw cell}</td>
+  #           </tr>
+  #         </tbody>
+  #       </table>
+  #     </div>
+  #     <% end %>
+  #   </article>
+  #   """
+  # end
 
   attr :id, :string, default: nil
   attr :class, :string, default: nil

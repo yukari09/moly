@@ -1,0 +1,70 @@
+<div>
+  <div class="max-w-7xl mx-auto flex items-center flex-col md:flex-row gap-4 lg:gap-8 xl:gap-12 p-4 lg:p-8 xl:p-12">
+    <.image post={@post}  />
+    <div>
+      <h1 class="text-[#431e33] text-lg sm:text-xl md:text-2xl xl:text-3xl font-bold tracking-tight uppercase">{Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}</h1>
+      <div class="flex items-center divide-x my-4 divide-base-content/50 leading-3 gap-2 text-base-content/50  text-xs md:text-sm">
+        <.link :if={Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "slug"])} class="pr-2" navigate={~p"/@#{Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "slug"])}"}>{Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "name"])}</.link>
+        <MolyWeb.PageHtml.Components.datetime_es data={@post} />
+      </div>
+      <article class="text-[#431e33]/60 line-clamp-3  text-sm md:text-base">
+        <%= for %{"data" => data, "id" => id, "type" => type} <- Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> JSON.decode! |> Moly.Helper.get_in_from_keys(["blocks"]) do %>
+        <p id={id}  :if={type == "paragraph"}>{raw data["text"]}</p>
+        <%= end %>
+      </article>
+      <div class="mt-8">
+        <div>
+          <h3 class="text-[#431e33] font-semibold text-sm md:text-base">Coloring Page Details</h3>
+          <ul class="space-y-2 text-[#431e33] mt-4 ">
+            <li class="flex items-center gap-2 ">
+              <span class="font-semibold w-32 text-sm md:text-base">Width:</span>
+              <span class="text-[#431e33]/80 text-sm md:text-base">{Moly.Helper.get_in_from_keys(@post, [:source, "thumbnail_id", "attachment_metadata", "width"])} plex</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="font-semibold w-32 text-sm md:text-base">Height:</span>
+              <span class="text-[#431e33]/80 text-sm md:text-base">{Moly.Helper.get_in_from_keys(@post, [:source, "thumbnail_id", "attachment_metadata", "height"])} plex</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="font-semibold w-32 text-sm md:text-base">Resolution:</span>
+              <span class="text-[#431e33]/80 text-sm md:text-base">{Moly.Helper.get_in_from_keys(@post, [:source, "thumbnail_id", "attachment_metadata", "width"])}x{Moly.Helper.get_in_from_keys(@post, [:source, "thumbnail_id", "attachment_metadata", "height"])}</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <span class="font-semibold w-32 text-sm md:text-base">File Size:</span>
+              <span class="text-[#431e33]/80 text-sm md:text-base">{ Moly.Helper.get_in_from_keys(@post, [:source, "thumbnail_id", "attachment_metadata", "filesize"])|> Moly.Helper.bits_to_readable()}</span>
+            </li>
+          </ul>
+        </div>
+        <div class="flex items-center gap-2 mt-8 md:mt-12" x-data="{}">
+          <button
+            @click={"printImage('#{Moly.Helper.get_in_from_keys(@post, [:source, "thumbnail_id", "attachment_metadata", "file"])}', '#{Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}')"}
+            class="btn bg-[#0d5b5f] btn-sm md:btn-md outline-none border-none text-[#fff9ef]"
+          ><Lucideicons.printer class= "size-4 md:size-5"/>Print</button>
+          <button 
+            @click={"window.location.href = '/download-file?url=#{Moly.Helper.get_in_from_keys(@post, [:source, "thumbnail_id", "attachment_metadata", "file"])}&filename=#{Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}.webp'"}
+            class="btn bg-[#fd776c] btn-sm md:btn-md outline-none border-none text-[#fff9ef]"
+            ><Lucideicons.download class="size-4 md:size-5"/>Download</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="max-w-7xl mx-auto px-4 lg:px-8 pt-16 pb-20">
+
+  <div class="text-center">
+    <h2 class="text-[#431e33] text-lg sm:text-2xl md:text-4xl font-semibold">Other similar coloring pages for kids</h2>
+    <p class="text-[#431e33] my-2 sm:my-4 md:my-8 text-xs sm:text-sm md:text-base w-4/5 mx-auto">
+      More Coloring Pages You’ll Love
+    </p>
+  </div>
+
+  <p class="flex flex-wrap items-center text-sm text-base-content/80 gap-2 py-12">
+    <.link navigate={~p"/-#{tag["slug"]}"} class="btn btn-outline btn-sm md:btn-md btn-primary btn-soft bg-inherit hover:border-[#fd776c] hover:outline-[#fd776c] text-[#fd776c]"  :for={tag <- Moly.Helper.get_in_from_keys(@post, [:source, "post_tag"])}>{tag["name"]}</.link>
+  </p>
+
+  <div class="grid md:grid-cols-3 xl:grid-cols-4 grid-cols-2 gap-4">
+    <.card posts={@relative} />
+  </div>
+
+</div>
