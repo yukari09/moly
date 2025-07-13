@@ -163,6 +163,24 @@ defmodule Moly.Contents.PostEs do
     es_query_result(query)
   end
 
+  def query_document_by_post_meta(meta_key, meta_value, from, size) when is_integer(from) and is_integer(size) do
+    query = %{query: %{
+      bool: %{
+        must: [
+          %{term: %{post_status: "publish"}},
+          %{term: %{post_type: "post"}},
+          %{term: %{"#{meta_key}.keyword" => meta_value}}
+        ]
+      },
+      size: size,
+      from: from
+    }}
+
+    Logger.debug("#{__MODULE__} query: #{JSON.encode!(query)}")
+
+    es_query_result(query)
+  end
+
   def relative_posts(post_id, size) do
     query = %{
       query: %{
