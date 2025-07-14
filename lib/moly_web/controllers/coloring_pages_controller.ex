@@ -129,7 +129,7 @@ defmodule MolyWeb.ColoringPagesController do
       story_uuid = Moly.Helper.get_in_from_keys(post, [:source, "story_uuid"])
       stories_post =
         if story_uuid do
-          case Moly.Contents.PostEs.query_document_by_post_meta("story_uuid", story_uuid, [post.id], 0, 5) do
+          case Moly.Contents.PostEs.query_document_by_post_meta("story_uuid", story_uuid, [post.id], 0, 8) do
             nil ->[]
             [_, posts] -> posts
           end

@@ -4,7 +4,7 @@
       <.image post={@post} />
     
     <div>
-      <h1 class="text-[#fd776c] text-lg sm:text-xl md:text-2xl xl:text-4xl font-bold tracking-tight">{Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}</h1>
+      <h1 class="text-[#fd776c] text-xl md:text-2xl xl:text-4xl font-bold tracking-tight">{Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}</h1>
       <div class="flex items-center divide-x my-4 divide-base-content/50 leading-3 gap-2 text-base-content/50  text-xs md:text-sm">
         <.link :if={Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "slug"])} class="pr-2" navigate={~p"/@#{Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "slug"])}"}>{Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "name"])}</.link>
         <MolyWeb.PageHtml.Components.datetime_es data={@post} />
@@ -51,9 +51,9 @@
   </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 lg:px-8 pt-16  border-y border-base-300">
-  <div class="flex flex-col lg:flex-row items-top justify-between mx-auto">
-    <div class="prose prose-xs md:prose-sm lg:prose-md xl:prose-lg">
+<div class="max-w-7xl mx-auto px-4 lg:px-8 pt-8 lg:pt-16  border-y border-base-300">
+  <div class="flex flex-col lg:flex-row items-top justify-between mx-auto gap-12">
+    <div class="prose prose-sm lg:prose-md xl:prose-lg">
       <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "story_content"])}>
         <h2 class=" text-[#fb8e29] !mt-0">Coloring page story</h2>
         <p class="text-[#431e33]/60 ">{Moly.Helper.get_in_from_keys(@post, [:source, "story_content"])}</p>
@@ -78,8 +78,10 @@
         <div><img phx-track-static src={~p"/images/color-pen.webp"}/></div>
       </div>
     </div>
-    <div class="md:max-w-[120px] xl:max-w-[240px] md:space-y-4 xl:space-y-8">
-      <.card posts={@stories_post} />
+    <div>
+      <div class="grid grid-cols-2 gap-4">
+        <.card posts={@stories_post} />
+      </div>
     </div>
   </div>
   <p class="flex flex-wrap items-center text-sm text-base-content/80 gap-2 py-8 xl:py-16">
@@ -88,7 +90,7 @@
 </div>
 
 
-<div class="max-w-7xl mx-auto px-4 lg:px-8 pt-0 md:pt-8 xl:pt-16 pb-8 xl:pb-20">
+<div class="max-w-7xl mx-auto px-4 lg:px-8 pt-8 xl:pt-16 pb-8 xl:pb-20">
   <div class="text-center">
     <h2 class="text-[#fb8e29] text-lg sm:text-2xl md:text-4xl font-semibold">Other similar coloring pages for kids</h2>
     <p class="text-[#431e33] my-2 sm:my-4 md:my-8 text-xs sm:text-sm md:text-base w-4/5 mx-auto">
