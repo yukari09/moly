@@ -121,6 +121,7 @@ defmodule Moly.Terms.Term do
     timestamps()
   end
 
+
   relationships do
     has_many :term_taxonomy, Moly.Terms.TermTaxonomy, public?: true
     has_many :term_meta, Moly.Terms.TermMeta

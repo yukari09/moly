@@ -21,6 +21,7 @@ defmodule Moly.Terms do
   graphql do
     queries do
       list Moly.Terms.Term, :list_terms, :read, paginate_with: :keyset, relay?: true
+      list Moly.Terms.TermTaxonomy, :list_term_taxonomies, :read, paginate_with: :keyset, relay?: true
     end
   end
 
