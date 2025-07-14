@@ -57,6 +57,7 @@ defmodule Moly.MixProject do
       {:sitemapper, "~> 0.9"},
       {:tidewave, "~> 0.1", only: :dev},
       {:ash_graphql, "~> 1.7.15"},
+      {:mdex, "~> 0.7"},
       # ====================
       {:phoenix, "~> 1.7.20"},
       {:phoenix_ecto, "~> 4.5"},
