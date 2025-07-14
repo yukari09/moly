@@ -56,7 +56,9 @@
     <div class="prose prose-sm lg:prose-md xl:prose-lg">
       <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "story_content"])}>
         <h2 class=" text-[#fb8e29] !mt-0">Coloring page story</h2>
-        <p class="text-[#431e33]/60 ">{Moly.Helper.get_in_from_keys(@post, [:source, "story_content"])}</p>
+        <p class="text-[#431e33]/60">
+          {Moly.Helper.get_in_from_keys(@post, [:source, "story_content"]) |> MDEx.to_html!}
+        </p>
       </div>
       <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "age_appropriateness"])}>
         <h2 class="text-lg md:text-xl xl:text-3xl text-[#6DB9E8]">Coloring page Age Appropriateness</h2>
