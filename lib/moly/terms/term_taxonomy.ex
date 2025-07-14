@@ -54,6 +54,7 @@ defmodule Moly.Terms.TermTaxonomy do
       filter expr(is_nil(^arg(:taxonomy_name)) or taxonomy == ^arg(:taxonomy_name))
     end
 
+
     create :create do
       primary? true
       upsert? true
@@ -91,6 +92,7 @@ defmodule Moly.Terms.TermTaxonomy do
 
     attribute :taxonomy, :string do
       allow_nil? false
+      public? true
     end
 
     attribute :description, :string do
@@ -107,7 +109,7 @@ defmodule Moly.Terms.TermTaxonomy do
   end
 
   relationships do
-    belongs_to :term, Moly.Terms.Term
+    belongs_to :term, Moly.Terms.Term, public?: true
 
     belongs_to :parent, Moly.Terms.Term do
       source_attribute :parent_id
