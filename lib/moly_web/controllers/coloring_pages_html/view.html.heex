@@ -1,6 +1,8 @@
 <div>
   <div class="max-w-7xl mx-auto flex items-center flex-col md:flex-row gap-4 lg:gap-8 xl:gap-12 p-4 lg:p-8 xl:p-12">
-    <.image post={@post}  />
+    
+      <.image post={@post} />
+    
     <div>
       <h1 class="text-[#fd776c] text-lg sm:text-xl md:text-2xl xl:text-4xl font-bold tracking-tight">{Moly.Helper.get_in_from_keys(@post, [:source, "post_title"])}</h1>
       <div class="flex items-center divide-x my-4 divide-base-content/50 leading-3 gap-2 text-base-content/50  text-xs md:text-sm">
@@ -49,51 +51,51 @@
   </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 lg:px-8 pt-16">
-  <div class="grid grid-cols-4 gap-36">
-    <div class="col-span-3 space-y-20">
-      <div :if={Moly.Helper.get_in_from_keys(@post, [:source, "story_content"])}>
-        <h2 class="mb-6 text-3xl text-[#5F9EA0]">Coloring page story</h2>
-        <p class="text-[#431e33]/60  text-sm md:text-base">{Moly.Helper.get_in_from_keys(@post, [:source, "story_content"])}</p>
+<div class="max-w-7xl mx-auto px-4 lg:px-8 pt-16  border-y border-base-300">
+  <div class="flex flex-col lg:flex-row items-top justify-between mx-auto">
+    <div class="prose prose-xs md:prose-sm lg:prose-md xl:prose-lg">
+      <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "story_content"])}>
+        <h2 class=" text-[#fb8e29] !mt-0">Coloring page story</h2>
+        <p class="text-[#431e33]/60 ">{Moly.Helper.get_in_from_keys(@post, [:source, "story_content"])}</p>
       </div>
-      <div :if={Moly.Helper.get_in_from_keys(@post, [:source, "age_appropriateness"])}>
-        <h2 class="mb-6 text-3xl text-[#6DB9E8]">Coloring page Age Appropriateness</h2>
-        <p class="text-[#431e33]/60   text-sm md:text-base">{Moly.Helper.get_in_from_keys(@post, [:source, "age_appropriateness"])}</p>
+      <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "age_appropriateness"])}>
+        <h2 class="text-lg md:text-xl xl:text-3xl text-[#6DB9E8]">Coloring page Age Appropriateness</h2>
+        <p class="text-[#431e33]/60 ">{Moly.Helper.get_in_from_keys(@post, [:source, "age_appropriateness"])}</p>
       </div>
-      <div class="space-y-6" :if={Moly.Helper.get_in_from_keys(@post, [:source, "coloring_instructions"])}>
-        <h2 class="text-3xl text-[#FD8075]">Coloring Page Coloring Instructions</h2>
-        <p class="text-[#431e33]/60   text-sm md:text-base">{Moly.Helper.get_in_from_keys(@post, [:source, "coloring_instructions"])}</p>
+      <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "coloring_instructions"])}>
+        <h2 class="text-lg md:text-xl xl:text-3xl text-[#FD8075]">Coloring Page Coloring Instructions</h2>
+        <p class="text-[#431e33]/60  ">{Moly.Helper.get_in_from_keys(@post, [:source, "coloring_instructions"])}</p>
         <div><img phx-track-static src={~p"/images/cute-girl.webp"}/></div>
       </div>
-      <div class="space-y-6" :if={Moly.Helper.get_in_from_keys(@post, [:source, "printing_tips"])}>
-        <h2 class="text-3xl text-[#fb8e29]">Coloring Page Printing Tips</h2>
-        <p class="text-[#431e33]/60  text-sm md:text-base">{Moly.Helper.get_in_from_keys(@post, [:source, "printing_tips"])}</p>
+      <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "printing_tips"])}>
+        <h2 class="text-lg md:text-xl xl:text-3xl text-[#5F9EA0]">Coloring Page Printing Tips</h2>
+        <p class="text-[#431e33]/60 ">{Moly.Helper.get_in_from_keys(@post, [:source, "printing_tips"])}</p>
         <div><img phx-track-static src={~p"/images/post-paper.webp"}/></div>
       </div>
-      <div class="space-y-6" :if={Moly.Helper.get_in_from_keys(@post, [:source, "recommended_tools"])}>
-        <h2 class="text-3xl text-[#5dc356]">Recommended Tools</h2>
-        <p class="text-[#431e33]/60  text-sm md:text-base">{Moly.Helper.get_in_from_keys(@post, [:source, "recommended_tools"])}</p>
+      <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "recommended_tools"])}>
+        <h2 class="text-lg md:text-xl xl:text-3xl text-[#5dc356]">Recommended Tools</h2>
+        <p class="text-[#431e33]/60 ">{Moly.Helper.get_in_from_keys(@post, [:source, "recommended_tools"])}</p>
         <div><img phx-track-static src={~p"/images/color-pen.webp"}/></div>
       </div>
     </div>
-    <div class="col-span-1 space-y-4">
-      <.card posts={@stories_post}/>
+    <div class="md:max-w-[120px] xl:max-w-[240px] md:space-y-4 xl:space-y-8">
+      <.card posts={@stories_post} />
     </div>
   </div>
-  <p class="flex flex-wrap items-center text-sm text-base-content/80 gap-2 py-16">
+  <p class="flex flex-wrap items-center text-sm text-base-content/80 gap-2 py-8 xl:py-16">
     <.link navigate={~p"/-#{tag["slug"]}"} class="btn btn-outline btn-sm md:btn-md btn-primary btn-soft bg-inherit hover:border-[#fd776c] hover:outline-[#fd776c] text-[#fd776c]"  :for={tag <- Moly.Helper.get_in_from_keys(@post, [:source, "post_tag"])}>{tag["name"]}</.link>
   </p>
 </div>
 
 
-<div class="max-w-7xl mx-auto px-4 lg:px-8 pt-16 pb-20">
+<div class="max-w-7xl mx-auto px-4 lg:px-8 pt-0 md:pt-8 xl:pt-16 pb-8 xl:pb-20">
   <div class="text-center">
     <h2 class="text-[#fb8e29] text-lg sm:text-2xl md:text-4xl font-semibold">Other similar coloring pages for kids</h2>
     <p class="text-[#431e33] my-2 sm:my-4 md:my-8 text-xs sm:text-sm md:text-base w-4/5 mx-auto">
       More Coloring Pages You’ll Love
     </p>
   </div>
-  <div class="grid sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4">
+  <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-2">
     <.card posts={@relative} />
   </div>
 </div>
