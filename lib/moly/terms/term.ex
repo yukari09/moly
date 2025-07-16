@@ -121,7 +121,6 @@ defmodule Moly.Terms.Term do
     timestamps()
   end
 
-
   relationships do
     has_many :term_taxonomy, Moly.Terms.TermTaxonomy, public?: true
     has_many :term_meta, Moly.Terms.TermMeta
@@ -129,6 +128,9 @@ defmodule Moly.Terms.Term do
 
   graphql do
     type :term
+    queries do
+      list :list_terms, :read, paginate_with: :keyset, relay?: true
+    end
   end
 
   identities do

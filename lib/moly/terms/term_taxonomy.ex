@@ -109,7 +109,7 @@ defmodule Moly.Terms.TermTaxonomy do
   end
 
   relationships do
-    belongs_to :term, Moly.Terms.Term, public?: true
+    belongs_to :term, Moly.Terms.Term
 
     belongs_to :parent, Moly.Terms.Term do
       source_attribute :parent_id
