@@ -89,7 +89,7 @@ defmodule MolyWeb.AdminCategoryLive.Form do
               label="Parent Category"
               prompt="Select a parent category(option)"
             />
-            <div class="mt-4">
+            <div :if={term_taxonomy[:taxonomy].value == "category"} class="mt-4">
             <.textarea field={term_taxonomy[:description]} placeholder="option" label={"Keyword"}/>
             </div>
           </.inputs_for>
