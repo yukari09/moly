@@ -146,6 +146,7 @@ defmodule MolyWeb.ColoringPagesController do
         relative: relative,
         page_title: page_title,
         meta_tags: page_meta,
+        page_description: Moly.Helper.get_in_from_keys(post, [:source, "post_excerpt"]),
         ld_json: ld_json,
         stories_post: stories_post
       ]
