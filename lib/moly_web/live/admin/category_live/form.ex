@@ -90,7 +90,7 @@ defmodule MolyWeb.AdminCategoryLive.Form do
               prompt="Select a parent category(option)"
             />
             <div class="mt-4">
-            <.textarea field={term_taxonomy[:description]} placeholder="option" label={"Keyword"}/>
+              <.textarea field={term_taxonomy[:description]} placeholder="option" label={"Keyword"}/>
             </div>
           </.inputs_for>
         </div>

@@ -172,7 +172,6 @@ defmodule MolyWeb.ColoringPagesController do
       %{name: "twitter:title", content: post_title},
       %{name: "twitter:description", content: post_excerpt},
       %{name: "twitter:image", content: media_url},
-      %{name: "description", content: post_excerpt},
     ]
   end
 
@@ -203,11 +202,11 @@ defmodule MolyWeb.ColoringPagesController do
       dateModified: Moly.Helper.get_in_from_keys(post, [:source, "updated_at"]),
       author: %{
         "@type": "Person",
-        name: "Coloring Pages for Kids"
+        name: "KidColoringPage"
       },
       publisher: %{
         "@type": "Organization",
-        name: "Coloring Pages for Kids",
+        name: "KidColoringPage",
         logo: %{
           "@type": "ImageObject",
           url: url(~p"/images/logo.webp"),

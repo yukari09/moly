@@ -82,20 +82,21 @@ defmodule Moly.Terms.Term do
       primary? true
 
       change before_action(fn changeset, context ->
-               Ash.Query.filter(
-                 Moly.Terms.TermTaxonomy,
-                 term_id == ^Ash.Changeset.get_attribute(changeset, :id)
-               )
-               |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
+        term_id = Ash.Changeset.get_attribute(changeset, :id)
+        Ash.Query.filter(
+          Moly.Terms.TermTaxonomy,
+          term_id == ^term_id
+        )
+        |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
 
-               Ash.Query.filter(
-                 Moly.Terms.TermMeta,
-                 term_id == ^Ash.Changeset.get_attribute(changeset, :id)
-               )
-               |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
+        Ash.Query.filter(
+          Moly.Terms.TermMeta,
+          term_id == ^term_id
+        )
+        |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
 
-               changeset
-             end)
+        changeset
+      end)
     end
   end
 

@@ -9,7 +9,7 @@
         <.link :if={Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "slug"])} class="pr-2" navigate={~p"/@#{Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "slug"])}"}>{Moly.Helper.get_in_from_keys(@post, [:source, "category", 0, "name"])}</.link>
         <MolyWeb.PageHtml.Components.datetime_es data={@post} />
       </div>
-      <article class="text-[#431e33]/60 line-clamp-3  text-sm md:text-base">
+      <article class=" line-clamp-3  text-sm md:text-base">
         <%= for %{"data" => data, "id" => id, "type" => type} <- Moly.Helper.get_in_from_keys(@post, [:source, "post_content"]) |> JSON.decode! |> Moly.Helper.get_in_from_keys(["blocks"]) do %>
         <p id={id}  :if={type == "paragraph"}>{raw data["text"]}</p>
         <%= end %>
@@ -59,27 +59,27 @@
     <div class="prose prose-sm lg:prose-md xl:prose-lg">
       <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "story_content"])}>
         <h2 class=" text-[#fb8e29] !mt-0">Coloring page story</h2>
-        <p class="text-[#431e33]/60">
+        <p class="t">
           {Moly.Helper.get_in_from_keys(@post, [:source, "story_content"]) |> MDEx.to_html! |> raw()}
         </p>
       </div>
       <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "age_appropriateness"])}>
         <h2 class="text-lg md:text-xl xl:text-3xl text-[#6DB9E8]">Coloring page Age Appropriateness</h2>
-        <p class="text-[#431e33]/60 ">{Moly.Helper.get_in_from_keys(@post, [:source, "age_appropriateness"])}</p>
+        <p class=" ">{Moly.Helper.get_in_from_keys(@post, [:source, "age_appropriateness"])}</p>
       </div>
       <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "coloring_instructions"])}>
         <h2 class="text-lg md:text-xl xl:text-3xl text-[#FD8075]">Coloring Page Coloring Instructions</h2>
-        <p class="text-[#431e33]/60  ">{Moly.Helper.get_in_from_keys(@post, [:source, "coloring_instructions"])}</p>
+        <p class="  ">{Moly.Helper.get_in_from_keys(@post, [:source, "coloring_instructions"])}</p>
         <div><img phx-track-static src={~p"/images/cute-girl.webp"}/></div>
       </div>
       <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "printing_tips"])}>
         <h2 class="text-lg md:text-xl xl:text-3xl text-[#5F9EA0]">Coloring Page Printing Tips</h2>
-        <p class="text-[#431e33]/60 ">{Moly.Helper.get_in_from_keys(@post, [:source, "printing_tips"])}</p>
+        <p class=" ">{Moly.Helper.get_in_from_keys(@post, [:source, "printing_tips"])}</p>
         <div><img phx-track-static src={~p"/images/post-paper.webp"}/></div>
       </div>
       <div  :if={Moly.Helper.get_in_from_keys(@post, [:source, "recommended_tools"])}>
         <h2 class="text-lg md:text-xl xl:text-3xl text-[#5dc356]">Recommended Tools</h2>
-        <p class="text-[#431e33]/60 ">{Moly.Helper.get_in_from_keys(@post, [:source, "recommended_tools"])}</p>
+        <p class=" ">{Moly.Helper.get_in_from_keys(@post, [:source, "recommended_tools"])}</p>
         <div><img phx-track-static src={~p"/images/color-pen.webp"}/></div>
       </div>
     </div>
