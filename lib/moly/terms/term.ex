@@ -81,25 +81,23 @@ defmodule Moly.Terms.Term do
     destroy :destroy do
       primary? true
 
-      change manage_relationship(:term_meta, :term_meta, on_lookup: :destroy)
-      change manage_relationship(:term_taxonomy, :term_taxonomy, on_lookup: :destroy)
+      change before_action(fn changeset, context ->
+        term_id = Ash.Changeset.get_attribute(changeset, :id)
 
-      # change before_action(fn changeset, context ->
-      #   term_id = Ash.Changeset.get_attribute(changeset, :id)
-      #   Ash.Query.filter(
-      #     Moly.Terms.TermTaxonomy,
-      #     term_id == ^term_id
-      #   )
-      #   |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
+        Ash.Query.filter(
+          Moly.Terms.TermTaxonomy,
+          term_id == ^term_id
+        )
+        |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
 
-      #   Ash.Query.filter(
-      #     Moly.Terms.TermMeta,
-      #     term_id == ^term_id
-      #   )
-      #   |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
+        Ash.Query.filter(
+          Moly.Terms.TermMeta,
+          term_id == ^term_id
+        )
+        |> Ash.bulk_destroy!(:destroy, %{}, actor: context.actor)
 
-      #   changeset
-      # end)
+        changeset
+      end)
     end
   end
 
