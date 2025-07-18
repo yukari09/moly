@@ -17,43 +17,104 @@
     id="post-top-nav"
     class={["flex items-center justify-between bg-white py-2 sm:py-0  mt-12 border-b border-gray-200"]}
   >
-    <.tabs_with_badges
-      id={Moly.Helper.generate_random_id()}
-      tabs={[
-        %{
-          label: "All",
-          value: "",
-          href: ~p"/admin/posts?#{%{@params | page: 1, post_status: nil}}",
-          badge: @status_count.all
-        },
-        %{
-          label: "Published",
-          value: "publish",
-          href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "publish"}}",
-          badge: @status_count.publish
-        },
-        %{
-          label: "Draft",
-          value: "draft",
-          href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "draft"}}",
-          badge: @status_count.draft
-        },
-        %{
-          label: "Scheduled",
-          value: "future",
-          href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "future"}}",
-          badge: @status_count.future
-        },
-        %{
-          label: "Trash",
-          value: "trash",
-          href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "trash"}}",
-          badge: @status_count.trash
-        }
-      ]}
-      current_tab={@params.post_status}
-      inner_class="border-none"
-    />
+    <div class="flex items-center gap-4">
+      <.dropdown id={Moly.Helper.generate_random_id()} data-action-id="action-dropmenu" >
+        <:button_slot 
+          class={[
+            "inline-flex items-center justify-center gap-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 rounded-md text-sm bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 !-m-0 px-4"
+          ]}
+          disabled="disabled"
+        >
+          Action 
+          <Lucideicons.chevron_down class="text-gray-600 size-4" />
+        </:button_slot>
+
+        <:menu_slot data-menu-id="actions-menu" class="w-44 absolute left-0 z-10 mt-2 origin-top-left rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden hidden divide-y divide-gray-100">
+          <div class="py-1" role="none" >
+            <.dropdown_link
+              class={"flex items-center gap-2"}
+              data-action-link="select-all"
+              phx-click={
+                JS.exec("phx-click-away", to: "[data-menu-id='actions-menu']")
+                |> JS.exec("data-act-publish", to: "input[checkbox-checked='true']")
+              }
+            >
+              <Lucideicons.book class="size-4"/> Publish
+            </.dropdown_link>
+
+            <.dropdown_link
+              class={"flex items-center gap-2"}
+              data-action-link="select-all"
+              phx-click={
+                JS.exec("phx-click-away", to: "[data-menu-id='actions-menu']")
+                |> JS.exec("data-act-draft", to: "input[checkbox-checked='true']")
+              }
+            >
+              <Lucideicons.book_dashed class="size-4"/> Draft
+            </.dropdown_link>
+            <.dropdown_link
+              class={"flex items-center gap-2"}
+              data-action-link="select-all"
+              phx-click={
+                JS.exec("phx-click-away", to: "[data-menu-id='actions-menu']")
+                |> JS.exec("data-act-delete", to: "input[checkbox-checked='true']")
+              }
+            >
+              <Lucideicons.trash class="size-4"/> Delete
+            </.dropdown_link>
+
+            <.dropdown_link
+              class={"flex items-center gap-2 text-red-500 hover:text-red-500"}
+              data-action-link="select-all"
+              data-confirm="Are you sure to delete those post forever?"
+              phx-click={
+                JS.exec("phx-click-away", to: "[data-menu-id='actions-menu']")
+                |> JS.exec("data-act-delete-forever", to: "input[checkbox-checked='true']")
+              }
+            >
+              <Lucideicons.trash_2 class="size-4"/> Delete Forever
+            </.dropdown_link>
+          </div>
+        </:menu_slot>
+      </.dropdown>
+      <.tabs_with_badges
+        id={Moly.Helper.generate_random_id()}
+        tabs={[
+          %{
+            label: "All",
+            value: "",
+            href: ~p"/admin/posts?#{%{@params | page: 1, post_status: nil}}",
+            badge: @status_count.all
+          },
+          %{
+            label: "Published",
+            value: "publish",
+            href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "publish"}}",
+            badge: @status_count.publish
+          },
+          %{
+            label: "Draft",
+            value: "draft",
+            href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "draft"}}",
+            badge: @status_count.draft
+          },
+          %{
+            label: "Scheduled",
+            value: "future",
+            href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "future"}}",
+            badge: @status_count.future
+          },
+          %{
+            label: "Trash",
+            value: "trash",
+            href: ~p"/admin/posts?#{%{@params | page: 1, post_status: "trash"}}",
+            badge: @status_count.trash
+          }
+        ]}
+        current_tab={@params.post_status}
+        inner_class="border-none"
+      />
+    </div>
     <div class="flex items-center gap-2">
       <.form
         for={nil}
@@ -71,9 +132,6 @@
           phx-update="ignore"
         />
       </.form>
-      <.button phx-click={JS.exec("phx-click", to: ".rebuild-index-btn")}>
-        <Lucideicons.loader_circle class="size-4" />
-      </.button>
     </div>
   </div>
 
@@ -81,6 +139,19 @@
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8 via-0">
         <.table rows={@posts.results} class="table-auto !max-w-full">
+          <:col :let={row} label={nil} checkbox_target={"[name=\"table-checkbox-id[]\"]"}>
+              <.checkbox 
+                name="table-checkbox-id[]" 
+                id={"table-checkbox-table-col-id-#{row.id}"} 
+                value={row.id} 
+                phx-value-id={row.id}
+                data-act-delete={JS.push("delete")}
+                data-act-delete-forever={JS.push("delete-forever")}
+                data-act-publish={JS.push("publish")}
+                data-act-draft={JS.push("draft")}
+                phx-click={JS.toggle_attribute({"checkbox-checked", "true", "false"})}
+              />
+          </:col>
           <:col :let={row} label="Title">
             <div class="flex gap-2">
               <img 

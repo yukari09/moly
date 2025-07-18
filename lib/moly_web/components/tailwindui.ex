@@ -325,6 +325,7 @@ defmodule MolyWeb.TailwindUI do
     attr(:width, :string)
     # For screen reader only labels
     attr(:sr_label, :string)
+    attr(:checkbox_target, :string)
   end
 
   def table(assigns) do
@@ -349,14 +350,18 @@ defmodule MolyWeb.TailwindUI do
             ]}
             style={col[:width] && "width: #{col[:width]}"}
           >
-            <%= if col[:sr_label] do %>
-              <span class="sr-only">{col.sr_label}</span>
-            <% else %>
-              {col.label}
-            <% end %>
-            <%= if Map.get(col, :sortable, false) do %>
-              <span class="ml-2 inline-flex">↑↓</span>
-            <% end %>
+          <%= if !col[:checkbox_target] do %>
+              <%= if col[:sr_label] do %>
+                <span class="sr-only">{col.sr_label}</span>
+              <% else %>
+                {col.label}
+              <% end %>
+              <%= if Map.get(col, :sortable, false) do %>
+                <span class="ml-2 inline-flex">↑↓</span>
+              <% end %>
+          <% else %>
+          <.checkbox name="checkbox-all" id="table-checkbox-all-id" value="" phx-hook="SelectAll" data-target={col.checkbox_target} />
+          <% end %>
           </th>
         </tr>
       </thead>

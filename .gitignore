@@ -44,5 +44,5 @@
 
 # Ignore ssr build for svelte.
 /priv/svelte/
-
+/.github/workflows/docker-build.yml
 .DS_Store

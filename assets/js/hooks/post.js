@@ -489,5 +489,97 @@ export const Editor = {
   updated() {
     this.mounted()
   }
-
 }
+
+export const SelectAll = {
+  mounted() {
+    this.initializeSelectAll();
+  },
+  
+  updated() {
+    this.initializeSelectAll();
+  },
+  
+  initializeSelectAll() {
+    this.setupEventDelegation();
+    this.updateSelectAllState();
+  },
+  
+  setupEventDelegation() {
+    if (this.boundSelectAllHandler) {
+      this.el.removeEventListener('change', this.boundSelectAllHandler);
+    }
+    if (this.boundTargetHandler) {
+      document.removeEventListener('change', this.boundTargetHandler);
+    }
+    
+    this.boundSelectAllHandler = (e) => {
+      this.handleSelectAllChange(e.target.checked);
+    };
+    this.el.addEventListener('change', this.boundSelectAllHandler);
+    
+    this.boundTargetHandler = (e) => {
+      if (e.target.matches && e.target.matches(this.el.dataset.target)) {
+        setTimeout(() => {
+          this.updateSelectAllState();
+        }, 0);
+      }
+    };
+    document.addEventListener('change', this.boundTargetHandler);
+  },
+  
+  handleSelectAllChange(isChecked) {
+    const targetCheckboxes = document.querySelectorAll(this.el.dataset.target);
+    
+    targetCheckboxes.forEach(checkbox => {
+      if (checkbox.checked !== isChecked) {
+        checkbox.checked = isChecked;
+        
+        const changeEvent = new Event('change', { bubbles: true });
+        checkbox.dispatchEvent(changeEvent);
+        
+        if (checkbox.hasAttribute('phx-click')) {
+          const clickEvent = new Event('click', { bubbles: true });
+          checkbox.dispatchEvent(clickEvent);
+        }
+      }
+    });
+  },
+  
+  updateSelectAllState() {
+    const targetCheckboxes = document.querySelectorAll(this.el.dataset.target);
+    
+    if (targetCheckboxes.length === 0) {
+      this.el.checked = false;
+      this.el.indeterminate = false;
+      return;
+    }
+    
+    const checkedCount = Array.from(targetCheckboxes).filter(cb => cb.checked).length;
+    const totalCount = targetCheckboxes.length;
+    const selectedActionBtn = document.querySelector('[data-action-id="action-dropmenu"] button')
+
+    if (checkedCount === 0) {
+      this.el.checked = false;
+      this.el.indeterminate = false;
+      selectedActionBtn.setAttribute("disabled", "disabled")
+    } else if (checkedCount === totalCount) {
+      this.el.checked = true;
+      this.el.indeterminate = false;
+      selectedActionBtn.removeAttribute("disabled")
+    } else {
+      this.el.checked = false;
+      this.el.indeterminate = true;
+      selectedActionBtn.removeAttribute("disabled")
+    }
+  },
+  
+  destroyed() {
+    if (this.boundSelectAllHandler) {
+      this.el.removeEventListener('change', this.boundSelectAllHandler);
+    }
+    if (this.boundTargetHandler) {
+      document.removeEventListener('change', this.boundTargetHandler);
+    }
+  }
+};
