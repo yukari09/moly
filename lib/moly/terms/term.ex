@@ -15,17 +15,17 @@ defmodule Moly.Terms.Term do
 
   rbac do
     role :user do
-      fields([:name, :slug, :term_group])
+      fields([:name, :slug, :term_group, :term_taxonomy_by])
       actions([:read])
     end
 
     role :admin do
-      fields([:name, :slug, :term_group])
+      fields([:name, :slug, :term_group, :term_taxonomy_by])
       actions([:create, :read, :update, :destroy])
     end
 
     role :owner do
-      fields([:name, :slug, :term_group])
+      fields([:name, :slug, :term_group, :term_taxonomy_by])
       actions([:create, :read, :update, :destroy])
     end
   end
@@ -124,7 +124,14 @@ defmodule Moly.Terms.Term do
   end
 
   relationships do
-    has_many :term_taxonomy, Moly.Terms.TermTaxonomy, public?: true
+    has_many :term_taxonomy, Moly.Terms.TermTaxonomy
+    has_one :category_taxonomy, Moly.Terms.TermTaxonomy do
+      public? true
+      from_many? true
+      destination_attribute :term_id
+      source_attribute :id
+      filter expr(taxonomy == "category")
+    end
     has_many :term_meta, Moly.Terms.TermMeta
   end
 
