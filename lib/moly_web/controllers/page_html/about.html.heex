@@ -3,17 +3,32 @@
 </div>
 
 
+<% 
+aboutus = """
+Welcome to **Kidcoloringpage** – your ultimate destination for **free, printable coloring pages for children of all ages**.
+
+Whether you're a **parent**, **teacher**, or **caregiver**, our collection is designed to be fun, educational, and easy to use. We offer thousands of **kid-friendly coloring pages**, including:
+
+* 🦕 **Dinosaurs**
+* 🐘 **Animals**
+* 🔤 **Alphabet & Numbers**
+* 🎄 **Holiday Themes** like Christmas, Halloween, and Easter
+* 🌸 **Cute & Simple Designs**
+
+All our pages are:
+
+✅ 100% free to download
+✅ Printable in high-quality **A4 PDF format**
+✅ No sign-up required
+✅ Perfect for home, classroom, or activity time
+
+Explore, print, and enjoy! Let’s spark creativity and learning—one coloring page at a time.
+"""
+%>
+
 <section class="max-w-3xl mx-auto px-4  prose prose-lg prose-primary prose-sm md:prose-base mb-12 xl:mb-24">
-  <p>
-    At <strong>{Moly.website_name()}</strong>, we’re passionate about exploring the rapidly evolving world of artificial intelligence and helping creators, marketers, and entrepreneurs stay ahead of the curve. Whether it's reviewing cutting-edge AI tools, analyzing tech trends, or uncovering how businesses are leveraging automation — we bring clarity to complexity.
-  </p>
-  <p>
-    Founded in 2024, {Moly.website_name()} has quickly grown into a trusted hub for AI-driven insights. Our mission is simple: <em>to decode innovation and deliver practical, reliable content that empowers our readers to make smarter digital decisions</em>.
-  </p>
-  <p>
-    We believe AI isn’t just for big tech — it’s for everyone. That’s why we’re committed to breaking down technical jargon, providing real-world examples, and curating only what truly matters. Whether you're building a startup, writing code, launching campaigns, or just curious — you’ll find content here tailored to your journey.
-  </p>
-  <p>
-    Want to collaborate, sponsor, or just say hi? <a href="/contact" class="link link-primary">Contact us</a> — we’d love to hear from you.
-  </p>
+  {raw MDEx.to_html!(aboutus)}
 </section>
+
+
+
