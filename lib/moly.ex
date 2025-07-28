@@ -54,7 +54,7 @@ defmodule Moly do
   def website_name(), do: website_term("website-name", true, @website_name)
   def website_auth_background(), do: website_term("website-auth-background", true, @website_auth_background)
   def website_description(), do: website_term("website-description", true, @website_description)
-  def social_links(), do: website_term("social-links")
+  def social_links(), do: website_term("website-social-links")
   def website_links(), do: website_term("website-links")
   def website_blog_list_title(), do: website_term("website-blog-list-title", true)
   def website_blog_list_description(), do: website_term("website-blog-list-description", true)

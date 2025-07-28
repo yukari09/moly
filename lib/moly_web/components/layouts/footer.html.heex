@@ -3,6 +3,13 @@
       <div class="col-span-2 xl:max-w-sm">
         <div><img class="w-auto max-h-8"  src={Moly.website_logo} /></div>
         <p class="mt-4 font-light text-sm md:text-base">{Moly.website_footer_description}</p>
+        <div :if={Moly.social_links()} class="mt-4">
+          <ul class="mt-2 flex items-center space-x-4">
+            <li :for={%{term_value: link} <- Moly.social_links()}>
+              <a href={link} :if={String.contains?(link, "x.com")}><img phx-track-static class="size-6" src={~p"/images/x.svg"} alt="follow kidcoloringpage on x" /></a>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="text-sm md:text-base" :for={level <- 1..3} :if={Moly.website_footer_column(level) not in [[],false,nil]}>
         <div class="font-medium">{Moly.website_footer_column_keyword(level)}</div>
