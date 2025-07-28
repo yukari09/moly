@@ -7,6 +7,7 @@
           <ul class="mt-2 flex items-center space-x-4">
             <li :for={%{term_value: link} <- Moly.social_links()}>
               <a href={link} :if={String.contains?(link, "x.com")}><img phx-track-static class="size-6" src={~p"/images/x.svg"} alt="follow kidcoloringpage on x" /></a>
+              <a href={link} :if={String.contains?(link, "youtube.com")}><img phx-track-static class="size-6" src={~p"/images/youtube.svg"} alt="follow kidcoloringpage on youtube" /></a>
             </li>
           </ul>
         </div>
