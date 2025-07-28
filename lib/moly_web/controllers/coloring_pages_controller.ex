@@ -180,7 +180,7 @@ defmodule MolyWeb.ColoringPagesController do
       "@context": "https://schema.org",
       "@type": "WebSite",
       name: "Kid Coloring Page",
-      description: "Free printable coloring pages for kids",
+      description: "Free Coloring Pages Printable",
       url: "https://kidcoloringpage.com"
     }
   end

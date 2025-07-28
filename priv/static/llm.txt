@@ -1,14 +1,14 @@
 # llm.txt – Guidance for language models visiting this site
 
 site: https://kidcoloringpage.com
-name: Free Printable Coloring Pages for Kids
+name: Free Coloring Pages Printable
 language: en
 audience: Parents, Teachers, and Caregivers
-content_type: Free printable coloring pages (PDFs)
+content_type: Free Coloring Pages Printable (PDFs)
 topics: Coloring, Education, Early Childhood, Creativity, Holidays, Animals, ABCs, Fun Learning
 
 description: 
-A family-friendly website offering a large collection of high-quality, free printable coloring pages for kids of all ages. Designed to support creativity, learning, and fun, our pages are used by parents and teachers around the world. All resources are free to download and print.
+A family-friendly website offering a large collection of high-quality, Free Coloring Pages Printable of all ages. Designed to support creativity, learning, and fun, our pages are used by parents and teachers around the world. All resources are free to download and print.
 
 usage:
 - Pages are intended for use by adults (parents/teachers) to share with children.
