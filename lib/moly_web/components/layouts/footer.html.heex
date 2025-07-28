@@ -6,13 +6,13 @@
         <div :if={Moly.social_links()} class="mt-4">
           <ul class="mt-2 flex items-center space-x-4">
             <li :for={%{term_value: link} <- Moly.social_links()}>
-              <a href={link} :if={String.contains?(link, "x.com")}><img phx-track-static class="size-6" src={~p"/images/x.svg"} alt="follow kidcoloringpage on x" /></a>
-              <a href={link} :if={String.contains?(link, "youtube.com")}><img phx-track-static class="size-6" src={~p"/images/youtube.svg"} alt="follow kidcoloringpage on youtube" /></a>
-              <a href={link} :if={String.contains?(link, "instagram.com")}><img phx-track-static class="size-6" src={~p"/images/instagram.svg"} alt="follow kidcoloringpage on instagram" /></a>
-              <a href={link} :if={String.contains?(link, "facebook.com")}><img phx-track-static class="size-6" src={~p"/images/facebook.svg"} alt="follow kidcoloringpage on facebook" /></a>
-              <a href={link} :if={String.contains?(link, "pinterest.com")}><img phx-track-static class="size-6" src={~p"/images/pinterest.svg"} alt="follow kidcoloringpage on pinterest" /></a>
-              <a href={link} :if={String.contains?(link, "tiktok.com")}><img phx-track-static class="size-6" src={~p"/images/tiktok.svg"} alt="follow kidcoloringpage on tiktok" /></a>
-              <a href={link} :if={String.contains?(link, "threads.net")}><img phx-track-static class="size-6" src={~p"/images/threads.svg"} alt="follow kidcoloringpage on threads" /></a>
+              <a href={link} :if={String.contains?(link, "x.com")}><img  class="size-6" src={~p"/images/x.svg"} alt="follow kidcoloringpage on x" /></a>
+              <a href={link} :if={String.contains?(link, "youtube.com")}><img   class="size-6" src={~p"/images/youtube.svg"} alt="follow kidcoloringpage on youtube" /></a>
+              <a href={link} :if={String.contains?(link, "instagram.com")}><img   class="size-6" src={~p"/images/instagram.svg"} alt="follow kidcoloringpage on instagram" /></a>
+              <a href={link} :if={String.contains?(link, "facebook.com")}><img   class="size-6" src={~p"/images/facebook.svg"} alt="follow kidcoloringpage on facebook" /></a>
+              <a href={link} :if={String.contains?(link, "pinterest.com")}><img   class="size-6" src={~p"/images/pinterest.svg"} alt="follow kidcoloringpage on pinterest" /></a>
+              <a href={link} :if={String.contains?(link, "tiktok.com")}><img   class="size-6" src={~p"/images/tiktok.svg"} alt="follow kidcoloringpage on tiktok" /></a>
+              <a href={link} :if={String.contains?(link, "threads.net")}><img   class="size-6" src={~p"/images/threads.svg"} alt="follow kidcoloringpage on threads" /></a>
             </li>
           </ul>
         </div>
