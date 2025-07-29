@@ -50,6 +50,11 @@
       create_category_modal_id={@create_category_modal_id}
     />
   </div>
+  <%= for {pm, i} <- Enum.with_index(@form.data.post_meta) do %>
+    <input :if={pm.meta_key not in ["thumbnail_id", "comments_open"]} name={"#{@form[:post_meta].name}[#{i+2}][meta_key]"} value={pm.meta_key} type="hidden"/>
+    <input :if={pm.meta_key not in ["thumbnail_id", "comments_open"]} name={"#{@form[:post_meta].name}[#{i+2}][meta_value]"} value={pm.meta_value} type="hidden"/>
+    <input :if={pm.meta_key not in ["thumbnail_id", "comments_open"]} name={"#{@form[:post_meta].name}[#{i+2}][id]"} value={pm.id} type="hidden"/>
+  <% end %>
   <button data-id="post-submit-btn" class="hidden" />
 </.form>
 
