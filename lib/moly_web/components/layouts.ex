@@ -106,6 +106,18 @@ defmodule MolyWeb.Layouts do
             url: ~p"/admin/website/appearance",
             view: [MolyWeb.AdminWebsiteLive.Appearance],
             show: true
+          },
+          %{
+            title: "Footer",
+            url: ~p"/admin/website/footer",
+            view: [MolyWeb.AdminWebsiteLive.Footer],
+            show: true
+          },
+          %{
+            title: "Social Links",
+            url: ~p"/admin/website/social-links",
+            view: [MolyWeb.AdminWebsiteLive.SocialLinks],
+            show: true
           }
         ]
         # view: [MolyWeb.AdminWebsiteLive.Index]

@@ -996,9 +996,10 @@ defmodule MolyWeb.TailwindUI do
           <option
             :for={{options_value, label} <- @options}
             value={options_value}
+            a = {@field.value}
             selected={
-              (is_binary(@field.value) && options_value == @field.value) ||
-                (is_list(@field.value) && options_value in @field.value)
+              (is_binary(@field.value) && to_string(options_value) == @field.value) ||
+                (is_list(@field.value) && to_string(options_value) in @field.value)
             }
           >
             {label}

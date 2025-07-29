@@ -145,6 +145,8 @@ defmodule MolyWeb.Router do
       live("/website", AdminWebsiteLive.Index, :index)
       live("/website/basic", AdminWebsiteLive.Basic)
       live("/website/appearance", AdminWebsiteLive.Appearance)
+      live("/website/footer", AdminWebsiteLive.Footer)
+      live("/website/social-links", AdminWebsiteLive.SocialLinks)
     end
   end
 
