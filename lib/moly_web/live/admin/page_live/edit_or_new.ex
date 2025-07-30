@@ -39,7 +39,8 @@ defmodule MolyWeb.AdminPageLive.EditOrNew do
     socket =
       case AshPhoenix.Form.submit(assign_form, params: form_data) do
         {:ok, _} ->
-          push_navigate(socket, to: ~p"/admin/pages")
+          # push_navigate(socket, to: ~p"/admin/pages")
+          put_flash(socket, :info, "Already Saved")
         {:error, form} ->
           assign(socket, :form, form)
           |> put_flash(:error, "Oops, some thing wrong: #{JSON.encode!(form.errors)}")
