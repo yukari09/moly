@@ -25,6 +25,38 @@ defmodule MolyWeb.PageController do
     json conn, result
   end
 
+  def page(conn, %{"gid" => guid} = params) do
+    key = "pages:es:#{guid}"
+    if params["preview"] do
+      Moly.Utilities.cache_del(key)
+    end
+    full_guid =
+      if Regex.match?(~r/^http/, guid) do
+        guid
+      else
+        url(~p"/page/#{guid}")
+      end
+    [page_content, page_title, page_description] =
+      Moly.Utilities.cache_get_or_put(key, fn ->
+        page =
+          Moly.Contents.PostEs.query_document_by_post_guid(full_guid)
+          |> case do
+            nil -> nil
+            [_, [page | _]] -> page
+          end
+
+        [
+          Moly.Helper.get_in_from_keys(page, [:source, "post_content"]),
+          Moly.Helper.get_in_from_keys(page, [:source, "post_title"]),
+          Moly.Helper.get_in_from_keys(page, [:source, "post_excerpt"]),
+        ]
+      end, :timer.hours(24))
+
+    conn = put_layout(conn, false)
+
+    render(conn, :page, [page_title: page_title, page_description: page_description, page_content: page_content])
+  end
+
   def about(conn, _params) do
     render(conn, "about.html")
   end

@@ -149,16 +149,16 @@ defmodule Moly.Contents.PostEs do
       Map.put(query, :from, from)
       |> Map.put(:size, per_page)
 
-    Logger.debug("#{__MODULE__} query: #{JSON.encode!(query)}")
-
     es_query_result(query)
   end
 
   def query_document_by_post_name(post_name) do
     query = %{query: %{term: %{"post_name.keyword" => post_name}}}
+    es_query_result(query)
+  end
 
-    Logger.debug("#{__MODULE__} query: #{JSON.encode!(query)}")
-
+  def query_document_by_post_guid(guid) do
+    query = %{query: %{term: %{"guid.keyword" => guid}}}
     es_query_result(query)
   end
 
@@ -178,8 +178,6 @@ defmodule Moly.Contents.PostEs do
     size: size,
     from: from
   }
-
-    Logger.debug("#{__MODULE__} query: #{JSON.encode!(query)}")
 
     es_query_result(query)
   end

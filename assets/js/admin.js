@@ -283,3 +283,5 @@ window.addEventListener("app:modal-show-body-width", () => {
 window.addEventListener("app:modal-hide-body-width", () => {
   document.body.style.paddingRight = `${0}px`;
 })
+
+

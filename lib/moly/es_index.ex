@@ -2,6 +2,7 @@ defmodule Moly.EsIndex do
 
   defmacro __using__(opts) do
     quote do
+      require Logger
       @name  unquote(Keyword.fetch!(opts, :name))
       @mapping_file  unquote(Keyword.fetch!(opts, :mapping_file))
       def index_name do
@@ -32,6 +33,7 @@ defmodule Moly.EsIndex do
       end
 
       def es_query_result(query) do
+        Logger.debug("#{__MODULE__} query: #{JSON.encode!(query)}")
         case Snap.Search.search(Moly.Cluster, index_name(), query) do
           {:ok, %{hits: %{total: %{"value" => total}, hits: hits}}} ->
             case hits do

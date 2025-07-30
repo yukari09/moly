@@ -114,7 +114,7 @@ config :ex_aws, :s3,
   bucket: "local"
 
 config :moly, Moly.Cluster,
-  url: "https://localhost:9200",
+  url: "http://localhost:9200",
   username: "elastic",
   password: "83233167",
   json_library: JSON,

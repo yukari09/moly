@@ -1,0 +1,143 @@
+<div>
+  <.header
+    title="Pages"
+    description="A list of all the pages."
+  >
+    <.button
+      class="flex items-center gap-2"
+      patch={~p"/admin/page/create"}
+      variant="primary"
+      size="sm"
+    >
+      Create Page
+    </.button>
+  </.header>
+
+  <div
+    id="post-top-nav"
+    class={["flex items-center justify-between bg-white py-2 sm:py-0  mt-12 border-b border-gray-200"]}
+  >
+    <.tabs_with_badges
+      id={Moly.Helper.generate_random_id()}
+      tabs={[
+        %{
+          label: "All",
+          value: "",
+          href: ~p"/admin/pages?#{%{@params | page: 1, post_status: nil}}",
+          badge: @status_count.all
+        },
+        %{
+          label: "Published",
+          value: "publish",
+          href: ~p"/admin/pages?#{%{@params | page: 1, post_status: "publish"}}",
+          badge: @status_count.publish
+        },
+        %{
+          label: "Draft",
+          value: "draft",
+          href: ~p"/admin/pages?#{%{@params | page: 1, post_status: "draft"}}",
+          badge: @status_count.draft
+        },
+        %{
+          label: "Trash",
+          value: "trash",
+          href: ~p"/admin/pages?#{%{@params | page: 1, post_status: "trash"}}",
+          badge: @status_count.trash
+        }
+      ]}
+      current_tab={@params.post_status}
+      inner_class="border-none"
+    />
+    <.form
+      for={nil}
+      class="hidden sm:block"
+      phx-save="search"
+      phx-key="enter"
+      phx-keydown="search"
+    >
+      <.search_input
+        id="image-search-text-input"
+        name="q"
+        value={@params.q}
+        phx-debounce="300"
+        aria-label="Search"
+        phx-update="ignore"
+      />
+    </.form>
+  </div>
+
+  <div :if={@posts.results != []} class="mt-4 flow-root p-4 border border-gray-200  rounded-md">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <.table rows={@posts.results} class="table-auto">
+          <:col :let={row} label="Title">
+            <div class="flex gap-2">
+              <.badge variant={
+                %{draft: "gray", published: "success", scheduled: "info", trash: "error"}[
+                  row.post_status
+                ]
+              }>
+                {row.post_status}
+              </.badge>
+              <.link
+                target="_blank"
+                patch={~p"/admin/page/#{row.id}/edit"}
+                class="hover:underline flex items-center"
+              >
+                {row.post_title}
+              </.link>
+            </div>
+          </:col>
+          <:col :let={row} label="Created at">
+            {row.inserted_at |> Timex.format!("{Mfull} {D}, {YYYY} {h24}:{m}")}
+          </:col>
+          <:col :let={row} label="" align="right">
+            <div class="flex items-center gap-2 justify-end text-gray-500">
+              <.link
+                target="_blank"
+                href={"#{row.guid}?preview=true"}
+                class="hover:underline flex items-center"
+              >
+                <Lucideicons.external_link  class="size-4"/>
+              </.link>
+              <.link
+                phx-click="publish"
+                phx-value-id={row.id}
+                class="hover:underline flex items-center"
+              >
+                <Lucideicons.globe  class="size-4"/>
+              </.link>
+              <.link
+                :if={@params.post_status != "trash"}
+                phx-click="delete"
+                data-confirm="Are you sure to delete this page?"
+                phx-value-id={row.id}
+                class="hover:underline flex items-center"
+              >
+                <Lucideicons.trash  class="size-4"/>
+              </.link>
+              <.link
+                :if={@params.post_status == "trash"}
+                phx-click="delete-forever"
+                data-confirm="Are you sure to delete this page?"
+                phx-value-id={row.id}
+                class="hover:underline flex items-center"
+              >
+                <Lucideicons.trash  class="size-4"/>
+              </.link>
+            </div>
+          </:col>
+        </.table>
+      </div>
+    </div>
+  </div>
+  <.pagination
+    :if={@page_meta.total_pages > 1}
+    current_url={live_url(@params)}
+    page_meta={@page_meta}
+    class="border-none"
+  />
+  <div :if={@posts.results == []} class="mt-24 max-w-sm mx-auto">
+    <.no_results />
+  </div>
+</div>

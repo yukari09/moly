@@ -9,6 +9,8 @@ import {
     SelectAll
 } from "./hooks/post.js";
 
+import AceEditor from "./hooks/ace.js" ;
+
 let Hooks = {};
 
 Hooks.SetFeatureImage = SetFeatureImage;
@@ -19,6 +21,7 @@ Hooks.Editor = Editor;
 Hooks.FormChangeListener = FormChangeListener;
 Hooks.Resize = Resize;
 Hooks.SelectAll = SelectAll;
+Hooks.AceEditor = AceEditor;
  
 
 export default Hooks;

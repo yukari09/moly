@@ -23,8 +23,9 @@ defmodule MolyWeb.AdminCategoryLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    Moly.Utilities.Term.get_term_by_id(id)
-    |> Ash.destroy!(actor: socket.assigns.current_user)
+    Ash.Query.new(Moly.Terms.TermTaxonomy)
+    |> Ash.Query.filter(term_id == ^id and taxonomy == "category")
+    |> Ash.bulk_destroy!(:destroy, [], actor: socket.assigns.current_user)
 
     {:noreply, push_patch(socket, to: live_url(socket.assigns.params))}
   end

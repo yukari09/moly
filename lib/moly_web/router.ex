@@ -107,6 +107,7 @@ defmodule MolyWeb.Router do
     get("/tags/:tag_slug", PostController, :tag)
 
     post("/page/cf-validation", PageController, :cf_validation)
+    get("/page/:gid", PageController, :page)
     post("/upload-file", PageController, :upload_file)
 
     live("/website/register-initial-user", Website.RegisterInitialUser)
@@ -139,8 +140,8 @@ defmodule MolyWeb.Router do
 
 
       live("/pages", AdminPageLive.Index, :index)
-      live("/page/create", AdminPageLive.Create, :create)
-      live("/page/preview", AdminPageLive.Create, :preview)
+      live("/page/create", AdminPageLive.EditOrNew)
+      live("/page/:id/edit", AdminPageLive.EditOrNew)
 
       live("/website", AdminWebsiteLive.Index, :index)
       live("/website/basic", AdminWebsiteLive.Basic)

@@ -23,8 +23,9 @@ defmodule MolyWeb.AdminTagLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    get_tag_by_id(id, socket.assigns.current_user)
-    |> Ash.destroy!(actor: socket.assigns.current_user)
+    Ash.Query.new(Moly.Terms.TermTaxonomy)
+    |> Ash.Query.filter(term_id == ^id and taxonomy == "post_tag")
+    |> Ash.bulk_destroy!(:destroy, [], actor: socket.assigns.current_user)
 
     {:noreply, push_patch(socket, to: live_url(socket.assigns.params))}
   end

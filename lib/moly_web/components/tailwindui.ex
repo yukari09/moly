@@ -645,6 +645,7 @@ defmodule MolyWeb.TailwindUI do
   attr(:label, :string, default: nil)
   attr(:placeholder, :string, default: nil)
   attr(:class, :string, default: nil)
+  attr(:container_class, :string, default: nil)
   attr(:help_text, :string, default: nil)
   attr(:errors, :list, default: [])
   attr(:value, :any, default: nil)
@@ -679,7 +680,7 @@ defmodule MolyWeb.TailwindUI do
       end
 
     ~H"""
-    <div>
+    <div class={@container_class}>
       <label for={@field.id} class="block text-sm/6 font-medium text-gray-900">{@label}</label>
       <div class={[@label && "mt-2", @errors != [] && "grid grid-cols-1"]}>
         <textarea
