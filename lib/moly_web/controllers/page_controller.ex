@@ -30,7 +30,7 @@ defmodule MolyWeb.PageController do
     if params["preview"] do
       Moly.Utilities.cache_del(key)
     end
-    full_guid = url(~p"/page/#{guid}")
+    full_guid = ~p"/page/#{guid}"
     [page_content, page_title, page_description] =
       Moly.Utilities.cache_get_or_put(key, fn ->
         page =
