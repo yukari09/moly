@@ -55,7 +55,7 @@ if config_env() == :prod do
 
   config :moly, MolyWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
-    check_origin: String.split(System.get_env("CHECK_ORIGIN_HOSTS") || "", ",", trim: true),
+    check_origin: String.split(System.get_env("CHECK_ORIGIN_HOSTS") || host, ",", trim: true),
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
