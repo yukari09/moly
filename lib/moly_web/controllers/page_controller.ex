@@ -47,7 +47,7 @@ defmodule MolyWeb.PageController do
         ]
       end, :timer.hours(24))
 
-    conn = put_layout(conn, false)
+    conn = put_layout(conn, false) |> put_root_layout({MolyWeb.Layouts, :root_page})
 
     render(conn, :page, [page_title: page_title, page_description: page_description, page_content: page_content])
   end
