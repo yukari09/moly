@@ -32,7 +32,7 @@ defmodule MolyWeb.AdminPageLive.EditOrNew do
       post_status: :draft,
       post_name: Slug.slugify(post_title),
       post_excerpt: post_excerpt,
-      guid: assign_form[:guid].value ||  url(~p"/page/#{Moly.Helper.generate_random_str()}"),
+      guid: assign_form[:guid].value || ~p"/page/#{Moly.Helper.generate_random_str()}",
       post_date: DateTime.utc_now()
     }
 

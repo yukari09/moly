@@ -463,6 +463,13 @@ defmodule Moly.Helper do
   end
 
   @doc false
+  def generate_absolute_url(conn, relative_path) do
+    Phoenix.Controller.current_url(conn) |> URI.parse() |> Map.get(:host)
+    |> URI.merge(relative_path)
+    |> URI.to_string()
+  end
+
+  @doc false
   def pagination_meta(total, page_size, page, show_item)
       when is_integer(total) and is_integer(page_size) and is_integer(page) and
              is_integer(show_item) do
