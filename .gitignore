@@ -46,3 +46,4 @@
 /priv/svelte/
 
 .DS_Store
+.elixir-tools

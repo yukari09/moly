@@ -1,4 +1,5 @@
 defmodule Moly.GraphqlSchema do
+  require Ash.Query
   use Absinthe.Schema
 
   import_types Absinthe.Plug.Types
@@ -18,6 +19,8 @@ defmodule Moly.GraphqlSchema do
   end
 
   mutation do
+    import Ash.Query
+
     field :upload_media, :post do
       arg :file, non_null(:upload)
 
@@ -32,5 +35,118 @@ defmodule Moly.GraphqlSchema do
         end
       end
     end
+
+    field :generate_confirm_token, :string do
+      description "Generate token for user by purpose."
+      arg :purpose, non_null(:string)
+
+      resolve fn args, context ->
+        purpose = String.to_atom(args.purpose) #:confirm_new_user
+        %{context: %{actor: user}} = context
+        c = [context: %{private: %{ash_authentication?: true}}]
+
+        subject = AshAuthentication.user_to_subject(user)
+        strategy = AshAuthentication.Info.strategy!(Moly.Accounts.User, purpose)
+
+        token_record =
+          Ash.Query.new(Moly.Accounts.Token)
+          |> Ash.Query.filter(subject == ^subject and purpose == ^purpose and expires_at > ^DateTime.utc_now())
+          |> Ash.read_first(c)
+          |> case do
+            {:ok, maybe_exists} -> maybe_exists
+            {:error, _} -> nil
+          end
+
+        token_lifetime =
+          if token_record do
+            Ash.destroy!(token_record, Keyword.merge(c, [action: :destory_token]))
+            {DateTime.diff(token_record.expires_at, DateTime.utc_now()), :seconds}
+          else
+            strategy.token_lifetime
+          end
+
+        claims = %{"act" => strategy.confirm_action_name}
+
+        {:ok, token, _claims} =
+          AshAuthentication.Jwt.token_for_user(
+            user,
+            claims,
+            Keyword.merge([], token_lifetime: token_lifetime)
+          )
+
+        Ash.create(Moly.Accounts.Token, %{
+          extra_data: %{email: to_string(user.email)},
+          purpose: purpose,
+          token: token,
+        }, Keyword.merge([action: :store_token], c))
+
+        {:ok, token}
+      end
+
+
+    end
+
+
+    field :generate_reset_token, :string do
+      description "Generate reset password token."
+      arg :email, non_null(:string)
+
+      resolve fn args, _context ->
+        c = [context: %{private: %{ash_authentication?: true}}]
+        email = args.email
+        strategy = AshAuthentication.Info.strategy_for_action!(Moly.Accounts.User, :request_password_reset_with_password)
+
+        user = Ash.Query.for_read(Moly.Accounts.User, :get_by_email, %{email: email}, c) |> Ash.read_one!()
+        AshAuthentication.Strategy.Password.reset_token_for(strategy, user)
+      end
+    end
+
+    field :verify_confirm_token, :user do
+      description "Verify token."
+      arg :token, non_null(:string)
+      arg :purpose, non_null(:string)
+
+      resolve fn args, _context ->
+        token = args.token
+        purpose = String.to_atom(args.purpose) #:confirm_new_user
+        c = [context: %{private: %{ash_authentication?: true}}]
+
+        strategy = AshAuthentication.Info.strategy!(Moly.Accounts.User, purpose)
+
+        case AshAuthentication.AddOn.Confirmation.Actions.confirm(strategy, %{"confirm" => token}, c) do
+          {:ok, user} ->
+            Ash.update!(user, %{status: :active, confirmed_at: DateTime.utc_now()}, Keyword.merge(c, [action: :update_user_status]))
+            {:ok, user}
+          {:error, _} ->
+            {:error, nil}
+        end
+      end
+    end
+
+    field :reset_password_with_token, :user do
+      description "Reset password by reset token."
+      arg :reset_token, non_null(:string)
+      arg :password, non_null(:string)
+      arg :password_confirmation, non_null(:string)
+
+      resolve fn args, _context ->
+        c = [context: %{private: %{ash_authentication?: true}}]
+        strategy = AshAuthentication.Info.strategy_for_action!(Moly.Accounts.User, :password_reset_with_password)
+
+        with {:ok, %{"sub" => subject}, _} <- AshAuthentication.Jwt.verify(args.reset_token, strategy.resource, []),
+                {:ok, user} <- AshAuthentication.subject_to_user(subject, strategy.resource, []) do
+
+          Ash.Changeset.for_update(user, :password_reset_with_password, %{
+            reset_token: args.reset_token, password: args.password, password_confirmation: args.password_confirmation
+          })
+          |> Ash.update(c)
+          |> case do
+            {:error, _} -> {:error, nil}
+            {:ok, user} -> {:ok,  user}
+          end
+        end
+      end
+    end
   end
+
 end

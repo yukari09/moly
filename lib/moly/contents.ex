@@ -15,9 +15,9 @@ defmodule Moly.Contents do
   end
 
   graphql do
-    queries do
-      # list Moly.Contents.Post, :list_posts, :read
-    end
+    # queries do
+    #   list Moly.Contents.Post, :list_posts, :read
+    # end
     mutations do
       create Moly.Contents.Post, :create_post, :create_post
     end

@@ -109,20 +109,23 @@ if config_env() == :prod do
   # Also, you may need to configure the Swoosh API client of your choice if you
   # are not using SMTP. Here is an example of the configuration:
   #
+  #For server send email
+  # config :moly, Moly.Mailer,
+  #   adapter: Swoosh.Adapters.SMTP,
+  #   relay: "mail.karian.one",
+  #   username: System.get_env("EMAIL_ADDRESS"),
+  #   password: System.get_env("EMAIL_PASSWORD"),
+  #   port: 587,
+  #   ssl: false,
+  #   tls: :always,
+  #   auth: :always,
+  #   retries: 1,
+  #   tls_options: [
+  #     verify: :verify_none,
+  #     versions: [:"tlsv1.2", :"tlsv1.3"]
+  #   ]
   config :moly, Moly.Mailer,
-    adapter: Swoosh.Adapters.SMTP,
-    relay: "mail.karian.one",
-    username: System.get_env("EMAIL_ADDRESS"),
-    password: System.get_env("EMAIL_PASSWORD"),
-    port: 587,
-    ssl: false,
-    tls: :always,
-    auth: :always,
-    retries: 1,
-    tls_options: [
-      verify: :verify_none,
-      versions: [:"tlsv1.2", :"tlsv1.3"]
-    ]
+   adapter: Swoosh.Adapters.Logger
   #
   # For this example you need include a HTTP client required by Swoosh API client.
   # Swoosh supports Hackney and Finch out of the box:
@@ -165,4 +168,5 @@ if config_env() == :prod do
     json_library: JSON,
     http_client_adapter:
       {Snap.HTTPClient.Adapters.Finch, [conn_opts: [transport_opts: [verify: :verify_none]]]}
+
 end

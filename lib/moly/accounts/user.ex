@@ -35,20 +35,13 @@ defmodule Moly.Accounts.User do
     end
 
     add_ons do
+      #Disabled
       confirmation :confirm_new_user do
         monitor_fields([:email])
         confirm_on_create?(true)
         confirm_on_update?(false)
         require_interaction?(true)
         sender(Moly.Accounts.User.Senders.SendNewUserConfirmationEmail)
-      end
-      confirmation :confirm_change do
-        monitor_fields [:email]
-        confirm_on_create? false
-        confirm_on_update? true
-        confirm_action_name :confirm_change
-        require_interaction? true
-        sender Moly.Accounts.User.Senders.SendEmailChangeConfirmationEmail
       end
     end
   end
@@ -340,6 +333,8 @@ defmodule Moly.Accounts.User do
     update :update_user_status do
       description "Update the status of a user to active"
 
+      accept [:confirmed_at]
+
       argument :status, :atom do
         allow_nil? false
         constraints one_of: [:active, :inactive, :deleted]
@@ -392,15 +387,29 @@ defmodule Moly.Accounts.User do
     attribute :roles, {:array, :atom} do
       allow_nil? false
       default [:user]
+      public? true
     end
 
     attribute :status, :atom do
       allow_nil? false
       default :inactive
       constraints one_of: [:active, :inactive, :deleted]
+      public? true
     end
 
     timestamps()
+  end
+
+  calculations do
+    calculate :avatar, :string, expr(
+      first(:user_meta, field: :meta_value, query: [filter: expr(meta_key == "avatar")])
+    ), public?: true
+    calculate :name, :string, expr(
+      first(:user_meta, field: :meta_value, query: [filter: expr(meta_key == "name")])
+    ), public?: true
+    calculate :username, :string, expr(
+      first(:user_meta, field: :meta_value, query: [filter: expr(meta_key == "username")])
+    ), public?: true
   end
 
   relationships do
@@ -417,7 +426,6 @@ defmodule Moly.Accounts.User do
   graphql do
     type :user
   end
-
 
   defp register_relation_user_meta(email_or_user_info) do
     [name, username, avatar] =

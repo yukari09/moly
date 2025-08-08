@@ -3,7 +3,7 @@ defmodule Moly.Accounts.UserMeta do
     otp_app: :moly,
     domain: Moly.Accounts,
     # authorizers: [Ash.Policy.Authorizer],
-    # extensions: [AshAdmin.Resource, AshRbac],
+    extensions: [AshGraphql.Resource],
     data_layer: AshPostgres.DataLayer
 
   postgres do
@@ -54,6 +54,10 @@ defmodule Moly.Accounts.UserMeta do
 
   identities do
     identity :meta_key_with_user_id, [:meta_key, :user_id]
+  end
+
+  graphql do
+    type :user_meta
   end
 
   # rbac do

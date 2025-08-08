@@ -1,6 +1,5 @@
 defmodule MolyWeb.Router do
   use MolyWeb, :router
-
   use AshAuthentication.Phoenix.Router
 
   pipeline :browser do
@@ -118,6 +117,8 @@ defmodule MolyWeb.Router do
     get("/privacy-policy", PageController, :privacy_policy)
     get("/terms-of-service", PageController, :terms_of_service)
   end
+
+
 
 
   scope "/admin", MolyWeb do

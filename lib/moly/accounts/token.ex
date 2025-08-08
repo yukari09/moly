@@ -57,6 +57,8 @@ defmodule Moly.Accounts.Token do
       description "Deletes expired tokens."
       change filter expr(expires_at < now())
     end
+
+    destroy :destory_token
   end
 
   policies do
@@ -100,4 +102,6 @@ defmodule Moly.Accounts.Token do
 
     timestamps()
   end
+
+
 end
