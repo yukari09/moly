@@ -1,6 +1,7 @@
 defmodule Moly.GraphqlSchema do
-  require Ash.Query
   use Absinthe.Schema
+
+  require Ash.Query
 
   import_types Absinthe.Plug.Types
 
@@ -8,18 +9,45 @@ defmodule Moly.GraphqlSchema do
   use AshGraphql,
     domains: [Moly.Contents, Moly.Accounts, Moly.Terms]
 
+
+  input_object :user_meta_input do
+    field :meta_key, :string
+    field :meta_value, :string
+  end
+
   query do
-    # Custom absinthe queries can be placed here
-    @desc "Remove me once you have a query of your own!"
-    field :remove_me, :string do
-      resolve fn _, _, _ ->
-        {:ok, "Remove me!"}
+
+    field :is_not_username_available, :boolean do
+      description "Check the username available in user meta."
+      arg :username, non_null(:string)
+
+      resolve fn args, %{context: %{actor: _actor}} = _context ->
+        username = args.username
+
+        Ash.Query.new(Moly.Accounts.UserMeta)
+        |> Ash.Query.filter(meta_value == ^username)
+        |> Ash.exists()
+      end
+    end
+
+    field :get_user_by_username, :user do
+      description "Get user through user meta's meta key equal username."
+      arg :username, non_null(:string)
+      arg :secrect_key, non_null(:string)
+
+      resolve fn args, _context ->
+        if check_app_secrect(args) do
+          c = [context: %{private: %{ash_authentication?: true}}, action: :read]
+          Ash.Query.new(Moly.Accounts.User)
+          |> Ash.Query.filter(user_meta.meta_key == "username" and user_meta.meta_value == ^args.username)
+          |> Ash.Query.load([:user_meta])
+          |> Ash.read_first(c)
+        end
       end
     end
   end
 
   mutation do
-    import Ash.Query
 
     field :upload_media, :post do
       arg :file, non_null(:upload)
@@ -147,6 +175,23 @@ defmodule Moly.GraphqlSchema do
         end
       end
     end
+
+    field :update_user_meta, :user do
+      description "Update current user meta"
+      arg :user_meta, list_of(:user_meta_input)
+
+      resolve fn args, context ->
+        %{context: %{actor: actor}} = context
+        user_meta = args.user_meta
+        c = [context: %{private: %{ash_authentication?: true}}]
+        Ash.update(actor, %{user_meta: user_meta}, Keyword.merge(c, [action: :update_user_meta]))
+      end
+    end
+
   end
 
+
+  defp check_app_secrect(args) do
+    Map.get(args, :secrect_key) == Application.get_env(:moly, :app_secrect_key)
+  end
 end

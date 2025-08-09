@@ -147,7 +147,8 @@ if config_env() == :prod do
     cf_app_secret: System.get_env("CF_APP_SECRET"),
     team_name: System.get_env("TEAM_NAME"),
     support_email: System.get_env("SUPPORT_EMAIL"),
-    openrouter_api_key: System.get_env("OPENROUTER_API_KEY")
+    openrouter_api_key: System.get_env("OPENROUTER_API_KEY"),
+    app_secrect_key: System.get_env("APP_API_KEY")
 
   config :ex_aws,
     region: System.get_env("AWS_REGION"),

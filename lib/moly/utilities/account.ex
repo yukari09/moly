@@ -62,7 +62,6 @@ defmodule Moly.Utilities.Account do
             _ ->
               1
           end
-
         ratio
       else
         1

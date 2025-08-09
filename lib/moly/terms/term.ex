@@ -138,6 +138,9 @@ defmodule Moly.Terms.Term do
     queries do
       list :list_terms, :read, paginate_with: :keyset, relay?: true
     end
+    mutations do
+      create :create_term, :create
+    end
   end
 
   identities do

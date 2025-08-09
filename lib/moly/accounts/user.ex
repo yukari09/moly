@@ -401,20 +401,20 @@ defmodule Moly.Accounts.User do
   end
 
   calculations do
-    calculate :avatar, :string, expr(
-      first(:user_meta, field: :meta_value, query: [filter: expr(meta_key == "avatar")])
-    ), public?: true
-    calculate :name, :string, expr(
-      first(:user_meta, field: :meta_value, query: [filter: expr(meta_key == "name")])
-    ), public?: true
-    calculate :username, :string, expr(
-      first(:user_meta, field: :meta_value, query: [filter: expr(meta_key == "username")])
-    ), public?: true
+    # calculate :avatar, :string, expr(
+    #   first(:user_meta, field: :meta_value, query: [filter: expr(meta_key == "avatar")])
+    # ), public?: true
+    # calculate :name, :string, expr(
+    #   first(:user_meta, field: :meta_value, query: [filter: expr(meta_key == "name")])
+    # ), public?: true
+    # calculate :username, :string, expr(
+    #   first(:user_meta, field: :meta_value, query: [filter: expr(meta_key == "username")])
+    # ), public?: true
   end
 
   relationships do
     has_many :posts, Moly.Contents.Post, destination_attribute: :author_id
-    has_many :user_meta, Moly.Accounts.UserMeta
+    has_many :user_meta, Moly.Accounts.UserMeta, public?: true
     has_many :comments, Moly.Comments.Comment, destination_attribute: :comment_author_id
     has_many :post_actions, Moly.Accounts.UserPostAction
   end

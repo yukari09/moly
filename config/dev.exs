@@ -100,6 +100,7 @@ config :moly,
   team_name: "Moly",
   support_email: "support@moly.com",
   env: :dev,
+  app_secrect_key: "BYMAarm4Il",
   openrouter_api_key: "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"
 
 config :ex_aws,

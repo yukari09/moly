@@ -3,7 +3,7 @@ defmodule Moly.Accounts.UserMeta do
     otp_app: :moly,
     domain: Moly.Accounts,
     # authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshGraphql.Resource],
+    extensions: [AshGraphql.Resource, AshGraphql.Resource],
     data_layer: AshPostgres.DataLayer
 
   postgres do
@@ -41,9 +41,12 @@ defmodule Moly.Accounts.UserMeta do
 
     attribute :meta_key, :string do
       allow_nil? false
+      public? true
     end
 
-    attribute :meta_value, :string
+    attribute :meta_value, :string do
+      public? true
+    end
 
     timestamps()
   end
