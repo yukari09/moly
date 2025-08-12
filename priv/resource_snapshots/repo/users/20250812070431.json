@@ -1,6 +1,16 @@
 {
   "attributes": [
     {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "confirmed_at",
+      "type": "utc_datetime_usec"
+    },
+    {
       "allow_nil?": false,
       "default": "fragment(\"gen_random_uuid()\")",
       "generated?": false,
@@ -17,8 +27,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "meta_key",
-      "type": "text"
+      "source": "email",
+      "type": "citext"
     },
     {
       "allow_nil?": true,
@@ -27,7 +37,30 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "meta_value",
+      "source": "hashed_password",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "roles",
+      "type": [
+        "array",
+        "text"
+      ]
+    },
+    {
+      "allow_nil?": false,
+      "default": "\"inactive\"",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "status",
       "type": "text"
     },
     {
@@ -49,35 +82,6 @@
       "size": null,
       "source": "updated_at",
       "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "user_meta_user_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "users"
-      },
-      "size": null,
-      "source": "user_id",
-      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -85,23 +89,19 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "0724111FED721DEC53D55599E3AACBE778871BA26A92F64111B9CC2462A69A83",
+  "hash": "E6B328B989BFF5773A30D3CDFEBD3227894AA3C335260B3E0D5D1ED4D198EF51",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "user_meta_meta_key_with_user_id_index",
+      "index_name": "users_unique_email_index",
       "keys": [
         {
           "type": "atom",
-          "value": "meta_key"
-        },
-        {
-          "type": "atom",
-          "value": "user_id"
+          "value": "email"
         }
       ],
-      "name": "meta_key_with_user_id",
+      "name": "unique_email",
       "nils_distinct?": true,
       "where": null
     }
@@ -113,5 +113,5 @@
   },
   "repo": "Elixir.Moly.Repo",
   "schema": null,
-  "table": "user_meta"
+  "table": "users"
 }

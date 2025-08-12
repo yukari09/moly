@@ -17,7 +17,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "meta_key",
+      "source": "term_key",
       "type": "text"
     },
     {
@@ -27,7 +27,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "meta_value",
+      "source": "term_value",
       "type": "text"
     },
     {
@@ -51,7 +51,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -68,32 +68,48 @@
           "global": null,
           "strategy": null
         },
-        "name": "post_meta_post_id_fkey",
+        "name": "term_meta_term_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "posts"
+        "table": "terms"
       },
       "size": null,
-      "source": "post_id",
+      "source": "term_id",
       "type": "uuid"
     }
   ],
   "base_filter": null,
   "check_constraints": [],
   "custom_indexes": [],
-  "custom_statements": [
+  "custom_statements": [],
+  "has_create_action": true,
+  "hash": "65B2E9C546E93A3ADEE48D12B12C1FBD013489E6AF32D162B70FD869DE0984CE",
+  "identities": [
     {
-      "code?": false,
-      "down": "DROP INDEX meta_value_idx;",
-      "name": "meta_value_idx",
-      "up": "CREATE INDEX meta_value_idx ON post_meta (substring(meta_value FROM 1 FOR 16));"
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "term_meta_term_key_value_with_id_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "term_id"
+        },
+        {
+          "type": "atom",
+          "value": "term_key"
+        },
+        {
+          "type": "atom",
+          "value": "term_value"
+        }
+      ],
+      "name": "term_key_value_with_id",
+      "nils_distinct?": true,
+      "where": null
     }
   ],
-  "has_create_action": true,
-  "hash": "63561C39CCD4629A5B270738548F474E229F18F179B12D2F3B06410C672E2C0E",
-  "identities": [],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -101,5 +117,5 @@
   },
   "repo": "Elixir.Moly.Repo",
   "schema": null,
-  "table": "post_meta"
+  "table": "term_meta"
 }

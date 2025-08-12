@@ -1,16 +1,6 @@
 {
   "attributes": [
     {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "confirmed_at",
-      "type": "utc_datetime_usec"
-    },
-    {
       "allow_nil?": false,
       "default": "fragment(\"gen_random_uuid()\")",
       "generated?": false,
@@ -27,17 +17,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "email",
-      "type": "citext"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "hashed_password",
+      "source": "option_name",
       "type": "text"
     },
     {
@@ -47,21 +27,18 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "roles",
-      "type": [
-        "array",
-        "text"
-      ]
+      "source": "option_value",
+      "type": "text"
     },
     {
       "allow_nil?": false,
-      "default": "\"inactive\"",
+      "default": "false",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "status",
-      "type": "text"
+      "source": "autoload",
+      "type": "boolean"
     },
     {
       "allow_nil?": false,
@@ -88,24 +65,9 @@
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": true,
-  "hash": "262FBDA1EDEDF7611B87155711D6852129D343E08FCF22F7E895773185D1264E",
-  "identities": [
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "users_unique_email_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "email"
-        }
-      ],
-      "name": "unique_email",
-      "nils_distinct?": true,
-      "where": null
-    }
-  ],
+  "has_create_action": false,
+  "hash": "D39BBD9A776820E3D3E3C1C385DC1098DFEADA7D2B70B7F4F94F3480BC0B086F",
+  "identities": [],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -113,5 +75,5 @@
   },
   "repo": "Elixir.Moly.Repo",
   "schema": null,
-  "table": "users"
+  "table": "options"
 }

@@ -10,6 +10,8 @@ defmodule Moly.GraphqlSchema do
     domains: [Moly.Contents, Moly.Accounts, Moly.Terms]
 
 
+  @privite_context [context: %{private: %{ash_authentication?: true}}]
+
   input_object :user_meta_input do
     field :meta_key, :string
     field :meta_value, :string
@@ -37,17 +39,17 @@ defmodule Moly.GraphqlSchema do
 
       resolve fn args, _context ->
         if check_app_secrect(args) do
-          c = [context: %{private: %{ash_authentication?: true}}, action: :read]
           Ash.Query.new(Moly.Accounts.User)
           |> Ash.Query.filter(user_meta.meta_key == "username" and user_meta.meta_value == ^args.username)
           |> Ash.Query.load([:user_meta])
-          |> Ash.read_first(c)
+          |> Ash.read_first(@privite_context)
         end
       end
     end
   end
 
   mutation do
+
 
     field :upload_media, :post do
       arg :file, non_null(:upload)
@@ -71,7 +73,6 @@ defmodule Moly.GraphqlSchema do
       resolve fn args, context ->
         purpose = String.to_atom(args.purpose) #:confirm_new_user
         %{context: %{actor: user}} = context
-        c = [context: %{private: %{ash_authentication?: true}}]
 
         subject = AshAuthentication.user_to_subject(user)
         strategy = AshAuthentication.Info.strategy!(Moly.Accounts.User, purpose)
@@ -79,7 +80,7 @@ defmodule Moly.GraphqlSchema do
         token_record =
           Ash.Query.new(Moly.Accounts.Token)
           |> Ash.Query.filter(subject == ^subject and purpose == ^purpose and expires_at > ^DateTime.utc_now())
-          |> Ash.read_first(c)
+          |> Ash.read_first(@privite_context)
           |> case do
             {:ok, maybe_exists} -> maybe_exists
             {:error, _} -> nil
@@ -87,7 +88,7 @@ defmodule Moly.GraphqlSchema do
 
         token_lifetime =
           if token_record do
-            Ash.destroy!(token_record, Keyword.merge(c, [action: :destory_token]))
+            Ash.destroy!(token_record, Keyword.merge(@privite_context, [action: :destory_token]))
             {DateTime.diff(token_record.expires_at, DateTime.utc_now()), :seconds}
           else
             strategy.token_lifetime
@@ -106,7 +107,7 @@ defmodule Moly.GraphqlSchema do
           extra_data: %{email: to_string(user.email)},
           purpose: purpose,
           token: token,
-        }, Keyword.merge([action: :store_token], c))
+        }, Keyword.merge([action: :store_token], @privite_context))
 
         {:ok, token}
       end
@@ -120,11 +121,10 @@ defmodule Moly.GraphqlSchema do
       arg :email, non_null(:string)
 
       resolve fn args, _context ->
-        c = [context: %{private: %{ash_authentication?: true}}]
         email = args.email
         strategy = AshAuthentication.Info.strategy_for_action!(Moly.Accounts.User, :request_password_reset_with_password)
 
-        user = Ash.Query.for_read(Moly.Accounts.User, :get_by_email, %{email: email}, c) |> Ash.read_one!()
+        user = Ash.Query.for_read(Moly.Accounts.User, :get_by_email, %{email: email}, @privite_context) |> Ash.read_one!()
         AshAuthentication.Strategy.Password.reset_token_for(strategy, user)
       end
     end
@@ -137,13 +137,12 @@ defmodule Moly.GraphqlSchema do
       resolve fn args, _context ->
         token = args.token
         purpose = String.to_atom(args.purpose) #:confirm_new_user
-        c = [context: %{private: %{ash_authentication?: true}}]
 
         strategy = AshAuthentication.Info.strategy!(Moly.Accounts.User, purpose)
 
-        case AshAuthentication.AddOn.Confirmation.Actions.confirm(strategy, %{"confirm" => token}, c) do
+        case AshAuthentication.AddOn.Confirmation.Actions.confirm(strategy, %{"confirm" => token}, @privite_context) do
           {:ok, user} ->
-            Ash.update!(user, %{status: :active, confirmed_at: DateTime.utc_now()}, Keyword.merge(c, [action: :update_user_status]))
+            Ash.update!(user, %{status: :active, confirmed_at: DateTime.utc_now()}, Keyword.merge(@privite_context, [action: :update_user_status]))
             {:ok, user}
           {:error, _} ->
             {:error, nil}
@@ -158,7 +157,6 @@ defmodule Moly.GraphqlSchema do
       arg :password_confirmation, non_null(:string)
 
       resolve fn args, _context ->
-        c = [context: %{private: %{ash_authentication?: true}}]
         strategy = AshAuthentication.Info.strategy_for_action!(Moly.Accounts.User, :password_reset_with_password)
 
         with {:ok, %{"sub" => subject}, _} <- AshAuthentication.Jwt.verify(args.reset_token, strategy.resource, []),
@@ -167,7 +165,7 @@ defmodule Moly.GraphqlSchema do
           Ash.Changeset.for_update(user, :password_reset_with_password, %{
             reset_token: args.reset_token, password: args.password, password_confirmation: args.password_confirmation
           })
-          |> Ash.update(c)
+          |> Ash.update(@privite_context)
           |> case do
             {:error, _} -> {:error, nil}
             {:ok, user} -> {:ok,  user}
@@ -183,11 +181,9 @@ defmodule Moly.GraphqlSchema do
       resolve fn args, context ->
         %{context: %{actor: actor}} = context
         user_meta = args.user_meta
-        c = [context: %{private: %{ash_authentication?: true}}]
-        Ash.update(actor, %{user_meta: user_meta}, Keyword.merge(c, [action: :update_user_meta]))
+        Ash.update(actor, %{user_meta: user_meta}, Keyword.merge(@privite_context, [action: :update_user_meta]))
       end
     end
-
   end
 
 

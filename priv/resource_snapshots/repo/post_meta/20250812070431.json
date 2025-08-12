@@ -17,7 +17,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "option_name",
+      "source": "meta_key",
       "type": "text"
     },
     {
@@ -27,18 +27,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "option_value",
+      "source": "meta_value",
       "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "false",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "autoload",
-      "type": "boolean"
     },
     {
       "allow_nil?": false,
@@ -59,14 +49,50 @@
       "size": null,
       "source": "updated_at",
       "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "post_meta_post_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "posts"
+      },
+      "size": null,
+      "source": "post_id",
+      "type": "uuid"
     }
   ],
   "base_filter": null,
   "check_constraints": [],
   "custom_indexes": [],
-  "custom_statements": [],
-  "has_create_action": false,
-  "hash": "E17609651532829BDFF60AA8C243C5ABF3352B31E2053B3F5170A07D2EEDFD74",
+  "custom_statements": [
+    {
+      "code?": false,
+      "down": "DROP INDEX meta_value_idx;",
+      "name": "meta_value_idx",
+      "up": "CREATE INDEX meta_value_idx ON post_meta (substring(meta_value FROM 1 FOR 16));"
+    }
+  ],
+  "has_create_action": true,
+  "hash": "991C7F0BC97DAE7AD33395BBA3A9A78130A48635BEEA6128787D114FC2E99A9E",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -75,5 +101,5 @@
   },
   "repo": "Elixir.Moly.Repo",
   "schema": null,
-  "table": "options"
+  "table": "post_meta"
 }

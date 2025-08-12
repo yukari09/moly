@@ -1,4 +1,4 @@
-defmodule Moly.Repo.Migrations.Rebuilde do
+defmodule Moly.Repo.Migrations.MigrateResources1 do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
@@ -228,10 +228,6 @@ defmodule Moly.Repo.Migrations.Rebuilde do
       )
     end
 
-    create unique_index(:term_meta, [:term_key, :term_value],
-             name: "term_meta_term_key_value_index"
-           )
-
     create unique_index(:term_meta, [:term_id, :term_key, :term_value],
              name: "term_meta_term_key_value_with_id_index"
            )
@@ -356,9 +352,10 @@ defmodule Moly.Repo.Migrations.Rebuilde do
       )
     end
 
-    create unique_index(:post_meta, [:meta_key, :post_id],
-             name: "post_meta_meta_key_with_post_id_index"
-           )
+    create table(:organizations, primary_key: false) do
+      add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
+      add(:name, :text, null: false)
+    end
 
     create table(:options, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
@@ -495,11 +492,7 @@ defmodule Moly.Repo.Migrations.Rebuilde do
 
     drop(table(:options))
 
-    drop_if_exists(
-      unique_index(:post_meta, [:meta_key, :post_id],
-        name: "post_meta_meta_key_with_post_id_index"
-      )
-    )
+    drop(table(:organizations))
 
     drop(constraint(:post_meta, "post_meta_post_id_fkey"))
 
@@ -567,10 +560,6 @@ defmodule Moly.Repo.Migrations.Rebuilde do
       unique_index(:term_meta, [:term_id, :term_key, :term_value],
         name: "term_meta_term_key_value_with_id_index"
       )
-    )
-
-    drop_if_exists(
-      unique_index(:term_meta, [:term_key, :term_value], name: "term_meta_term_key_value_index")
     )
 
     drop(constraint(:term_meta, "term_meta_term_id_fkey"))

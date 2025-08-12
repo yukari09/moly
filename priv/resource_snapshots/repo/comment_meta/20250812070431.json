@@ -12,13 +12,23 @@
     },
     {
       "allow_nil?": true,
-      "default": "0",
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "term_order",
-      "type": "bigint"
+      "source": "meta_key",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "meta_value",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -58,44 +68,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "term_relationships_term_taxonomy_id_fkey",
+        "name": "comment_meta_comment_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "term_taxonomies"
+        "table": "comments"
       },
       "size": null,
-      "source": "term_taxonomy_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "term_relationships_to_posts_fkey",
-        "on_delete": "delete",
-        "on_update": "update",
-        "primary_key?": true,
-        "schema": "public",
-        "table": "posts"
-      },
-      "size": null,
-      "source": "post_id",
+      "source": "comment_id",
       "type": "uuid"
     }
   ],
@@ -103,24 +84,24 @@
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": true,
-  "hash": "1F4DE727C6E8F315D4B9CB14148B3DE71A2A96BD2A82F202DE69D422EC8B0703",
+  "has_create_action": false,
+  "hash": "18B0C177AD434456B0D90135323249369EA4E9A7E3E8C34D414AF28A238ABE29",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "term_relationships_post_id_term_taxonomy_id_index",
+      "index_name": "comment_meta_meta_key_with_comment_id_index",
       "keys": [
         {
           "type": "atom",
-          "value": "term_taxonomy_id"
+          "value": "meta_key"
         },
         {
           "type": "atom",
-          "value": "post_id"
+          "value": "comment_id"
         }
       ],
-      "name": "post_id_term_taxonomy_id",
+      "name": "meta_key_with_comment_id",
       "nils_distinct?": true,
       "where": null
     }
@@ -132,5 +113,5 @@
   },
   "repo": "Elixir.Moly.Repo",
   "schema": null,
-  "table": "term_relationships"
+  "table": "comment_meta"
 }

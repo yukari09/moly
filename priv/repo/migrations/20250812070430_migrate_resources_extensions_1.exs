@@ -1,4 +1,4 @@
-defmodule Moly.Repo.Migrations.RebuildeExtensions1 do
+defmodule Moly.Repo.Migrations.MigrateResourcesExtensions1 do
   @moduledoc """
   Installs any extensions that are mentioned in the repo's `installed_extensions/0` callback
 

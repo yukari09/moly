@@ -11,7 +11,7 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -68,15 +68,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "comment_meta_comment_id_fkey",
+        "name": "user_meta_user_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "comments"
+        "table": "users"
       },
       "size": null,
-      "source": "comment_id",
+      "source": "user_id",
       "type": "uuid"
     }
   ],
@@ -84,13 +84,13 @@
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": false,
-  "hash": "E5BAAA9860B1A44CB2B913B91F8A45F59D8D4BE6891BF01E44FE17254E8DF85A",
+  "has_create_action": true,
+  "hash": "ACB6AA920D13AA487CFF42C14910A0BA7DAE7971AC17FE45617113CEC3E9E881",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "comment_meta_meta_key_with_comment_id_index",
+      "index_name": "user_meta_meta_key_with_user_id_index",
       "keys": [
         {
           "type": "atom",
@@ -98,10 +98,10 @@
         },
         {
           "type": "atom",
-          "value": "comment_id"
+          "value": "user_id"
         }
       ],
-      "name": "meta_key_with_comment_id",
+      "name": "meta_key_with_user_id",
       "nils_distinct?": true,
       "where": null
     }
@@ -113,5 +113,5 @@
   },
   "repo": "Elixir.Moly.Repo",
   "schema": null,
-  "table": "comment_meta"
+  "table": "user_meta"
 }

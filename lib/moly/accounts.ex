@@ -10,6 +10,7 @@ defmodule Moly.Accounts do
     resource Moly.Accounts.User
     resource Moly.Accounts.UserMeta
     resource Moly.Accounts.UserPostAction
+    resource Moly.Accounts.Organization
   end
 
   graphql do

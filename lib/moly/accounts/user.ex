@@ -51,6 +51,10 @@ defmodule Moly.Accounts.User do
     repo(Moly.Repo)
   end
 
+  # multitenancy do
+  #   strategy :context
+  # end
+
   actions do
     read :read do
       primary? true
@@ -433,7 +437,8 @@ defmodule Moly.Accounts.User do
         %Ash.CiString{} ->
           email = Ash.CiString.value(email_or_user_info)
           name = extract_name_from_email(email)
-          [name, name, nil]
+          username = "#{name}#{Moly.Helper.generate_random_id(2)}"
+          [name, username, nil]
 
         email_or_user_info when is_map(email_or_user_info) ->
           name = email_or_user_info["name"]
