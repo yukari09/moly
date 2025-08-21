@@ -2,22 +2,22 @@
   "attributes": [
     {
       "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "created_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
+      "default": "fragment(\"gen_random_uuid()\")",
       "generated?": false,
       "primary_key?": true,
       "references": null,
       "size": null,
-      "source": "jti",
+      "source": "id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "name",
       "type": "text"
     },
     {
@@ -27,38 +27,18 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "subject",
+      "source": "slug",
       "type": "text"
     },
     {
       "allow_nil?": false,
-      "default": "nil",
+      "default": "0",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "expires_at",
-      "type": "utc_datetime"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "purpose",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "extra_data",
-      "type": "map"
+      "source": "term_group",
+      "type": "bigint"
     },
     {
       "allow_nil?": false,
@@ -86,8 +66,23 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "DAB1C3FCF815EA5677C52FA4BBA8784A803CC010B0B0EE295AD9162FCDBF5333",
-  "identities": [],
+  "hash": "9308D7991F0CDBC7503434184FE7D27A4EBF8E210AA86773B04FFE479E525C3A",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "terms_unique_slug_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "slug"
+        }
+      ],
+      "name": "unique_slug",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -95,5 +90,5 @@
   },
   "repo": "Elixir.Moly.Repo",
   "schema": null,
-  "table": "tokens"
+  "table": "terms"
 }

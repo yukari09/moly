@@ -11,24 +11,14 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": false,
-      "default": "nil",
+      "allow_nil?": true,
+      "default": "0",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "action",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "created_at",
-      "type": "utc_datetime"
+      "source": "term_order",
+      "type": "bigint"
     },
     {
       "allow_nil?": false,
@@ -51,7 +41,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -68,19 +58,19 @@
           "global": null,
           "strategy": null
         },
-        "name": "user_post_actions_user_id_fkey",
+        "name": "term_relationships_term_taxonomy_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "term_taxonomies"
       },
       "size": null,
-      "source": "user_id",
+      "source": "term_taxonomy_id",
       "type": "uuid"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -97,9 +87,9 @@
           "global": null,
           "strategy": null
         },
-        "name": "user_post_actions_post_id_fkey",
-        "on_delete": null,
-        "on_update": null,
+        "name": "term_relationships_to_posts_fkey",
+        "on_delete": "delete",
+        "on_update": "update",
         "primary_key?": true,
         "schema": "public",
         "table": "posts"
@@ -114,27 +104,23 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "AA157D69C7F5338228A50DD2C11E01755E721E32B84F98893EA481E111052F88",
+  "hash": "226A97282402AA6C3024C370129645D2320D71946AAB818477EE9269EB0B4E7E",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "user_post_actions_unique_user_id_post_id_action_index",
+      "index_name": "term_relationships_post_id_term_taxonomy_id_index",
       "keys": [
         {
           "type": "atom",
-          "value": "user_id"
+          "value": "term_taxonomy_id"
         },
         {
           "type": "atom",
           "value": "post_id"
-        },
-        {
-          "type": "atom",
-          "value": "action"
         }
       ],
-      "name": "unique_user_id_post_id_action",
+      "name": "post_id_term_taxonomy_id",
       "nils_distinct?": true,
       "where": null
     }
@@ -146,5 +132,5 @@
   },
   "repo": "Elixir.Moly.Repo",
   "schema": null,
-  "table": "user_post_actions"
+  "table": "term_relationships"
 }

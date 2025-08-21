@@ -352,11 +352,6 @@ defmodule Moly.Repo.Migrations.MigrateResources1 do
       )
     end
 
-    create table(:organizations, primary_key: false) do
-      add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
-      add(:name, :text, null: false)
-    end
-
     create table(:options, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
       add(:option_name, :text, null: false)
@@ -491,8 +486,6 @@ defmodule Moly.Repo.Migrations.MigrateResources1 do
     drop(table(:comments))
 
     drop(table(:options))
-
-    drop(table(:organizations))
 
     drop(constraint(:post_meta, "post_meta_post_id_fkey"))
 

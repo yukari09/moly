@@ -11,24 +11,24 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "meta_key",
+      "source": "action",
       "type": "text"
     },
     {
-      "allow_nil?": true,
-      "default": "nil",
+      "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "meta_value",
-      "type": "text"
+      "source": "created_at",
+      "type": "utc_datetime"
     },
     {
       "allow_nil?": false,
@@ -51,7 +51,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -68,15 +68,44 @@
           "global": null,
           "strategy": null
         },
-        "name": "comment_meta_comment_id_fkey",
+        "name": "user_post_actions_user_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "comments"
+        "table": "users"
       },
       "size": null,
-      "source": "comment_id",
+      "source": "user_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "user_post_actions_post_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "primary_key?": true,
+        "schema": "public",
+        "table": "posts"
+      },
+      "size": null,
+      "source": "post_id",
       "type": "uuid"
     }
   ],
@@ -84,24 +113,28 @@
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": false,
-  "hash": "18B0C177AD434456B0D90135323249369EA4E9A7E3E8C34D414AF28A238ABE29",
+  "has_create_action": true,
+  "hash": "9C1A4D064496DD337BAC5D83FB764E608C3084D7BA07C0929FE9545F0DE30CEC",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "comment_meta_meta_key_with_comment_id_index",
+      "index_name": "user_post_actions_unique_user_id_post_id_action_index",
       "keys": [
         {
           "type": "atom",
-          "value": "meta_key"
+          "value": "user_id"
         },
         {
           "type": "atom",
-          "value": "comment_id"
+          "value": "post_id"
+        },
+        {
+          "type": "atom",
+          "value": "action"
         }
       ],
-      "name": "meta_key_with_comment_id",
+      "name": "unique_user_id_post_id_action",
       "nils_distinct?": true,
       "where": null
     }
@@ -113,5 +146,5 @@
   },
   "repo": "Elixir.Moly.Repo",
   "schema": null,
-  "table": "comment_meta"
+  "table": "user_post_actions"
 }

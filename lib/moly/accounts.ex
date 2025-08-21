@@ -4,13 +4,11 @@ defmodule Moly.Accounts do
       AshGraphql.Domain
     ]
 
-
   resources do
     resource Moly.Accounts.Token
     resource Moly.Accounts.User
     resource Moly.Accounts.UserMeta
     resource Moly.Accounts.UserPostAction
-    resource Moly.Accounts.Organization
   end
 
   graphql do

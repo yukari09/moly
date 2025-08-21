@@ -11,14 +11,24 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": true,
-      "default": "0",
+      "allow_nil?": false,
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "term_order",
-      "type": "bigint"
+      "source": "term_key",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "term_value",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -58,44 +68,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "term_relationships_term_taxonomy_id_fkey",
+        "name": "term_meta_term_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "term_taxonomies"
+        "table": "terms"
       },
       "size": null,
-      "source": "term_taxonomy_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "term_relationships_to_posts_fkey",
-        "on_delete": "delete",
-        "on_update": "update",
-        "primary_key?": true,
-        "schema": "public",
-        "table": "posts"
-      },
-      "size": null,
-      "source": "post_id",
+      "source": "term_id",
       "type": "uuid"
     }
   ],
@@ -104,23 +85,27 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "E04778931E594E9D09BBC7B9AE6A149F919230BF24A73F638CA69A2AEAE77497",
+  "hash": "458F36B2CF1540A6FDA9A4809A19BCE1B7B518D5588F2E07D125693E25D5F42A",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "term_relationships_post_id_term_taxonomy_id_index",
+      "index_name": "term_meta_term_key_value_with_id_index",
       "keys": [
         {
           "type": "atom",
-          "value": "term_taxonomy_id"
+          "value": "term_id"
         },
         {
           "type": "atom",
-          "value": "post_id"
+          "value": "term_key"
+        },
+        {
+          "type": "atom",
+          "value": "term_value"
         }
       ],
-      "name": "post_id_term_taxonomy_id",
+      "name": "term_key_value_with_id",
       "nils_distinct?": true,
       "where": null
     }
@@ -132,5 +117,5 @@
   },
   "repo": "Elixir.Moly.Repo",
   "schema": null,
-  "table": "term_relationships"
+  "table": "term_meta"
 }

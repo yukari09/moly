@@ -1,6 +1,16 @@
 {
   "attributes": [
     {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "confirmed_at",
+      "type": "utc_datetime_usec"
+    },
+    {
       "allow_nil?": false,
       "default": "fragment(\"gen_random_uuid()\")",
       "generated?": false,
@@ -17,7 +27,17 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "name",
+      "source": "email",
+      "type": "citext"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "hashed_password",
       "type": "text"
     },
     {
@@ -27,18 +47,21 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "slug",
-      "type": "text"
+      "source": "roles",
+      "type": [
+        "array",
+        "text"
+      ]
     },
     {
       "allow_nil?": false,
-      "default": "0",
+      "default": "\"inactive\"",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "term_group",
-      "type": "bigint"
+      "source": "status",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -66,19 +89,19 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "7C0E600A1EE93D4C937DC29D1AE224CEBEC8096E40114B1AA665D8959492A173",
+  "hash": "E01762934B81BA9D9B0D3D56AB738536DCDF6D6DA1CDFA18AA7FF0B6822B179D",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "terms_unique_slug_index",
+      "index_name": "users_unique_email_index",
       "keys": [
         {
           "type": "atom",
-          "value": "slug"
+          "value": "email"
         }
       ],
-      "name": "unique_slug",
+      "name": "unique_email",
       "nils_distinct?": true,
       "where": null
     }
@@ -90,5 +113,5 @@
   },
   "repo": "Elixir.Moly.Repo",
   "schema": null,
-  "table": "terms"
+  "table": "users"
 }

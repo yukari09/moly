@@ -52,7 +52,7 @@ defmodule Moly.Accounts.User do
   end
 
   # multitenancy do
-  #   strategy :context
+  #   strategy :attribute
   # end
 
   actions do

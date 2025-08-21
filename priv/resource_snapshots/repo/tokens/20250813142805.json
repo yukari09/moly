@@ -2,22 +2,22 @@
   "attributes": [
     {
       "allow_nil?": false,
-      "default": "fragment(\"gen_random_uuid()\")",
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "created_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
       "generated?": false,
       "primary_key?": true,
       "references": null,
       "size": null,
-      "source": "id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "option_name",
+      "source": "jti",
       "type": "text"
     },
     {
@@ -27,18 +27,38 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "option_value",
+      "source": "subject",
       "type": "text"
     },
     {
       "allow_nil?": false,
-      "default": "false",
+      "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "autoload",
-      "type": "boolean"
+      "source": "expires_at",
+      "type": "utc_datetime"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "purpose",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "extra_data",
+      "type": "map"
     },
     {
       "allow_nil?": false,
@@ -65,8 +85,8 @@
   "check_constraints": [],
   "custom_indexes": [],
   "custom_statements": [],
-  "has_create_action": false,
-  "hash": "D39BBD9A776820E3D3E3C1C385DC1098DFEADA7D2B70B7F4F94F3480BC0B086F",
+  "has_create_action": true,
+  "hash": "B0524C57E16AB620A75552DD8B065743AF9206156D38EDF27F75605065C43498",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -75,5 +95,5 @@
   },
   "repo": "Elixir.Moly.Repo",
   "schema": null,
-  "table": "options"
+  "table": "tokens"
 }
