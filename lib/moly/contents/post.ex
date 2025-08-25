@@ -335,7 +335,7 @@ defmodule Moly.Contents.Post do
       default ""
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
   relationships do

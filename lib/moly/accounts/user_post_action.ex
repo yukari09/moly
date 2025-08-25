@@ -68,7 +68,7 @@ defmodule Moly.Accounts.UserPostAction do
     attribute :action, :atom, allow_nil?: false
     # Timestamp indicating when the action was performed, defaults to current UTC time
     attribute :created_at, :utc_datetime, allow_nil?: false, default: &DateTime.utc_now/0
-    timestamps()
+    timestamps(public?: true)
   end
 
   relationships do

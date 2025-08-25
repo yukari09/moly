@@ -13,12 +13,12 @@ defmodule Moly.Terms.TermMeta do
 
   rbac do
     role :user do
-      fields([:term_key, :term_value])
+      fields([:term_key, :term_value, :inserted_at, :updated_at])
       actions([:read])
     end
 
     role :admin do
-      actions([:create, :read, :update, :destroy])
+      actions([:create, :read, :update, :destroy, :inserted_at, :updated_at])
     end
   end
 
@@ -62,7 +62,7 @@ defmodule Moly.Terms.TermMeta do
       allow_nil? false
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
   relationships do

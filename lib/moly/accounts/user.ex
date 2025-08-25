@@ -401,7 +401,7 @@ defmodule Moly.Accounts.User do
       public? true
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
   calculations do

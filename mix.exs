@@ -42,7 +42,7 @@ defmodule Moly.MixProject do
       {:ash_authentication, "~> 4.9"},
       {:bcrypt_elixir, "~> 3.2"},
       {:picosat_elixir, "~> 0.2"},
-      {:ash_postgres, "~> 2.5.6"},
+      {:ash_postgres, "~> 2.5.22"},
       {:ash_phoenix, "~> 2.2"},
       {:ash, "~> 3.5"},
       {:cachex, "~> 4.0"},
@@ -56,7 +56,7 @@ defmodule Moly.MixProject do
       {:slugify, "~> 1.3"},
       {:sitemapper, "~> 0.9"},
       {:tidewave, "~> 0.1", only: :dev},
-      {:ash_graphql, "~> 1.7.15"},
+      {:ash_graphql, "~> 1.8.3"},
       {:mdex, "~> 0.7"},
       # ====================
       {:phoenix, "~> 1.7.20"},

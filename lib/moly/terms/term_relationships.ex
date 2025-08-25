@@ -54,7 +54,7 @@ defmodule Moly.Terms.TermRelationships do
       default 0
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
   relationships do

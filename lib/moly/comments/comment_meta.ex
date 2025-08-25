@@ -29,7 +29,7 @@ defmodule Moly.Comments.CommentMeta do
       allow_nil? true
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
   relationships do

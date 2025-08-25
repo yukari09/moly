@@ -15,17 +15,17 @@ defmodule Moly.Terms.Term do
 
   rbac do
     role :user do
-      fields([:name, :slug, :term_group, :term_taxonomy_by])
+      fields([:name, :slug, :term_group, :term_taxonomy_by, :inserted_at, :updated_at])
       actions([:read])
     end
 
     role :admin do
-      fields([:name, :slug, :term_group, :term_taxonomy_by])
+      fields([:name, :slug, :term_group, :term_taxonomy_by, :inserted_at, :updated_at])
       actions([:create, :read, :update, :destroy])
     end
 
     role :owner do
-      fields([:name, :slug, :term_group, :term_taxonomy_by])
+      fields([:name, :slug, :term_group, :term_taxonomy_by, :inserted_at, :updated_at])
       actions([:create, :read, :update, :destroy])
     end
   end
@@ -118,7 +118,7 @@ defmodule Moly.Terms.Term do
       public? true
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
   relationships do
@@ -137,9 +137,11 @@ defmodule Moly.Terms.Term do
     type :term
     queries do
       list :list_terms, :read, paginate_with: :keyset, relay?: true
+      list :list_terms_offset, :read, paginate_with: :offset
     end
     mutations do
       create :create_term, :create
+      destroy :destroy_term, :destroy
     end
   end
 

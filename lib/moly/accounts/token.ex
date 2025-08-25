@@ -100,7 +100,7 @@ defmodule Moly.Accounts.Token do
       public? true
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
 

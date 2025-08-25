@@ -83,7 +83,7 @@ defmodule Moly.Comments.Comment do
       default false
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
   relationships do

@@ -42,6 +42,6 @@ defmodule Moly.Options.Option do
       default false
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 end

@@ -48,7 +48,7 @@ defmodule Moly.Accounts.UserMeta do
       public? true
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
   relationships do

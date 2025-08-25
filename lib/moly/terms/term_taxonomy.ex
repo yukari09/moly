@@ -13,17 +13,17 @@ defmodule Moly.Terms.TermTaxonomy do
 
   rbac do
     role :user do
-      fields([:taxonomy, :description, :count])
+      fields([:taxonomy, :description, :count, :inserted_at, :updated_at])
       actions([:read])
     end
 
     role :admin do
       fields([:taxonomy, :description, :count])
-      actions([:create, :read, :update, :destroy, :inc_count])
+      actions([:create, :read, :update, :destroy, :inc_count, :inserted_at, :updated_at])
     end
 
     role :owner do
-      fields([:taxonomy, :description, :count])
+      fields([:taxonomy, :description, :count, :inserted_at, :updated_at])
       actions([:create, :read, :update, :destroy])
     end
   end
@@ -105,7 +105,7 @@ defmodule Moly.Terms.TermTaxonomy do
       default 0
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
   relationships do
